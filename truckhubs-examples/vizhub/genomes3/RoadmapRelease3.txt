@@ -1,0 +1,5 @@
+hub VizHub
+shortLabel Roadmap Epigenomics Release III at Wash U VizHub
+longLabel Roadmap Epigenomics Human Epigenome Atlas Release III, VizHub at Washington University in St. Louis
+genomesFile genomes3.txt
+email twang@genetics.wustl.edu

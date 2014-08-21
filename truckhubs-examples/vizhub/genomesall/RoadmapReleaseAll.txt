@@ -1,0 +1,6 @@
+hub VizHub
+descriptionUrl http://www.roadmapepigenomics.org/
+shortLabel Roadmap Epigenomics Data Complete Collection at Wash U VizHub
+longLabel Roadmap Epigenomics Human Epigenome Atlas Data Complete Collection, VizHub at Washington University in St. Louis
+genomesFile genomesall.txt
+email twang@genetics.wustl.edu

@@ -1,0 +1,9 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+
+  "title": "TruckHub",
+
+  "description" : "Represents the properties of a TruckHub",
+
+  "type": "object"
+}

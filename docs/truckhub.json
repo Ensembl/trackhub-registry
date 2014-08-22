@@ -26,10 +26,9 @@
         "maxLength": 80
       },
 
-      "email": {
-        "type": "string",
-        "description": "The contact to whom questions regarding the track hub should be directed",
-        "pattern": "^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$"
+      "email": { 
+        "format": "email",
+	"description": "The contact to whom questions regarding the track hub should be directed",
       },
 
       additionalProperties: { type: "string" }    

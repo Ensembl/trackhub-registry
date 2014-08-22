@@ -7,71 +7,79 @@
 
   "type": "object",
 
-    "properties": {
-      "hub": { 
-        "type": "string",
-        "description": "A single word name of the directory containing the track hub files. Not displayed to hub users",
-        "pattern": "^[a-zA-z0-9]+$"
-      },
-
-      "shortLabel": { 
-        "type": "string",
-        "description": "The short name for the track hub. Displayed as the hub name on the Track Hubs page and the track group name on the browser tracks page",
-        "maxLength": 17
-      },
-
-      "longLabel": {
-        "type": string,
-        "description": "A longer descriptive label for the track hub. Displayed in the description field on the Track Hubs page",
-        "maxLength": 80
-      },
-
-      "email": { 
-        "format": "email",
-	"description": "The contact to whom questions regarding the track hub should be directed",
-      },
-
-      "genomes": {
-        "type": "array",
-        "description": "The set of genome assemblies this hub contains data for",
-	"items" : { "$ref": "#/definitions/assembly" },
-	"minItems": 1,
-	"uniqueItems": "true"
-      },
-
-      additionalProperties: { type: "string" }    
+  "properties": {
+    "hub": { 
+      "type": "string",
+      "description": "A single word name of the directory containing the track hub files. Not displayed to hub users",
+      "pattern": "^[a-zA-z0-9]+$"
     },
 
-    "required": [""],
+    "shortLabel": { 
+      "type": "string",
+      "description": "The short name for the track hub. Displayed as the hub name on the Track Hubs page and the track group name on the browser tracks page",
+      "maxLength": 17
+    },
 
-    "definitions": {
-      "assembly": {
-        "type": "object",
+    "longLabel": {
+      "type": string,
+      "description": "A longer descriptive label for the track hub. Displayed in the description field on the Track Hubs page",
+      "maxLength": 80
+    },
 
-	"description": "",
+    "email": { 
+      "format": "email",
+      "description": "The contact to whom questions regarding the track hub should be directed",
+    },
 
-	"properties": {
-	  "id": { 
-	    "type": "string",
-	    "description": "A tag used to identify the genome assembly"
+    "genomes": {
+      "type": "array",
+      "description": "The set of genome assemblies this hub contains data for",
+      "items" : { "$ref": "#/definitions/assembly" },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+
+    "additionalProperties": { "type": "string" }    
+  },
+
+  "required": [""],
+
+  "definitions": {
+    "assembly": {
+      "type": "object",
+
+      "description": "The container for the display and configuration properties for each track in a particular genome assembly",
+
+      "properties": {
+        "id": { 
+	  "type": "string",
+	  "description": "A tag used to identify the genome assembly"
+	},
+
+	"tracks": {
+	  "type": "array",
+	  "items": { 
+	    "oneOf": [
+	      "$ref": "#/definitions/track",
+	      "$ref": "#/definitions/composite_track",
+	      "$ref": "#/definitions/super_track",
+	      "$ref": "#/definitions/aggregate_track"
+	    ]
 	  },
-	  "tracks": {
-	    "type": "array",
-	    "items": { 
-	      "oneOf": [
-	        "$ref": "#/definitions/track",
-		"$ref": "#/definitions/composite_track",
-		"$ref": "#/definitions/super_track",
-		"$ref": "#/definitions/aggregate_track"
-	      ]
-	    },
-	    "minItems": 1
-	    "uniqueItems: true
-	  }
-	   	  
+	  "minItems": 1,
+	  "uniqueItems": true
 	}
       }
-    }   
+    },
 
-  
+    "track": {
+    },
+
+    "composite_track": {},
+
+    "super_track": {},
+
+    "aggregate_track": {}
+  }
+
 }

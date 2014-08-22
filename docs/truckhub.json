@@ -5,5 +5,34 @@
 
   "description" : "Represents the properties of a TruckHub",
 
-  "type": "object"
+  "type": "object",
+
+    "properties": {
+      "hub": { 
+        "type": "string",
+        "description": "A single word name of the directory containing the track hub files. Not displayed to hub users",
+        "pattern": "^[a-zA-z0-9]+$"
+      },
+
+      "shortLabel": { 
+        "type": "string",
+        "description": "The short name for the track hub. Displayed as the hub name on the Track Hubs page and the track group name on the browser tracks page",
+        "maxLength": 17
+      },
+
+      "longLabel": {
+        "type": string,
+        "description": "A longer descriptive label for the track hub. Displayed in the description field on the Track Hubs page",
+        "maxLength": 80
+      },
+
+      "email": {
+        "type": "string",
+        "description": "The contact to whom questions regarding the track hub should be directed",
+        "pattern": "^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$"
+      },
+    
+    },
+
+  
 }

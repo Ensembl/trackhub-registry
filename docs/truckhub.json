@@ -31,8 +31,47 @@
 	"description": "The contact to whom questions regarding the track hub should be directed",
       },
 
+      "genomes": {
+        "type": "array",
+        "description": "The set of genome assemblies this hub contains data for",
+	"items" : { "$ref": "#/definitions/assembly" },
+	"minItems": 1,
+	"uniqueItems": "true"
+      },
+
       additionalProperties: { type: "string" }    
     },
+
+    "required": [""],
+
+    "definitions": {
+      "assembly": {
+        "type": "object",
+
+	"description": "",
+
+	"properties": {
+	  "id": { 
+	    "type": "string",
+	    "description": "A tag used to identify the genome assembly"
+	  },
+	  "tracks": {
+	    "type": "array",
+	    "items": { 
+	      "oneOf": [
+	        "$ref": "#/definitions/track",
+		"$ref": "#/definitions/composite_track",
+		"$ref": "#/definitions/super_track",
+		"$ref": "#/definitions/aggregate_track"
+	      ]
+	    },
+	    "minItems": 1
+	    "uniqueItems: true
+	  }
+	   	  
+	}
+      }
+    }   
 
   
 }

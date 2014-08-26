@@ -73,6 +73,16 @@
     },
 
     "track": {
+      "type": "object",
+
+      "description": "",
+
+      "properties": {
+        "name": {
+	  "type": "string",
+	  "description": "The symbolic name of the track"
+	  "pattern": "^[a-zA-z][a-zA-Z0-9_]+$"
+      }      
     },
 
     "composite_track": {},

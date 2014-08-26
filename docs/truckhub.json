@@ -45,6 +45,50 @@
   "required": [""],
 
   "definitions": {
+    "name": {
+      "type": "string",
+      
+      "definition": "The symbolic name of the track. This is the name of the dataset and must be unique within the Genome Browser or dataHub.",
+
+      "pattern": "^[a-zA-z][a-zA-Z0-9_]+$"
+    },
+
+    "type": {
+      "enum": [ "bam", "bigBed", "bigWig", "vcfTabix"],
+
+      "description": "Declares the format of the data and is used to determine display methods and options. In many cases the type setting includes additional parameters to further specify the data format."
+    },
+
+    "shortLabel": {
+      "type": "string",
+
+      "definition": "Specifies the track's "short label", which is used in a number of places in the Browser to identify the track.",
+
+      "maxLength": 17
+    },
+
+    "longLabel": {
+      "type": "string",
+
+      "definition": "Specifies the track's "long label", which is also used in numerous places in the Browser to identify a track. This label should be descriptive enough to allow users to uniquely identify the track within the Browser.",
+
+      "maxLength": 76
+    },
+
+    "bigDataUrl": {
+      "type": "string",
+
+      "description": "The location of a remote data file containing the bulk of the data for the track. The setting is either the full URL (including http: or another protocol) or it is relative to the directory in which the trackDb file containing this setting is located. The file must be in one of the supported remote data file formats: bam, bigBed, bigWig or vcfTabix. Note that bam and vcfTabix types require a separate index file that must have the same name as the data file plus a standard suffix (".bai" and ".tbi" respectively).",
+
+      "format": "uri"
+    },   
+
+    "visibility": {
+      "enum": [ "hide", "dense", "squish", "pack", "full" ],
+
+      "description": "Visibility (i.e. "display mode") specifies which of 5 modes (including 'hide') should be used to display the track within the Browser image. This setting is almost always dynamically customizable by each user. The exact configuration of the display for each mode depends upon the track's type, and some modes may not be supported for certain track types. Valid settigs: 1. hide: DEFAULT. The track is not displayed in the Browser image unless the user changes the display setting; 2. dense: The track is displayed as a single line or ribbon. In many cases multiple items are summarized or drawn on top of one another, and the long labels are not displayed; 3. squish: Each item is drawn individually, but at half height and without a label. (Not supported for all types.); 4. pack: Items are displayed individually at full height, but in a much more compact vertical space than in full mode. (Not supported for all types.); 5. full: Each item is displayed as a separate line in the Browser image. Graphed signals may be displayed in varying heights."
+    },
+
     "assembly": {
       "type": "object",
 
@@ -75,13 +119,10 @@
     "track": {
       "type": "object",
 
-      "description": "",
+      "description": "Contains display and configuration properties for a simple (i.e. non-hierarchical) track.",
 
       "properties": {
-        "name": {
-	  "type": "string",
-	  "description": "The symbolic name of the track"
-	  "pattern": "^[a-zA-z][a-zA-Z0-9_]+$"
+        "name": { "$ref": "#/definitions/name" }
       }      
     },
 

@@ -120,7 +120,9 @@
 	      "description": "On tracks that show exons or blocks within features, exon arrows allow the user to jump to the next exon or block outside the image. Exon arrows are typically shown by default in these types of tracks, with the exception of tracks in the Regulation group. The arrows can be explicitly shown or hidden using this setting. "
 	    },
 
-	    "scoreFilter": { "$ref": "#/definitions/scoreFilter" }
+	    "scoreFilter": { "$ref": "#/definitions/scoreFilter" },
+
+	    
 
 
 	  },
@@ -363,6 +365,31 @@
 
       "minItems": 1,
       "uniqueItems": true
+    },
+
+    "range": {
+      "type": "array",
+
+      "description": "Define a range of value: first value is lower bound, second is upper."
+
+      "items": [
+        { "type": "number" },
+	{ "type": "number" }
+      ]
+    },
+
+    "scoreFilter": {
+      "type": "object",
+
+      "description": "The standard bed field of score, which is an integer will be used to filter items in the track. By default, items with scores below threshold will be excluded. If limits is specified, the threshold cannot be set outside the boundaries specified by limits.",
+
+      "properties": {
+        "threshold": { "type": "number" },
+
+	"limits": { "$ref": "#/definitions/range" }
+      }
+
+      "required": ["threshold"]
     }
 
   }

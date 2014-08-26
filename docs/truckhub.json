@@ -119,11 +119,41 @@
     "track": {
       "type": "object",
 
-      "description": "Contains display and configuration properties for a simple (i.e. non-hierarchical) track.",
+      "description": "Contains display and configuration properties common to all track types.",
 
       "properties": {
-        "name": { "$ref": "#/definitions/name" }
-      }      
+        "name": { "$ref": "#/definitions/name" },
+
+	"shortLabel": { "$ref": "#/definitions/shortLabel" },
+
+	"longLabel": { "$ref": "#/definitions/longLabel" },
+
+	"bigDataUrl": { "$ref": "#/definitions/bigDataUrl" },
+
+	"visibility": { "$ref": "#/definitions/visibility" },
+
+	"boxedCfg": { 
+	  "type": "boolean",
+
+	  "description": "Configuration controls can be placed inside a box on the configuration page. This setting is decorative only, but can make a busy page look more cohesive. Not all track types currently support this feature, but the most common types do, including wig, bigWig, bed, and bigBed. DEFAULT: off."
+	},
+
+	"color": { 
+	  "$ref": "#/definitions/color",
+
+	  "description": "Many track types allow the color of the data displayed in the image to be specified with this setting. The setting accepts red, green and blue values, each in the range of 0-255 and delimited by commas. Though this setting is widely supported, some track types in certain display modes ignore it, such as the EST tracks in dense mode."
+	},
+	
+	"altColor": { 
+	  "$ref": "#/definitions/color",
+
+	  "description": "Many track types allow setting a color range that varies from color to altColor. For instance the CpG Island tracks use the altColor setting to display the weaker islands, while the stronger ones are rendered in color. If altColor is not specified, the system will use a color halfway between that specified in the color tag and white instead."
+	},
+
+	
+      },
+
+      "required": [ "name", "shortLabel", "longLabel", "bigDataUrl", "visibility" ]
     },
 
     "composite_track": {},

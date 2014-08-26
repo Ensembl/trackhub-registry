@@ -111,6 +111,22 @@
       }
     },
 
+    "fields_urls": {
+      "type": "array",
+
+      "items": {
+        "type": "object",
+
+	"properties": {
+	  "field": { "type": "string" },
+	  "url": { "type": "string", "format": "uri" }
+	}
+      },
+
+      "minItems": 1,
+      "uniqueItems": true
+    },
+
     "assembly": {
       "type": "object",
 
@@ -172,7 +188,83 @@
 	  "description": "Many track types allow setting a color range that varies from color to altColor. For instance the CpG Island tracks use the altColor setting to display the weaker islands, while the stronger ones are rendered in color. If altColor is not specified, the system will use a color halfway between that specified in the color tag and white instead."
 	},
 
-	
+	"chromosomes": {
+	  "type": "array",
+
+	  "description": "Some datasets do not contain data for all chromosomes of a genome. When this is true, use this setting to specify the chromosomes that are covered. The system displays a message that no data is available when the user browses chromosomes not included in this list.",
+
+	  "items": { "type": "string" },
+
+	  "minItems": 1,
+	  
+	  "uniqueItems": true
+	},
+
+	"dataVersion": {
+	  "type": "string",
+
+	  "description": "Many tracks undergo multiple revisions over time. In some cases, the older versions should be retained, but even if they are not, it can be useful to declare the current version of the track. Use this setting to display a version statement on the track configuration page and item details page of a track."
+	},
+
+	"directUrl": {
+	  "type": "string",
+
+	  "description": "Link to a details page giving information about that item.",
+
+	  "format": "uri"
+	},
+
+	"iframeUrl": { 
+	  "type": "string",
+
+	  "description": "This setting allows integrating an external html page into the default details page, as an iframe."
+	},
+
+	"iframeOptions": {
+	  "type": "string",
+
+	  "description": "When iframeUrl is used, this statement specifies a string that is inserted literally into the HTML <iframe> tag. It can include options needed for iframe formatting, like width, height, scrolling, etc. If the statement is not present, the default is width='100%' height='1024'."
+	},
+
+	"otherDb": {
+	  "type": "string",
+
+	  "description": "Track types that show pairwise alignments often need to declare the other species/assembly included in the alignment."
+	},
+
+	"pennantIcon": {
+	  "type": "object",
+
+	  "description": "Certain tracks can be visually flagged in the Browser by use of an icon and a link to a description of the icon's meaning. The icon is displayed next to the track's short label in the track groups section below the Browser image, and on the track's description and configuration pages. This setting has three parts: 1. icon: currently must refer to an icon in the Browser's images directory in the Browser source tree; 2. a relative or full html path to a description document explaining the icon's meaning. This page displays when the user clicks on the icon; 3. tip: a quoted string tip that will be seen when the user's mouse pointer hovers over the icon.",
+
+	  "properties": {
+	    "icon": { "type": "string", "format": "uri" },
+	    "html": { "type": "string", "format": "uri" },
+	    "tip": { "type": "string" }
+	  }
+	},
+
+	"priority": {
+	  "type": "number",
+
+	  "description": "The priority is used to define the order of a track within its track group or data hub, as well as its default order within the Browser image. The order within the image can be dynamically changed by the user and will always depend upon which other tracks are currently visible. Typically the priority is set only for tracks that are on by default in order to move them ahead of other tracks. Prioritized tracks within a group or data hub are displayed in ascending priority order, followed by unprioritized tracks sorted alphabetically by short label. Tracks of the same priority within a group or hub are sorted by short label. Priority is a floating point number. Default: 0."
+	},
+
+	"url": {
+	  "type": "string",
+
+	  "description": "Many tracks allow an external link when an individual track data item is examined. Use this setting to put a link to an external URL on the details page. The default prompt the user will see for this url is "outside link:". Use urlLabel to provide a more informative prompt.",
+
+	  "format": "uri"
+	},
+
+	"urlLabel": { "type": "string" },
+
+	"urls": {
+	  "$ref": "#/definitions/fields_urls",
+
+	  "description": "This is similar to the url tag, but allows urls on fields that are not the "name" field. Use this statement if you need multiple linkouts on the details page or if your linkout is not based on the name field."
+	}
       },
 
       "required": [ "name", "shortLabel", "longLabel", "bigDataUrl", "visibility" ]

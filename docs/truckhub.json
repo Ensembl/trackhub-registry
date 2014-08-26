@@ -83,13 +83,16 @@
 	{ "properties": {
 	    "type": { 
 	      "type": "string", 
-	      "pattern": "bigBed" 
+
+	      "enum": [ "bigBed" ] 
 	    }, 
 
 	    "standard_fields": {
 	      "type": "number",
+
 	      "minimum": 3,
 	      "exclusiveMinimum": false,
+
 	      "maximum": 12,
 	      "exclusiveMaximum": false,
 	    },
@@ -187,7 +190,33 @@
 	      "description": "Specifies the URL to a TRIX file that maps free text to a set of indices that are assumed to have indicies in the associated bigBed file.",
 
 	      "format": "uri"
-	    }
+	    },
+
+	    "bedNameLabel": {
+	      "type": "string",
+
+	      "description": "When a user clicks on a bed track item in the Browser image, the item detail page is shown. This setting specifies an alternate label for the item name on that page. Without this setting, the label will be 'Item:'."
+	    },
+
+	    "exonArrowsDense": {
+	      "type": "boolean",
+	      
+	      "description": "On tracks that show exons or blocks within items, exon arrows allow the user to jump to the next exon/block outside the image. Use this setting to display exon arrows even when the track is in dense mode."
+	    },
+
+	    "itemImagePath": { "$ref": "#/definitions/image_path" },
+
+	    "itemBigImagePath": { "$ref": "#/definitions/image_path" },
+
+	    "nextExonText": {
+	      "type": "string",
+
+	      "definition": "For tracks that offer multiple block items such as gene models, the next/previous exon arrows are usually displayed by default in the Browser. The functionality of these tiny arrows is described by mouse-over "tool tips" that default to "Next Exon" and "Prev Exon". If the blocks do not represent exons, you can adjust the tool tip text to the appropriate information with these two settings."
+	    },
+
+	    "prevExonText": { "type": "string" },
+
+	    "showTopScorers": { "type": "integer" }
 	  },
 
 	  "required": [ "type", "bigDataUrl" ]
@@ -452,6 +481,18 @@
       }
 
       "required": ["threshold"]
+    },
+
+    "image_path": {
+      "type": "object",
+
+      "definition": "Items can be associated with images and the images can be made visible with these two settings. The itemImagepath specifies a URL path to a directory with image files named in the format {name}.{suffix}. The name is retrieved from the table or remote data file. This image will be displayed on the item detaiIs page. If itemBigImagePath is also supplied, then a link to a larger image will be provided. If the path provided is local to the browser then the path should be relative.",
+
+      "properties": {
+        "path": { "type": "string" },
+
+	"suffix": { "type": "string" }
+      }
     }
 
   }

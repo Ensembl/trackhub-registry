@@ -80,6 +80,49 @@
       "allOf": [
         { "$ref": "#/definitions/track" },
 	{ "properties": {
+	    "type": { 
+	      "type": "string", 
+	      "pattern": "bigBed" 
+	    }, 
+
+	    "standard_fields": {
+	      "type": "number",
+	      "minimum": 3,
+	      "exclusiveMinimum": false,
+	      "maximum": 12,
+	      "exclusiveMaximum": false,
+	    },
+
+	    "non_standard_fields": { "type": "boolean" },
+
+	    "colorByStrand": {
+	      "type": "array",
+
+	      "description": "To color items differently by the strand they align to. The first color will be used for plus strand alignments and the second for the minus strand. This setting is incompatible with spectrum and all items on the same strand will have the same color, regardless of the item's score.",
+
+	      "items": [
+	        { "$ref": "#/definitions/color" },
+		{ "$ref": "#/definitions/color" }
+	      ]
+	    },
+
+	    "denseCoverage": {
+	      "type": "number",
+
+	      "description": "Type bigBed tracks in dense mode do a density plot based on maximum coverage seen at each pixel. The maxVal corresponds to the count at which the plot reaches maximum darkness. If maxVal is 0 then this will be calculated from the data itself.",
+
+	      "minimum": 0
+	    },
+
+	    "exonArrows": {
+	      "type": "boolean",
+
+	      "description": "On tracks that show exons or blocks within features, exon arrows allow the user to jump to the next exon or block outside the image. Exon arrows are typically shown by default in these types of tracks, with the exception of tracks in the Regulation group. The arrows can be explicitly shown or hidden using this setting. "
+	    },
+
+	    "scoreFilter": { "$ref": "#/definitions/scoreFilter" }
+
+
 	  },
 	  "required": []
 	}
@@ -247,6 +290,8 @@
     },
 
     "type": {
+      "type": "string",
+
       "enum": [ "bam", "bigBed", "bigWig", "vcfTabix"],
 
       "description": "Declares the format of the data and is used to determine display methods and options. In many cases the type setting includes additional parameters to further specify the data format."

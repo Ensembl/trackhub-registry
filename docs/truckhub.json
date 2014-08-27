@@ -449,7 +449,40 @@
 
     "super_track": {},
 
-    "aggregate_track": {},
+    "aggregate_track": {
+      "description": "Signal overlay tracks are declared much like simple composites. Like simple composites, all subtrack types should be identical and the container itself should be declared as the same type (e.g. "bigWig"). Also like a composite, the container parent should have common settings for all children. Unlike composites, containers can have neither subgroups nor views. Additionally, all subtracks within a container are configured as one; there is no independent configuration of individual subtracks. Even when the user sets the overlay method to none and the subtracks are viewed as separate signals, they are still configured as a set.",
+
+      "allOf": [
+        { "$ref": "#/definitions/bigWig_track" },
+
+	{ "properties": {
+	    "subtracks": {
+	      "type": "array",
+
+	      "items": { "$ref": "#/definitions/bigWig_track" },
+
+	      "minItems": 2,
+
+	      "uniqueItems": true
+	    },
+
+	    "aggregate": {
+	      "type": "string",
+
+	      "definition": "It is important to declare an aggregation method; otherwise, this set of tracks displays as a composite would, with additional restrictions. Of the four options, the preferred setting is transparentOverlay. The setting stacked will draw the graphs in stacked mode. The setting solidOverlay should not be used if there are more than a couple of tracks, and none should never be the default. The aggregation method is a configurable option, however, so the user may wish to temporarily set it to none in order to see subtleties hidden in overlay mode.",
+
+	      "enum": [ "transparentOverlay", "stacked", "solidOverlay", "none" ]
+	    },
+
+	    "showSubtrackColorOnUi": {
+	      "type": "boolean",
+
+	      "description": "Subtracks in an overlay have individual colors. Use this setting to show the color associated with each on the track configuration page."
+	    }
+	  }
+	}
+      ]
+    },
 
     "track": {
       "type": "object",

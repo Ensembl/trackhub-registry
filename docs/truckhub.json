@@ -42,7 +42,7 @@
     "additionalProperties": { "type": "string" }    
   },
 
-  "required": [""],
+  "required": [ "hub", "shortLabel", "longLabel", "email", "genomes" ],
 
   "definitions": {
 

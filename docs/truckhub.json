@@ -431,8 +431,16 @@
         { "$ref": "#/definitions/track" },
 
 	{ "properties": {
+	    "type": {
+	      "type": "string",
+
+	      "enum": [ "vcfTabix" ]
+	    },
+
+	    "bigDataUrl": { "$ref": "#/definitions/bigDataUrl" }
+
 	  },
-	  "required": []
+	  "required": [ "type", "bigDataUrl" ]
 	}
       ]      
     },

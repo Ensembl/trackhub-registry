@@ -227,11 +227,111 @@
     "bigWig_track": {
       "allOf": [
         { "$ref": "#/definitions/track" },
+
 	{ "properties": {
-	  },
-	  "required": []
+	    "type": { 
+	      "type": "string", 
+
+	      "enum": [ "bigWig" ] 
+	    }, 
+
+	    "range": { "$ref": "#/definitions/range" },
+
+	    "alwaysZero": {
+	      "type": "boolean",
+
+	      "description": "When autoScale is set to "on" in the signal track, additionally setting alwaysZero to "on" will ensure that the y=0 value will be in view at all times. Default: off. "
+	    },
+
+	    "autoScale": {
+	      "type": "boolean",
+
+	      "description": "The graph of the data displayed in the Browser image is usually scaled on the y axis in absolute coordinates. However, you can display the data in autoScale which will ensure that the high score in the current viewing window will peak at the top of the graph. Like most graph settings, this is configurable by the user. Setting it to "on" in trackDb will default the track to autoScale. Default: off. NOTE: this option should be avoided if it will lead to display regions in which a low signal erroneously appears as significant because there is no high signal in the view window."
+	    },
+
+	    "bigDataUrl": { "$ref": "#/definitions/bigDataUrl" },
+
+	    "graphTypeDefault": {
+	      "type": "string",
+
+	      "description": "The signal can be graphed as either 'points' displayed at the signal value, or the default space-filling 'bars'.",
+
+	      "enum": [ "bars", "points" ]
+	    },
+
+	    "maxHeightPixels": {
+	      "type": "object",
+
+	      "description": "The amount of vertical viewing space for your signal track should be declared, though it is configurable by the user. Typically it is set to no more than 100 pixels and no less than 8, with a default of 16 or 32 pixels.",
+
+	      "properties": {
+	        "max": { "type": "number" },
+		"default": { "type": "number" },
+		"min": { "type": "number" }
+	      },
+
+	      "required": [ "max", "default", "min" ]
+	    },
+
+	    "maxWindowToQuery": {
+	      "type": "integer",
+
+	      "description": "When signal data is clicked in the Browser image, the details of the signal in the current viewing window are displayed. For bigWigs that reference remote data, the query can be a very expensive operation if the current window is large. To avoid overburdening the Browser, the size of the window to query should be limited. The value of this setting is the maximum window size in bases that should be queried to give the detailed signal numbers."
+	    },
+
+	    "negateValues": {
+	      "type": "boolean",
+
+	      "description": "Negate the values in the wiggle, meaning that positive values become negative and vice-versa. This is useful for wiggles representing transcription or other activities on the Crick strand. Be aware that wiggles with negative values are drawn in altColor not color as positive values are."
+	    },
+
+	    "smoothingWindow": {
+	      "description": "Often signal information is chunky, because a single value is given for a number of bases. The graph can smooth the chunky data, presenting a display more reflective of the actual biology it is meant to illustrate. The numerical value of this setting determines how much surrounding data to use for smoothing: the larger the number, the less abrupt the curves will be. The setting is user-configurable. Default: off.",
+
+	      "oneOf": [
+	        { "type": "boolean" },
+		{ 
+		  "type": "integer",
+		  "minimum": 1,
+		  "maximum": 16
+		}
+	      ]
+	    },
+
+	    "transformFunc": {
+	      "type": "string",
+	      
+	      "description": "The track's signal can be presented in log scale with this user-configurable setting. Default: NONE.",
+
+	      "enum": [ "NONE", "LOG" ]
+	    },
+
+	    "viewLimits": { "$ref": "#/definitions/range" },
+
+	    "viewLimitsMax": { "$ref": "#/definitions/range" },
+
+	    "windowingFunction": {
+	      "type": "string",
+
+	      "description": "Depending upon how large of a genomic region is displayed in the Browser image, it may be necessary to summarize the actual signal. This user-configurable setting controls how the Browser collapses the signal from (for example) 100 or 100 thousand bases down to a single pixel. By default the single pixel represents the mean of the data, though the maximum or minimum can alternatively be displayed. A more informative option is often mean+whiskers. This setting displays the mean, max and one standard deviation above mean, differentiated by shading. The mean is displayed as the darkest shade, one stdDev above mean as slightly lighter, and the max as the lightest shade. This subtle shading can quickly indicate if the condensed data is hiding important information that can be adequately evaluated only by zooming in.",
+
+	      "enum": [ "mean", "mean+whiskers", "maximum", "minimum" ],
+	    },
+
+	    "yLineOnOff": {
+	      "type": "boolean",
+
+	      "description": "It can be useful to draw a line across the track's signal graph at some fixed y coordinate. Do this by setting yLineOnOff to "on" and specifying the y coordinate with yLineMark. These two settings are configurable by the user. Defaults: off and 0.0."
+	    },
+	    
+	    "gridDefault": { "type": "boolean" },
+
+	    "yLineMark": { "type": "number" }	    
+	  }
+
+	  "required": [ "type", "bigDataUrl" ]
 	}
-      ]      
+      ]    
     },
 
     "bam_track": {

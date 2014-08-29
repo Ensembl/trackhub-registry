@@ -1,4 +1,4 @@
-truckhub-registry
+trackhub-registry
 =================
 
-Specifications and implementation of the TruckHub registry
+Specifications and implementation of the TrackHub registry

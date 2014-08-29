@@ -1,4 +1,4 @@
-truckhub-registry
+trackhub-registry
 =================
 
 This repository contains the specification and implementation of the TruckHub registry.

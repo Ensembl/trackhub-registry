@@ -61,13 +61,13 @@
 	  "type": "array",
 	  "items": { 
 	    "oneOf": [
-	      "$ref": "#/definitions/bigBed_track",
-	      "$ref": "#/definitions/bigWig_track",
-	      "$ref": "#/definitions/bam_track",
-	      "$ref": "#/definitions/vcfTabix_track",
-	      "$ref": "#/definitions/super_track",
-	      "$ref": "#/definitions/composite_track",
-	      "$ref": "#/definitions/aggregate_track"
+	      { "$ref": "#/definitions/bigBed_track" },
+	      { "$ref": "#/definitions/bigWig_track" },
+	      { "$ref": "#/definitions/bam_track" },
+	      { "$ref": "#/definitions/vcfTabix_track" },
+	      { "$ref": "#/definitions/super_track" },
+	      { "$ref": "#/definitions/composite_track" },
+	      { "$ref": "#/definitions/aggregate_track" }
 	    ]
 	  },
 	  "minItems": 1,
@@ -471,12 +471,12 @@
 
 	      "items": { 
 	        "oneOf": [
-	          "$ref": "#/definitions/bigBed_track",
-	          "$ref": "#/definitions/bigWig_track",
-	          "$ref": "#/definitions/bam_track",
-	          "$ref": "#/definitions/vcfTabix_track",
-	          "$ref": "#/definitions/composite_track",
-	          "$ref": "#/definitions/aggregate_track"
+	          { "$ref": "#/definitions/bigBed_track" },
+	          { "$ref": "#/definitions/bigWig_track" },
+	          { "$ref": "#/definitions/bam_track" },
+	          { "$ref": "#/definitions/vcfTabix_track" },
+	          { "$ref": "#/definitions/composite_track" },
+	          { "$ref": "#/definitions/aggregate_track" }
 	        ]
 	      },
 
@@ -557,10 +557,10 @@
     "composite_subtrack": {
       "allOf": [
         "oneOf": [
-          "$ref": "#/definitions/bigBed_track",
-          "$ref": "#/definitions/bigWig_track",
-          "$ref": "#/definitions/bam_track",
-          "$ref": "#/definitions/vcfTabix_track",
+          { "$ref": "#/definitions/bigBed_track" },
+          { "$ref": "#/definitions/bigWig_track" },
+          { "$ref": "#/definitions/bam_track" },
+          { "$ref": "#/definitions/vcfTabix_track" },
         ],
 
 	{ "properties": {
@@ -586,10 +586,10 @@
 
       "allOf": [
         "oneOf": [
-          "$ref": "#/definitions/bigBed_track",
-          "$ref": "#/definitions/bigWig_track",
-          "$ref": "#/definitions/bam_track",
-          "$ref": "#/definitions/vcfTabix_track",
+          { "$ref": "#/definitions/bigBed_track" },
+          { "$ref": "#/definitions/bigWig_track" },
+          { "$ref": "#/definitions/bam_track" },
+          { "$ref": "#/definitions/vcfTabix_track" },
         ],
 
 	{ "properties": {

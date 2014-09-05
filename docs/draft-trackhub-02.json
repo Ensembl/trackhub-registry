@@ -100,6 +100,19 @@
       "required": [ "assembly", "bigDataUrl" ]
     },
 
+    "ihec_track_data": {
+      "allOf": [
+        { "$ref": "#/definitions/generic_track_data" },
+	{ 
+	  "type": "object",
+	  "properties": {
+	    "molecule": { "type": "string" },
+	    "disease": { "type": "string" },
+	    "biomaterial_type": { "type": "string" }
+	  }
+	}
+      ]
+    }
 
   }
 }

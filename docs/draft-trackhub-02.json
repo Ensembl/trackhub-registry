@@ -13,7 +13,7 @@
 
       "title": "TrackHub Data",
 
-      "description": "The set of track data/metadata: attribute name is track name, attribute value is the track data definition. Exclude hierarchical (i.e. super-,composite-,aggregate) tracks, which are part of the provided views and then are modelled in the configuration property."
+      "description": "Data/metadata for each track: attribute name is track name, attribute value is the track data definition. Exclude hierarchical (i.e. super-,composite-,aggregate) tracks, which are part of the provided views and then are modelled in the configuration property."
 
       "patternProperties": {
         "^[a-zA-z][a-zA-Z0-9_]+$": { "$ref": "#/definitions/track_data" }
@@ -46,7 +46,8 @@
       "description": "",
       "oneOf": [
         { "$ref": "#/definitions/generic_track_data" },
-	{ "$ref": "#/definitions/ihec_track_data" }
+	{ "$ref": "#/definitions/ihec_track_data" },
+	{ "$ref": "#/definitions/proteomexchange_track_data" }
       ]
       
     },
@@ -66,7 +67,39 @@
 	 { "$ref": "#/definitions/aggregate_track" }
       ]
 
-    }
-  }
+    },
 
+    "generic_track_data": {
+      "type": "object",
+
+      "title": "",
+      "description": "",
+
+      "properties": {
+        "organism": {
+	  "type": "object",
+
+	  "title": "",
+	  "description": "",
+
+          "properties": {
+	    "taxid": { "type": "integer" },
+	    "scientific_name": { "type": "string" }
+	  }
+	  "required": [ "taxid" ]
+        },
+
+        "assembly": { 
+          "type": "string",
+	  "pattern": "^GCA_[0-9]+\.[0-9]+$"
+        },
+
+	"bigDataUrl": { "$ref": "#/definitions/bigDataUrl" },
+      },
+
+      "required": [ "assembly", "bigDataUrl" ]
+    },
+
+
+  }
 }

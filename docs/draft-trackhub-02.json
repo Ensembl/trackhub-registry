@@ -150,6 +150,13 @@
       ]
     },
 
+    "proteomexchange_track_data": {
+      "allOf": [
+        { "$ref": "#/definitions/generic_track_data" },
+	{ "type": "string" }
+      ]
+    }
 
   }
+
 }

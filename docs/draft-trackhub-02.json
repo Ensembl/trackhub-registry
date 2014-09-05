@@ -103,18 +103,18 @@
     "ihec_track_data": {
       "allOf": [
         { "$ref": "#/definitions/generic_track_data" },
-	{       "
+	{
 	  "type": "object",
-      	  "properties": {
-            "molecule": { "type": "string" },
+	  "properties": {
+	    "molecule": { "type": "string" },
 	    "disease": { "type": "string" },
 	    "biomaterial_type": { "type": "string" },
 	    "sample_ontology_uri": { "type": "string", "format": "uri" },
-	    "disease_ontology_uri": { "type": "string, "format": "uri" },
+	    "disease_ontology_uri": { "type": "string", "format": "uri" },
 	    "sample_id": { "type": "string" }
-      	  },
-      	  "additionalProperties": true
-      	}
+	  },
+	  "additionalProperties": true
+	}
       ]
     },
 

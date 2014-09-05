@@ -133,8 +133,17 @@
 	    "culture_conditions": { "type": "string" },
 
 	    "tissue_type": { "type": "string" },
-	    "tissue_depot": { "type": "string" }
+	    "tissue_depot": { "type": "string" },
 
+	    "experiment_type": { "type": "string" },
+	    "library_strategy": { "type": "string" },
+	    "experiment_id": { "type": "string" },
+	    "reference_registry_id": { "type": "string" },
+	    "analysis_group": { "type": "string" },
+	    "alignment_software": { "type": "string" },
+	    "alignment_software_version": { "type": "string" },
+	    "analysis_software": { "type": "string" },
+	    "analysis_software_version": { "type": "string" }
 	  },
 	  "additionalProperties": true
 	}

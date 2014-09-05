@@ -111,7 +111,24 @@
 	    "biomaterial_type": { "type": "string" },
 	    "sample_ontology_uri": { "type": "string", "format": "uri" },
 	    "disease_ontology_uri": { "type": "string", "format": "uri" },
-	    "sample_id": { "type": "string" }
+	    "sample_id": { "type": "string" },
+
+	    "line": { "type": "string" },
+	    "lineage": { "type": "string" },
+	    "differentiation_stage": { "type": "string" },
+	    "medium": { "type": "string" },
+	    "sex": { "type": "string" },
+
+	    "donor_id": { "type": "string" },
+	    "donor_age": { 
+	      "type": "integer",
+	      "minimum": 0
+	      "exclusiveMinimum": false
+	    },
+	    "donor_health_status": { "type": "string" },
+	    "donor_sex": { "type": "string" },
+	    "donor_ethnicity": { "type": "string" }
+
 	  },
 	  "additionalProperties": true
 	}

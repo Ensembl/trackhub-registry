@@ -129,6 +129,12 @@
 	    "donor_sex": { "type": "string" },
 	    "donor_ethnicity": { "type": "string" }
 
+	    "cell_type": { "type": "string" },
+	    "culture_conditions": { "type": "string" },
+
+	    "tissue_type": { "type": "string" },
+	    "tissue_depot": { "type": "string" }
+
 	  },
 	  "additionalProperties": true
 	}

@@ -3,7 +3,7 @@
 
   "title": "TrackHub",
 
-  "description" : "Represents the properties of a TrackHub",
+  "description" : "Represents the properties of a TrackHub. This is an attempt to model in JSON the display and configuration properties of the UCSC trackhub specification. Hierarchical (i.e. super, composite, aggregate) tracks are included. Subgroups but not views are modelled in composite tracks.",
 
   "type": "object",
 

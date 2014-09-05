@@ -3,11 +3,26 @@
 
   "title": "TrackHub",
 
-  "description" : "Represents the properties of a TrackHub. This is an attempt to model in JSON the display and configuration properties of the UCSC trackhub specification. Hierarchical (i.e. super, composite, aggregate) tracks are included. Subgroups but not views are modelled in composite track.",
+  "description" : "",
 
   "type": "object",
 
   "properties": {
+
+    "patternProperties": {
+      "^[a-zA-z][a-zA-Z0-9_]+$": {
+        "$ref": "#/definitions/track_data"
+      },
+
+      additionalProperties: { "$ref": "#/definitions/track_configuration" }
+    }
+
+    "hub": { 
+      "type": "string",
+      "description": "A single word name of the directory containing the track hub files. Not displayed to hub users",
+      "pattern": "^[a-zA-z0-9]+$"
+    },
+
     "shortLabel": { 
       "type": "string",
       "description": "The short name for the track hub. Displayed as the hub name on the Track Hubs page and the track group name on the browser tracks page",

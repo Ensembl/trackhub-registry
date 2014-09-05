@@ -11,6 +11,10 @@
     "data": {
       "type": "object", 
 
+      "title": "TrackHub Data",
+
+      "description": "The set of track data/metadata: attribute name is track name, attribute value is the track data definition. Exclude hierarchical (i.e. super-,composite-,aggregate) tracks, which are part of the provided views and then are modelled in the configuration property."
+
       "patternProperties": {
         "^[a-zA-z][a-zA-Z0-9_]+$": { "$ref": "#/definitions/track_data" }
       },
@@ -18,7 +22,17 @@
       "additionalProperties": "false"
     },
 
-    "configuration": { "$ref": "#/definitions/track_configuration" },
+    "configuration": {
+      "type": "array",
+
+      "title": "TruckHub Configuration",
+
+      "description": "Contains display and configuration properties for the tracks speficied in the data attribute. Also provides the definition of track groupings into set and hierarchies with super-,composite-,aggregate-tracks.",
+
+      "items": { "$ref": "#/definitions/track_configuration" },
+
+      "uniqueItems": true
+    }
 
     "additionalProperties": false
   },
@@ -27,9 +41,32 @@
 
   "definitions": {
 
-    "track_data": {},
+    "track_data": {
+      "title": "Track data/metadata definition.",
+      "description": "",
+      "oneOf": [
+        { "$ref": "#/definitions/generic_track_data" },
+	{ "$ref": "#/definitions/ihec_track_data" }
+      ]
+      
+    },
 
-    "track_configuration": {}
+    "track_configuration": {
+      "title": "Track display and configuration properties.",
+
+      "description": "",
+
+      "oneOf": [
+	 { "$ref": "#/definitions/bigBed_track" },
+	 { "$ref": "#/definitions/bigWig_track" },
+	 { "$ref": "#/definitions/bam_track" },
+	 { "$ref": "#/definitions/vcfTabix_track" },
+	 { "$ref": "#/definitions/super_track" },
+	 { "$ref": "#/definitions/composite_track" },
+	 { "$ref": "#/definitions/aggregate_track" }
+      ]
+
+    }
   }
 
 }

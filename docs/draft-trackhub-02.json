@@ -701,8 +701,8 @@
     },
 
     "composite_track": {
-      
-      "description": "Composite tracks are another level of hierarchy and are meant to group very similar tracks (called "subtracks") together such that they can all share the same configuration settings. In its simplest form a composite holds tracks all of the same type (such as bigBed). Initially, all track within the set are configured identically. Usually only some of the subtracks are visible by default, and these will have the same display mode (e.g., dense) and optional settings (e.g., viewLimits). While default settings cover the entire composite of related tracks, in most cases individual subtracks can be configured by the user independently of the composite settings. However, once individual subtrack settings are made, they can be overridden by new choices made at the composite level.",
+      "title": "Composite track display and configuration properties",
+      "description": "Composite tracks are another level of hierarchy and are meant to group very similar tracks (called 'subtracks') together such that they can all share the same configuration settings. In its simplest form a composite holds tracks all of the same type (such as bigBed). Initially, all track within the set are configured identically. Usually only some of the subtracks are visible by default, and these will have the same display mode (e.g., dense) and optional settings (e.g., viewLimits). While default settings cover the entire composite of related tracks, in most cases individual subtracks can be configured by the user independently of the composite settings. However, once individual subtrack settings are made, they can be overridden by new choices made at the composite level.",
 
       "allOf": [
         "oneOf": [
@@ -763,10 +763,54 @@
       ]
     },
 
+    "aggregate_track": {
+
+      "title": "multiWig track display and configuration properties",
+      "description": "In some instances, data from multiple tracks is so closely related that it makes sense to view it as a single track. The premiere example of this is the signal overlay track (i.e. 'multiWig'). Signal overlay tracks display the signal data from several subtracks combined in several different ways, making it possible to see the data of several tracks together in a condensed view. The default overlay method for multiWigs is as colored transparencies, in which all the graphs are drawn on top of one other in such a way that overlapping regions are a different color. Another choice is solid overlay, where all the graphs are still drawn overlapping each other, but without transparency. A third choice is stacked where the values of the subtracks are stacked on top of one another with no overlap such that the total height of the wiggle is the sum of all the values in the subtracks. The value of the overlay track surpasses simply condensing the image. Occasionally this is the most effective way to identify hidden relationships in the underlying data. The overlay track should not be overused, however. Attempts to overlay too many subtracks can hide important information as regions with many layered signals become too dark to interpret. More than eight subtracks in a single overlay may prove less than ideal. As with composites, it is important for the multiWig tracks to have the same data dimensions, i.e. a signal height of 100 should be interpretable in the same way for the whole set of tracks. While this is true for a composite or view, it is especially important for overlay tracks. You cannot reasonably overlay a signal from 0-1 with another signal from 0-1000. Signal overlay tracks are declared much like simple composites. Like simple composites, all subtrack types should be identical and the container itself should be declared as the same type (e.g. 'bigWig'). Also like a composite, the container parent should have common settings for all children. Unlike composites, containers can have neither subgroups nor views. Additionally, all subtracks within a container are configured as one; there is no independent configuration of individual subtracks. Even when the user sets the overlay method to none and the subtracks are viewed as separate signals, they are still configured as a set.",
+
+      "allOf": [
+        { "$ref": "#/definitions/bigWig_track" },
+
+	{ "properties": {
+	    "container": {
+	      "type": "string",
+
+	      "enum": [ "multiWig" ]
+	    },
+
+	    "subtracks": {
+	      "type": "array",
+
+	      "items": { "$ref": "#/definitions/bigWig_track" },
+
+	      "minItems": 1,
+
+	      "uniqueItems": true
+	    },
+
+	    "aggregate": {
+	      "type": "string",
+
+	      "definition": "It is important to declare an aggregation method; otherwise, this set of tracks displays as a composite would, with additional restrictions. Of the four options, the preferred setting is transparentOverlay. The setting stacked will draw the graphs in stacked mode. The setting solidOverlay should not be used if there are more than a couple of tracks, and none should never be the default. The aggregation method is a configurable option, however, so the user may wish to temporarily set it to none in order to see subtleties hidden in overlay mode.",
+
+	      "enum": [ "transparentOverlay", "stacked", "solidOverlay", "none" ]
+	    },
+
+	    "showSubtrackColorOnUi": {
+	      "type": "boolean",
+
+	      "description": "Subtracks in an overlay have individual colors. Use this setting to show the color associated with each on the track configuration page."
+	    }
+	  }
+	}
+      ]
+    },
+
     "subgroup_membership": {
       "type": "object",
 
-      "definition": "Declares the tag/title group membership pair to be able to assign a subtrack to a subgroup.",
+      "title": "Allows to define membership of a subtrack of a composite to a subgroup",
+      "definition": "Declares the tag/title group membership pair to be able to assign a subtrack to a subgroup of a composite track.",
 
       "properties": {
         "tag": {
@@ -783,24 +827,29 @@
     "subgroup": {
       "type": "object",
 
+      "title": "Defines subgroup of a composite track",
       "description": "The subgroup can be used for selecting sets of subtracks for display based on certain characteristics of the data. For instance, if 'cell' and 'antibody' are defined as subgroups within a composite track, the user will be able to select subtracks based on specific cell types and antibodies to display in the Browser.",
 
       "properties": {
         "tag": {
 	  "type": "string",
+
+	  "title": "Composite subgroup tag",
 	  "description": "Used to select and sort subtracks based upon their membership. Tag names must be alphanumeric, begin with a letter, and be formed such that the desired sort order of the member subtracks will result.",
 	  "format": "^[a-zA-Z]"
 	},
 
 	"title": {
 	  "type": "string",
+
+	  "title": "Composite subgroup title",
 	  "description": "Label of the subgroup as it appears on the selection matrix that is displayed to the user, e.g. 'Antibody;. Spaces within titles must be replaced by '_'. A limited amount of HTML is allowed in titles, such as the insertion of Greek letters using an HTML code. Any use of HTML should be tested to ensure that it displays correctly."
 	},
 
 	"membership": {
 	  "type": "array",
 
-	  "description": "The list of tag/title group membership pairs",
+	  "title": "List of tag/title group membership pairs",
 
 	  "items": { "$ref": "#/definitions/subgroup_membership" },
 
@@ -810,7 +859,8 @@
 
 	"dimension": {
 	  "type": "integer",
-	  "description": "Declares the dimension defined by a group.",
+
+	  "title": "Declares the dimension defined by a group.",
 
 	  "minimum": 1,
 	  "exclusiveMinimum": false

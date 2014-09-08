@@ -160,7 +160,7 @@
       "properties": {
         "name": { 
 	  "title": "Symbolic track name",
-	  "description": "If data/metadata is defined for the track, this name is the index to access the track data definition attributes in the hub data object.",
+	  "description": "If data/metadata is defined for the track, this name must appear as an index to access the track data definition attributes in the trackhub data object.",
  
 	  "$ref": "#/definitions/name" 
 	},
@@ -651,6 +651,53 @@
 	  "required": [ "type", "bigDataUrl" ]
 	}
       ]      
+    },
+
+    "super_track": {
+      "title": "Represents heterogeneous tracks as a single group",
+      "description": "This hierarchical may be thought of as a folder that holds other tracks. The Browser currently supports only one level of supertrack folders. Generally the subtracks of a supertrack are of differing types. If all the children are of the same type, it is often better to use the 'compositeTrack' grouping described below. If all of the children are wig or bigWig tracks, it may be of interest to use a signal overlay 'container multiWig' grouping. Signal overlay tracks display the signal data from several subtracks as colored transparencies, making it possible to see the data of several tracks together in a condensed view.",
+
+      "allOf": [
+        { "$ref": "#/definitions/track" },
+
+	{ "properties": {
+	    "container": {
+	      "type": "string",
+
+	      "enum": [ "superTrack" ]
+	    },
+
+	    "show": {
+	      "type": "boolean",
+
+	      "description": "To set a supertrack to display as default."
+	    },
+
+	    "subtracks": {
+	      "type": "array",
+
+	      "items": { 
+	        "oneOf": [
+	          { "$ref": "#/definitions/bigBed_track" },
+	          { "$ref": "#/definitions/bigWig_track" },
+	          { "$ref": "#/definitions/bam_track" },
+	          { "$ref": "#/definitions/vcfTabix_track" },
+	          { "$ref": "#/definitions/composite_track" },
+	          { "$ref": "#/definitions/aggregate_track" }
+	        ]
+	      },
+
+	      "minItems": 1,
+
+	      "uniqueItems": true
+	    },
+
+	    "group": { "type": "string" }
+	  },
+	  
+	  "required": [ "container", "subtracks" ]
+	}
+      ]
     },
 
     "name": {

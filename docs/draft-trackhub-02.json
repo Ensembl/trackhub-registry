@@ -13,7 +13,7 @@
 
       "title": "TrackHub Data",
 
-      "description": "Data/metadata for each track: attribute name is track name, attribute value is the track data definition. Exclude hierarchical (i.e. super-,composite-,aggregate) tracks, which are part of the provided views and then are modelled in the configuration property."
+      "description": "Data/metadata for each track: attribute name is track name, attribute value is the track data definition. Exclude hierarchical (i.e. super-,composite-,aggregate-) tracks, which are part of the provided views and then are modelled in the configuration property."
 
       "patternProperties": {
         "^[a-zA-z][a-zA-Z0-9_]+$": { "$ref": "#/definitions/track_data" }
@@ -46,8 +46,8 @@
       "description": "",
       "oneOf": [
         { "$ref": "#/definitions/generic_track_data" },
-	{ "$ref": "#/definitions/ihec_track_data" },
-	{ "$ref": "#/definitions/proteomexchange_track_data" }
+	{ "$ref": "#/definitions/epigenomics_track_data" },
+	{ "$ref": "#/definitions/proteomics_track_data" }
       ]
       
     },
@@ -83,7 +83,7 @@
 	  "description": "",
 
           "properties": {
-	    "taxid": { "type": "integer" },
+	    "taxid": { "type": "integer", "minimum": 0, "exclusiveMinimum": true },
 	    "scientific_name": { "type": "string" }
 	  }
 	  "required": [ "taxid" ]
@@ -100,7 +100,7 @@
       "required": [ "organism", "assembly", "bigDataUrl" ]
     },
 
-    "ihec_track_data": {
+    "epigenomics_track_data": {
       "allOf": [
         { "$ref": "#/definitions/generic_track_data" },
 	{
@@ -120,11 +120,7 @@
 	    "sex": { "type": "string" },
 
 	    "donor_id": { "type": "string" },
-	    "donor_age": { 
-	      "type": "integer",
-	      "minimum": 0
-	      "exclusiveMinimum": false
-	    },
+	    "donor_age": { "type": "integer", "minimum": 0, "exclusiveMinimum": false },
 	    "donor_health_status": { "type": "string" },
 	    "donor_sex": { "type": "string" },
 	    "donor_ethnicity": { "type": "string" }
@@ -150,7 +146,7 @@
       ]
     },
 
-    "proteomexchange_track_data": {
+    "proteomics_track_data": {
       "allOf": [
         { "$ref": "#/definitions/generic_track_data" },
 	{ "type": "string" }

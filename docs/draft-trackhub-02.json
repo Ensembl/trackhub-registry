@@ -13,7 +13,7 @@
 
       "title": "TrackHub Data",
 
-      "description": "Data/metadata for each track: attribute name is track name, attribute value is the track data definition. Exclude hierarchical (i.e. super-,composite-,aggregate-) tracks, which are part of the provided views and then are modelled in the configuration property."
+      "description": "Data/metadata for each track: attribute name is symbolic name of a track, attribute value is the track data definition. Exclude hierarchical (i.e. super-,composite-,aggregate-) tracks, which are part of the views provided by the TruckHub and then are modelled in the configuration section."
 
       "patternProperties": {
         "^[a-zA-z][a-zA-Z0-9_]+$": { "$ref": "#/definitions/track_data" }
@@ -43,7 +43,7 @@
 
     "track_data": {
       "title": "Track data/metadata definition.",
-      "description": "",
+
       "oneOf": [
         { "$ref": "#/definitions/generic_track_data" },
 	{ "$ref": "#/definitions/epigenomics_track_data" },
@@ -55,8 +55,8 @@
     "generic_track_data": {
       "type": "object",
 
-      "title": "",
-      "description": "",
+      "title": "Generic track data/metadata",
+      "description": "Track data/metadata properties common to all domain-specific tracks (e.g. epigenomics, proteomics).",
 
       "properties": {
         "organism": {
@@ -77,10 +77,9 @@
 	  "pattern": "^GCA_[0-9]+\.[0-9]+$"
         },
 
-	"bigDataUrl": { "$ref": "#/definitions/bigDataUrl" },
       },
 
-      "required": [ "organism", "assembly", "bigDataUrl" ]
+      "required": [ "organism", "assembly" ]
     },
 
     "epigenomics_track_data": {

@@ -535,6 +535,101 @@
       ]    
     },
 
+    "bam_track": {
+      "title": "BAM track configuration properties",
+      "description": "BAM track configuration properties. Inherites the properties common to all track types.",
+
+      "allOf": [
+        { "$ref": "#/definitions/track" },
+
+	{ "properties": {
+	    "type": { 
+	      "type": "string", 
+
+	      "enum": [ "bam" ] 
+	    }, 
+
+	    "bigDataUrl": { "$ref": "#/definitions/bigDataUrl" },
+
+	    "bamColorMode": {
+	      "type": "string",
+
+	      "description": "There are numerous ways to color bam tracks to highlight certain aspects of the data. All of these are user-configurable. Possible settings: 1. strand: (Default) When colored by strand, mismatched bases are highlighted in bright red, alignments on the reverse strand are colored dark red, and alignments on the forward strand are colored dark blue; 2. gray: When colored in grayscale, items are shaded according to the method specified by bamGrayMode: alignment quality, base qualities, or unpaired ends; 3. tag: Colors are specified in "user-defined tags". SAM/BAM may include user-defined tags, the names of which begin with X, Y or Z and include one other letter or number. The user-defined tag named here specifies red, green and blue (RGB) intensities as a zero-terminated string (tag type Z) containing comma-separated triples of numbers from 0-255. For example, if a SAM/BAM record includes the tag YC:Z:255,0,0, then the item is colored red; YC:Z:0,0,255 makes the item blue. By default, the tag is "YC" unless changed using the bamColorTag setting; 4. off: No additional coloring.",
+
+	      "enum": [ "strand", "gray", "tag", "off" ]
+	    },
+
+	    "bamGrayMode": {
+	      "type": "string",
+
+	      "description": "When bamColorMode is set to "gray", you can highlight one of the following: 1. aliQual: (Default) The "alignment qualities" of the items are shaded on a scale of 0 (lightest) to 99 (darkest). Use aliQualRange to specify a default range; 2. baseQual: "Base qualities" are shaded on a scale of 0 (lightest) to 40 (darkest). Use baseQualRange to specify a default range; 3. unpaired: When "unpaired ends" is selected, an item that was paired in sequencing but whose mate was not mapped is colored gray, while singletons and properly paired items are colored black. Refer to the SAM format details for a discussion of these values.",
+
+	      "enum": [ "aliQual", "baseQual", "unpaired" ]
+	    },
+
+	    "aliQualRange": { "$ref": "#/definitions/range" },
+
+	    "baseQualRange": { "$ref": "#/definitions/range" },
+	    		     
+	    "bamColorTag": {
+	      "type": "string",
+
+	      "description": "You can also use RGB data associated with individual tags within the bam file itself. Refer to the SAM documentation to understand how the RGB values are included. When the bamColorMode is set to 'tag', the standard 'YC' tag is used as the default. The default may be overridden with this setting."
+	    },
+
+	    "noColorTag": { 
+	      "type": "boolean",
+
+	      "description": "The bam coloring options are all user-configurable within the browser. If your bam dataset contains no color tags, this setting should be included to block the Browser from offering the option to color tags by an embedded RGB value."
+	    },
+
+	    "bamSkipPrintQualScore": {
+	      "type": "boolean",
+
+	      "description": "Any bam tag can be displayed on the details page by clicking on it in the Browser image. The details include quality scores by default. If these scores are not relevant for this particular bam, they may be excluded from the details page with this setting."
+	    },
+
+	    "indelDoubleInsert": {
+	      "type": "boolean",
+
+	      "description": "Insertion and deletion differences between tag sequences and the reference genome can be highlighted with the use of these settings. These options may be set by the user. indelDoubleInsert: Use to highlight alignment gaps in both the target (reference) and query (tag) sequence with double (=) lines. indelQueryInsert: Use to highlight an insert in the query sequence only by drawing an orange (|) or purple (|) vertical line. Orange lines show unalignable regions in the middle of a sequence, and purple highlights regions at the end of the query sequence. indelPolyA: Use to highlight an apparently valid poly-a tail by drawing a vertical green line (|).",
+	    },
+
+	    "indelQueryInsert": { "type": "boolean" },
+
+	    "indelPolyA": { "type": "boolean" },
+
+	    "minAliQual": {
+	      "type": "number",
+
+	      "description": "When the Browser image is zoomed in to the level where individual tags are visible, the tags in a bam file can be filtered to show only those with a minimum alignment quality score. This is a user-configurable setting. Default: 0."
+	    },
+
+	    "pairEndsByName": {
+	      "type": "boolean",
+
+	      "description": "Some high-throughput sequencing technologies result in "paired end" tags, which are two individual bam records joined by their name. If this is the case with your dataset, include this setting."
+	    },
+
+	    "pairSearchRange": {
+	      "type": "number",
+
+	      "description": "Searching to join pairs of tags by name will be limited to a maximum distance (default: 20,000 bases). Use a larger range to increase the likelihood that both reads in a pair will be found even when only one read is in the viewed region. Use a smaller range to speed image rendering."
+	    },
+
+	    "showNames": {
+	      "type": "boolean",
+
+	      "description": "When the Browser image is zoomed in to the level where individual tags are viewable, the query name for each tag is shown by default. Use this setting to hide this name."
+	    }
+	    
+	  },
+
+	  "required": [ "type", "bigDataUrl" ]
+	}
+      ]      
+    },
+
     "name": {
       "type": "string",
       

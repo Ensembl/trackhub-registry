@@ -630,6 +630,29 @@
       ]      
     },
 
+    "vcfTabix_track": {
+      "title": "vcfTabix track configuration properties",
+      "description": "vcfTabix track configuration properties. Inherites the properties common to all track types.",
+
+      "allOf": [
+        { "$ref": "#/definitions/track" },
+
+	{ "properties": {
+	    "type": {
+	      "type": "string",
+
+	      "enum": [ "vcfTabix" ]
+	    },
+
+	    "bigDataUrl": { "$ref": "#/definitions/bigDataUrl" }
+
+	  },
+
+	  "required": [ "type", "bigDataUrl" ]
+	}
+      ]      
+    },
+
     "name": {
       "type": "string",
       

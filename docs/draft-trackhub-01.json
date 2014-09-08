@@ -620,7 +620,7 @@
 	    "subgroups": {
 	      "type": "array",
 
-	      "description": "Up to 9 subgroup types can be defined for a composite. However, to minimize the complexity, it is strongly recommended that only two subgroups be defined for a given composite track. These will be presented in a simple X/Y matrix that is easy for the user to understand and navigate. It is possible to define more subgroups in additional "abc" dimensions that will be presented to the user as drop-down multi-select dialogs, but use of these should be avoided or minimized.",
+	      "description": "Up to 9 subgroup types can be defined for a composite. However, to minimize the complexity, it is strongly recommended that only two subgroups be defined for a given composite track. These will be presented in a simple X/Y matrix that is easy for the user to understand and navigate. It is possible to define more subgroups in additional 'abc' dimensions that will be presented to the user as drop-down multi-select dialogs, but use of these should be avoided or minimized.",
 
 	      "items": { "$ref": "#/definitions/subgroup" },
 

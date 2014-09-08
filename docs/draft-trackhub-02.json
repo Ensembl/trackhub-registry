@@ -305,6 +305,43 @@
       "description": "Visibility (i.e. "display mode") specifies which of 5 modes (including 'hide') should be used to display the track within the Browser image. This setting is almost always dynamically customizable by each user. The exact configuration of the display for each mode depends upon the track's type, and some modes may not be supported for certain track types. Valid settigs: 1. hide: DEFAULT. The track is not displayed in the Browser image unless the user changes the display setting; 2. dense: The track is displayed as a single line or ribbon. In many cases multiple items are summarized or drawn on top of one another, and the long labels are not displayed; 3. squish: Each item is drawn individually, but at half height and without a label. (Not supported for all types.); 4. pack: Items are displayed individually at full height, but in a much more compact vertical space than in full mode. (Not supported for all types.); 5. full: Each item is displayed as a separate line in the Browser image. Graphed signals may be displayed in varying heights."
     },
 
+    "color_code": {
+      "type": "integer",
+
+      "minimum": 0,
+      "exclusiveMinimum": false,
+
+      "maximum": 255,
+      "exclusiveMaximum": false
+    },
+
+    "color": {
+      "type": "object",
+
+      "description": "Specifies a color as red, green, blue values",
+
+      "properties": {
+        "red": { "$ref": "#/definitions/color_code" },
+	"green": { "$ref": "#/definitions/color_code" },
+	"blue": { "$ref": "#/definitions/color_code" },
+      }
+    },
+
+    "fields_urls": {
+      "type": "array",
+
+      "items": {
+        "type": "object",
+
+	"properties": {
+	  "field": { "type": "string" },
+	  "url": { "type": "string", "format": "uri" }
+	}
+      },
+
+      "minItems": 1,
+      "uniqueItems": true
+    },
 
 
   }

@@ -700,6 +700,158 @@
       ]
     },
 
+    "composite_track": {
+      
+      "description": "Composite tracks are another level of hierarchy and are meant to group very similar tracks (called "subtracks") together such that they can all share the same configuration settings. In its simplest form a composite holds tracks all of the same type (such as bigBed). Initially, all track within the set are configured identically. Usually only some of the subtracks are visible by default, and these will have the same display mode (e.g., dense) and optional settings (e.g., viewLimits). While default settings cover the entire composite of related tracks, in most cases individual subtracks can be configured by the user independently of the composite settings. However, once individual subtrack settings are made, they can be overridden by new choices made at the composite level.",
+
+      "allOf": [
+        "oneOf": [
+          { "$ref": "#/definitions/bigBed_track" },
+          { "$ref": "#/definitions/bigWig_track" },
+          { "$ref": "#/definitions/bam_track" },
+          { "$ref": "#/definitions/vcfTabix_track" },
+        ],
+
+	{ "properties": {
+	    "container": {
+	      "type": "string",
+
+	      "enum": [ "composite" ]
+	    },
+
+	    "allButtonPair": {
+	      "type": "boolean",
+
+	      "description": "When a simple composite track presents a short list of subtracks, it can be convenient for the user to have an easy way to select or deselect all of them. Include this setting to display an 'All (plus and minus button pair)' for the user's convenience. If the list contains more than 10 subtracks, other methods may be more useful for organizing and selecting subtracks."
+	    },
+	    
+	    "centerLabelsDense": {
+	      "type": "boolean",
+
+	      "description": "By default, only the composite track's single center label is shown when the subtracks are displayed together in the Browser dense mode. If centerLabelsDense is set, the Browser will display a center label for each subtrack."
+	    },
+
+	    "dragAndDrop": {
+	      "type": "boolean",
+
+	      "description": "The subtrack list in the configuration page can be rearranged by setting a sortOrder or by allowing the user to drag and drop the subtracks to a new order if enabled with this setting. The changed order will also be seen in the track image. However, the order of tracks can always be rearranged through drag and drop, directly in the image. Reordering subtracks in the image will not be reflected in the configuration page. Note: This setting will not work correctly if 'container multiWig' is specified."
+	    },
+
+	    "subgroups": {
+	      "type": "array",
+
+	      "description": "Up to 9 subgroup types can be defined for a composite. However, to minimize the complexity, it is strongly recommended that only two subgroups be defined for a given composite track. These will be presented in a simple X/Y matrix that is easy for the user to understand and navigate. It is possible to define more subgroups in additional 'abc' dimensions that will be presented to the user as drop-down multi-select dialogs, but use of these should be avoided or minimized.",
+
+	      "items": { "$ref": "#/definitions/subgroup" },
+
+	      "minItems": 1,
+	      "maxItems": 9,
+	      "uniqueItems": true
+	    },
+
+	    "subtracks": {
+	      "type": "array",
+
+	      "items": { "$ref": "#/definitions/composite_subtrack" },
+
+	      "minItems": 1,
+	      "uniqueItems": true
+	    }
+
+	  }
+	}
+      ]
+    },
+
+    "subgroup_membership": {
+      "type": "object",
+
+      "definition": "Declares the tag/title group membership pair to be able to assign a subtrack to a subgroup.",
+
+      "properties": {
+        "tag": {
+	  "type": "string",
+	  "description": "A group's member tag"
+	},
+	"title": {
+	  "type": "string",
+	  "description": "A group's member title"
+	}
+      }
+    },
+
+    "subgroup": {
+      "type": "object",
+
+      "description": "The subgroup can be used for selecting sets of subtracks for display based on certain characteristics of the data. For instance, if 'cell' and 'antibody' are defined as subgroups within a composite track, the user will be able to select subtracks based on specific cell types and antibodies to display in the Browser.",
+
+      "properties": {
+        "tag": {
+	  "type": "string",
+	  "description": "Used to select and sort subtracks based upon their membership. Tag names must be alphanumeric, begin with a letter, and be formed such that the desired sort order of the member subtracks will result.",
+	  "format": "^[a-zA-Z]"
+	},
+
+	"title": {
+	  "type": "string",
+	  "description": "Label of the subgroup as it appears on the selection matrix that is displayed to the user, e.g. 'Antibody;. Spaces within titles must be replaced by '_'. A limited amount of HTML is allowed in titles, such as the insertion of Greek letters using an HTML code. Any use of HTML should be tested to ensure that it displays correctly."
+	},
+
+	"membership": {
+	  "type": "array",
+
+	  "description": "The list of tag/title group membership pairs",
+
+	  "items": { "$ref": "#/definitions/subgroup_membership" },
+
+	  "minItems": 1,
+	  "uniqueItems": true
+	},
+
+	"dimension": {
+	  "type": "integer",
+	  "description": "Declares the dimension defined by a group.",
+
+	  "minimum": 1,
+	  "exclusiveMinimum": false
+	},
+
+	"sortOrder": {
+	  "type": "string",
+
+	  "description": "When declaring subgroups, it is often useful to sort the subtrack list by those subgroups. By including a sortOrder setting, long sets of subtracks are more easily organized and navigated by the user. If there are only a few subtracks in the composite, sorting may be of little value and dragAndDrop may be a better option. Currently only subgroups can be defined in the sortOrder, but it is anticipated that this will expand to include short and long labels as well. Sorting will occur on the tag values defined in the subgroup. By sorting on tags, non-alphanumeric orders can be defined.",
+
+	  "enum": [ "asc", "desc" ]
+	}
+      }
+    },
+
+    "composite_subtrack": {
+      "allOf": [
+        "oneOf": [
+          { "$ref": "#/definitions/bigBed_track" },
+          { "$ref": "#/definitions/bigWig_track" },
+          { "$ref": "#/definitions/bam_track" },
+          { "$ref": "#/definitions/vcfTabix_track" },
+        ],
+
+	{ "properties": {
+	    "subgroups": {
+	      "type": "array",
+
+	      "items": {
+	        "type": "string",
+
+		"description": "Points to a subgroup_membership item in a subgroup of a composite track. This defines the membership of the subtrack to a subgroup.",
+
+		"format": "uri"
+	      }
+	    },
+	  }
+	}
+      ]
+    },
+    
     "name": {
       "type": "string",
       

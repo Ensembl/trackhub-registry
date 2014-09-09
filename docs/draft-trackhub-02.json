@@ -85,9 +85,7 @@
     "epigenomics_track_data": {
       "allOf": [
         { "$ref": "#/definitions/generic_track_data" },
-	{
-	  "type": "object",
-	  "properties": {
+	{ "properties": {
 	    "molecule": { "type": "string" },
 	    "disease": { "type": "string" },
 	    "biomaterial_type": { "type": "string" },
@@ -705,12 +703,14 @@
       "description": "Composite tracks are another level of hierarchy and are meant to group very similar tracks (called 'subtracks') together such that they can all share the same configuration settings. In its simplest form a composite holds tracks all of the same type (such as bigBed). Initially, all track within the set are configured identically. Usually only some of the subtracks are visible by default, and these will have the same display mode (e.g., dense) and optional settings (e.g., viewLimits). While default settings cover the entire composite of related tracks, in most cases individual subtracks can be configured by the user independently of the composite settings. However, once individual subtrack settings are made, they can be overridden by new choices made at the composite level.",
 
       "allOf": [
-        "oneOf": [
-          { "$ref": "#/definitions/bigBed_track" },
-          { "$ref": "#/definitions/bigWig_track" },
-          { "$ref": "#/definitions/bam_track" },
-          { "$ref": "#/definitions/vcfTabix_track" },
-        ],
+        { 
+	  "oneOf": [
+            { "$ref": "#/definitions/bigBed_track" },
+            { "$ref": "#/definitions/bigWig_track" },
+            { "$ref": "#/definitions/bam_track" },
+            { "$ref": "#/definitions/vcfTabix_track" },
+          ]
+	},
 
 	{ "properties": {
 	    "container": {
@@ -757,6 +757,15 @@
 	      "minItems": 1,
 	      "uniqueItems": true
 	    },
+
+	    "views": {
+	      "type": "array",
+
+	      "items": { "$ref": "#/definitions/composite_view" },
+
+	      "minItems": 1,
+	      "uniqueItems": true
+	    }
 
 	  },
 
@@ -837,12 +846,14 @@
 
     "composite_subtrack": {
       "allOf": [
-        "oneOf": [
-          { "$ref": "#/definitions/bigBed_track" },
-          { "$ref": "#/definitions/bigWig_track" },
-          { "$ref": "#/definitions/bam_track" },
-          { "$ref": "#/definitions/vcfTabix_track" },
-        ],
+        {
+	  "oneOf": [
+            { "$ref": "#/definitions/bigBed_track" },
+            { "$ref": "#/definitions/bigWig_track" },
+            { "$ref": "#/definitions/bam_track" },
+            { "$ref": "#/definitions/vcfTabix_track" },
+          ]
+	},
 
 	{ "properties": {
 	    "visible": { 
@@ -860,10 +871,41 @@
 
 		"format": "uri"
 	      }
-	    },
+	    }
 	  }
 	}
       ]
+    },
+
+    "composite_view": {
+      "allOf": [
+        {
+	  "oneOf": [
+            { "$ref": "#/definitions/bigBed_track" },
+            { "$ref": "#/definitions/bigWig_track" },
+            { "$ref": "#/definitions/bam_track" },
+            { "$ref": "#/definitions/vcfTabix_track" },
+          ]
+	},
+
+	{ "properties": {
+	    "viewUi": { 
+	      "description": "If subtracks within a view are configurable, then the view will have the configuration controls for it in a box beneath the view's visibility drop down. That box filled with configuration controls is hidden by default so that the UI is not too cluttered. The user must first open the box before its contents are seen. If there is only one view with configuration settings, or if the view is the most important one, the box can be open by default. Use this setting in the view stanza of settings to default the configuration box as open.",
+	      "type": "boolean"
+	    },
+	    
+	    "subtracks": {
+	      "type": "array",
+
+	      "items": { "$ref": "#/definitions/composite_subtrack" },
+
+	      "minItems": 1,
+	      "uniqueItems": true
+	    },
+	    
+	  }
+	}
+      ]      
     },
 
     "aggregate_track": {

@@ -902,7 +902,9 @@
 
 	      "description": "Subtracks in an overlay have individual colors. Use this setting to show the color associated with each on the track configuration page."
 	    }
-	  }
+	  },
+	  
+	  "required": [ "container", "aggregate", "subtracks" ]
 	}
       ]
     },

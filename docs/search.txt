@@ -1,0 +1,8 @@
+Search TrackHubs
+Representations of truckhubs in JSON are indexed and searched using Solr.
+
+Pb.
+Solr requires a flat, denormalized document. A document is a self-contained collection of fields, in which each field only holds data and doesn’t contain nested fields. In other words, a document in a search engine like Solr has a flat structure and doesn’t depend on other documents. The flat concept is slightly relaxed in Solr, in that a field can have multiple values, but fields don’t contain subfields. You can store multiple values in a single field, but you can’t nest fields inside of other fields. 
+
+A solution could be the Result grouping/field collapsing feature of Solr
+Although Solr requires a flat, denormalized document, Solr allows you to treat multiple documents as a group based on some common property shared by all documents in the group. Result grouping, also referred to as field collapsing, allows you to return unique groups instead of individual documents in the results. 

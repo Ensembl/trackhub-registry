@@ -1,14 +1,11 @@
-- analysis_design.odt
-Documents the development process of the registry.
+- problem_statement.odt
+TrackHub registry development: problem description, assumption and risk factors.
 
 - draft-trackhub-01.json
-JSON schema to represent the properties of a TrackHub. 
+JSON schema to represent the properties of a TrackHub - draft version 01.
 This is an attempt to model in JSON the display and configuration properties of the UCSC trackhub specification. Hierarchical (i.e. super, composite, aggregate) tracks are included. Subgroups but not views are modelled in composite tracks.
 
-Draft version 01.
-
 - draft-trackhub-02.json
-JSON schema to represent the properties of a UCSC TrackHub.
+JSON schema to represent the properties of a UCSC TrackHub - draft version 02.
 Attempt to separate the data/metadata definition from the presentation layer. This has been expressed as a desirable goal by David Bujold and his team of the IHEC (International Human Epigenomics Consortium).
 
-Draft version 02.

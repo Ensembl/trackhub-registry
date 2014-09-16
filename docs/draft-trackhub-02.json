@@ -64,8 +64,8 @@
         "organism": {
 	  "type": "object",
 
-	  "title": "",
-	  "description": "",
+	  "title": "Organism",
+	  "description": "Information about the organism the track relates to",
 
           "properties": {
 	    "taxid": { "type": "integer", "minimum": 0, "exclusiveMinimum": true },
@@ -76,6 +76,10 @@
 
         "assembly": { 
           "type": "string",
+
+	  "title": "Assembly accession",
+	  "description": "The assembly accession the track relates to",
+
 	  "pattern": "^GCA_[0-9]+\.[0-9]+$"
         },
 

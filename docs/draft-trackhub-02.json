@@ -23,15 +23,17 @@
     },
 
     "configuration": {
-      "type": "array",
+      "type": "object",
 
       "title": "TruckHub Configuration",
 
       "description": "Contains display and configuration properties for the tracks speficied in the data attribute.",
 
-      "items": { "$ref": "#/definitions/track_configuration" },
+      "patternProperties": {
+        "^[a-zA-z][a-zA-Z0-9_]+$": { "$ref": "#/definitions/track_configuration" }
+      },
 
-      "uniqueItems": true
+      "additionalProperties": "false"
     }
 
     "additionalProperties": false

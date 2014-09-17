@@ -1,0 +1,15 @@
+{
+  "data": {
+    "bpDnaseRegionsC0010K46DNaseEBI": {
+      "organism": {
+        "taxid": 9606,
+	"scientific_name": "Homo sapiens"
+      },
+      "assembly": "GCA_000001405.15"
+    }
+  },
+
+  "configuration": {
+    
+  }
+}

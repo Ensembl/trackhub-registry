@@ -3,7 +3,7 @@
 
   "title": "TrackHub Schema",
 
-  "description" : "",
+  "description" : "The schema which describes valid TrackHub JSON documents.",
 
   "type": "object",
 
@@ -13,13 +13,13 @@
 
       "title": "TrackHub Data",
 
-      "description": "Contains data/metadata for a set of tracks defined in the TrauckHub: attribute name is symbolic name of a track, attribute value is the corresponding definition of the data for that particular track."
+      "description": "Contains data/metadata for a set of tracks defined in the TrauckHub: attribute name is symbolic name of a track, attribute value is the corresponding definition of the data for that particular track.",
 
       "patternProperties": {
         "^[a-zA-z][a-zA-Z0-9_]+$": { "$ref": "#/definitions/track_data" }
       },
 
-      "additionalProperties": "false"
+      "additionalProperties": false
     },
 
     "configuration": {
@@ -33,13 +33,13 @@
         "^[a-zA-z][a-zA-Z0-9_]+$": { "$ref": "#/definitions/track_configuration" }
       },
 
-      "additionalProperties": "false"
+      "additionalProperties": false
     }
-
-    "additionalProperties": false
   },
 
-  "required": [ "data", "configuration" ]
+  "additionalProperties": false,
+
+  "required": [ "data", "configuration" ],
 
   "definitions": {
 
@@ -70,18 +70,19 @@
           "properties": {
 	    "taxid": { "type": "integer", "minimum": 0, "exclusiveMinimum": true },
 	    "scientific_name": { "type": "string" }
-	  }
+	  },
+
 	  "required": [ "taxid" ]
         },
 
-        "assembly": { 
+	"assembly": { 
           "type": "string",
 
 	  "title": "Assembly accession",
 	  "description": "The assembly accession the track relates to",
 
-	  "pattern": "^GCA_[0-9]+\.[0-9]+$"
-        },
+	  "pattern": "^GCA_[0-9]+.[0-9]+$"
+        }
 
       },
 
@@ -109,7 +110,7 @@
 	    "donor_age": { "type": "integer", "minimum": 0, "exclusiveMinimum": false },
 	    "donor_health_status": { "type": "string" },
 	    "donor_sex": { "type": "string" },
-	    "donor_ethnicity": { "type": "string" }
+	    "donor_ethnicity": { "type": "string" },
 
 	    "cell_type": { "type": "string" },
 	    "culture_conditions": { "type": "string" },
@@ -258,7 +259,7 @@
 	"url": {
 	  "type": "string",
 
-	  "description": "Many tracks allow an external link when an individual track data item is examined. Use this setting to put a link to an external URL on the details page. The default prompt the user will see for this url is "outside link:". Use urlLabel to provide a more informative prompt.",
+	  "description": "Many tracks allow an external link when an individual track data item is examined. Use this setting to put a link to an external URL on the details page. The default prompt the user will see for this url is \"outside link:\". Use urlLabel to provide a more informative prompt.",
 
 	  "format": "uri"
 	},
@@ -268,7 +269,7 @@
 	"urls": {
 	  "$ref": "#/definitions/fields_urls",
 
-	  "description": "This is similar to the url tag, but allows urls on fields that are not the "name" field. Use this statement if you need multiple linkouts on the details page or if your linkout is not based on the name field."
+	  "description": "This is similar to the url tag, but allows urls on fields that are not the \"name\" field. Use this statement if you need multiple linkouts on the details page or if your linkout is not based on the name field."
 	}
       },
 
@@ -296,7 +297,7 @@
 	      "exclusiveMinimum": false,
 
 	      "maximum": 12,
-	      "exclusiveMaximum": false,
+	      "exclusiveMaximum": false
 	    },
 
 	    "non_standard_fields": { "type": "boolean" },
@@ -325,7 +326,7 @@
 	    "exonArrows": {
 	      "type": "boolean",
 
-	      "description": "On tracks that show exons or blocks within features, exon arrows allow the user to jump to the next exon or block outside the image. Exon arrows are typically shown by default in these types of tracks, with the exception of tracks in the Regulation group. The arrows can be explicitly shown or hidden using this setting. "
+	      "description": "On tracks that show exons or blocks within features, exon arrows allow the user to jump to the next exon or block outside the image. Exon arrows are typically shown by default in these types of tracks, with the exception of tracks in the Regulation group. The arrows can be explicitly shown or hidden using this setting."
 	    },
 
 	    "scoreFilter": { "$ref": "#/definitions/scoreFilter" },
@@ -361,7 +362,7 @@
 	    "noScoreFilter": {
 	      "type": "boolean",
 
-	      "description": "By default, bed tracks with 5 or more standard bed fields that contain either a '.' or a '+' in the type setting will be filterable on score; that is, they will have an assumed setting of "scoreFilter 0". To turn this old-style default off, include the "noScoreFilter" setting."
+	      "description": "By default, bed tracks with 5 or more standard bed fields that contain either a '.' or a '+' in the type setting will be filterable on score; that is, they will have an assumed setting of \"scoreFilter 0\". To turn this old-style default off, include the \"noScoreFilter\" setting."
 	    },
 
 	    "spectrum": {
@@ -413,7 +414,7 @@
 	    "nextExonText": {
 	      "type": "string",
 
-	      "definition": "For tracks that offer multiple block items such as gene models, the next/previous exon arrows are usually displayed by default in the Browser. The functionality of these tiny arrows is described by mouse-over "tool tips" that default to "Next Exon" and "Prev Exon". If the blocks do not represent exons, you can adjust the tool tip text to the appropriate information with these two settings."
+	      "definition": "For tracks that offer multiple block items such as gene models, the next/previous exon arrows are usually displayed by default in the Browser. The functionality of these tiny arrows is described by mouse-over \"tool tips\" that default to \"Next Exon\" and \"Prev Exon\". If the blocks do not represent exons, you can adjust the tool tip text to the appropriate information with these two settings."
 	    },
 
 	    "prevExonText": { "type": "string" },
@@ -445,13 +446,13 @@
 	    "alwaysZero": {
 	      "type": "boolean",
 
-	      "description": "When autoScale is set to "on" in the signal track, additionally setting alwaysZero to "on" will ensure that the y=0 value will be in view at all times. Default: off. "
+	      "description": "When autoScale is set to \"on\" in the signal track, additionally setting alwaysZero to \"on\" will ensure that the y=0 value will be in view at all times. Default: off."
 	    },
 
 	    "autoScale": {
 	      "type": "boolean",
 
-	      "description": "The graph of the data displayed in the Browser image is usually scaled on the y axis in absolute coordinates. However, you can display the data in autoScale which will ensure that the high score in the current viewing window will peak at the top of the graph. Like most graph settings, this is configurable by the user. Setting it to "on" in trackDb will default the track to autoScale. Default: off. NOTE: this option should be avoided if it will lead to display regions in which a low signal erroneously appears as significant because there is no high signal in the view window."
+	      "description": "The graph of the data displayed in the Browser image is usually scaled on the y axis in absolute coordinates. However, you can display the data in autoScale which will ensure that the high score in the current viewing window will peak at the top of the graph. Like most graph settings, this is configurable by the user. Setting it to \"on\" in trackDb will default the track to autoScale. Default: off. NOTE: this option should be avoided if it will lead to display regions in which a low signal erroneously appears as significant because there is no high signal in the view window."
 	    },
 
 	    "bigDataUrl": { "$ref": "#/definitions/bigDataUrl" },
@@ -520,19 +521,19 @@
 
 	      "description": "Depending upon how large of a genomic region is displayed in the Browser image, it may be necessary to summarize the actual signal. This user-configurable setting controls how the Browser collapses the signal from (for example) 100 or 100 thousand bases down to a single pixel. By default the single pixel represents the mean of the data, though the maximum or minimum can alternatively be displayed. A more informative option is often mean+whiskers. This setting displays the mean, max and one standard deviation above mean, differentiated by shading. The mean is displayed as the darkest shade, one stdDev above mean as slightly lighter, and the max as the lightest shade. This subtle shading can quickly indicate if the condensed data is hiding important information that can be adequately evaluated only by zooming in.",
 
-	      "enum": [ "mean", "mean+whiskers", "maximum", "minimum" ],
+	      "enum": [ "mean", "mean+whiskers", "maximum", "minimum" ]
 	    },
 
 	    "yLineOnOff": {
 	      "type": "boolean",
 
-	      "description": "It can be useful to draw a line across the track's signal graph at some fixed y coordinate. Do this by setting yLineOnOff to "on" and specifying the y coordinate with yLineMark. These two settings are configurable by the user. Defaults: off and 0.0."
+	      "description": "It can be useful to draw a line across the track's signal graph at some fixed y coordinate. Do this by setting yLineOnOff to \"on\" and specifying the y coordinate with yLineMark. These two settings are configurable by the user. Defaults: off and 0.0."
 	    },
 	    
 	    "gridDefault": { "type": "boolean" },
 
 	    "yLineMark": { "type": "number" }	    
-	  }
+	  },
 
 	  "required": [ "type", "bigDataUrl" ]
 	}
@@ -558,7 +559,7 @@
 	    "bamColorMode": {
 	      "type": "string",
 
-	      "description": "There are numerous ways to color bam tracks to highlight certain aspects of the data. All of these are user-configurable. Possible settings: 1. strand: (Default) When colored by strand, mismatched bases are highlighted in bright red, alignments on the reverse strand are colored dark red, and alignments on the forward strand are colored dark blue; 2. gray: When colored in grayscale, items are shaded according to the method specified by bamGrayMode: alignment quality, base qualities, or unpaired ends; 3. tag: Colors are specified in "user-defined tags". SAM/BAM may include user-defined tags, the names of which begin with X, Y or Z and include one other letter or number. The user-defined tag named here specifies red, green and blue (RGB) intensities as a zero-terminated string (tag type Z) containing comma-separated triples of numbers from 0-255. For example, if a SAM/BAM record includes the tag YC:Z:255,0,0, then the item is colored red; YC:Z:0,0,255 makes the item blue. By default, the tag is "YC" unless changed using the bamColorTag setting; 4. off: No additional coloring.",
+	      "description": "There are numerous ways to color bam tracks to highlight certain aspects of the data. All of these are user-configurable. Possible settings: 1. strand: (Default) When colored by strand, mismatched bases are highlighted in bright red, alignments on the reverse strand are colored dark red, and alignments on the forward strand are colored dark blue; 2. gray: When colored in grayscale, items are shaded according to the method specified by bamGrayMode: alignment quality, base qualities, or unpaired ends; 3. tag: Colors are specified in \"user-defined tags\". SAM/BAM may include user-defined tags, the names of which begin with X, Y or Z and include one other letter or number. The user-defined tag named here specifies red, green and blue (RGB) intensities as a zero-terminated string (tag type Z) containing comma-separated triples of numbers from 0-255. For example, if a SAM/BAM record includes the tag YC:Z:255,0,0, then the item is colored red; YC:Z:0,0,255 makes the item blue. By default, the tag is \"YC\" unless changed using the bamColorTag setting; 4. off: No additional coloring.",
 
 	      "enum": [ "strand", "gray", "tag", "off" ]
 	    },
@@ -566,7 +567,7 @@
 	    "bamGrayMode": {
 	      "type": "string",
 
-	      "description": "When bamColorMode is set to "gray", you can highlight one of the following: 1. aliQual: (Default) The "alignment qualities" of the items are shaded on a scale of 0 (lightest) to 99 (darkest). Use aliQualRange to specify a default range; 2. baseQual: "Base qualities" are shaded on a scale of 0 (lightest) to 40 (darkest). Use baseQualRange to specify a default range; 3. unpaired: When "unpaired ends" is selected, an item that was paired in sequencing but whose mate was not mapped is colored gray, while singletons and properly paired items are colored black. Refer to the SAM format details for a discussion of these values.",
+	      "description": "When bamColorMode is set to \"gray\", you can highlight one of the following: 1. aliQual: (Default) The \"alignment qualities\" of the items are shaded on a scale of 0 (lightest) to 99 (darkest). Use aliQualRange to specify a default range; 2. baseQual: \"Base qualities\" are shaded on a scale of 0 (lightest) to 40 (darkest). Use baseQualRange to specify a default range; 3. unpaired: When \"unpaired ends\" is selected, an item that was paired in sequencing but whose mate was not mapped is colored gray, while singletons and properly paired items are colored black. Refer to the SAM format details for a discussion of these values.",
 
 	      "enum": [ "aliQual", "baseQual", "unpaired" ]
 	    },
@@ -596,7 +597,7 @@
 	    "indelDoubleInsert": {
 	      "type": "boolean",
 
-	      "description": "Insertion and deletion differences between tag sequences and the reference genome can be highlighted with the use of these settings. These options may be set by the user. indelDoubleInsert: Use to highlight alignment gaps in both the target (reference) and query (tag) sequence with double (=) lines. indelQueryInsert: Use to highlight an insert in the query sequence only by drawing an orange (|) or purple (|) vertical line. Orange lines show unalignable regions in the middle of a sequence, and purple highlights regions at the end of the query sequence. indelPolyA: Use to highlight an apparently valid poly-a tail by drawing a vertical green line (|).",
+	      "description": "Insertion and deletion differences between tag sequences and the reference genome can be highlighted with the use of these settings. These options may be set by the user. indelDoubleInsert: Use to highlight alignment gaps in both the target (reference) and query (tag) sequence with double (=) lines. indelQueryInsert: Use to highlight an insert in the query sequence only by drawing an orange (|) or purple (|) vertical line. Orange lines show unalignable regions in the middle of a sequence, and purple highlights regions at the end of the query sequence. indelPolyA: Use to highlight an apparently valid poly-a tail by drawing a vertical green line (|)."
 	    },
 
 	    "indelQueryInsert": { "type": "boolean" },
@@ -612,7 +613,7 @@
 	    "pairEndsByName": {
 	      "type": "boolean",
 
-	      "description": "Some high-throughput sequencing technologies result in "paired end" tags, which are two individual bam records joined by their name. If this is the case with your dataset, include this setting."
+	      "description": "Some high-throughput sequencing technologies result in \"paired end\" tags, which are two individual bam records joined by their name. If this is the case with your dataset, include this setting."
 	    },
 
 	    "pairSearchRange": {
@@ -714,7 +715,7 @@
             { "$ref": "#/definitions/bigBed_track" },
             { "$ref": "#/definitions/bigWig_track" },
             { "$ref": "#/definitions/bam_track" },
-            { "$ref": "#/definitions/vcfTabix_track" },
+            { "$ref": "#/definitions/vcfTabix_track" }
           ]
 	},
 
@@ -857,7 +858,7 @@
             { "$ref": "#/definitions/bigBed_track" },
             { "$ref": "#/definitions/bigWig_track" },
             { "$ref": "#/definitions/bam_track" },
-            { "$ref": "#/definitions/vcfTabix_track" },
+            { "$ref": "#/definitions/vcfTabix_track" }
           ]
 	},
 
@@ -890,7 +891,7 @@
             { "$ref": "#/definitions/bigBed_track" },
             { "$ref": "#/definitions/bigWig_track" },
             { "$ref": "#/definitions/bam_track" },
-            { "$ref": "#/definitions/vcfTabix_track" },
+            { "$ref": "#/definitions/vcfTabix_track" }
           ]
 	},
 
@@ -907,7 +908,7 @@
 
 	      "minItems": 1,
 	      "uniqueItems": true
-	    },
+	    }
 	    
 	  }
 	}
@@ -971,7 +972,7 @@
     "shortLabel": {
       "type": "string",
 
-      "definition": "Specifies the track's "short label", which is used in a number of places in the Browser to identify the track.",
+      "definition": "Specifies the track's \"short label\", which is used in a number of places in the Browser to identify the track.",
 
       "maxLength": 17
     },
@@ -979,7 +980,7 @@
     "longLabel": {
       "type": "string",
 
-      "definition": "Specifies the track's "long label", which is also used in numerous places in the Browser to identify a track. This label should be descriptive enough to allow users to uniquely identify the track within the Browser.",
+      "definition": "Specifies the track's \"long label\", which is also used in numerous places in the Browser to identify a track. This label should be descriptive enough to allow users to uniquely identify the track within the Browser.",
 
       "maxLength": 76
     },
@@ -987,7 +988,7 @@
     "bigDataUrl": {
       "type": "string",
 
-      "description": "The location of a remote data file containing the bulk of the data for the track. The setting is either the full URL (including http: or another protocol) or it is relative to the directory in which the trackDb file containing this setting is located. The file must be in one of the supported remote data file formats: bam, bigBed, bigWig or vcfTabix. Note that bam and vcfTabix types require a separate index file that must have the same name as the data file plus a standard suffix (".bai" and ".tbi" respectively).",
+      "description": "The location of a remote data file containing the bulk of the data for the track. The setting is either the full URL (including http: or another protocol) or it is relative to the directory in which the trackDb file containing this setting is located. The file must be in one of the supported remote data file formats: bam, bigBed, bigWig or vcfTabix. Note that bam and vcfTabix types require a separate index file that must have the same name as the data file plus a standard suffix (\".bai\" and \".tbi\" respectively).",
 
       "format": "uri"
     },   
@@ -995,7 +996,7 @@
     "visibility": {
       "enum": [ "hide", "dense", "squish", "pack", "full" ],
 
-      "description": "Visibility (i.e. "display mode") specifies which of 5 modes (including 'hide') should be used to display the track within the Browser image. This setting is almost always dynamically customizable by each user. The exact configuration of the display for each mode depends upon the track's type, and some modes may not be supported for certain track types. Valid settigs: 1. hide: DEFAULT. The track is not displayed in the Browser image unless the user changes the display setting; 2. dense: The track is displayed as a single line or ribbon. In many cases multiple items are summarized or drawn on top of one another, and the long labels are not displayed; 3. squish: Each item is drawn individually, but at half height and without a label. (Not supported for all types.); 4. pack: Items are displayed individually at full height, but in a much more compact vertical space than in full mode. (Not supported for all types.); 5. full: Each item is displayed as a separate line in the Browser image. Graphed signals may be displayed in varying heights."
+      "description": "Visibility (i.e. \"display mode\") specifies which of 5 modes (including 'hide') should be used to display the track within the Browser image. This setting is almost always dynamically customizable by each user. The exact configuration of the display for each mode depends upon the track's type, and some modes may not be supported for certain track types. Valid settigs: 1. hide: DEFAULT. The track is not displayed in the Browser image unless the user changes the display setting; 2. dense: The track is displayed as a single line or ribbon. In many cases multiple items are summarized or drawn on top of one another, and the long labels are not displayed; 3. squish: Each item is drawn individually, but at half height and without a label. (Not supported for all types.); 4. pack: Items are displayed individually at full height, but in a much more compact vertical space than in full mode. (Not supported for all types.); 5. full: Each item is displayed as a separate line in the Browser image. Graphed signals may be displayed in varying heights."
     },
 
     "color_code": {
@@ -1016,7 +1017,7 @@
       "properties": {
         "red": { "$ref": "#/definitions/color_code" },
 	"green": { "$ref": "#/definitions/color_code" },
-	"blue": { "$ref": "#/definitions/color_code" },
+	"blue": { "$ref": "#/definitions/color_code" }
       }
     },
 
@@ -1039,7 +1040,7 @@
    "range": {
       "type": "array",
 
-      "description": "Define a range of value: first value is lower bound, second is upper."
+      "description": "Define a range of value: first value is lower bound, second is upper.",
 
       "items": [
         { "type": "number" },
@@ -1056,7 +1057,7 @@
         "threshold": { "type": "number" },
 
 	"limits": { "$ref": "#/definitions/range" }
-      }
+      },
 
       "required": ["threshold"]
     },
@@ -1071,8 +1072,10 @@
 
 	"suffix": { "type": "string" }
       }
-    },
+    }
 
   }
+
+
 
 }

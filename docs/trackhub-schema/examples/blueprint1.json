@@ -5,7 +5,28 @@
         "taxid": 9606,
 	"scientific_name": "Homo sapiens"
       },
-      "assembly": "GCA_000001405.15"
+
+      "assembly": "GCA_000001405.15",
+
+      "molecule": "genomic_DNA",
+      "disease": "None",
+      "biomaterial_type": "Primary_cells",
+      "sample_id": "EGAN00001070025",
+      "donor_id": "C0010K46",
+      "donor_age": "60-65",
+      "donor_health_status": "Healthy",
+      "donor_sex": "Female",
+      "donor_ethnicity": "Northern_European",
+      "cell_type": "CD14-positive, _CD16-negative_classical_monocyte",
+      "tissue_type": "Venous_blood",
+      "library_strategy": "DNAse-Seq",
+      "experiment_type": "Chromatin-_accessibility",
+      "experiment_id": "EGAX00001084791",
+      "alignment_software": "BWA",
+      "alignment_software_version": "0.5.9",
+      "analysis_software": "Hotspot",
+      "analysis_software_version": "v3",
+      "analysis_group": "EMBL-EBI"
     }
   },
 

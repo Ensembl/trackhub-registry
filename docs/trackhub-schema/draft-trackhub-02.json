@@ -85,6 +85,8 @@
         }
 
       },
+      
+      "additionalProperties": false,
 
       "required": [ "organism", "assembly" ]
     },
@@ -128,15 +130,15 @@
 	    "analysis_software": { "type": "string" },
 	    "analysis_software_version": { "type": "string" }
 	  },
-	  "additionalProperties": true
+
+	  "additionalProperties": false
 	}
       ]
     },
 
     "proteomics_track_data": {
       "allOf": [
-        { "$ref": "#/definitions/generic_track_data" },
-	{ "type": "string" }
+        { "$ref": "#/definitions/generic_track_data" }
       ]
     },
 

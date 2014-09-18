@@ -289,7 +289,7 @@
 	    "type": { 
 	      "type": "string", 
 
-	      "enum": [ "bigBed" ] 
+	      "enum": [ "bed", "bigBed" ] 
 	    }, 
 
 	    "standard_fields": {

@@ -1,0 +1,93 @@
+{
+  "data": {
+    "bpDnaseRegionsBP_BP_DG-75_d01DNaseHOTSPOT_peakEMBL-EBI": {},
+    "bpDnaseRegionsBP_BP_U-266_d01DNaseHOTSPOT_peakEMBL-EBI": {},
+    "bpDnaseRegionsBP_BP_DG-75_d01DNasewiggler_peakEMBL-EBI": {},
+    "bpDnaseRegionsBP_BP_U-266_d01DNasewiggler_peakEMBL-EBI": {}
+  },
+
+  "configuration": {
+    "bp": {
+      "container": "composite",
+
+      "shortLabel": "Blueprint",
+      "longLabel": "Blueprint",
+
+      "subgroups": [
+        {
+	  "tag": "experiment",
+	  "title": "Experiment",
+	  "membership": [
+	    { "tag": "DNase", "title": "DNase" }
+	  ],
+	  "dimension": 1,
+	  "sortOrder": "asc"
+	},
+        {
+	  "tag": "analysis_type",
+	  "title": "Analysis_type",
+	  "membership": [
+	    { "tag": "HOTSPOT_peak", "title": "HOTSPOT_peak" },
+	    { "tag": "wiggler", "title": "wiggler" }
+	  ],
+	  "dimension": 3,
+	  "sortOrder": "asc"
+	},
+        {
+	  "tag": "sample_description",
+	  "title": "Sample_description",
+	  "membership": [
+	    { "tag": "DG-75", "title": "DG-75" },
+	    { "tag": "U-266", "title": "U-266" }
+	  ],
+	  "dimension": 2,
+	  "sortOrder": "asc"
+	},
+        {
+	  "tag": "view",
+	  "title": "View",
+	  "membership": [
+	    { "tag": "Region", "title": "Region" },
+	    { "tag": "Signal", "title": "Signal" }
+	  ],
+	  "sortOrder": "asc"
+	},
+        {
+	  "tag": "analysis_group",
+	  "title": "Analysis_group",
+	  "membership": [
+	    { "tag": "EMBL-EBI", "title": "EMBL-EBI" }
+	  ],
+	  "dimension": 4,
+	  "sortOrder": "asc"
+	}
+      ],
+
+      "views": {
+        "regions": {
+	  "type": "bigBed",
+	  "shortLabel": "Blueprint Regions",
+	  "visibility": "dense",
+
+	  "subtracks": {
+	    "bpDnaseRegionsBP_BP_DG-75_d01DNaseHOTSPOT_peakEMBL-EBI": {
+	      "type": "bigBed",
+	      "standard_fields": 6,
+	      "non_standard_fields": false,
+	      "bigDataUrl": "http://.../BP_DG-75_d01.DNase.hotspot_v3.20130819.bb",
+	      "shortLabel": "DG-75.DNase.DG-75",
+	      "longLabel": "DG-75 DNase DG-75 peaks from NCMLS",
+	      "color": { "red": 8, "green": 104, "blue": 172 },
+	      "subgroups": [
+	        
+	      ]
+	    },
+	    "bpDnaseRegionsBP_BP_U-266_d01DNaseHOTSPOT_peakEMBL-EBI": {
+	      
+	    }
+	  }
+	}
+      }
+    }
+  }
+}

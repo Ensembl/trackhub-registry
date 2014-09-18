@@ -32,18 +32,13 @@
 
   "configuration": {
     "bpDnaseRegionsC0010K46DNaseEBI": {
-      "name": "bpDnaseRegionsC0010K46DNaseEBI",
       "shortLabel": "C0010K.DNase.Mono",
       "longLabel": "C0010K DNase monocytes peaks (EBI)",
       "bigDataUrl": "http://ftp.ebi.ac.uk/pub/databases/blueprint/data/homo_sapiens/Peripheral_blood/C0010K/Monocytes/DNase-Hypersensitivity//C0010K46.DNase.hotspot_v3_20130415.bb",
       "type": "bigBed",
       "standard_fields": 6,
       "non_standard_fields": false,
-      "color": {
-        "red": 8,
-	"green": 104,
-	"blue": 172
-      }
+      "color": { "red": 8, "green": 104, "blue": 172 }
     }
   }
 }

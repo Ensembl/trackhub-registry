@@ -772,7 +772,7 @@
 
 	      "patternProperties": {
                 "^[a-zA-z][a-zA-Z0-9_]+$": { "$ref": "#/definitions/composite_view" }
-      	      },
+      	      }
 	    }
 
 	  },
@@ -903,12 +903,11 @@
 	    },
 	    
 	    "subtracks": {
-	      "type": "array",
+	      "type": "object",
 
-	      "items": { "$ref": "#/definitions/composite_subtrack" },
-
-	      "minItems": 1,
-	      "uniqueItems": true
+	      "patternProperties": {
+                "^[a-zA-z][a-zA-Z0-9_]+$": { "$ref": "#/definitions/composite_subtrack" }
+      	      }
 	    }
 	    
 	  }

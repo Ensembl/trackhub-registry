@@ -106,12 +106,12 @@
 	    "lineage": { "type": "string" },
 	    "differentiation_stage": { "type": "string" },
 	    "medium": { "type": "string" },
-	    "sex": { "type": "string" },
+	    "sex": { "type": "string", "enum": [ "Female", "Male" ] },
 
 	    "donor_id": { "type": "string" },
 	    "donor_age": { "type": "integer", "minimum": 0, "exclusiveMinimum": false },
 	    "donor_health_status": { "type": "string" },
-	    "donor_sex": { "type": "string" },
+	    "donor_sex": { "type": "string", "enum": [ "Female", "Male" ] },
 	    "donor_ethnicity": { "type": "string" },
 
 	    "cell_type": { "type": "string" },

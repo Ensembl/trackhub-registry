@@ -1,9 +1,105 @@
 {
   "data": {
-    "bpDnaseRegionsBP_BP_DG-75_d01DNaseHOTSPOT_peakEMBL-EBI": {},
-    "bpDnaseRegionsBP_BP_U-266_d01DNaseHOTSPOT_peakEMBL-EBI": {},
-    "bpDnaseRegionsBP_BP_DG-75_d01DNasewiggler_peakEMBL-EBI": {},
-    "bpDnaseRegionsBP_BP_U-266_d01DNasewiggler_peakEMBL-EBI": {}
+    "bpDnaseRegionsBP_BP_DG-75_d01DNaseHOTSPOT_peakEMBL-EBI": {
+      "organism": { "taxid": 9606, "scientific_name": "Homo sapiens" },
+      "assembly": "GCA_000001405.15",
+
+      "molecule": "genomic_DNA",
+      "disease": "None",
+      "biomaterial_type": "Primary_cells",
+      "sample_id": "EGAN00001070025",
+      "donor_id": "C0010K46",
+      "donor_age": "60-65",
+      "donor_health_status": "Healthy",
+      "donor_sex": "Female",
+      "donor_ethnicity": "Northern_European",
+      "cell_type": "CD14-positive, _CD16-negative_classical_monocyte",
+      "tissue_type": "Venous_blood",
+      "library_strategy": "DNAse-Seq",
+      "experiment_type": "Chromatin-_accessibility",
+      "experiment_id": "EGAX00001084791",
+      "alignment_software": "BWA",
+      "alignment_software_version": "0.5.9",
+      "analysis_software": "Hotspot",
+      "analysis_software_version": "v3",
+      "analysis_group": "EMBL-EBI"
+    },
+
+    "bpDnaseRegionsBP_BP_U-266_d01DNaseHOTSPOT_peakEMBL-EBI": {
+      "organism": { "taxid": 9606, "scientific_name": "Homo sapiens" },
+      "assembly": "GCA_000001405.15",
+
+      "line": "BL-2",
+      "differentiation_stage": "B_cell",
+      "medium": "RPMI_1640_+_10%FBS_+_1%_Glutamine",
+      "sex": "Male",
+      "molecule": "genomic_DNA",
+      "disease": "Sporadic_Burkitt_lymphoma",
+      "disease_ontology_uri": "http://ncimeta.nci.nih.gov/ncibrowser/ConceptReport.jsp?dictionary=NCI%20MetaThesaurus&amp;code=C1336077",
+      "biomaterial_type": "Cell_line",
+      "sample_ontology_uri": "http://www.ebi.ac.uk/efo/EFO_0001639",
+      "sample_id": "ERS333897",
+      "library_strategy": "DNAse-Seq",
+      "experiment_type": "H3K27ac",
+      "experiment_id": "EGAX00001084792",
+      "alignment_software": "BWA",
+      "alignment_software_version": "0.5.9",
+      "analysis_software": "Hotspot",
+      "analysis_software_version": "v3",
+      "analysis_group": "EMBL-EBI"
+    },
+
+    "bpDnaseRegionsBP_BP_DG-75_d01DNasewiggler_peakEMBL-EBI": {
+      "organism": { "taxid": 9606, "scientific_name": "Homo sapiens" },
+      "assembly": "GCA_000001405.15",
+
+      "molecule": "genomic_DNA",
+      "disease": "None",
+      "biomaterial_type": "Primary_tissue",
+      "sample_id": "EGAN00001070027",
+      "donor_id": "C0010K46",
+      "donor_age": "60-65",
+      "donor_health_status": "Healthy",
+      "donor_sex": "Female",
+      "donor_ethnicity": "Northern_European",
+      "tissue_type": "Venous_blood",
+      "tissue_depot": "median_cubital_vein",
+      "library_strategy": "DNAse-Seq",
+      "experiment_type": "Chromatin-_accessibility",
+      "experiment_id": "EGAX00001084792",
+      "alignment_software": "BWA",
+      "alignment_software_version": "0.5.9",
+      "analysis_software": "Hotspot",
+      "analysis_software_version": "v3",
+      "analysis_group": "EMBL-EBI",
+      "sample_ontology_uri": "http://purl.obolibrary.org/obo/CL_0000775"
+    },
+
+    "bpDnaseRegionsBP_BP_U-266_d01DNasewiggler_peakEMBL-EBI": {
+      "organism": { "taxid": 9606, "scientific_name": "Homo sapiens" },
+      "assembly": "GCA_000001405.15",
+
+      "molecule": "genomic_DNA",
+      "disease": "None",
+      "biomaterial_type": "Primary_Cell_Culture",
+      "cell_type": "macrophage",
+      "sample_id": "EGAN00001070028",
+      "donor_id": "C0010K46",
+      "donor_age": "60-65",
+      "donor_health_status": "Healthy",
+      "donor_sex": "Female",
+      "donor_ethnicity": "Northern_European",
+      "culture_conditions": "http://www.blueprint-epigenome.eu/UserFiles/file/Protocols/UCAM_BluePrint_Macrophage.pdf",
+      "library_strategy": "DNAse-Seq",
+      "experiment_type": "Chromatin-_accessibility",
+      "experiment_id": "EGAX00001084792",
+      "alignment_software": "BWA",
+      "alignment_software_version": "0.5.9",
+      "analysis_software": "Hotspot",
+      "analysis_software_version": "v3",
+      "analysis_group": "EMBL-EBI",
+      "sample_ontology_uri": "http://purl.obolibrary.org/obo/CL_0000235"
+    }
   },
 
   "configuration": {

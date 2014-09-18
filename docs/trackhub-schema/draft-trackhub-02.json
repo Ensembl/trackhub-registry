@@ -165,12 +165,6 @@
       "description": "Contains display and configuration properties common to all track types.",
 
       "properties": {
-        "name": { 
-	  "title": "Symbolic track name",
-	  "description": "If data/metadata is defined for the track, this name must appear as an index to access the track data definition attributes in the trackhub data object.",
- 
-	  "$ref": "#/definitions/name" 
-	},
 
 	"shortLabel": { "$ref": "#/definitions/shortLabel" },
 
@@ -275,7 +269,7 @@
 	}
       },
 
-      "required": [ "name", "shortLabel", "longLabel", "visibility" ]
+      "required": [ "shortLabel", "longLabel", "visibility" ]
     },
 
    "bigBed_track": {
@@ -959,15 +953,6 @@
       ]
     },
     
-    "name": {
-      "type": "string",
-      
-      "title": "The symbolic name of the track",
-      "definition": "This is the name of the dataset and must be unique within the data hub.",
-
-      "pattern": "^[a-zA-z][a-zA-Z0-9_]+$"
-    },
-
     "shortLabel": {
       "type": "string",
 

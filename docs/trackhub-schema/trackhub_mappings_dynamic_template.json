@@ -1,0 +1,16 @@
+{
+  "trackhub": {
+    "dynamic_templates": [
+      {
+        "template1": {
+	  "path_match": "data.*.*",
+	  "match_mapping_type" : "string",
+	  "mapping": {
+	    "type": "string",
+	    "index": "analyzed"
+	  }
+	}
+      }
+    ]
+  }
+}

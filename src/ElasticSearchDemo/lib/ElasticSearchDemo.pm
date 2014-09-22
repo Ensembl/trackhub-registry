@@ -36,10 +36,16 @@ our $VERSION = '0.01';
 # local deployment.
 
 __PACKAGE__->config(
-    name => 'ElasticSearchDemo',
-    # Disable deprecated behavior needed by old applications
-    disable_component_resolution_regex_fallback => 1,
-    enable_catalyst_header => 1, # Send X-Catalyst header
+		    name => 'ElasticSearchDemo',
+		    # Disable deprecated behavior needed by old applications
+		    disable_component_resolution_regex_fallback => 1,
+		    enable_catalyst_header => 1, # Send X-Catalyst header
+		    'Model::Search' => 
+		    {
+		     nodes           => 'localhost:9200',
+		     request_timeout => 30,
+		     max_requests    => 10_000
+		    }
 );
 
 # Start the application

@@ -101,6 +101,36 @@ has '_additional_opts' => (
 
 The L<Search::Elasticsearch|Search::Elasticsearch> object.
 
+- NOTE: 
+  This is not true!
+  The Search::Elasticsearch constrctor returns an instance
+  of Search::Elasticsearch::Client::Direct.
+  The list of methods assigned to handles is incomplete and/or
+  wrong, as there are missing methods and methods which
+  this oject does not provide.
+
+From: https://metacpan.org/pod/Search::Elasticsearch#Bulk-methods-and-scrolled_search
+
+Bulk indexing has changed a lot in the new client. The helper methods, eg bulk_index() and reindex() have been removed from the main client, and the bulk() method itself now simply returns the response from Elasticsearch. It doesn't interfere with processing at all.
+
+These helper methods have been replaced by the Search::Elasticsearch::Bulk class. Similarly, scrolled_search() has been replaced by the Search::Elasticsearch::Scroll. These helper classes are accessible as:
+$bulk   = $e->bulk_helper( %args_to_new );
+$scroll = $e->scroll_helper( %args_to_new );
+
+==> 
+ - remove bulk_(index|create|delete) and reindex
+ - add bulk_helper, scroll_helper
+ - remove searchqs, scrolled_search (not supported)
+ - add indices (returns Search::Elasticsearch::Client::Indices
+ - add cluster (returns Search::Elasticsearch::Client::Cluster)
+ - other?
+
+Given the method returns a Search::Elasticsearch::Client::Direct it's better
+to look at what it now supports.
+
+See https://metacpan.org/pod/Search::Elasticsearch::Client::Direct for a list of methods
+grouped according to category
+
 =cut
 
 has '_es' => (
@@ -111,8 +141,8 @@ has '_es' => (
   handles  => {
     map { $_ => $_ }
       qw(
-      search searchqs scrolled_search count index get mget create delete reindex
-      bulk bulk_index bulk_create bulk_delete
+      search scrolled_search count index get mget create delete
+      bulk bulk_helper scroll_helper indices
       )
   },
 );
@@ -132,6 +162,8 @@ around BUILDARGS => sub {
   my $class  = shift;
 
   my $params = $class->$orig(@_);
+  # NOTE: also update this: other stuff deprecated?
+  # See https://metacpan.org/pod/Search::Elasticsearch#MIGRATING-FROM-ElasticSearch.pm
   if (defined $params->{servers}) {
     warn("Passing 'servers' is deprecated, use 'nodes' now");
     $params->{nodes} = delete $params->{servers};

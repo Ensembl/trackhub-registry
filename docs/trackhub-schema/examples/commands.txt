@@ -1,0 +1,20 @@
+# create the index
+curl 'http://localhost:9200/test' -XPUT
+
+# delete the index
+curl 'http://localhost:9200/test' -XDELETE
+
+# create the mapping
+curl 'http://localhost:9200/test/trackhub/_mapping' -XPUT -d @trackhub_mappings.json
+
+# query the mapping
+curl 'http://localhost:9200/test/trackhub/_mapping?pretty=1' -XGET
+
+# put one document
+curl http://localhost:9200/test/trackhub/1 -XPUT -d @blueprint1.json
+
+# put the second document
+curl http://localhost:9200/test/trackhub/2 -XPUT -d @blueprint2.json
+
+# a sample query
+curl -XGET http://localhost:9200/test/trackhub/_search?q=alignment_software:bwa

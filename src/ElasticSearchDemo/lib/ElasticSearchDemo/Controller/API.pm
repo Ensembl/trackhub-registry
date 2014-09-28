@@ -35,6 +35,7 @@ Catalyst Controller.
 sub index :Path :Args(0) {
   my ( $self, $c ) = @_;
 
+  #########################################################################
   # # Get the username and password from form
   # my $username = $c->request->params->{username} || "";
   # my $password = $c->request->params->{password} || "";
@@ -55,16 +56,38 @@ sub index :Path :Args(0) {
     
   # # If either of above don't work out, send to the login page
   # $c->stash->{template} = 'login.tt';
+  #########################################################################
 
   # # $c->response->body('Matched ElasticSearchDemo::Controller::API in API.');
 
+  #
   # Abort request, as there's nothing available at the moment
-  $c->detach('error', [404, 'No resource available']);
+  #
+  # comment if you want to just proceed to the end method
+  # and generate an empty successful response
+  #
+  my $username = $c->request->params->{username} || "";
+  my $password = $c->request->params->{password} || "";
+  if ($username && $password) {
+    # Attempt to authenticate the user
+    if ($c->authenticate({ username => $username,
+                           password => $password} )) {
+      # return welcome message
+      $c->stash->{data} = { msg => "Welcome user $username" };
+      return;
+    } else {
+      # Set an error message
+      $c->detach('error', [ 401, 'Unauthorized' ]);
+    }
+  } 
+
+  $c->detach('error', [401, 'Please specify username/password credentials']);
 }
 
 # end action is always called at the end of the route
 sub end :Private {
   my ( $self, $c ) = @_;
+
   # Render the stash using our JSON view
   $c->forward($c->view('JSON'));
 }

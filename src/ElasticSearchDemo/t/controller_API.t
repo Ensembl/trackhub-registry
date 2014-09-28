@@ -2,6 +2,7 @@ use strict;
 use warnings;
 use Test::More;
 use Data::Dumper;
+use JSON;
 
 BEGIN {
   use FindBin qw/$Bin/;
@@ -19,8 +20,30 @@ use ElasticSearchDemo::Controller::API;
 #  _headers
 #  _msg
 #  _request
-# 
-ok( !request('/api')->is_success, 'Request should not succeed' );
+#
+#
+# TODO: check status codes
+#
+my $response = request('/api');
+ok( !$response->is_success, 'Request with no credentials should not succeed' );
+
+my $content = from_json($response->content); 
+is( $content->{data}{error}, "Please specify username/password credentials", "Error response: no credentials");
+
+$response = request('/api?username=pippo;password=pluto');
+ok( !$response->is_success, 'Request with incorrect credentials should not succeed' );
+$content = from_json($response->content); 
+is( $content->{data}{error}, "Unauthorized", "Unsuccessful authentication message");
+
+$response = request('/api?username=test;password=test');
+ok( $response->is_success, 'Request with correct credentials should succeed' );
+$content = from_json($response->content); 
+is( $content->{data}{msg}, "Welcome user test", "Successful authentication message");
+
+
+# this one gets the JSON string
+# $response = get '/api';
+# print ref $response, "\n";
 
 # ##########
 # # Test initial gift list includes all the gifts
@@ -40,6 +63,6 @@ ok( !request('/api')->is_success, 'Request should not succeed' );
 
 # my $response = get '/api';
 # print $response;
-# print Dumper(request('/api'));
+# print Dumper(request('/api')), "\n\n";
 
 done_testing();

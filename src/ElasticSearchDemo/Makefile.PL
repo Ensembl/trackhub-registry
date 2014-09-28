@@ -19,6 +19,7 @@ requires 'Config::General'; # This should reflect the config file format you've 
                  # See Catalyst::Plugin::ConfigLoader for supported formats
 
 requires 'Search::Elasticsearch';
+# requires 'Catalyst::Authentication::Credential::HTTP';
 
 test_requires 'Test::More' => '0.88';
 catalyst;

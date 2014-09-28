@@ -20,6 +20,10 @@ use Catalyst qw/
     -Debug
     ConfigLoader
     Static::Simple
+
+    StackTrace
+
+    Authentication
 /;
 
 extends 'Catalyst';
@@ -45,7 +49,52 @@ __PACKAGE__->config(
 		     nodes           => 'localhost:9200',
 		     request_timeout => 30,
 		     max_requests    => 10_000
-		    }
+		    },
+		    # Auth with Password credential and Minimal store
+		    'Plugin::Authentication' => 
+		    {
+		     default_realm => 'example',
+		     realms => 
+		     {
+		      example => 
+		      {
+		       credential => 
+		       {
+		    	class => 'Password',
+		    	password_type  => 'clear',
+		    	password_field => 'password'
+		       },
+		       store => 
+		       {
+		    	class => 'Minimal',
+		    	users => { test => { password => "test", } },
+		       },
+		      },
+		     }
+		   },
+		   # Auth with HTTP (basic or digest) credential and Minimal store
+		    # authentication => 
+		    # {
+		    #  default_realm => 'example',
+		    #  realms => 
+		    #  {
+		    #   example => 
+		    #   {
+		    #    credential => 
+		    #    {
+		    # 	class => 'HTTP',
+		    # 	type  => 'any', # or 'digest' or 'basic'
+		    # 	password_type  => 'clear',
+		    # 	password_field => 'password'
+		    #    },
+		    #    store => 
+		    #    {
+		    # 	class => 'Minimal',
+		    # 	users => { test => { password => "test", } },
+		    #    },
+		    #   },
+		    #  }
+		    # }
 );
 
 # Start the application

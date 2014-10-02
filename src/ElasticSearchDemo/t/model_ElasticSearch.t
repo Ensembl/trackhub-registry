@@ -1,0 +1,116 @@
+use strict;
+use warnings;
+use Test::More;
+
+BEGIN {
+  use FindBin qw/$Bin/;
+  use lib "$Bin/../lib";
+}
+
+use LWP;
+use JSON;
+use Data::Dumper;
+
+use_ok 'ElasticSearchDemo::Model::ElasticSearch';
+
+my $es = ElasticSearchDemo::Model::ElasticSearch->new();
+
+isa_ok($es, 'ElasticSearchDemo::Model::ElasticSearch');
+is($es->nodes, 'localhost:9200', 'Correct default nodes');
+
+
+my $es = ElasticSearchDemo::Model::ElasticSearch->new();
+isa_ok($es, 'ElasticSearchDemo::Model::ElasticSearch');
+is($es->nodes, 'localhost:9200', 'Correct default nodes');
+
+SKIP: {
+  skip "Launch an elasticsearch instance for the tests to run fully",
+    1 unless get('http://localhost:9200')->is_success;
+
+  #
+  # create the index (test)
+  #
+  my ($index, $type) = ('test', 'trackhub');
+  
+  #
+  # delete the index if it exists
+  #
+  eval {
+    $es->indices->delete(index => $index) and note "Deleting index $index\n"
+      if $es->indices->exists(index => $index);
+  };
+    
+  # recreate the index
+  note "Creating index $index. ";
+  $es->indices->create(index => $index); # , type => 'trackhub', body => {});
+  
+  #
+  # create the mapping (trackhub)
+  #
+  my $mapping_json = from_json(&slurp_file('trackhub_mappings.json'));
+  
+  note "Creating trackhub mapping. ";
+  $es->indices->put_mapping(index => $index,
+			    type  => $type,
+			    body  => $mapping_json);
+  
+  #
+  # add example trackhub documents
+  #
+  # NOTE
+  # Adding version *.1 as in original
+  # search doesn't work as it's not indexing
+  # the fields
+  #
+  my $id = 1;
+  my $bp = 'blueprint1.1.json';
+  note "Indexing document $bp. ";
+  $es->index(index   => $index,
+	     type    => $type,
+	     id      => $id++,
+	     body    => from_json(&slurp_file($bp)));
+	     
+  $bp = 'blueprint2.1.json';
+  note "Indexing document $bp. ";
+  $es->index(index   => $index,
+	     type    => $type,
+	     id      => $id++,
+	     body    => from_json(&slurp_file($bp)));
+
+  # The refresh() method refreshes the specified indices (or all indices), 
+  # allowing recent changes to become visible to search. 
+  # This process normally happens automatically once every second by default.
+
+  # NOTE: doesn't work, search cannot find anything
+  # $es->indices->refresh(index => $index);
+}
+
+done_testing();
+
+sub slurp_file {
+  my $file = shift;
+
+  my $string;
+  {
+    local $/=undef;
+    open FILE, "<$file" or die "Couldn't open file: $!";
+    $string = <FILE>;
+    close FILE;
+  }
+  
+  return $string;
+}
+
+sub get {
+  my ($href) = @_;
+
+  my $req = HTTP::Request->new( GET => $href );
+
+  my $ua = LWP::UserAgent->new;
+  my $response = $ua->request($req);
+
+  return $response;
+  # my @ret = ( $response->message, $response->code);
+
+  # return wantarray ? @ret : \@ret;  
+}

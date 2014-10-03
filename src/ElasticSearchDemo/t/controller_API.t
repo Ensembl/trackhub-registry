@@ -13,32 +13,34 @@ use HTTP::Request::Common;
 use Catalyst::Test 'ElasticSearchDemo';
 use ElasticSearchDemo::Controller::API;
 
-# request return is HTTP::Response object
-# Attributes:
-#  _content
-#  _rc
-#  _headers
-#  _msg
-#  _request
-#
-#
-# TODO: check status codes
-#
-my $response = request('/api');
-ok( !$response->is_success, 'Request with no credentials should not succeed' );
+my $response = request('/api/list');
+print Dumper($response);
 
-my $content = from_json($response->content); 
-is( $content->{data}{error}, "Please specify username/password credentials", "Error response: no credentials");
+# #
+# # TODO: check status codes
+# #
+# # request subroutine return is HTTP::Response object with attribs:
+# #  _content
+# #  _rc
+# #  _headers
+# #  _msg
+# #  _request
+# #
+# my $response = request('/api');
+# ok( !$response->is_success, 'Request with no credentials should not succeed' );
 
-$response = request('/api?username=pippo;password=pluto');
-ok( !$response->is_success, 'Request with incorrect credentials should not succeed' );
-$content = from_json($response->content); 
-is( $content->{data}{error}, "Unauthorized", "Unsuccessful authentication message");
+# my $content = from_json($response->content); 
+# is( $content->{data}{error}, "Please specify username/password credentials", "Error response: no credentials");
 
-$response = request('/api?username=test;password=test');
-ok( $response->is_success, 'Request with correct credentials should succeed' );
-$content = from_json($response->content); 
-is( $content->{data}{msg}, "Welcome user test", "Successful authentication message");
+# $response = request('/api?username=pippo;password=pluto');
+# ok( !$response->is_success, 'Request with incorrect credentials should not succeed' );
+# $content = from_json($response->content); 
+# is( $content->{data}{error}, "Unauthorized", "Unsuccessful authentication message");
+
+# $response = request('/api?username=test;password=test');
+# ok( $response->is_success, 'Request with correct credentials should succeed' );
+# $content = from_json($response->content); 
+# is( $content->{data}{msg}, "Welcome user test", "Successful authentication message");
 
 
 # this one gets the JSON string

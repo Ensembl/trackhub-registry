@@ -18,14 +18,9 @@ my $es = ElasticSearchDemo::Model::ElasticSearch->new();
 isa_ok($es, 'ElasticSearchDemo::Model::ElasticSearch');
 is($es->nodes, 'localhost:9200', 'Correct default nodes');
 
-
-my $es = ElasticSearchDemo::Model::ElasticSearch->new();
-isa_ok($es, 'ElasticSearchDemo::Model::ElasticSearch');
-is($es->nodes, 'localhost:9200', 'Correct default nodes');
-
 SKIP: {
   skip "Launch an elasticsearch instance for the tests to run fully",
-    1 unless get('http://localhost:9200')->is_success;
+    2 unless get('http://localhost:9200')->is_success;
 
   #
   # create the index (test)
@@ -35,14 +30,13 @@ SKIP: {
   #
   # delete the index if it exists
   #
-  eval {
-    $es->indices->delete(index => $index) and note "Deleting index $index\n"
-      if $es->indices->exists(index => $index);
-  };
+  $es->indices->delete(index => $index) and note "Deleting index $index\n"
+    if $es->indices->exists(index => $index);
     
   # recreate the index
   note "Creating index $index. ";
-  $es->indices->create(index => $index); # , type => 'trackhub', body => {});
+  $es->indices->create(index => $index); 
+  ok($es->indices->exists(index => $index), "Index created");
   
   #
   # create the mapping (trackhub)
@@ -53,12 +47,15 @@ SKIP: {
   $es->indices->put_mapping(index => $index,
 			    type  => $type,
 			    body  => $mapping_json);
-  
+  $mapping_json = $es->indices->get_mapping(index => $index,
+					    type  => $type);
+  ok(exists $mapping_json->{$index}{mappings}{$type}, "Mapping created");
+
   #
   # add example trackhub documents
   #
   # NOTE
-  # Adding version *.1 as in original
+  # Adding version [1-2].1 as in original [1-2]
   # search doesn't work as it's not indexing
   # the fields
   #

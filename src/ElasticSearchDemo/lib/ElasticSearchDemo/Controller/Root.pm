@@ -110,18 +110,6 @@ sub search : Chained('/') :PathPart('search') :Args(2) {
 
 }
 
-=head2 search_form
-
-Display form to perform full text query on all metadata fields
-
-=cut 
-
-sub search_form :Chained('/') :PathPart('search_form') :Args(0) {
-  my ($self, $c) = @_;
-
-
-} 
-
 =head1 AUTHOR
 
 Alessandro,,,

@@ -32,11 +32,11 @@ SKIP: {
   #
   # delete the index if it exists
   #
-  $es->indices->delete(index => $index) and note "Deleting index $index\n"
+  $es->indices->delete(index => $index) and note "Deleting index $index"
     if $es->indices->exists(index => $index);
     
   # recreate the index
-  note "Creating index $index. ";
+  note "Creating index $index";
   $es->indices->create(index => $index); 
   ok($es->indices->exists(index => $index), "Index created");
   
@@ -45,7 +45,7 @@ SKIP: {
   #
   my $mapping_json = from_json(&slurp_file("$Bin/trackhub_mappings.json"));
   
-  note "Creating trackhub mapping. ";
+  note "Creating trackhub mapping";
   $es->indices->put_mapping(index => $index,
 			    type  => $type,
 			    body  => $mapping_json);
@@ -63,14 +63,14 @@ SKIP: {
   #
   my $id = 1;
   my $bp = "$Bin/blueprint1.1.json";
-  note "Indexing document $bp. ";
+  note "Indexing document $bp";
   $es->index(index   => $index,
 	     type    => $type,
 	     id      => $id++,
 	     body    => from_json(&slurp_file($bp)));
 	     
   $bp = "$Bin/blueprint2.1.json";
-  note "Indexing document $bp. ";
+  note "Indexing document $bp";
   $es->index(index   => $index,
 	     type    => $type,
 	     id      => $id++,
@@ -85,7 +85,9 @@ SKIP: {
   #
   # Test getting all documents
   #
-  my $docs = $es->get_all_docs();
+  # no args default to get all docs
+  #
+  my $docs = $es->query();
   is(scalar @{$docs->{hits}{hits}}, 2, "Doc counts when requesting all documents match");
 
 }

@@ -13,12 +13,22 @@ use Moose;
 use namespace::autoclean;
 extends 'Catalyst::Model::ElasticSearch';
 
-sub get_all_docs {
-  my ($self, $index, $type) = @_;
+#
+# Get documents according to a given query
+#
+# Param is query parameters, default: return all docs
+#
+sub query {
+  my ($self, %args) = @_;
+  
+  $args{index} ||= 'test';
+  $args{type} ||= 'trackhub';
+  $args{query} = { match_all => {} }
+    unless exists $args{query};
+  $args{body} = { query => $args{query} };
+  delete $args{query};
 
-  return $self->_es->search(index => $index,
-			    type  => $type,
-			    body  => { query => { match_all => {} } });
+  return $self->_es->search(%args);
 }
 
 __PACKAGE__->meta->make_immutable;

@@ -13,6 +13,15 @@ requires 'Catalyst::Runtime' => '5.90071';
 requires 'Catalyst::Plugin::ConfigLoader';
 requires 'Catalyst::Plugin::Static::Simple';
 requires 'Catalyst::Action::RenderView';
+
+# for session handlng, as per
+# http://www.catalystframework.org/calendar/2007/5
+requires 'Catalyst::Plugin::Authentication';
+requires 'Catalyst::Plugin::Session';
+requires 'Catalyst::Plugin::Session::State::Cookie';
+requires 'Catalyst::Plugin::Session::Store::FastMmap';
+# requires 'Catalyst::Plugin::Session::Store::Minimal';
+
 requires 'Moose';
 requires 'namespace::autoclean';
 requires 'Config::General'; # This should reflect the config file format you've chosen

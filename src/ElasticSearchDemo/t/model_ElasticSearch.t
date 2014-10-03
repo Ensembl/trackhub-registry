@@ -79,7 +79,7 @@ SKIP: {
   # The refresh() method refreshes the specified indices (or all indices), 
   # allowing recent changes to become visible to search. 
   # This process normally happens automatically once every second by default.
-  note "flushing recent changes";
+  note "Flushing recent changes";
   $es->indices->refresh(index => $index);
 
   #

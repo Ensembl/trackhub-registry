@@ -1,6 +1,7 @@
 use strict;
 use warnings;
 use Test::More;
+use Test::Exception;
 
 BEGIN {
   use FindBin qw/$Bin/;
@@ -20,7 +21,7 @@ is($es->nodes, 'localhost:9200', 'Correct default nodes');
 
 SKIP: {
   skip "Launch an elasticsearch instance for the tests to run fully",
-    2 unless get('http://localhost:9200')->is_success;
+    8 unless get('http://localhost:9200')->is_success;
 
   my $es = ElasticSearchDemo::Model::ElasticSearch->new();
 
@@ -90,6 +91,32 @@ SKIP: {
   my $docs = $es->query();
   is(scalar @{$docs->{hits}{hits}}, 2, "Doc counts when requesting all documents match");
 
+  #
+  # Test getting documents by IDs
+  #
+  # TODO
+  # missing args throws exception
+  my %args;   
+  throws_ok { $es->find(%args) }
+    qr/Missing/, "Find doc without required arguments";
+  $args{index} = 'test';
+  $args{id} = 1;
+  throws_ok { $es->find(%args) }
+    qr/Missing/, "Find doc without required arguments";
+
+  $args{id} = 1;
+  $args{type} = 'trackhub';
+  my $doc = $es->find(%args);
+  is($doc->{data}[0]{name}, "bpDnaseRegionsC0010K46DNaseEBI", "Fetched correct document");
+  
+  $args{id} = 2;
+  $doc = $es->find(%args);
+  is(scalar @{$doc->{data}}, 4, "Fetched correct document");
+
+  # request for non-existant doc throws exception
+  $args{id} = 3;
+  throws_ok { $es->find(%args) }
+    qr/Missing/, "Request document by incorrect ID"
 }
 
 done_testing();

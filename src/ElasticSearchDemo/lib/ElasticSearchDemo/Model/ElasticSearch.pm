@@ -9,6 +9,8 @@ package ElasticSearchDemo::Model::ElasticSearch;
 # model, considering Catalyst::Model::ElasticSearch is meant to be a 
 # minimalistic wrapper around the official Search::Elasticsearch API
 #
+
+use Carp;
 use Moose;
 use namespace::autoclean;
 extends 'Catalyst::Model::ElasticSearch';
@@ -21,14 +23,24 @@ extends 'Catalyst::Model::ElasticSearch';
 sub query {
   my ($self, %args) = @_;
   
-  $args{index} ||= 'test';
-  $args{type} ||= 'trackhub';
   $args{query} = { match_all => {} }
     unless exists $args{query};
   $args{body} = { query => $args{query} };
   delete $args{query};
 
   return $self->_es->search(%args);
+}
+
+#
+# Return a document given its ID
+#
+sub find {
+  my ($self, %args) = @_;
+
+  croak "Missing required index|type|id parameters"
+    unless exists $args{index} and exists $args{type} and exists $args{id};
+
+  return $self->_es->get_source(%args);
 }
 
 __PACKAGE__->meta->make_immutable;

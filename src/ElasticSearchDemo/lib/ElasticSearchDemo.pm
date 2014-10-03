@@ -16,6 +16,9 @@ use Catalyst::Runtime 5.80;
 # Static::Simple: will serve static files from the application's root
 #                 directory
 
+    # Session
+    # Session::State::Cookie
+    # Session::Store::FastMmap
 use Catalyst qw/
     -Debug
     ConfigLoader
@@ -26,6 +29,7 @@ use Catalyst qw/
     Authentication
 /;
 
+    
 extends 'Catalyst';
 
 our $VERSION = '0.01';
@@ -44,36 +48,21 @@ __PACKAGE__->config(
 		    # Disable deprecated behavior needed by old applications
 		    disable_component_resolution_regex_fallback => 1,
 		    enable_catalyst_header => 1, # Send X-Catalyst header
+		    'Plugin::ConfigLoader' => #Allow key = [val] to become an array
+		    { 
+		     driver => { General => {-ForceArray => 1}, },
+		    },
+		    # the model (to index and search)
 		    'Model::Search' => 
 		    {
 		     nodes           => 'localhost:9200',
 		     request_timeout => 30,
 		     max_requests    => 10_000
 		    },
-		    # Auth with Password credential and Minimal store
-		    'Plugin::Authentication' => 
-		    {
-		     default_realm => 'example',
-		     realms => 
-		     {
-		      example => 
-		      {
-		       credential => 
-		       {
-		    	class => 'Password',
-		    	password_type  => 'clear',
-		    	password_field => 'password'
-		       },
-		       store => 
-		       {
-		    	class => 'Minimal',
-		    	users => { test => { password => "test", } },
-		       },
-		      },
-		     }
-		   },
-		   # Auth with HTTP (basic or digest) credential and Minimal store
-		    # authentication => 
+		    
+		    # API authentication
+		    # Auth with HTTP (basic or digest) credential and Minimal store
+		    # 'Plugin::Authentication' => 
 		    # {
 		    #  default_realm => 'example',
 		    #  realms => 
@@ -83,7 +72,7 @@ __PACKAGE__->config(
 		    #    credential => 
 		    #    {
 		    # 	class => 'HTTP',
-		    # 	type  => 'any', # or 'digest' or 'basic'
+		    # 	type  => 'basic', # 'digest'|'basic|'any'
 		    # 	password_type  => 'clear',
 		    # 	password_field => 'password'
 		    #    },
@@ -94,8 +83,30 @@ __PACKAGE__->config(
 		    #    },
 		    #   },
 		    #  }
-		    # }
-);
+		    # },
+		    # Auth with Password credential and Minimal store
+		     'Plugin::Authentication' => 
+		     {
+		      default_realm => 'example',
+		      realms => 
+		      {
+		       example => 
+		       {
+		        credential => 
+		        {
+		     	class => 'Password',
+		     	password_type  => 'clear',
+		     	password_field => 'password'
+		        },
+		        store => 
+		        {
+		     	class => 'Minimal',
+		     	users => { test => { password => "test", } },
+		        },
+		       },
+		      }
+		    },
+		   );
 
 # Start the application
 __PACKAGE__->setup();

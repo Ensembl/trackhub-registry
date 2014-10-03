@@ -12,6 +12,8 @@ use LWP;
 use JSON;
 use Data::Dumper;
 
+use ElasticSearchDemo::Utils; # slurp_file
+
 use_ok 'ElasticSearchDemo::Model::ElasticSearch';
 
 my $es = ElasticSearchDemo::Model::ElasticSearch->new();
@@ -44,7 +46,7 @@ SKIP: {
   #
   # create the mapping (trackhub)
   #
-  my $mapping_json = from_json(&slurp_file("$Bin/trackhub_mappings.json"));
+  my $mapping_json = from_json(&ElasticSearchDemo::Utils::slurp_file("$Bin/trackhub_mappings.json"));
   
   note "Creating trackhub mapping";
   $es->indices->put_mapping(index => $index,
@@ -68,14 +70,14 @@ SKIP: {
   $es->index(index   => $index,
 	     type    => $type,
 	     id      => $id++,
-	     body    => from_json(&slurp_file($bp)));
+	     body    => from_json(&ElasticSearchDemo::Utils::slurp_file($bp)));
 	     
   $bp = "$Bin/blueprint2.1.json";
   note "Indexing document $bp";
   $es->index(index   => $index,
 	     type    => $type,
 	     id      => $id++,
-	     body    => from_json(&slurp_file($bp)));
+	     body    => from_json(&ElasticSearchDemo::Utils::slurp_file($bp)));
 
   # The refresh() method refreshes the specified indices (or all indices), 
   # allowing recent changes to become visible to search. 
@@ -121,19 +123,6 @@ SKIP: {
 
 done_testing();
 
-sub slurp_file {
-  my $file = shift;
-
-  my $string;
-  {
-    local $/=undef;
-    open FILE, "<$file" or die "Couldn't open file: $!";
-    $string = <FILE>;
-    close FILE;
-  }
-  
-  return $string;
-}
 
 sub get {
   my ($href) = @_;
@@ -144,7 +133,4 @@ sub get {
   my $response = $ua->request($req);
 
   return $response;
-  # my @ret = ( $response->message, $response->code);
-
-  # return wantarray ? @ret : \@ret;  
 }

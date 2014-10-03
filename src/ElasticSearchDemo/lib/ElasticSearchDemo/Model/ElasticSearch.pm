@@ -34,6 +34,8 @@ sub query {
 #
 # Return a document given its ID
 #
+# Params (required): index, type, id
+#
 sub find {
   my ($self, %args) = @_;
 

@@ -94,26 +94,26 @@ SKIP: {
   #
   # Test getting documents by IDs
   #
-  # TODO
   # missing args throws exception
   my %args;   
   throws_ok { $es->find(%args) }
-    qr/Missing/, "Find doc without required arguments";
+    qr/Missing/, "Fetch doc without required arguments";
   $args{index} = 'test';
   $args{id} = 1;
   throws_ok { $es->find(%args) }
-    qr/Missing/, "Find doc without required arguments";
+    qr/Missing/, "Fetch doc without required arguments";
 
+  # getting existing documents
   $args{id} = 1;
   $args{type} = 'trackhub';
   my $doc = $es->find(%args);
-  is($doc->{data}[0]{name}, "bpDnaseRegionsC0010K46DNaseEBI", "Fetched correct document");
+  is($doc->{data}[0]{name}, "bpDnaseRegionsC0010K46DNaseEBI", "Fetch correct document");
   
   $args{id} = 2;
   $doc = $es->find(%args);
-  is(scalar @{$doc->{data}}, 4, "Fetched correct document");
+  is(scalar @{$doc->{data}}, 4, "Fetch correct document");
 
-  # request for non-existant doc throws exception
+  # getting document by non-existant ID
   $args{id} = 3;
   throws_ok { $es->find(%args) }
     qr/Missing/, "Request document by incorrect ID"

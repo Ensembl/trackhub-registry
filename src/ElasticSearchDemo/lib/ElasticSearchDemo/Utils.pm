@@ -3,6 +3,8 @@ package ElasticSearchDemo::Utils;
 use strict;
 use warnings;
 
+use LWP;
+
 #
 # TODO
 # Have to use this until I implement with Moose
@@ -25,6 +27,21 @@ sub slurp_file {
   }
   
   return $string;
+}
+
+sub es_running {
+  return _get('http://localhost:9200')->is_success;
+}
+
+sub _get {
+  my ($href) = @_;
+
+  my $req = HTTP::Request->new( GET => $href );
+
+  my $ua = LWP::UserAgent->new;
+  my $response = $ua->request($req);
+
+  return $response;
 }
 
 1;

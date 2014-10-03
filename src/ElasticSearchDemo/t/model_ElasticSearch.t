@@ -12,7 +12,8 @@ use LWP;
 use JSON;
 use Data::Dumper;
 
-use ElasticSearchDemo::Utils; # slurp_file
+use ElasticSearchDemo::Utils; # slurp_file, es_running
+use ElasticSearchDemo::Indexer;
 
 use_ok 'ElasticSearchDemo::Model::ElasticSearch';
 
@@ -23,67 +24,73 @@ is($es->nodes, 'localhost:9200', 'Correct default nodes');
 
 SKIP: {
   skip "Launch an elasticsearch instance for the tests to run fully",
-    8 unless get('http://localhost:9200')->is_success;
+    6 unless &ElasticSearchDemo::Utils::es_running();
+
+  my $indexer = ElasticSearchDemo::Indexer->new(dir   => "$Bin/../../../docs/trackhub-schema/draft02/examples/",
+						index => 'test',
+						type  => 'trackhub',
+						mapping => 'trackhub_mappings.json');
+  $indexer->index();
 
   my $es = ElasticSearchDemo::Model::ElasticSearch->new();
 
-  #
-  # create the index (test)
-  #
-  my ($index, $type) = ('test', 'trackhub');
+  # #
+  # # create the index (test)
+  # #
+  # my ($index, $type) = ('test', 'trackhub');
   
-  #
-  # delete the index if it exists
-  #
-  $es->indices->delete(index => $index) and note "Deleting index $index"
-    if $es->indices->exists(index => $index);
+  # #
+  # # delete the index if it exists
+  # #
+  # $es->indices->delete(index => $index) and note "Deleting index $index"
+  #   if $es->indices->exists(index => $index);
     
-  # recreate the index
-  note "Creating index $index";
-  $es->indices->create(index => $index); 
-  ok($es->indices->exists(index => $index), "Index created");
+  # # recreate the index
+  # note "Creating index $index";
+  # $es->indices->create(index => $index); 
+  # ok($es->indices->exists(index => $index), "Index created");
   
-  #
-  # create the mapping (trackhub)
-  #
-  my $mapping_json = from_json(&ElasticSearchDemo::Utils::slurp_file("$Bin/trackhub_mappings.json"));
+  # #
+  # # create the mapping (trackhub)
+  # #
+  # my $mapping_json = from_json(&ElasticSearchDemo::Utils::slurp_file("$Bin/trackhub_mappings.json"));
   
-  note "Creating trackhub mapping";
-  $es->indices->put_mapping(index => $index,
-			    type  => $type,
-			    body  => $mapping_json);
-  $mapping_json = $es->indices->get_mapping(index => $index,
-					    type  => $type);
-  ok(exists $mapping_json->{$index}{mappings}{$type}, "Mapping created");
+  # note "Creating trackhub mapping";
+  # $es->indices->put_mapping(index => $index,
+  # 			    type  => $type,
+  # 			    body  => $mapping_json);
+  # $mapping_json = $es->indices->get_mapping(index => $index,
+  # 					    type  => $type);
+  # ok(exists $mapping_json->{$index}{mappings}{$type}, "Mapping created");
 
-  #
-  # add example trackhub documents
-  #
-  # NOTE
-  # Adding version [1-2].1 as in original [1-2]
-  # search doesn't work as it's not indexing
-  # the fields
-  #
-  my $id = 1;
-  my $bp = "$Bin/blueprint1.1.json";
-  note "Indexing document $bp";
-  $es->index(index   => $index,
-	     type    => $type,
-	     id      => $id++,
-	     body    => from_json(&ElasticSearchDemo::Utils::slurp_file($bp)));
+  # #
+  # # add example trackhub documents
+  # #
+  # # NOTE
+  # # Adding version [1-2].1 as in original [1-2]
+  # # search doesn't work as it's not indexing
+  # # the fields
+  # #
+  # my $id = 1;
+  # my $bp = "$Bin/blueprint1.1.json";
+  # note "Indexing document $bp";
+  # $es->index(index   => $index,
+  # 	     type    => $type,
+  # 	     id      => $id++,
+  # 	     body    => from_json(&ElasticSearchDemo::Utils::slurp_file($bp)));
 	     
-  $bp = "$Bin/blueprint2.1.json";
-  note "Indexing document $bp";
-  $es->index(index   => $index,
-	     type    => $type,
-	     id      => $id++,
-	     body    => from_json(&ElasticSearchDemo::Utils::slurp_file($bp)));
+  # $bp = "$Bin/blueprint2.1.json";
+  # note "Indexing document $bp";
+  # $es->index(index   => $index,
+  # 	     type    => $type,
+  # 	     id      => $id++,
+  # 	     body    => from_json(&ElasticSearchDemo::Utils::slurp_file($bp)));
 
-  # The refresh() method refreshes the specified indices (or all indices), 
-  # allowing recent changes to become visible to search. 
-  # This process normally happens automatically once every second by default.
-  note "Flushing recent changes";
-  $es->indices->refresh(index => $index);
+  # # The refresh() method refreshes the specified indices (or all indices), 
+  # # allowing recent changes to become visible to search. 
+  # # This process normally happens automatically once every second by default.
+  # note "Flushing recent changes";
+  # $es->indices->refresh(index => $index);
 
   #
   # Test getting all documents
@@ -122,15 +129,3 @@ SKIP: {
 }
 
 done_testing();
-
-
-sub get {
-  my ($href) = @_;
-
-  my $req = HTTP::Request->new( GET => $href );
-
-  my $ua = LWP::UserAgent->new;
-  my $response = $ua->request($req);
-
-  return $response;
-}

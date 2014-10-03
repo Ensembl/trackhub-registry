@@ -141,7 +141,7 @@ has '_es' => (
   handles  => {
     map { $_ => $_ }
       qw(
-      search scrolled_search count index get mget create delete
+      search scrolled_search count index get get_source mget create delete
       bulk bulk_helper scroll_helper indices
       )
   },

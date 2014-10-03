@@ -22,6 +22,8 @@ SKIP: {
   skip "Launch an elasticsearch instance for the tests to run fully",
     2 unless get('http://localhost:9200')->is_success;
 
+  my $es = ElasticSearchDemo::Model::ElasticSearch->new();
+
   #
   # create the index (test)
   #
@@ -74,18 +76,18 @@ SKIP: {
 	     id      => $id++,
 	     body    => from_json(&slurp_file($bp)));
 
-  #
-  # Test getting all documents
-  #
-  
-
-
   # The refresh() method refreshes the specified indices (or all indices), 
   # allowing recent changes to become visible to search. 
   # This process normally happens automatically once every second by default.
+  note "flushing recent changes";
+  $es->indices->refresh(index => $index);
 
-  # NOTE: doesn't work, search cannot find anything
-  # $es->indices->refresh(index => $index);
+  #
+  # Test getting all documents
+  #
+  my $docs = $es->get_all_docs();
+  is(scalar @{$docs->{hits}{hits}}, 2, "Doc counts when requesting all documents match");
+
 }
 
 done_testing();

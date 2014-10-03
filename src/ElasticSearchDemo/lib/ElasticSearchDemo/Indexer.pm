@@ -20,7 +20,8 @@ use ElasticSearchDemo::Utils;
 use ElasticSearchDemo::Model::ElasticSearch;
 
 sub new {
-  my ($caller, $dir, $index, $type, $mapping) = @_;
+  my ($caller, %args) = @_;
+  my ($dir, $index, $type, $mapping) = ($args{dir}, $args{index}, $args{type}, $args{mapping});
   defined $dir or croak "Undefined directory arg";
   defined $index and defined $type or
     croak "Undefined index|type parameters";
@@ -36,7 +37,7 @@ sub new {
   # search doesn't work as it's not indexing
   # the fields
   #
-  my @doclist = ('bluprint1.1.json', 'bluprint2.1.json');
+  my @doclist = ('blueprint1.1.json', 'blueprint2.1.json');
   my $id = 1;
   foreach my $doc (@doclist) {
     my $doc_path = "$dir/$doc";
@@ -88,7 +89,7 @@ sub index {
     $self->{es}->index(index   => $index,
 		       type    => $type,
 		       id      => $id,
-		       body    => from_json(&slurp_file($self->{docs}{$id})));
+		       body    => from_json(&ElasticSearchDemo::Utils::slurp_file($self->{docs}{$id})));
   }
 
   # The refresh() method refreshes the specified indices (or all indices), 

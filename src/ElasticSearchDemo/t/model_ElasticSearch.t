@@ -41,7 +41,7 @@ SKIP: {
   #
   # create the mapping (trackhub)
   #
-  my $mapping_json = from_json(&slurp_file('trackhub_mappings.json'));
+  my $mapping_json = from_json(&slurp_file("$Bin/trackhub_mappings.json"));
   
   note "Creating trackhub mapping. ";
   $es->indices->put_mapping(index => $index,
@@ -60,19 +60,25 @@ SKIP: {
   # the fields
   #
   my $id = 1;
-  my $bp = 'blueprint1.1.json';
+  my $bp = "$Bin/blueprint1.1.json";
   note "Indexing document $bp. ";
   $es->index(index   => $index,
 	     type    => $type,
 	     id      => $id++,
 	     body    => from_json(&slurp_file($bp)));
 	     
-  $bp = 'blueprint2.1.json';
+  $bp = "$Bin/blueprint2.1.json";
   note "Indexing document $bp. ";
   $es->index(index   => $index,
 	     type    => $type,
 	     id      => $id++,
 	     body    => from_json(&slurp_file($bp)));
+
+  #
+  # Test getting all documents
+  #
+  
+
 
   # The refresh() method refreshes the specified indices (or all indices), 
   # allowing recent changes to become visible to search. 

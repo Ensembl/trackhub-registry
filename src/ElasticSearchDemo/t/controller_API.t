@@ -10,11 +10,32 @@ BEGIN {
 }
 
 use HTTP::Request::Common;
+use JSON;
 use Catalyst::Test 'ElasticSearchDemo';
-use ElasticSearchDemo::Controller::API;
 
-my $response = request('/api/list');
-print Dumper($response);
+use ElasticSearchDemo::Utils; # es_running
+use ElasticSearchDemo::Indexer;
+
+SKIP: {
+  skip "Launch an elasticsearch instance for the tests to run fully",
+    4 unless &ElasticSearchDemo::Utils::es_running();
+
+  # index test data
+  note 'Preparing data for test (indexing sample documents)';
+  my $indexer = ElasticSearchDemo::Indexer->new(dir   => "$Bin/../../../docs/trackhub-schema/draft02/examples/",
+						index => 'test',
+						type  => 'trackhub',
+						mapping => 'trackhub_mappings.json');
+  $indexer->index();
+
+  ok(my $response = request('/api/trackhub'), 'Request to /api/trackhub');
+  ok($response->is_success, 'Request successful 2xx');
+  is($response->content_type, 'application/json', 'JSON content type');
+  my $content = from_json($response->content);
+  is(scalar keys %{$content}, 2, 'Returns 2 documents');
+}
+
+
 
 # #
 # # TODO: check status codes

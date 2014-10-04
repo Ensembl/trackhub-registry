@@ -2,18 +2,14 @@ package ElasticSearchDemo::Controller::API;
 use Moose;
 use namespace::autoclean;
 
-BEGIN { extends 'Catalyst::Controller'; }
+BEGIN { extends 'Catalyst::Controller::REST'; }
 
 __PACKAGE__->config(
-  action => {
-    '*' => {
-      # Attributes common to all actions
-      # in this controller
-      Consumes => 'JSON',
-      Path => '',
-    }
-  }
-);
+		    'default'   => 'application/json',
+		    # map => {
+		    # 	    'text/plain' => ['YAML'],
+		    # 	   }
+		   );
 
 =head1 NAME
 
@@ -27,81 +23,136 @@ Catalyst Controller.
 
 =cut
 
+=head2 trackhub_list
 
-=head2 index
+Return list of available documents
+
+Action for GET /api/trackhub, no arguments
+
+Returns documents IDs mapped to the URI of the
+resource which represents the document
 
 =cut
 
-sub index :Path :Args(0) {
-  my ( $self, $c ) = @_;
-
-  #########################################################################
-  # # Get the username and password from form
-  # my $username = $c->request->params->{username} || "";
-  # my $password = $c->request->params->{password} || "";
-    
-  # # If the username and password values were found in form
-  # if ($username && $password) {
-  #   # Attempt to authenticate the user
-  #   if ($c->authenticate({ username => $username,
-  #                          password => $password} )) {
-  #     # If successful, then let them use the application
-  #     $c->response->redirect($c->uri_for('/'));
-  #     return;
-  #   } else {
-  #     # Set an error message
-  #     $c->stash->{error_msg} = "Bad username or password.";
-  #   }
-  # }
-    
-  # # If either of above don't work out, send to the login page
-  # $c->stash->{template} = 'login.tt';
-  #########################################################################
-
-  # # $c->response->body('Matched ElasticSearchDemo::Controller::API in API.');
-
-  #
-  # Abort request, as there's nothing available at the moment
-  #
-  # comment if you want to just proceed to the end method
-  # and generate an empty successful response
-  #
-  my $username = $c->request->params->{username} || "";
-  my $password = $c->request->params->{password} || "";
-  if ($username && $password) {
-    # Attempt to authenticate the user
-    if ($c->authenticate({ username => $username,
-                           password => $password} )) {
-      # return welcome message
-      $c->stash->{data} = { msg => "Welcome user $username" };
-      return;
-    } else {
-      # Set an error message
-      $c->detach('error', [ 401, 'Unauthorized' ]);
-    }
-  } 
-
-  $c->detach('error', [401, 'Please specify username/password credentials']);
+sub trackhub_list :Path('/api/trackhub') Args(0) ActionClass('REST') { 
+  my ($self, $c) = @_;  
 }
 
-# end action is always called at the end of the route
-sub end :Private {
-  my ( $self, $c ) = @_;
+sub trackhub_list_GET { 
+  my ($self, $c) = @_;
 
-  # Render the stash using our JSON view
-  $c->forward($c->view('JSON'));
+  # no query arg default to get all docs
+  my $docs = $c->model('ElasticSearch')->query(index => 'test', type => 'trackhub');
+
+  my %trackhubs;
+  foreach my $doc (@{$docs->{hits}{hits}}) {
+    $trackhubs{$doc->{_id}} = 
+      $c->uri_for('/api/trackhub/' . $doc->{_id})->as_string;
+  }
+  $self->status_ok($c, entity => \%trackhubs);
+
+  # $self->status_no_content($c);
 }
+
+#
+# trackhub: return trackhub doc by id
+#
+# Action for GET /api/trackhub/:id
+#
+sub trackhub :Path('/api/trackhub') Args(1) ActionClass('REST') {
+  my ($self, $c, $doc_id) = @_;
+
+  my %args = 
+    ( index => 'test',
+      type  => 'trackhub',
+      id    => $doc_id);
+
+  # if the doc with that ID doesn't exist, ES throws exception
+  # intercept but do nothing, as the GET method will handle
+  # the situation in a REST appropriate way.
+  eval { $c->stash(trackhub => $c->model('ElasticSearch')->find(%args)); };
+}
+
+sub trackhub_GET {
+  my ($self, $c, $doc_id) = @_;
+
+  my $trackhub = $c->stash()->{'trackhub'};
+  if ($trackhub) {
+    $self->status_ok($c, entity => $trackhub) if $trackhub;
+  } else {
+    $self->status_not_found($c, message => "Could not find trackhub $doc_id");    
+  }
+}
+
+__PACKAGE__->meta->make_immutable;
+
+1;
+
+# BEGIN { extends 'Catalyst::Controller' }
+
+#
+# Matching Actions on Request Content Types,
+# a feature introduced since v5.90050
+#
+# See http://www.catalystframework.org/calendar/2013/8
+# 
+# __PACKAGE__->config(
+#   action => {
+#     '*' => {
+#       # Attributes common to all actions
+#       # in this controller
+#       Consumes => 'JSON',
+#       Path => '',
+#     }
+#   }
+# );
+
+# =head2 index
  
-# We use the error action to handle errors
-sub error :Private {
-  my ( $self, $c, $code, $reason ) = @_;
-  $reason ||= 'Unknown Error';
-  $code ||= 500;
+# =cut
+
+# sub index :Path :Args(0) {
+#   my ( $self, $c ) = @_;
+
+#   #
+#   # TODO: should handle POST data
+#   #
+#   my $username = $c->request->params->{username} || "";
+#   my $password = $c->request->params->{password} || "";
+#   if ($username && $password) {
+#     # Attempt to authenticate the user
+#     if ($c->authenticate({ username => $username,
+#                            password => $password} )) {
+#       # return welcome message
+#       $c->stash->{data} = { msg => "Welcome user $username" };
+#       return;
+#     } else {
+#       # Set an error message
+#       $c->detach('error', [ 401, 'Unauthorized' ]);
+#     }
+#   } 
+
+#   $c->detach('error', [401, 'Please specify username/password credentials']);
+# }
+
+# # end action is always called at the end of the route
+# sub end :Private {
+#   my ( $self, $c ) = @_;
+
+#   # Render the stash using our JSON view
+#   $c->forward($c->view('JSON'));
+# }
  
-  $c->res->status($code);
-  # Error text is rendered as JSON as well
-  $c->stash->{data} = { error => $reason };
-}
+# # We use the error action to handle errors
+# sub error :Private {
+#   my ( $self, $c, $code, $reason ) = @_;
+#   $reason ||= 'Unknown Error';
+#   $code ||= 500;
+ 
+#   $c->res->status($code);
+#   # Error text is rendered as JSON as well
+#   $c->stash->{data} = { error => $reason };
+# }
 
 =encoding utf8
 
@@ -116,6 +167,3 @@ it under the same terms as Perl itself.
 
 =cut
 
-__PACKAGE__->meta->make_immutable;
-
-1;

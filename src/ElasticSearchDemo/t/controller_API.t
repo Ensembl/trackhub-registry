@@ -18,7 +18,7 @@ use ElasticSearchDemo::Indexer;
 
 SKIP: {
   skip "Launch an elasticsearch instance for the tests to run fully",
-    5 unless &ElasticSearchDemo::Utils::es_running();
+    11 unless &ElasticSearchDemo::Utils::es_running();
 
   # index test data
   note 'Preparing data for test (indexing sample documents)';
@@ -28,12 +28,25 @@ SKIP: {
 						mapping => 'trackhub_mappings.json');
   $indexer->index();
 
-  ok(my $response = request('/api/trackhub'), 'Request to /api/trackhub');
+  #
+  # /api/trackhub (GET)
+  #
+  ok(my $response = request('/api/trackhub'), 'GET request to /api/trackhub');
   ok($response->is_success, 'Request successful 2xx');
   is($response->content_type, 'application/json', 'JSON content type');
   my $content = from_json($response->content);
-  map { like($content->{$_}, qr/api\/trackhub\/$_/, "contains correct resource URI") } 1 .. 2;
+  map { like($content->{$_}, qr/api\/trackhub\/$_/, "contains correct resource (document) URI") } 1 .. 2;
   
+  #
+  # /api/trackhub/:id (GET)
+  #
+  ok($response = request('/api/trackhub/1'), 'GET Request to /api/trackhub/1');
+  ok($response->is_success, 'Request successful 2xx');
+  is($response->content_type, 'application/json', 'JSON content type');
+  $content = from_json($response->content);
+  is(scalar @{$content->{data}}, 1, 'One trackhub');
+  is($content->{data}[0]{name}, 'bpDnaseRegionsC0010K46DNaseEBI', 'Trackhub name');
+  is($content->{configuration}{bpDnaseRegionsC0010K46DNaseEBI}{bigDataUrl}, 'http://ftp.ebi.ac.uk/pub/databases/blueprint/data/homo_sapiens/Peripheral_blood/C0010K/Monocytes/DNase-Hypersensitivity//C0010K46.DNase.hotspot_v3_20130415.bb', 'Trackhub url');
 }
 
 

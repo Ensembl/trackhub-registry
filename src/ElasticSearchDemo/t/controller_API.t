@@ -18,7 +18,7 @@ use ElasticSearchDemo::Indexer;
 
 SKIP: {
   skip "Launch an elasticsearch instance for the tests to run fully",
-    4 unless &ElasticSearchDemo::Utils::es_running();
+    5 unless &ElasticSearchDemo::Utils::es_running();
 
   # index test data
   note 'Preparing data for test (indexing sample documents)';
@@ -32,7 +32,8 @@ SKIP: {
   ok($response->is_success, 'Request successful 2xx');
   is($response->content_type, 'application/json', 'JSON content type');
   my $content = from_json($response->content);
-  is(scalar keys %{$content}, 2, 'Returns 2 documents');
+  map { like($content->{$_}, qr/api\/trackhub\/$_/, "contains correct resource URI") } 1 .. 2;
+  
 }
 
 

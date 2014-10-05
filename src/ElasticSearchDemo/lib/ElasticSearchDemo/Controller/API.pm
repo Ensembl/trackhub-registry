@@ -2,6 +2,8 @@ package ElasticSearchDemo::Controller::API;
 use Moose;
 use namespace::autoclean;
 
+use List::Util 'max';
+
 BEGIN { extends 'Catalyst::Controller::REST'; }
 
 __PACKAGE__->config(
@@ -63,6 +65,12 @@ Action for /api/trackhub/create (PUT)
 
 sub trackhub_create :Path('/api/trackhub/create') Args(0) ActionClass('REST') {
   my ($self, $c) = @_;
+
+  # get the list of existing document IDs
+  my $docs = $c->model('ElasticSearch')->query(index => 'test', type => 'trackhub');
+
+  # determine the ID of the doc to create
+  $c->stash( id => max( map { $_->{_id} } @{$docs->{hits}{hits}} ) + 1 ); 
 }
 
 sub trackhub_create_PUT {
@@ -74,8 +82,22 @@ sub trackhub_create_PUT {
   return $self->status_bad_request($c, message => "You must provide a doc to create!")
     unless defined $new_doc_data;
 
-}
+  my $id = $c->stash()->{'id'};
+  if ($id) {
+    $c->model('ElasticSearch')->index(index   => 'test',
+				      type    => 'trackhub',
+				      id      => $id,
+				      body    => $new_doc_data);
+  } else {
+    $c->detach('error', [500, 'Couldn\'t determine doc ID']);
+  }
 
+  $self->status_created( $c,
+			 location => $c->uri_for( '/api/trackhub/' . $id )->as_string,
+			 entity   => $c->model('ElasticSearch')->find( index => 'test',
+								       type  => 'trackhub',
+								       id    => $id));
+}
 
 =head2 trackhub 
 
@@ -199,16 +221,16 @@ __PACKAGE__->meta->make_immutable;
 #   $c->forward($c->view('JSON'));
 # }
  
-# # We use the error action to handle errors
-# sub error :Private {
-#   my ( $self, $c, $code, $reason ) = @_;
-#   $reason ||= 'Unknown Error';
-#   $code ||= 500;
+# We use the error action to handle errors
+sub error :Private {
+  my ( $self, $c, $code, $reason ) = @_;
+  $reason ||= 'Unknown Error';
+  $code ||= 500;
  
-#   $c->res->status($code);
-#   # Error text is rendered as JSON as well
-#   $c->stash->{data} = { error => $reason };
-# }
+  $c->res->status($code);
+  # Error text is rendered as JSON as well
+  $c->stash->{data} = { error => $reason };
+}
 
 =encoding utf8
 

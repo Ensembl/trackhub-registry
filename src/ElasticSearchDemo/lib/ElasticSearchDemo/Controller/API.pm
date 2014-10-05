@@ -25,12 +25,11 @@ Catalyst Controller.
 
 =head2 trackhub_list
 
-Return list of available documents
+Return list of available documents, as document IDs 
+mapped to the URI of the resource which represents 
+the document
 
-Action for GET /api/trackhub, no arguments
-
-Returns documents IDs mapped to the URI of the
-resource which represents the document
+Action for /api/trackhub (GET), no arguments
 
 =cut
 
@@ -54,11 +53,36 @@ sub trackhub_list_GET {
   # $self->status_no_content($c);
 }
 
-#
-# trackhub: return trackhub doc by id
-#
-# Action for GET /api/trackhub/:id
-#
+=head2 trackhub_create
+
+Create new trackhub document
+
+Action for /api/trackhub/create (PUT)
+
+=cut
+
+sub trackhub_create :Path('/api/trackhub/create') Args(0) ActionClass('REST') {
+  my ($self, $c) = @_;
+}
+
+sub trackhub_create_PUT {
+  my ($self, $c) = @_;
+  my $new_doc_data = $c->req->data;
+
+  # if the client didn't supply any data, 
+  # they didn't send a properly formed request
+  return $self->status_bad_request($c, message => "You must provide a doc to create!")
+    unless defined $new_doc_data;
+
+}
+
+
+=head2 trackhub 
+
+Actions for /api/trackhub/:id (GET|POST)
+
+=cut
+
 sub trackhub :Path('/api/trackhub') Args(1) ActionClass('REST') {
   my ($self, $c, $doc_id) = @_;
 
@@ -73,6 +97,13 @@ sub trackhub :Path('/api/trackhub') Args(1) ActionClass('REST') {
   eval { $c->stash(trackhub => $c->model('ElasticSearch')->find(%args)); };
 }
 
+=head2 trackhub_GET
+
+Return trackhub document content for a document
+with the specified ID
+
+=cut
+
 sub trackhub_GET {
   my ($self, $c, $doc_id) = @_;
 
@@ -82,6 +113,31 @@ sub trackhub_GET {
   } else {
     $self->status_not_found($c, message => "Could not find trackhub $doc_id");    
   }
+}
+
+=head2 trackhub_POST
+
+Update document content for a document
+with the specified ID
+
+=cut
+
+sub trackhub_POST {
+  my ($self, $c, $doc_id) = @_;
+  
+  # if the doc with that ID doesn't exist,
+  # cannot update the doc
+  return $self->status_bad_request($c, message => "Cannot update: document (ID: $doc_id) doesn't exist")
+    unless $c->stash()->{'trackhub'};
+
+  my $new_doc_data = $c->req->data;
+
+  # if the client didn't supply any data, 
+  # they didn't send a properly formed request
+  return $self->status_bad_request($c, message => "You must provide a doc to modify!")
+    unless defined $new_doc_data;
+
+  
 }
 
 __PACKAGE__->meta->make_immutable;

@@ -22,9 +22,12 @@ extends 'Catalyst::Model::ElasticSearch';
 #
 sub query {
   my ($self, %args) = @_;
-  
+
+  # default: return all documents
   $args{query} = { match_all => {} }
     unless exists $args{query};
+
+  # this is what Search::Elasticsearch expect 
   $args{body} = { query => $args{query} };
   delete $args{query};
 

@@ -14,7 +14,7 @@ use JSON;
 use Catalyst::Test 'ElasticSearchDemo';
 
 use ElasticSearchDemo::Utils; # es_running
-use ElasticSearchDemo::Indexer;
+use ElasticSearchDemo::Indexer; # index a couple of sample documents
 
 SKIP: {
   skip "Launch an elasticsearch instance for the tests to run fully",
@@ -29,13 +29,13 @@ SKIP: {
   $indexer->index();
 
   #
-  # /api/trackhub (GET)
+  # /api/trackhub (GET): get list of documents with their URIs
   #
   ok(my $response = request('/api/trackhub'), 'GET request to /api/trackhub');
   ok($response->is_success, 'Request successful 2xx');
   is($response->content_type, 'application/json', 'JSON content type');
   my $content = from_json($response->content);
-  map { like($content->{$_}, qr/api\/trackhub\/$_/, "contains correct resource (document) URI") } 1 .. 2;
+  map { like($content->{$_}, qr/api\/trackhub\/$_/, "Contains correct resource (document) URI") } 1 .. 2;
   
   #
   # /api/trackhub/:id (GET)
@@ -47,6 +47,23 @@ SKIP: {
   is(scalar @{$content->{data}}, 1, 'One trackhub');
   is($content->{data}[0]{name}, 'bpDnaseRegionsC0010K46DNaseEBI', 'Trackhub name');
   is($content->{configuration}{bpDnaseRegionsC0010K46DNaseEBI}{bigDataUrl}, 'http://ftp.ebi.ac.uk/pub/databases/blueprint/data/homo_sapiens/Peripheral_blood/C0010K/Monocytes/DNase-Hypersensitivity//C0010K46.DNase.hotspot_v3_20130415.bb', 'Trackhub url');
+  ok($response = request('/api/trackhub/3'), 'GET request to /api/trackhub/3');
+  is($response->code, 404, 'Request 404');
+  is($response->content_type, 'application/json', 'JSON content type');
+  $content = from_json($response->content);
+  like($content->{error}, qr/Could not find/, 'Correct response');
+
+  note "Re-creating index test";
+  $indexer->create_index(); # do not index this time through the indexer, the API will do that
+
+  # now the index's empty, create the sample docs through the API
+  #
+  # TODO
+  # /api/trackhub/create (PUT): create new document
+  #
+  my $docs = $indexer->docs;
+  
+  
 }
 
 

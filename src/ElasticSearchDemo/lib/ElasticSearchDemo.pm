@@ -50,7 +50,7 @@ __PACKAGE__->config(
 		    enable_catalyst_header => 1, # Send X-Catalyst header
 		    'Plugin::ConfigLoader' => #Allow key = [val] to become an array
 		    { 
-		     driver => { General => {-ForceArray => 1}, },
+		     driver => { General => { -ForceArray => 1}, },
 		    },
 		    # the model (to index and search)
 		    'Model::Search' => 

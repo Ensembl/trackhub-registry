@@ -49,11 +49,15 @@ sub new {
     croak "ElasticSearch instance not available";
 
   $self->{es} = ElasticSearchDemo::Model::ElasticSearch->new();
+  $self->create_index();
 
   return $self;
 }
 
-sub index {
+#
+# Create index, mapping 
+#
+sub create_index {
   my $self = shift;
 
   my ($index, $type) = ($self->{index}, $self->{type});
@@ -80,14 +84,23 @@ sub index {
   $mapping_json = $indices->get_mapping(index => $index,
 					type  => $type);
   exists $mapping_json->{$index}{mappings}{$type} and carp "Mapping created";
+  
+}
+
+
+# index the couple of example documents 
+# (hardwire in the constructor, at the moment
+#
+sub index {
+  my $self = shift;
 
   #
   # add example trackhub documents
   #
   foreach my $id (keys %{$self->{docs}}) {
     carp "Indexing document $self->{docs}{$id}";
-    $self->{es}->index(index   => $index,
-		       type    => $type,
+    $self->{es}->index(index   => $self->{index},
+		       type    => $self->{type},
 		       id      => $id,
 		       body    => from_json(&ElasticSearchDemo::Utils::slurp_file($self->{docs}{$id})));
   }
@@ -96,7 +109,25 @@ sub index {
   # allowing recent changes to become visible to search. 
   # This process normally happens automatically once every second by default.
   carp "Flushing recent changes";
-  $indices->refresh(index => $index);
+  $self->{es}->indices->refresh(index => $self->{index});
+}
+
+#
+# delete everything created 
+#
+sub delete {
+  my $self = shift;
+
+  $self->{es}->indices->delete(index => $self->{index});
+}
+
+#
+# get the list of id => doc_path
+#
+sub docs {
+  my $self = shift;
+
+  return $self->{docs};
 }
 
 1;

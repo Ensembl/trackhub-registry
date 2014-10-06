@@ -19,7 +19,7 @@ use ElasticSearchDemo::Indexer; # index a couple of sample documents
 
 SKIP: {
   skip "Launch an elasticsearch instance for the tests to run fully",
-    31 unless &ElasticSearchDemo::Utils::es_running();
+    46 unless &ElasticSearchDemo::Utils::es_running();
 
   # index test data
   note 'Preparing data for test (indexing sample documents)';
@@ -42,7 +42,6 @@ SKIP: {
   # /api/trackhub/:id (GET)
   #
   # request correct document
-  #
   ok($response = request('/api/trackhub/1'), 'GET Request to /api/trackhub/1');
   ok($response->is_success, 'Request successful 2xx');
   is($response->content_type, 'application/json', 'JSON content type');
@@ -50,26 +49,52 @@ SKIP: {
   is(scalar @{$content->{data}}, 1, 'One trackhub');
   is($content->{data}[0]{name}, 'bpDnaseRegionsC0010K46DNaseEBI', 'Trackhub name');
   is($content->{configuration}{bpDnaseRegionsC0010K46DNaseEBI}{bigDataUrl}, 'http://ftp.ebi.ac.uk/pub/databases/blueprint/data/homo_sapiens/Peripheral_blood/C0010K/Monocytes/DNase-Hypersensitivity//C0010K46.DNase.hotspot_v3_20130415.bb', 'Trackhub url');
-  #
+
   # request incorrect document
-  #
   ok($response = request('/api/trackhub/3'), 'GET request to /api/trackhub/3');
   is($response->code, 404, 'Request unsuccessful 404');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
   like($content->{error}, qr/Could not find/, 'Correct error response');
 
+  #
+  # /api/trackhub/:id (POST) update document
+  #
+  # request incorrect document
+  my $request = POST('/api/trackhub/3',
+		     'Content-type' => 'application/json');
+  ok($response = request($request), 'POST request to /api/trackhub/3');
+  is($response->code, 400, 'Request unsuccessful 400');
+  $content = from_json($response->content);
+  like($content->{error}, qr/does not exist/, 'Correct error response');
+
+  # request to update a doc but do not supply data
+  $request = POST('/api/trackhub/1',
+		 'Content-type' => 'application/json');
+  ok($response = request($request), 'POST request to /api/trackhub/1');
+  is($response->code, 400, 'Request unsuccessful 400');
+  $content = from_json($response->content);
+  like($content->{error}, qr/You must provide a doc/, 'Correct error response');
+
+  # update doc1
+  $request = POST('/api/trackhub/1',
+		  'Content-type' => 'application/json',
+		  'Content'      => to_json({ test => 'test' }));
+  ok($response = request($request), 'POST request to /api/trackhub/1');
+  ok($response->is_success, 'Doc update request successful');
+  is($response->content_type, 'application/json', 'JSON content type');
+  $content = from_json($response->content);
+  is($content->{test}, 'test', 'Correct updated content');
+
   note "Re-creating index test";
   $indexer->create_index(); # do not index this time through the indexer, the API will do that
 
   #
-  # TODO
   # /api/trackhub/create (PUT): create new document
   #
   # request to create a doc but do not supply data
-  #
-  my $request = PUT('/api/trackhub/create',
-		    'Content-type' => 'application/json');
+  $request = PUT('/api/trackhub/create',
+		 'Content-type' => 'application/json');
   ok($response = request($request), 'PUT request to /api/trackhub/create');
   is($response->code, 400, 'Request unsuccessful 400');
   $content = from_json($response->content);
@@ -78,6 +103,9 @@ SKIP: {
   # now the index's empty, create the sample docs through the API
   my $docs = $indexer->docs;
 
+  #
+  # TODO: should test content of created docs
+  #
   # create doc1
   $request = PUT('/api/trackhub/create',
 		 'Content-type' => 'application/json',
@@ -104,6 +132,15 @@ SKIP: {
   ok($response = request($request), 'POST request to /api/trackhub/create');
   ok(!$response->is_success, 'Doc create POST request unsuccessful');
   is($response->code, 405, 'Method not allowed');
+
+  # should now have two documents which we can access
+  # via the /api/trackhub endpoint
+  ok($response = request('/api/trackhub'), 'GET request to /api/trackhub');
+  ok($response->is_success, 'Request successful 2xx');
+  is($response->content_type, 'application/json', 'JSON content type');
+  $content = from_json($response->content);
+  map { like($content->{$_}, qr/api\/trackhub\/$_/, "Contains correct resource (document) URI") } 1 .. 2;
+
 }
 
 

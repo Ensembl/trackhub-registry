@@ -25,6 +25,7 @@ Catalyst Controller.
 
 =cut
 
+
 =head2 trackhub_list
 
 Return list of available documents, as document IDs 
@@ -106,7 +107,7 @@ sub trackhub_create_PUT {
 
 =head2 trackhub 
 
-Actions for /api/trackhub/:id (GET|POST)
+Actions for /api/trackhub/:id (GET|POST|DELETE)
 
 =cut
 
@@ -186,6 +187,40 @@ sub trackhub_POST {
 								  id    => $doc_id));
   
 }
+
+=head2 trackhub_DELETE
+
+Delete a document with the specified ID
+
+=cut
+
+sub trackhub_DELETE {
+  my ($self, $c, $doc_id) = @_;
+
+  my $trackhub = $c->stash()->{'trackhub'};
+  if ($trackhub) {
+    #
+    # http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/delete-doc.html
+    #
+    # As already mentioned in Updating a whole document, deleting a document doesn’t immediately 
+    # remove the document from disk — it just marks it as deleted. Elasticsearch will clean up 
+    # deleted documents in the background as you continue to index more data.
+    #
+    # https://metacpan.org/pod/Search::Elasticsearch::Client::Direct#delete
+    #
+    # The delete() method will delete the document with the specified 
+    # index, type and id, or will throw a Missing error.
+    #
+    $c->model('ElasticSearch')->delete(index   => 'test',
+				       type    => 'trackhub',
+				       id      => $doc_id);
+
+    $self->status_ok($c, entity => $trackhub) if $trackhub;
+  } else {
+    $self->status_not_found($c, message => "Could not find trackhub $doc_id");    
+  }
+}
+
 
 __PACKAGE__->meta->make_immutable;
 

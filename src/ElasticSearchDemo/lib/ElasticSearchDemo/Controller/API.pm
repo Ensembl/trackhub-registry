@@ -154,7 +154,7 @@ sub trackhub_POST {
   
   # if the doc with that ID doesn't exist,
   # cannot update the doc
-  return $self->status_bad_request($c, message => "Cannot update: document (ID: $doc_id) doesn't exist")
+  return $self->status_bad_request($c, message => "Cannot update: document (ID: $doc_id) does not exist")
     unless $c->stash()->{'trackhub'};
 
   my $new_doc_data = $c->req->data;
@@ -164,6 +164,26 @@ sub trackhub_POST {
   return $self->status_bad_request($c, message => "You must provide a doc to modify!")
     unless defined $new_doc_data;
 
+  #
+  # Updates in Elasticsearch
+  # http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/partial-updates.html
+  #
+  # Partial updates can be done through the update API, which accepts a partial document.
+  # However, this just gets merged with the existing document, so the only way to actually
+  # update a document is to retrieve it, change it, then reindex the whole document.
+  #
+  $c->model('ElasticSearch')->index(index   => 'test',
+				    type    => 'trackhub',
+				    id      => $doc_id,
+				    body    => $new_doc_data);
+
+  # refresh the index
+  $c->model('ElasticSearch')->indices->refresh(index => 'test');
+
+  $self->status_ok( $c,
+		    entity   => $c->model('ElasticSearch')->find( index => 'test',
+								  type  => 'trackhub',
+								  id    => $doc_id));
   
 }
 

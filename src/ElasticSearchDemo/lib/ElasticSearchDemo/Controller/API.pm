@@ -70,7 +70,8 @@ sub trackhub_create :Path('/api/trackhub/create') Args(0) ActionClass('REST') {
   my $docs = $c->model('ElasticSearch')->query(index => 'test', type => 'trackhub');
 
   # determine the ID of the doc to create
-  $c->stash( id => max( map { $_->{_id} } @{$docs->{hits}{hits}} ) + 1 ); 
+  my $current_max_id = max( map { $_->{_id} } @{$docs->{hits}{hits}} );
+  $c->stash( id =>  $current_max_id?$current_max_id + 1:1 ); 
 }
 
 sub trackhub_create_PUT {
@@ -88,6 +89,10 @@ sub trackhub_create_PUT {
 				      type    => 'trackhub',
 				      id      => $id,
 				      body    => $new_doc_data);
+
+    # refresh the index
+    $c->model('ElasticSearch')->indices->refresh(index => 'test');
+
   } else {
     $c->detach('error', [500, 'Couldn\'t determine doc ID']);
   }

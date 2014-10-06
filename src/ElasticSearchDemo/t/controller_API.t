@@ -10,7 +10,7 @@ BEGIN {
 
 use JSON;
 use HTTP::Headers;
-use HTTP::Request::Common;
+use HTTP::Request::Common qw/GET POST PUT DELETE/;
 
 use Catalyst::Test 'ElasticSearchDemo';
 
@@ -19,7 +19,7 @@ use ElasticSearchDemo::Indexer; # index a couple of sample documents
 
 SKIP: {
   skip "Launch an elasticsearch instance for the tests to run fully",
-    46 unless &ElasticSearchDemo::Utils::es_running();
+    56 unless &ElasticSearchDemo::Utils::es_running();
 
   # index test data
   note 'Preparing data for test (indexing sample documents)';
@@ -85,6 +85,30 @@ SKIP: {
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
   is($content->{test}, 'test', 'Correct updated content');
+
+  #
+  # /api/trackhub/:id (DELETE) delete document
+  #
+  # request incorrect document
+  $request = DELETE('/api/trackhub/3');
+  ok($response = request($request), 'DELETE request to /api/trackhub/3');
+  is($response->code, 404, 'Request unsuccessful 404');
+  $content = from_json($response->content);
+  like($content->{error}, qr/Could not find/, 'Correct error response');
+
+  # delete doc1
+  $request = DELETE('/api/trackhub/1');
+  ok($response = request($request), 'DELETE request to /api/trackhub/1');
+  ok($response->is_success, 'Request successful 2xx');
+  $content = from_json($response->content);
+  is($content->{test}, 'test', 'Content of deleted resource');
+
+  # request for deleted doc should fail
+  ok($response = request('/api/trackhub/1'), 'GET request to /api/trackhub/1');
+  is($response->code, 404, 'Request unsuccessful 404');
+  is($response->content_type, 'application/json', 'JSON content type');
+  $content = from_json($response->content);
+  like($content->{error}, qr/Could not find/, 'Correct error response');
 
   note "Re-creating index test";
   $indexer->create_index(); # do not index this time through the indexer, the API will do that

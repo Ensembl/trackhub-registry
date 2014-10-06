@@ -1,8 +1,0 @@
-Total hits: [% results.hits.total %]<br/>
-Index: [% index %]<br/>
-Type: [% type %]<br/>
-[% FOREACH item IN results.hits.hits %]
-        [% item %]<br/>
-[% END %]
-</body>
-</html>

@@ -30,6 +30,8 @@ requires 'Config::General'; # This should reflect the config file format you've 
 requires 'Search::Elasticsearch';
 # requires 'Catalyst::Authentication::Credential::HTTP';
 
+requires 'List::Util';
+
 test_requires 'Test::More' => '0.88';
 catalyst;
 

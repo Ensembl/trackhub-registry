@@ -29,10 +29,15 @@ SKIP: {
 						mapping => 'trackhub_mappings.json');
   $indexer->index();
 
+  # TODO: test /api returns the list of endpoints (name/method/description)
+
   #
   # /api/trackhub (GET): get list of documents with their URIs
   #
-  ok(my $response = request('/api/trackhub'), 'GET request to /api/trackhub');
+  my $request = GET('/api/trackhub');
+  $request->headers->authorization_basic('test', 'test');
+  ok(my $response = request($request), 'GET request to /api/trackhub');
+  print Dumper($response);
   ok($response->is_success, 'Request successful 2xx');
   is($response->content_type, 'application/json', 'JSON content type');
   my $content = from_json($response->content);
@@ -42,7 +47,9 @@ SKIP: {
   # /api/trackhub/:id (GET)
   #
   # request correct document
-  ok($response = request('/api/trackhub/1'), 'GET Request to /api/trackhub/1');
+  $request = GET('/api/trackhub/1');
+  $request->headers->authorization_basic('test', 'test');
+  ok($response = request($request), 'GET Request to /api/trackhub/1');
   ok($response->is_success, 'Request successful 2xx');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
@@ -51,7 +58,9 @@ SKIP: {
   is($content->{configuration}{bpDnaseRegionsC0010K46DNaseEBI}{bigDataUrl}, 'http://ftp.ebi.ac.uk/pub/databases/blueprint/data/homo_sapiens/Peripheral_blood/C0010K/Monocytes/DNase-Hypersensitivity//C0010K46.DNase.hotspot_v3_20130415.bb', 'Trackhub url');
 
   # request incorrect document
-  ok($response = request('/api/trackhub/3'), 'GET request to /api/trackhub/3');
+  $request = GET('/api/trackhub/3');
+  $request->headers->authorization_basic('test', 'test');
+  ok($response = request($request), 'GET request to /api/trackhub/3');
   is($response->code, 404, 'Request unsuccessful 404');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
@@ -61,8 +70,9 @@ SKIP: {
   # /api/trackhub/:id (POST) update document
   #
   # request incorrect document
-  my $request = POST('/api/trackhub/3',
-		     'Content-type' => 'application/json');
+  $request = POST('/api/trackhub/3',
+		  'Content-type' => 'application/json');
+  $request->headers->authorization_basic('test', 'test');
   ok($response = request($request), 'POST request to /api/trackhub/3');
   is($response->code, 400, 'Request unsuccessful 400');
   $content = from_json($response->content);
@@ -70,7 +80,8 @@ SKIP: {
 
   # request to update a doc but do not supply data
   $request = POST('/api/trackhub/1',
-		 'Content-type' => 'application/json');
+  		 'Content-type' => 'application/json');
+  $request->headers->authorization_basic('test', 'test');
   ok($response = request($request), 'POST request to /api/trackhub/1');
   is($response->code, 400, 'Request unsuccessful 400');
   $content = from_json($response->content);
@@ -78,8 +89,9 @@ SKIP: {
 
   # update doc1
   $request = POST('/api/trackhub/1',
-		  'Content-type' => 'application/json',
-		  'Content'      => to_json({ test => 'test' }));
+  		  'Content-type' => 'application/json',
+  		  'Content'      => to_json({ test => 'test' }));
+  $request->headers->authorization_basic('test', 'test');
   ok($response = request($request), 'POST request to /api/trackhub/1');
   ok($response->is_success, 'Doc update request successful');
   is($response->content_type, 'application/json', 'JSON content type');
@@ -91,6 +103,7 @@ SKIP: {
   #
   # request incorrect document
   $request = DELETE('/api/trackhub/3');
+  $request->headers->authorization_basic('test', 'test');
   ok($response = request($request), 'DELETE request to /api/trackhub/3');
   is($response->code, 404, 'Request unsuccessful 404');
   $content = from_json($response->content);
@@ -98,13 +111,16 @@ SKIP: {
 
   # delete doc1
   $request = DELETE('/api/trackhub/1');
+  $request->headers->authorization_basic('test', 'test');
   ok($response = request($request), 'DELETE request to /api/trackhub/1');
   ok($response->is_success, 'Request successful 2xx');
   $content = from_json($response->content);
   is($content->{test}, 'test', 'Content of deleted resource');
 
   # request for deleted doc should fail
-  ok($response = request('/api/trackhub/1'), 'GET request to /api/trackhub/1');
+  $request = GET('/api/trackhub/1');
+  $request->headers->authorization_basic('test', 'test');
+  ok($response = request($request), 'GET request to /api/trackhub/1');
   is($response->code, 404, 'Request unsuccessful 404');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
@@ -118,7 +134,8 @@ SKIP: {
   #
   # request to create a doc but do not supply data
   $request = PUT('/api/trackhub/create',
-		 'Content-type' => 'application/json');
+  		 'Content-type' => 'application/json');
+  $request->headers->authorization_basic('test', 'test');
   ok($response = request($request), 'PUT request to /api/trackhub/create');
   is($response->code, 400, 'Request unsuccessful 400');
   $content = from_json($response->content);
@@ -132,8 +149,9 @@ SKIP: {
   #
   # create doc1
   $request = PUT('/api/trackhub/create',
-		 'Content-type' => 'application/json',
-		 'Content'      => &ElasticSearchDemo::Utils::slurp_file($docs->{1}));
+  		 'Content-type' => 'application/json',
+  		 'Content'      => &ElasticSearchDemo::Utils::slurp_file($docs->{1}));
+  $request->headers->authorization_basic('test', 'test');
   ok($response = request($request), 'PUT request to /api/trackhub/create');
   ok($response->is_success, 'Doc create request successful');
   is($response->code, 201, 'Request successful 201');
@@ -141,8 +159,9 @@ SKIP: {
   like($response->header('location'), qr/\/api\/trackhub\/1/, 'Correct URI for created doc');
   # create doc2
   $request = PUT('/api/trackhub/create',
-		 'Content-type' => 'application/json',
-		 'Content'      => &ElasticSearchDemo::Utils::slurp_file($docs->{2}));
+  		 'Content-type' => 'application/json',
+  		 'Content'      => &ElasticSearchDemo::Utils::slurp_file($docs->{2}));
+  $request->headers->authorization_basic('test', 'test');
   ok($response = request($request), 'PUT request to /api/trackhub/create');
   ok($response->is_success, 'Doc create request successful');
   is($response->code, 201, 'Request successful 201');
@@ -151,15 +170,18 @@ SKIP: {
   
   # POST request should fail
   $request = POST('/api/trackhub/create',
-		  'Content-type' => 'application/json',
-		  'Content'      => &ElasticSearchDemo::Utils::slurp_file($docs->{2}));
+  		  'Content-type' => 'application/json',
+  		  'Content'      => &ElasticSearchDemo::Utils::slurp_file($docs->{2}));
+  $request->headers->authorization_basic('test', 'test');
   ok($response = request($request), 'POST request to /api/trackhub/create');
   ok(!$response->is_success, 'Doc create POST request unsuccessful');
   is($response->code, 405, 'Method not allowed');
 
   # should now have two documents which we can access
   # via the /api/trackhub endpoint
-  ok($response = request('/api/trackhub'), 'GET request to /api/trackhub');
+  $request = GET('/api/trackhub');
+  $request->headers->authorization_basic('test', 'test');
+  ok($response = request($request), 'GET request to /api/trackhub');
   ok($response->is_success, 'Request successful 2xx');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);

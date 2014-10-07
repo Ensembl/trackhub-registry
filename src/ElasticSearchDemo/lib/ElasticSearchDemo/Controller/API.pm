@@ -25,6 +25,37 @@ Catalyst Controller.
 
 =cut
 
+=head2 auto
+
+=cut
+
+sub auto : Private {
+  my ($self, $c) = @_;
+
+  $c->authenticate;
+}
+
+=head2 list_endpoints
+
+List available endpoints
+
+=cut
+
+sub list_endpoints :Path('/api') Args(0) {
+  my ($self, $c) = @_;
+
+  my @endpoints = 
+    (
+     ['/api/trackhub', 'GET', 'Return the list of available docs (id => URI)'],
+     ['/api/trackhub/create', 'PUT', 'Create new trackhub document'],
+     ['/api/trackhub/:id', 'GET', 'Return content for a document with the specified ID'],
+     ['/api/trackhub/:id', 'POST', 'Update content for a document with the specified ID'],
+     ['/api/trackhub/:id', 'DELETE', 'Delete document with the specified ID']
+    );
+  $c->stash( template  => 'endpoints.tt',
+	     endpoints => \@endpoints);
+  $c->forward( $c->view('HTML') );
+}
 
 =head2 trackhub_list
 

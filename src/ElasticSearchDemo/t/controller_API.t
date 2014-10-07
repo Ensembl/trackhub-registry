@@ -19,7 +19,7 @@ use ElasticSearchDemo::Indexer; # index a couple of sample documents
 
 SKIP: {
   skip "Launch an elasticsearch instance for the tests to run fully",
-    56 unless &ElasticSearchDemo::Utils::es_running();
+    64 unless &ElasticSearchDemo::Utils::es_running();
 
   # index test data
   note 'Preparing data for test (indexing sample documents)';
@@ -29,15 +29,30 @@ SKIP: {
 						mapping => 'trackhub_mappings.json');
   $indexer->index();
 
-  # TODO: test /api returns the list of endpoints (name/method/description)
-
+  #
+  # /api (GET): returns the list of endpoints (name/method/description)
+  #
+  my $request = GET('/api');
+  $request->headers->authorization_basic('test', 'test');
+  ok(my $response = request($request), 'GET request to /api');
+  ok($response->is_success, 'Request successful 2xx');
+  is($response->content_type, 'text/html', 'HTML Content-type');
+  my @endpoints = 
+    (
+     ['/api/trackhub', 'GET', 'Return the list of available docs'],
+     ['/api/trackhub/create', 'PUT', 'Create new trackhub document'],
+     ['/api/trackhub/:id', 'GET', 'Return content for a document with the specified ID'],
+     ['/api/trackhub/:id', 'POST', 'Update content for a document with the specified ID'],
+     ['/api/trackhub/:id', 'DELETE', 'Delete document with the specified ID']
+    );
+  map { like($response->content, qr/$_->[2]/, 'Contains endpoint') } @endpoints;
+  
   #
   # /api/trackhub (GET): get list of documents with their URIs
   #
-  my $request = GET('/api/trackhub');
+  $request = GET('/api/trackhub');
   $request->headers->authorization_basic('test', 'test');
-  ok(my $response = request($request), 'GET request to /api/trackhub');
-  print Dumper($response);
+  ok($response = request($request), 'GET request to /api/trackhub');
   ok($response->is_success, 'Request successful 2xx');
   is($response->content_type, 'application/json', 'JSON content type');
   my $content = from_json($response->content);
@@ -71,7 +86,7 @@ SKIP: {
   #
   # request incorrect document
   $request = POST('/api/trackhub/3',
-		  'Content-type' => 'application/json');
+  		  'Content-type' => 'application/json');
   $request->headers->authorization_basic('test', 'test');
   ok($response = request($request), 'POST request to /api/trackhub/3');
   is($response->code, 400, 'Request unsuccessful 400');

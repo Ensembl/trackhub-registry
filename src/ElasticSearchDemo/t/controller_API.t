@@ -19,7 +19,7 @@ use ElasticSearchDemo::Indexer; # index a couple of sample documents
 
 SKIP: {
   skip "Launch an elasticsearch instance for the tests to run fully",
-    64 unless &ElasticSearchDemo::Utils::es_running();
+    79 unless &ElasticSearchDemo::Utils::es_running();
 
   # index test data
   note 'Preparing data for test (indexing sample documents)';
@@ -30,6 +30,26 @@ SKIP: {
   $indexer->index();
 
   #
+  # Requests with no authentication fail
+  #
+  my @endpoints = 
+    (
+     ['/api/trackhub', 'GET', 'Return the list of available docs'],
+     ['/api/trackhub/create', 'PUT', 'Create new trackhub document'],
+     ['/api/trackhub/1', 'GET', 'Return content for a document with the specified ID'],
+     ['/api/trackhub/1', 'POST', 'Update content for a document with the specified ID'],
+     ['/api/trackhub/1', 'DELETE', 'Delete document with the specified ID']
+    );
+  foreach my $ep (@endpoints) {
+    my ($endpoint, $method) = ($ep->[0], $ep->[1]);
+    my $request;
+    $request = ($method eq 'GET')?GET($endpoint):($method eq 'POST'?POST($endpoint):DELETE($endpoint));
+    ok(my $response = request($request), "Unauthorized request to $endpoint");
+    is($response->code, 401, 'Unauthorized response 401');
+    like($response->content, qr/Authorization required/, 'Unauthorized response content');
+  }
+
+  #
   # /api (GET): returns the list of endpoints (name/method/description)
   #
   my $request = GET('/api');
@@ -37,15 +57,7 @@ SKIP: {
   ok(my $response = request($request), 'GET request to /api');
   ok($response->is_success, 'Request successful 2xx');
   is($response->content_type, 'text/html', 'HTML Content-type');
-  my @endpoints = 
-    (
-     ['/api/trackhub', 'GET', 'Return the list of available docs'],
-     ['/api/trackhub/create', 'PUT', 'Create new trackhub document'],
-     ['/api/trackhub/:id', 'GET', 'Return content for a document with the specified ID'],
-     ['/api/trackhub/:id', 'POST', 'Update content for a document with the specified ID'],
-     ['/api/trackhub/:id', 'DELETE', 'Delete document with the specified ID']
-    );
-  map { like($response->content, qr/$_->[2]/, 'Contains endpoint') } @endpoints;
+  map { like($response->content, qr/$_->[2]/, sprintf "Contains endpoint %s description", $_->[0]) } @endpoints;
   
   #
   # /api/trackhub (GET): get list of documents with their URIs

@@ -19,7 +19,7 @@ use ElasticSearchDemo::Indexer; # index a couple of sample documents
 
 SKIP: {
   skip "Launch an elasticsearch instance for the tests to run fully",
-    79 unless &ElasticSearchDemo::Utils::es_running();
+    96 unless &ElasticSearchDemo::Utils::es_running();
 
   # index test data
   note 'Preparing data for test (indexing sample documents)';
@@ -30,7 +30,8 @@ SKIP: {
   $indexer->index();
 
   #
-  # Requests with no authentication fail
+  # Requests with no authentication fail.
+  # Should log in first
   #
   my @endpoints = 
     (
@@ -43,18 +44,44 @@ SKIP: {
   foreach my $ep (@endpoints) {
     my ($endpoint, $method) = ($ep->[0], $ep->[1]);
     my $request;
-    $request = ($method eq 'GET')?GET($endpoint):($method eq 'POST'?POST($endpoint):DELETE($endpoint));
-    ok(my $response = request($request), "Unauthorized request to $endpoint");
+    $request = ($method eq 'GET')?GET($endpoint):($method eq 'POST'?POST($endpoint):($method eq 'PUT'?PUT($endpoint):DELETE($endpoint)));
+    ok(my $response = request($request), "Unauthorized $method request to $endpoint");
     is($response->code, 401, 'Unauthorized response 401');
-    like($response->content, qr/Authorization required/, 'Unauthorized response content');
+    like($response->content, qr/You need to login, get an auth_token/, 'Unauthorized response content');
   }
 
   #
+  # Authenticate
+  #
+  my $request = GET('/api/login');
+  $request->headers->authorization_basic('test', 'test');
+  ok(my $response = request($request), 'Request to log in');
+  my $content = from_json($response->content);
+  ok(exists $content->{auth_token}, 'Logged in');
+  my $auth_token = $content->{auth_token};
+
+  #
+  # Requests to endpoints with no or partial (use just user) API-key based authentication
+  #
+  foreach my $ep (@endpoints) {
+    my ($endpoint, $method) = ($ep->[0], $ep->[1]);
+    my $request;
+    $request = ($method eq 'GET')?GET($endpoint):($method eq 'POST'?POST($endpoint):($method eq 'PUT'?PUT($endpoint):DELETE($endpoint)));
+    $request->headers->header(user => 'test');
+    ok(my $response = request($request), "Unauthorized request to $endpoint");
+    is($response->code, 401, 'Unauthorized response 401');
+    like($response->content, qr/You need to login, get an auth_token/, 'Unauthorized response content');
+  }
+
+  #
+  # Authenticated requests (using API-key)
+  #
   # /api (GET): returns the list of endpoints (name/method/description)
   #
-  my $request = GET('/api');
-  $request->headers->authorization_basic('test', 'test');
-  ok(my $response = request($request), 'GET request to /api');
+  $request = GET('/api');
+  $request->headers->header(user       => 'test');
+  $request->headers->header(auth_token => $auth_token);
+  ok($response = request($request), 'GET request to /api');
   ok($response->is_success, 'Request successful 2xx');
   is($response->content_type, 'text/html', 'HTML Content-type');
   map { like($response->content, qr/$_->[2]/, sprintf "Contains endpoint %s description", $_->[0]) } @endpoints;
@@ -63,11 +90,12 @@ SKIP: {
   # /api/trackhub (GET): get list of documents with their URIs
   #
   $request = GET('/api/trackhub');
-  $request->headers->authorization_basic('test', 'test');
+  $request->headers->header(user       => 'test');
+  $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'GET request to /api/trackhub');
   ok($response->is_success, 'Request successful 2xx');
   is($response->content_type, 'application/json', 'JSON content type');
-  my $content = from_json($response->content);
+  $content = from_json($response->content);
   map { like($content->{$_}, qr/api\/trackhub\/$_/, "Contains correct resource (document) URI") } 1 .. 2;
   
   #
@@ -75,7 +103,8 @@ SKIP: {
   #
   # request correct document
   $request = GET('/api/trackhub/1');
-  $request->headers->authorization_basic('test', 'test');
+  $request->headers->header(user       => 'test');
+  $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'GET Request to /api/trackhub/1');
   ok($response->is_success, 'Request successful 2xx');
   is($response->content_type, 'application/json', 'JSON content type');
@@ -86,7 +115,8 @@ SKIP: {
 
   # request incorrect document
   $request = GET('/api/trackhub/3');
-  $request->headers->authorization_basic('test', 'test');
+  $request->headers->header(user       => 'test');
+  $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'GET request to /api/trackhub/3');
   is($response->code, 404, 'Request unsuccessful 404');
   is($response->content_type, 'application/json', 'JSON content type');
@@ -99,7 +129,8 @@ SKIP: {
   # request incorrect document
   $request = POST('/api/trackhub/3',
   		  'Content-type' => 'application/json');
-  $request->headers->authorization_basic('test', 'test');
+  $request->headers->header(user       => 'test');
+  $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'POST request to /api/trackhub/3');
   is($response->code, 400, 'Request unsuccessful 400');
   $content = from_json($response->content);
@@ -108,7 +139,8 @@ SKIP: {
   # request to update a doc but do not supply data
   $request = POST('/api/trackhub/1',
   		 'Content-type' => 'application/json');
-  $request->headers->authorization_basic('test', 'test');
+  $request->headers->header(user       => 'test');
+  $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'POST request to /api/trackhub/1');
   is($response->code, 400, 'Request unsuccessful 400');
   $content = from_json($response->content);
@@ -118,7 +150,8 @@ SKIP: {
   $request = POST('/api/trackhub/1',
   		  'Content-type' => 'application/json',
   		  'Content'      => to_json({ test => 'test' }));
-  $request->headers->authorization_basic('test', 'test');
+  $request->headers->header(user       => 'test');
+  $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'POST request to /api/trackhub/1');
   ok($response->is_success, 'Doc update request successful');
   is($response->content_type, 'application/json', 'JSON content type');
@@ -130,7 +163,8 @@ SKIP: {
   #
   # request incorrect document
   $request = DELETE('/api/trackhub/3');
-  $request->headers->authorization_basic('test', 'test');
+  $request->headers->header(user       => 'test');
+  $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'DELETE request to /api/trackhub/3');
   is($response->code, 404, 'Request unsuccessful 404');
   $content = from_json($response->content);
@@ -138,7 +172,8 @@ SKIP: {
 
   # delete doc1
   $request = DELETE('/api/trackhub/1');
-  $request->headers->authorization_basic('test', 'test');
+  $request->headers->header(user       => 'test');
+  $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'DELETE request to /api/trackhub/1');
   ok($response->is_success, 'Request successful 2xx');
   $content = from_json($response->content);
@@ -146,7 +181,8 @@ SKIP: {
 
   # request for deleted doc should fail
   $request = GET('/api/trackhub/1');
-  $request->headers->authorization_basic('test', 'test');
+  $request->headers->header(user       => 'test');
+  $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'GET request to /api/trackhub/1');
   is($response->code, 404, 'Request unsuccessful 404');
   is($response->content_type, 'application/json', 'JSON content type');
@@ -162,7 +198,8 @@ SKIP: {
   # request to create a doc but do not supply data
   $request = PUT('/api/trackhub/create',
   		 'Content-type' => 'application/json');
-  $request->headers->authorization_basic('test', 'test');
+  $request->headers->header(user       => 'test');
+  $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'PUT request to /api/trackhub/create');
   is($response->code, 400, 'Request unsuccessful 400');
   $content = from_json($response->content);
@@ -178,7 +215,8 @@ SKIP: {
   $request = PUT('/api/trackhub/create',
   		 'Content-type' => 'application/json',
   		 'Content'      => &ElasticSearchDemo::Utils::slurp_file($docs->{1}));
-  $request->headers->authorization_basic('test', 'test');
+  $request->headers->header(user       => 'test');
+  $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'PUT request to /api/trackhub/create');
   ok($response->is_success, 'Doc create request successful');
   is($response->code, 201, 'Request successful 201');
@@ -188,7 +226,8 @@ SKIP: {
   $request = PUT('/api/trackhub/create',
   		 'Content-type' => 'application/json',
   		 'Content'      => &ElasticSearchDemo::Utils::slurp_file($docs->{2}));
-  $request->headers->authorization_basic('test', 'test');
+  $request->headers->header(user       => 'test');
+  $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'PUT request to /api/trackhub/create');
   ok($response->is_success, 'Doc create request successful');
   is($response->code, 201, 'Request successful 201');
@@ -199,7 +238,8 @@ SKIP: {
   $request = POST('/api/trackhub/create',
   		  'Content-type' => 'application/json',
   		  'Content'      => &ElasticSearchDemo::Utils::slurp_file($docs->{2}));
-  $request->headers->authorization_basic('test', 'test');
+  $request->headers->header(user       => 'test');
+  $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'POST request to /api/trackhub/create');
   ok(!$response->is_success, 'Doc create POST request unsuccessful');
   is($response->code, 405, 'Method not allowed');
@@ -207,7 +247,8 @@ SKIP: {
   # should now have two documents which we can access
   # via the /api/trackhub endpoint
   $request = GET('/api/trackhub');
-  $request->headers->authorization_basic('test', 'test');
+  $request->headers->header(user       => 'test');
+  $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'GET request to /api/trackhub');
   ok($response->is_success, 'Request successful 2xx');
   is($response->content_type, 'application/json', 'JSON content type');

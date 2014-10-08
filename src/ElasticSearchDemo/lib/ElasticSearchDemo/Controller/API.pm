@@ -3,6 +3,7 @@ use Moose;
 use namespace::autoclean;
 
 use List::Util 'max';
+use String::Random;
 
 BEGIN { extends 'Catalyst::Controller::REST'; }
 
@@ -25,15 +26,48 @@ Catalyst Controller.
 
 =cut
 
-=head2 auto
+=head2 begin
 
 =cut
 
-sub auto : Private {
+sub begin : Private {
   my ($self, $c) = @_;
 
-  $c->authenticate;
+  # ... do things before Deserializing ... 
+  use Data::Dumper;
+  $c->log->debug(Dumper($c->req->headers));
+  my $authorized = 0;
+  if (exists($c->req->headers->{'user'}) && exists($c->req->headers->{'auth-token'})) {
+    # $c->log->debug("Got token");
+    $authorized = $c->authenticate({ username => $c->req->headers->{'user'}, 
+				     auth_key => $c->req->headers->{'auth-token'} }, 'testauthkey');
+  } # else {
+  #   $c->log->debug("No token given");
+  # }
+  $c->forward('deserialize');
+
+  # ... do things after Deserializing ...
+  $c->detach('/api/error', [ 'You need to login, get an auth_token and make requests using the token' ])
+    unless $authorized;
 }
+
+sub deserialize : ActionClass('Deserialize') {}
+
+=head2 auto
+
+Works with normal HTTP basic auth, but errors occur
+when trying to use it to support API key authentication
+for all endpoints.
+
+I suspect it depends on the way the REST controller 
+overrides the dispatch chain.
+
+=cut 
+
+# sub auto : Private {
+#   my ($self, $c) = @_;
+#   $c->authenticate();
+# }
 
 =head2 list_endpoints
 
@@ -126,7 +160,7 @@ sub trackhub_create_PUT {
     $c->model('ElasticSearch')->indices->refresh(index => 'test');
 
   } else {
-    $c->detach('error', [500, 'Couldn\'t determine doc ID']);
+    $c->detach('/api/error', [ "Couldn't determine doc ID" ]);
   }
 
   $self->status_created( $c,
@@ -252,6 +286,21 @@ sub trackhub_DELETE {
   }
 }
 
+=head2 error
+
+
+
+=cut
+
+sub error : Path('/api/error') Args(0) ActionClass('REST') {
+  my ( $self, $c, $error_msg ) = @_;
+  $c->log->error($error_msg);
+    
+  $self->status_bad_request( $c, message => $error_msg );
+}
+
+sub error_GET { }
+sub error_POST { }
 
 __PACKAGE__->meta->make_immutable;
 
@@ -313,15 +362,15 @@ __PACKAGE__->meta->make_immutable;
 # }
  
 # We use the error action to handle errors
-sub error :Private {
-  my ( $self, $c, $code, $reason ) = @_;
-  $reason ||= 'Unknown Error';
-  $code ||= 500;
+# sub error :Private {
+#   my ( $self, $c, $code, $reason ) = @_;
+#   $reason ||= 'Unknown Error';
+#   $code ||= 500;
  
-  $c->res->status($code);
-  # Error text is rendered as JSON as well
-  $c->stash->{data} = { error => $reason };
-}
+#   $c->res->status($code);
+#   # Error text is rendered as JSON as well
+#   $c->stash->{data} = { error => $reason };
+# }
 
 =encoding utf8
 

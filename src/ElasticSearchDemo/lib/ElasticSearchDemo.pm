@@ -62,50 +62,66 @@ __PACKAGE__->config(
 		    
 		    # API authentication
 		    # Auth with HTTP (basic or digest) credential and Minimal store
-		    # 'Plugin::Authentication' => 
-		    # {
-		    #  default_realm => 'example',
-		    #  realms => 
-		    #  {
-		    #   example => 
-		    #   {
-		    #    credential => 
-		    #    {
-		    # 	class => 'HTTP',
-		    # 	type  => 'basic', # 'digest'|'basic|'any'
-		    # 	password_type  => 'clear',
-		    # 	password_field => 'password'
-		    #    },
-		    #    store => 
-		    #    {
-		    # 	class => 'Minimal',
-		    # 	users => { test => { password => "test", } },
-		    #    },
-		    #   },
-		    #  }
-		    # },
-		    # Auth with Password credential and Minimal store
-		     'Plugin::Authentication' => 
-		     {
-		      default_realm => 'example',
-		      realms => 
-		      {
-		       example => 
-		       {
-		        credential => 
-		        {
-		     	class => 'Password',
-		     	password_type  => 'clear',
-		     	password_field => 'password'
-		        },
-		        store => 
-		        {
-		     	class => 'Minimal',
-		     	users => { test => { password => "test", } },
-		        },
-		       },
-		      }
+		    'Plugin::Authentication' => 
+		    {
+		     default_realm => 'test',
+		     realms => {
+				test => {
+					 credential => {
+							class => 'HTTP',
+							type  => 'basic', # 'digest'|'basic|'any'
+							password_type  => 'clear',
+							password_field => 'password'
+						       },
+					 store => {
+						   class => 'Minimal',
+						   users => { 
+							     test => { 
+								      password => "test"
+								     }
+							    }
+						  }
+					},
+				testauthkey => {
+					 credential => {
+							class => 'Password',
+							# No password check is done.  An attempt is made to retrieve the user 
+							# based on the information provided in the $c->authenticate() call. 
+							# If a user is found, authentication is considered to be successful.
+							password_type  => 'none' 
+						       },
+					 store => {
+						   class => 'Minimal',
+						   users => { 
+							     test => { }
+							    }
+						  }
+					},
+			       }
 		    },
+				 
+		    # Auth with Password credential and Minimal store
+		    # 'Plugin::Authentication' => 
+		    #  {
+		    #   default_realm => 'example',
+		    #   realms => 
+		    #   {
+		    #    example => 
+		    #    {
+		    #     credential => 
+		    #     {
+		    #  	class => 'Password',
+		    #  	password_type  => 'clear',
+		    #  	password_field => 'password'
+		    #     },
+		    #     store => 
+		    #     {
+		    #  	class => 'Minimal',
+		    #  	users => { test => { password => "test", } },
+		    #     },
+		    #    },
+		    #   }
+		    # },
 		   );
 
 # Start the application

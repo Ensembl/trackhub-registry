@@ -6,6 +6,7 @@ use List::Util 'max';
 use String::Random;
 
 BEGIN { extends 'Catalyst::Controller::REST'; }
+use Params::Validate qw(SCALAR);
 
 __PACKAGE__->config(
 		    'default'   => 'application/json',
@@ -34,21 +35,31 @@ sub begin : Private {
   my ($self, $c) = @_;
 
   # ... do things before Deserializing ... 
-  use Data::Dumper;
-  $c->log->debug(Dumper($c->req->headers));
+  # 
+  # API-key based authentication
+  # The client should have obtained an authorization token
+  # and submit the request by attaching the username and
+  # the auth token as headers
+  #
   my $authorized = 0;
   if (exists($c->req->headers->{'user'}) && exists($c->req->headers->{'auth-token'})) {
-    # $c->log->debug("Got token");
     $authorized = $c->authenticate({ username => $c->req->headers->{'user'}, 
 				     auth_key => $c->req->headers->{'auth-token'} }, 'testauthkey');
-  } # else {
-  #   $c->log->debug("No token given");
-  # }
+  }
+
   $c->forward('deserialize');
 
   # ... do things after Deserializing ...
-  $c->detach('/api/error', [ 'You need to login, get an auth_token and make requests using the token' ])
+  #
+  # Deny access in case API-key authorization fails,
+  # otherwise allow normal dispatch chain
+  #
+  $c->detach('status_unauthorized', 
+	     [ message => "You need to login, get an auth_token and make requests using the token" ] )
     unless $authorized;
+  
+  # $c->detach('/api/error', [ 'You need to login, get an auth_token and make requests using the token' ])
+  #   unless $authorized;
 }
 
 sub deserialize : ActionClass('Deserialize') {}
@@ -61,6 +72,9 @@ for all endpoints.
 
 I suspect it depends on the way the REST controller 
 overrides the dispatch chain.
+
+The intended functionality is implemented by overriding
+the begin method.
 
 =cut 
 
@@ -286,6 +300,33 @@ sub trackhub_DELETE {
   }
 }
 
+=item status_unauthorized
+
+Returns a "401 Unauthorized" response.  Takes a "message" argument
+as a scalar, which will become the value of "error" in the serialized
+response.
+
+Example:
+
+  $self->status_unauthorized(
+    $c,
+    message => "Cannot do what you have asked!",
+  );
+
+=cut
+
+sub status_unauthorized : Private {
+  my $self = shift;
+  my $c    = shift;
+  my %p    = Params::Validate::validate( @_, { message => { type => SCALAR }, }, );
+
+  $c->response->status(401);
+  $c->log->debug( "Status Unauthorized: " . $p{'message'} ) if $c->debug;
+  $self->_set_entity( $c, { error => $p{'message'} } );
+  return 1;
+}
+
+
 =head2 error
 
 
@@ -301,6 +342,11 @@ sub error : Path('/api/error') Args(0) ActionClass('REST') {
 
 sub error_GET { }
 sub error_POST { }
+sub error_PUT { }
+sub error_DELETE { }
+sub error_HEAD { }
+sub error_OPTIONS { }
+
 
 __PACKAGE__->meta->make_immutable;
 

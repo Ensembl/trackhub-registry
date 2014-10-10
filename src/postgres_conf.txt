@@ -1,0 +1,80 @@
+Steps needed to configure postgres on an Ubuntu 12.04 machine
+-------------------------------------------------------------
+
+- Create file /etc/apt/sources.list.d/pgdg.list
+
+Content:
+
+deb http://apt.postgresql.org/pub/repos/apt/ precise-pgdg main
+
+
+- Import the repository signing key
+
+$ sudo wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add 
+
+- Update the package list
+
+$ sudo apt-get update
+
+- Install PostgreSQL 9.3
+
+$ sudo apt-get install postgresql-9.3 
+
+- Change the PostgreSQL postgres user password; we will not be able to access the server otherwise
+
+$ sudo -u postgres psql postgres
+
+- Set a password for the postgres database role
+
+postgres=# \password postgres
+
+- Create yourself a superuser database account, so you can administer the db (user/roles etc.)
+
+$ sudo -u postgres createuser --superuser $USER
+
+$ sudo -u postgres psql
+
+postgres=# \password $USER
+
+- Client programs, by default, connect to the local host using your Ubuntu login name and expect 
+  to find a database with that name too. 
+
+$ sudo -u postgres createdb $USER
+
+Now you can connect to the local postgres server with no password 
+
+- Use password authentication over Unix sockets instead of the peer method (i.e. postgres asks the 
+  operating system for your login name and uses this for authentication. To login as user "dev" using 
+  peer authentication on postgres, you must also be the user "dev" on the operating system)
+
+$ sudo nano /etc/postgresql/9.3/main/pg_hba.conf
+
+from
+
+# TYPE DATABASE USER ADDRESS METHOD
+local  all      all          peer
+
+to
+
+# TYPE DATABASE USER ADDRESS METHOD
+local  all      all          md5
+
+- Restart the server 
+
+$ sudo /etc/init.d/postgresql restart
+
+- Create a test user
+
+$ createuser test
+$ psql
+# now it asks for the password that postgres set for $USER
+
+$USER=# \password test
+$USER=# create database test owner test;
+
+$ createdb test
+
+- Now user "test" can cannect to server by specifying the password $USER set for "test"
+
+$ psql -U test -W <password>
+

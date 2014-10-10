@@ -1,6 +1,8 @@
 Steps needed to configure postgres on an Ubuntu 12.04 machine
 -------------------------------------------------------------
 
+Extracts taken from: http://www.postgresql.org/download/linux/ubuntu
+
 - Create file /etc/apt/sources.list.d/pgdg.list
 
 Content:
@@ -42,6 +44,8 @@ postgres=# \password $USER
 $ sudo -u postgres createdb $USER
 
 Now you can connect to the local postgres server with no password 
+
+Extracts taken from: http://stackoverflow.com/questions/17443379/psql-fatal-peer-authentication-failed-for-user-dev
 
 - Use password authentication over Unix sockets instead of the peer method (i.e. postgres asks the 
   operating system for your login name and uses this for authentication. To login as user "dev" using 

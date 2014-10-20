@@ -1,15 +1,17 @@
-## no critic
-# no critic line turns off Perl::Critic, to get rid of the warning that
-# Dist::Zilla::Plugin::PkgVersion puts the package version straight
-# after the package line, and thus before use strict
+#
+# A storage class for Catalyst Authentication using ElasticSearch
+# Strongly inspired by CouchDB storage authentication module
+#
+# See Catalyst::Authentication::Store::CouchDB 
+#
 package Catalyst::Authentication::Store::ElasticSearch;
+
+use strict;
+use warnings;
+
 BEGIN {
   $Catalyst::Authentication::Store::ElasticSearch::VERSION = '0.001';
 }
-# ABSTRACT: A storage class for Catalyst Authentication using ElasticSearch
-## use critic
-use strict;
-use warnings;
 
 use Moose 2.00;
 use Catalyst::Exception;
@@ -22,66 +24,58 @@ has 'config'            => (is => 'ro', isa => 'HashRef', required => 1,  );
 # Also, ensure that the user class is loaded.
 
 around BUILDARGS => sub {
-    my ( $orig, $class, $config, $c ) = @_;
+  my ( $orig, $class, $config, $c ) = @_;
 
-    # Validate the configuration
-    if (!$config->{couchdb_uri}) {
-        Catalyst::Exception->throw("couchdb_uri required in configuration");
-    }
+  # figure out if we are overriding the default store user class
+  $config->{'store_user_class'} = 
+    (exists($config->{'store_user_class'})) ? $config->{'store_user_class'} :
+      "Catalyst::Authentication::Store::ElasticSearch::User";
 
-    if (!$config->{dbname}) {
-        Catalyst::Exception->throw("dbname required in configuration");
-    }
-    if (!$config->{designdoc}) {
-        Catalyst::Exception->throw("designdoc required in configuration");
-    }
-    if ($config->{designdoc} !~ /^\_design\//) {
-        Catalyst::Exception->throw("designdoc must start with _design/ required in configuration");
-    }
-    if (!$config->{view}) {
-        Catalyst::Exception->throw("view required in configuration");
-    }
+  # make sure the user class is loaded.
+  Catalyst::Utils::ensure_class_loaded( $config->{'store_user_class'} );
 
-    ## figure out if we are overriding the default store user class
-    $config->{'store_user_class'} = (exists($config->{'store_user_class'})) ? $config->{'store_user_class'} :
-                                        "Catalyst::Authentication::Store::ElasticSearch::User";
+  # overrides 'nodes' parameter or set to ES default: localhost:9200
+  $config->{'nodes'} = 
+    (exists($config->{'nodes'})) ? $config->{'nodes'} : "localhost:9200";
 
-    ## make sure the store class is loaded.
-    Catalyst::Utils::ensure_class_loaded( $config->{'store_user_class'} );
-
-    # $orig will call the superclass BUILDARGS, which
-    # will format the args hash appropriately.
-    return $class->$orig(
-        store_user_class => $config->{store_user_class},
-        config => $config,
-    );
+  # overrides 'transport' parameter or set to default
+  $config->{'transport'} = (exists($config->{'transport'})) ? $config->{'transport'} :
+    "Search::Elasticsearch::Transport";
+    
+  # $orig will call the superclass BUILDARGS, which
+  # will format the args hash appropriately.
+  return $class->$orig(
+		       store_user_class => $config->{store_user_class},
+		       config => $config,
+		      );
 };
 
 sub from_session {
-    my ($self, $c, $frozenuser) = @_;
+  my ($self, $c, $frozenuser) = @_;
 
-    my $user = $self->store_user_class->new($self->{'config'}, $c);
-    return $user->from_session($frozenuser);
+  my $user = $self->store_user_class->new($self->{'config'}, $c);
+  return $user->from_session($frozenuser);
 }
 
 sub for_session {
-    my ($self, $c, $user) = @_;
+  my ($self, $c, $user) = @_;
 
-    return $user->for_session();
+  return $user->for_session();
 }
 
 sub find_user {
-    my ($self, $authinfo, $c) = @_;
+  my ($self, $authinfo, $c) = @_;
 
-    my $user = $self->store_user_class->new($self->{'config'}, $c);
+  my $user = $self->store_user_class->new($self->{'config'}, $c);
 
-    return $user->load($authinfo, $c);
+  return $user->load($authinfo, $c);
 }
 
 sub user_supports {
-    my $self = shift;
-    # this can work as a class method on the user class
-    return $self->store_user_class->supports( @_ );
+  my $self = shift;
+
+  # this can work as a class method on the user class
+  return $self->store_user_class->supports( @_ );
 }
 
 1;

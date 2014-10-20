@@ -1,179 +1,164 @@
-## no critic
-# no critic line turns off Perl::Critic, to get rid of the warning that
-# Dist::Zilla::Plugin::PkgVersion puts the package version straight
-package Catalyst::Authentication::Store::CouchDB::User;
-BEGIN {
-  $Catalyst::Authentication::Store::CouchDB::User::VERSION = '0.001';
-}
-# ABSTRACT: The backing user class for the Catalyst::Authentication::Store::CouchDB storage module.
-## use critic
+#
+# The backing user class for the Catalyst::Authentication::Store::ElasticSearch storage module.
+#
+package Catalyst::Authentication::Store::ElasticSearch::User;
+
 use strict;
 use warnings;
 
+BEGIN {
+  $Catalyst::Authentication::Store::ElasticSearch::User::VERSION = '0.001';
+}
+
 use Moose 2.000;
 use MooseX::NonMoose 0.20;
-use CouchDB::Client 0.09 qw ();
 use Catalyst::Exception;
 use Catalyst::Utils;
+
+use LWP;
 use JSON 2.17 qw ();
 use Try::Tiny 0.09;
-
+use Search::Elasticsearch;
 
 use namespace::autoclean;
 extends 'Catalyst::Authentication::User';
 
-has '_user'         => (is => 'rw', isa => 'CouchDB::Client::Doc', );
-has '_couchdb'      => (is => 'ro', isa => 'CouchDB::Client::DB', );
-has '_designdoc'    => (is => 'ro', isa => 'CouchDB::Client::DesignDoc', );
-has 'view'          => (is => 'ro', isa => 'Str', required => 1, );
+has '_user'  => (is => 'rw', isa => 'HashRef', );
+has '_es'    => (is => 'ro', isa => 'Search::Elasticsearch', );
+has '_index' => (is => 'ro', isa => 'Str', required => 1, );
+has '_type'  => (is => 'ro', isa => 'Str', required => 1, );
 
 around BUILDARGS => sub {
-    my ($orig, $class, $config, $c) = @_;
+  my ($orig, $class, $config, $c) = @_;
 
-    # Allow the User Agent to be overridden - this is handy for tests to 
-    # mock up the CouchDB interaction
+  Catalyst::Exception->throw("Elasticsearch nodes required in configuration")
+      unless $config->{nodes};
 
-    my $ua_class = (exists $config->{ua} ? $config->{ua} : 'LWP::UserAgent');
-    Catalyst::Utils::ensure_class_loaded($ua_class);
-    my $ua = $ua_class->new();
+  Catalyst::Exception->throw("Elasticsearch transport required in configuration")
+      unless $config->{transport};
+    
+  my $es = 
+    Search::Elasticsearch->new(nodes     => $config->{nodes},
+			       transport => $config->{transport});
 
-    my $couch = CouchDB::Client->new(
-        uri => $config->{couchdb_uri},
-        ua  => $ua,
-    );
+  # test connection
+  #
+  # TODO
+  # should consider nodes can be an array
+  #
+  my $req = HTTP::Request->new( GET => $config->{nodes} );
+  my $ua = LWP::UserAgent->new;
+  my $response = $ua->request($req);
+  Catalyst::Exception->throw("Elasticsearch instance not available")
+      unless $response->is_success;
 
-    if (!$couch->testConnection()) {
-        Catalyst::Exception->throw("Could not connect to database");
-    }
+  # test the index exists
+  Catalyst::Exception->throw("index name required in configuration")
+      unless $config->{index};
 
-    my $couch_database = $couch->newDB($config->{dbname});
-    my $couch_designdoc = try {
-        $couch_database->newDesignDoc($config->{designdoc})->retrieve();
-    };
-    if (!$couch_designdoc) {
-        Catalyst::Exception->throw("Could not retrieve design document");
-    };
+  $es->indices->exists(index => $config->{index})
+    or Catalyst::Exception->throw("Index does not exist");
 
-    if (!exists $couch_designdoc->views->{$config->{view}}) {
-        Catalyst::Exception->throw("Design document does not contain view");
-    }
+  # test type exists
+  Catalyst::Exception->throw("user type required in configuration")
+      unless $config->{type};
 
-    return $class->$orig(
-        _couchdb    => $couch_database,
-        _designdoc  => $couch_designdoc,
-        view        => $config->{view},
-    );
+  $es->indices->exists_type(index => $config->{index},
+			    type  => $config->{type})
+    or Catalyst::Exception->throw("Type does not exist");
 
+  return $class->$orig(_es    => $es,
+		       _index => $config->{index},
+		       _type  => $config->{type});
 };
 
 
 sub load {
-    my ($self, $authinfo, $c) = @_;
+  my ($self, $authinfo, $c) = @_;
 
-    my $couch_data = try { $self->_designdoc->queryView(
-            $self->view,
-            include_docs    => 'true',
-            limit           => 1,
-            key             => $authinfo->{username},
-        );
-    };
-    if (!$couch_data) {
-        Catalyst::Exception->throw("Could not read view");
-    };
+  my $username = $authinfo->{username};
+  my $user_search = $self->_es->search(index => $self->_index,
+				       type  => $self->_type,
+				       # term filter: exact value
+				       body  => { query => { term => { username => $username } } });
 
-    return unless exists $couch_data->{rows};
-    return unless ref ( $couch_data->{rows}) eq 'ARRAY';
-    return unless defined  $couch_data->{rows}->[0];
-    return unless exists  $couch_data->{rows}->[0]->{doc};
-    my $user_data = $couch_data->{rows}->[0]->{doc};
+  return unless $user_search;
+  # no user found
+  return unless $user_search->{hits}{total};
+  # multiple users found
+  Catalyst::Exception->throw("Multiple users found for $username")
+      if $user_search->{hits}{total} > 1;
 
-    my $user_doc = $self->_user_doc_from_hash($user_data);
-    $self->_user($user_doc);
-    return $self;
+  return unless ref $user_search->{hits}{hits} eq 'ARRAY';
+  
+  $self->_user($user_search->{hits}{hits}[0]);
+  return $self;
 }
 
 sub supported_features {
-    my $self = shift;
+  my $self = shift;
 
-    return {
-        session         => 1,
-        roles           => 1,
-    };
+  return {
+	  session => 1,
+	  roles   => 1,
+	 };
 }
 
 sub id {
-    my ($self) = @_;
-    return $self->_user->id;
+  my ($self) = @_;
+  return $self->_user->{_id};
 }
 
 
 sub roles {
-    my ($self) = shift;
+  my ($self) = shift;
 
-    return @{$self->_user->data->{roles}};
+  return @{$self->_user->{roles}};
 }
 
 sub get {
-    my ($self, $field) = @_;
+  my ($self, $field) = @_;
 
-    return unless defined $self->_user;
+  return unless defined $self->_user;
 
-    if ($field eq 'id') {
-        return $self->id;
-    }
+  return $self->id if $field eq 'id';
 
-    if (exists $self->_user->data->{$field}) {
-        return $self->_user->data->{$field};
-    }
-    return;
+  return $self->_user->{$field}
+    if exists $self->_user->{$field};  
+  
+  return;
 }
 
 sub get_object {
-    my ($self, $force) = @_;
+  my ($self, $force) = @_;
 
-    return $self->_user;
+  return $self->_user;
 }
 
 sub for_session {
-    my ($self) = @_;
+  my ($self) = @_;
 
-    my $data = $self->_user->contentForSubmit();
-    # Return JSON here, because it's fast, it's human readable so we can
-    # see what's going on in the session.  We can't return the data structure,
-    # because something in the session handling somewhere is mangling it.
-    return JSON::encode_json($data);
+  # Return JSON here, because it's fast, it's human readable so we can
+  # see what's going on in the session.  We can't return the data structure,
+  # because something in the session handling somewhere is mangling it.
+  return JSON::encode_json($self->_user);
 }
 
 sub from_session {
-    my ($self, $frozen_user) = @_;
+  my ($self, $frozen_user) = @_;
 
-    $self->_user($self->_user_doc_from_hash(JSON::decode_json($frozen_user)));
-    return $self;
+  $self->_user(JSON::decode_json($frozen_user));
+  return $self;
 }
 
 sub AUTOLOAD {
-    my ($self) = @_;
+  my ($self) = @_;
 
-    (my $method) = (our $AUTOLOAD =~ /([^:]+)$/);
-    return if $method eq "DESTROY";
+  (my $method) = (our $AUTOLOAD =~ /([^:]+)$/);
+  return if $method eq "DESTROY";
 
-    return $self->get($method);
+  return $self->get($method);
 }
-
-
-
-
-
-sub _user_doc_from_hash {
-    my ($self, $user_data) = @_;
-
-    my $id = delete($user_data->{_id});
-    my $rev = delete($user_data->{_rev});
-    my $attachments = delete($user_data->{_attachments});
-
-    return $self->_couchdb->newDoc($id, $rev, $user_data, $attachments);
-}
-
 
 __PACKAGE__->meta->make_immutable(inline_constructor => 0);
 
@@ -186,7 +171,7 @@ __PACKAGE__->meta->make_immutable(inline_constructor => 0);
 
 =head1 NAME
 
-Catalyst::Authentication::Store::CouchDB::User - The backing user class for the Catalyst::Authentication::Store::CouchDB storage module.
+Catalyst::Authentication::Store::ElasticSearch::User - The backing user class for the Catalyst::Authentication::Store::ElasticSearch storage module.
 
 =head1 VERSION
 
@@ -194,8 +179,8 @@ version 0.001
 
 =head1 DESCRIPTION
 
-The L<Catalyst::Authentication::Store::CouchDB:User> class
-implements user storage connected to a CouchDB instance.
+The L<Catalyst::Authentication::Store::ElasticSearch:User> class
+implements user storage connected to a ElasticSearch instance.
 
 =head1 SYNPOSIS
 
@@ -205,13 +190,13 @@ Internal - not used directly.
 
 =head2 new
 
-Constructor.  Connects to the CouchDB instance in the configuration, and
+Constructor.  Connects to the ElasticSearch instance in the configuration, and
 fetches the design document that contains the configured view.
 
 =head2 load ( $authinfo, $c )
 
 Retrieves a user from storage.  It queries the configured view, and converts
-the first document retrieved into a CouchDB document.  This is then used
+the first document retrieved into a ElasticSearch document.  This is then used
 as the User backing object
 
 =head2 supported_features
@@ -256,11 +241,6 @@ None known, but there are bound to be some.  Please email the author.
 Colin Bradford <cjbradford@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
-
-This software is copyright (c) 2011 by Colin Bradford.
-
-This is free software; you can redistribute it and/or modify it under
-the same terms as the Perl 5 programming language system itself.
 
 =cut
 

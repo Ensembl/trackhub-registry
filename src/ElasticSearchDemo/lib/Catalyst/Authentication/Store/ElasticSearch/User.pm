@@ -24,7 +24,7 @@ use namespace::autoclean;
 extends 'Catalyst::Authentication::User';
 
 has '_user'  => (is => 'rw', isa => 'HashRef', );
-has '_es'    => (is => 'ro', isa => 'Search::Elasticsearch', );
+has '_es'    => (is => 'ro', isa => 'Search::Elasticsearch::Client::Direct', );
 has '_index' => (is => 'ro', isa => 'Str', required => 1, );
 has '_type'  => (is => 'ro', isa => 'Str', required => 1, );
 
@@ -34,19 +34,20 @@ around BUILDARGS => sub {
   Catalyst::Exception->throw("Elasticsearch nodes required in configuration")
       unless $config->{nodes};
 
-  Catalyst::Exception->throw("Elasticsearch transport required in configuration")
-      unless $config->{transport};
+  # Catalyst::Exception->throw("Elasticsearch transport required in configuration")
+  #     unless $config->{transport};
     
   my $es = 
-    Search::Elasticsearch->new(nodes     => $config->{nodes},
-			       transport => $config->{transport});
-
+    Search::Elasticsearch->new(nodes     => $config->{nodes}); # transport => $config->{transport});
+ 
   # test connection
   #
   # TODO
   # should consider nodes can be an array
   #
-  my $req = HTTP::Request->new( GET => $config->{nodes} );
+  my $url = $config->{nodes};
+  $url = "http://$url" unless $url =~ /^http/;
+  my $req = HTTP::Request->new( GET => $url );
   my $ua = LWP::UserAgent->new;
   my $response = $ua->request($req);
   Catalyst::Exception->throw("Elasticsearch instance not available")
@@ -113,7 +114,7 @@ sub id {
 sub roles {
   my ($self) = shift;
 
-  return @{$self->_user->{roles}};
+  return @{$self->_user->{_source}{roles}};
 }
 
 sub get {
@@ -123,8 +124,8 @@ sub get {
 
   return $self->id if $field eq 'id';
 
-  return $self->_user->{$field}
-    if exists $self->_user->{$field};  
+  return $self->_user->{_source}{$field}
+    if exists $self->_user->{_source}{$field};  
   
   return;
 }

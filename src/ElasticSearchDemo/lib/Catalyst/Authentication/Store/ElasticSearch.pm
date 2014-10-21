@@ -34,13 +34,13 @@ around BUILDARGS => sub {
   # make sure the user class is loaded.
   Catalyst::Utils::ensure_class_loaded( $config->{'store_user_class'} );
 
-  # overrides 'nodes' parameter or set to ES default: localhost:9200
-  $config->{'nodes'} = 
-    (exists($config->{'nodes'})) ? $config->{'nodes'} : "localhost:9200";
+  # # overrides 'nodes' parameter or set to ES default: localhost:9200
+  $config->{'nodes'} = '127.0.0.1:9200'
+    unless exists $config->{'nodes'};
 
-  # overrides 'transport' parameter or set to default
-  $config->{'transport'} = (exists($config->{'transport'})) ? $config->{'transport'} :
-    "Search::Elasticsearch::Transport";
+  # # overrides 'transport' parameter or set to default
+  # $config->{'transport'} = (exists($config->{'transport'})) ? $config->{'transport'} :
+  #   "Search::Elasticsearch::Transport";
     
   # $orig will call the superclass BUILDARGS, which
   # will format the args hash appropriately.

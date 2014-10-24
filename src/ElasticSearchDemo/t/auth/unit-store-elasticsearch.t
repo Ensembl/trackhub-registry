@@ -35,7 +35,6 @@ ok(!defined $missing_user, 'Missing user not found');
 
 my $session_data = $store_es->for_session(undef, $good_user);
 is(ref $session_data, '', 'Got a scalar back from for_session');
-note $session_data;
 
 # sub from_session
 my $good_user2 = $store_es->from_session(undef, $session_data);

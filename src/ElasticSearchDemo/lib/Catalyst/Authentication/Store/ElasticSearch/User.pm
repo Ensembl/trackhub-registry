@@ -77,17 +77,23 @@ around BUILDARGS => sub {
 sub load {
   my ($self, $authinfo, $c) = @_;
 
-  my $username = $authinfo->{username};
+  my $query = { bool => { must => [] } };
+  foreach my $key (keys %{$authinfo}) {
+    push @{$query->{bool}{must}}, { term => { $key =>  $authinfo->{$key} } };
+  }
+
+  # my $username = $authinfo->{username};
   my $user_search = $self->_es->search(index => $self->_index,
 				       type  => $self->_type,
-				       # term filter: exact value
-				       body  => { query => { term => { username => $username } } });
+				       # # term filter: exact value
+				       # body  => { query => { term => { username => $username } } });
+				       body => { query => $query });
 
   return unless $user_search;
   # no user found
   return unless $user_search->{hits}{total};
   # multiple users found
-  Catalyst::Exception->throw("Multiple users found for $username")
+  Catalyst::Exception->throw("Multiple users found")
       if $user_search->{hits}{total} > 1;
 
   return unless ref $user_search->{hits}{hits} eq 'ARRAY';
@@ -152,13 +158,26 @@ sub from_session {
   return $self;
 }
 
+# sub AUTOLOAD {
+#   my ($self) = @_;
+
+#   (my $method) = (our $AUTOLOAD =~ /([^:]+)$/);
+#   return if $method eq "DESTROY";
+
+#   return $self->get($method);
+# }
+
 sub AUTOLOAD {
-  my ($self) = @_;
+  my $self = shift;
+  our $AUTOLOAD;
+  my $attr = $AUTOLOAD;
+  $attr =~ s/.*:://;
 
-  (my $method) = (our $AUTOLOAD =~ /([^:]+)$/);
-  return if $method eq "DESTROY";
+  return unless $attr =~ /[^A-Z]/;  # skip DESTROY and all-cap methods
 
-  return $self->get($method);
+  $self->_user->{_source}{$attr} = shift if @_;
+  return $self->get($attr);
+  
 }
 
 __PACKAGE__->meta->make_immutable(inline_constructor => 0);

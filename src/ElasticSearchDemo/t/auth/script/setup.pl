@@ -35,6 +35,37 @@ $indices->delete(index => $index) and carp "Deleting index $index"
 carp "Creating index $index";
 $indices->create(index => $index);
 
+#
+# create mapping
+#
+# NOTE
+# It's necessary to use dynamic templates in order to tell ES
+# not to index any string field, otherwise fields like auth_key
+# which might be created with a random pattern containing lower
+# and upper case characters won't be suitable for exact matching
+# and authentication won't find the user with the given field.
+#
+my $mapping = {
+    user => {
+	     "dynamic_templates" => [
+				     {
+				      "test" => {
+						 "match" => "*",
+						 "match_mapping_type" => "string",
+						 "mapping" => {
+							       "type"  => "string",
+							       "index" => "not_analyzed"
+							      }
+						}
+				     }
+				    ]
+	    },
+	      };
+
+$indices->put_mapping(index => $index,
+		      type  => $type,
+		      body  => $mapping);
+
 # Get the data for each user document to be created, and create it.
 my $id = 1;
 foreach my $user_doc (get_doc_data()) {

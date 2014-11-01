@@ -41,10 +41,7 @@ BEGIN {
     };
 
     $ENV{TESTAPP_PLUGINS} = [
-        qw/Authentication
-	   Session
-	   Session::Store::FastMmap
-	   Session::State::Cookie/
+        qw/Authentication/
     ];
 }
 
@@ -54,34 +51,10 @@ use Catalyst::Test 'TestApp';
 #
 # test user login and get authentication token
 #
-my $auth_token = String::Random->new->randpattern("cCn");
+my $auth_token = String::Random->new->randpattern("s" x 64);
 ok( my $res = request("http://localhost/user_login?username=test&password=test&auth_token=$auth_token&detach=get_auth_key"), 'request ok' );
 is( $res->content, $auth_token, 'auth token' );
 
-my $query = {
-	     'bool' => {
-			'must' => [
-				   {
-                                    'term' => {
-					       'auth_key' => $auth_token
-                                              }
-				   },
-				   {
-                                    'term' => {
-					       'username' => 'test'
-                                              }
-				   }
-				  ]
-		       }
-	    };
-
-my $es = Search::Elasticsearch->new();
-my $user_search = $es->search(index => 'test',
-			      type  => 'user',
-			      body => { query => $query });
-use Data::Dumper;
-print Dumper($user_search);
-exit;
 #
 # test user authentication with auth key
 #

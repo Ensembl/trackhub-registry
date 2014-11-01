@@ -40,7 +40,7 @@ throws_ok (
 	     my $test_user = Catalyst::Authentication::Store::ElasticSearch::User->new($bad_config, undef),
 	   },
 	   'Catalyst::Exception',
-	   'incorrect designdoc throws an exception',
+	   'incorrect user configuration throws an exception',
 	  );
 
 done_testing;

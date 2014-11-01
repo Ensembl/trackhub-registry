@@ -43,6 +43,11 @@ our $VERSION = '0.01';
 # with an external configuration file acting as an override for
 # local deployment.
 
+# TIP: Here is a short script that will dump the contents of MyApp-config> to Config::General format in myapp.conf:
+
+#     $ CATALYST_DEBUG=0 perl -Ilib -e 'use MyApp; use Config::General;
+#         Config::General->new->save_file("myapp.conf", MyApp->config);'
+
 __PACKAGE__->config(
 		    name => 'ElasticSearchDemo',
 		    # Disable deprecated behavior needed by old applications
@@ -88,7 +93,17 @@ __PACKAGE__->config(
 							# No password check is done.  An attempt is made to retrieve the user 
 							# based on the information provided in the $c->authenticate() call. 
 							# If a user is found, authentication is considered to be successful.
+							#
+							# NOTE
+							# This is actually not working in combination with a Minimal store,
+							# since this store is just using the username information to locate a
+							# a user and not any other provide piece of info (e.g. auth_key).
+							# The result is that the user will always be authenticated if we
+							# provide an existing used id.
+							#
 							password_type  => 'none' 
+							# password_type => 'clear',
+							# password_field => 'auth_key'
 						       },
 					 store => {
 						   class => 'Minimal',

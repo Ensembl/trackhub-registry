@@ -46,20 +46,20 @@ $indices->create(index => $index);
 # and authentication won't find the user with the given field.
 #
 my $mapping = {
-    user => {
-	     "dynamic_templates" => [
-				     {
-				      "test" => {
-						 "match" => "*",
-						 "match_mapping_type" => "string",
-						 "mapping" => {
-							       "type"  => "string",
-							       "index" => "not_analyzed"
-							      }
-						}
-				     }
-				    ]
-	    },
+	       $type => {
+			 "dynamic_templates" => [
+						 {
+						  "test" => {
+							     "match" => "*",
+							     "match_mapping_type" => "string",
+							     "mapping" => {
+									   "type"  => "string",
+									   "index" => "not_analyzed"
+									  }
+							    }
+						 }
+						]
+			},
 	      };
 
 $indices->put_mapping(index => $index,

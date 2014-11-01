@@ -39,21 +39,20 @@ use Catalyst::Test 'TestApp';
 
 # log a user in
 {
-    ok( my $res = request('http://localhost/user_login?username=test&password=test'), 'request ok' );
-    is( $res->content, 'test logged in', 'user logged in ok' );
+  ok( my $res = request('http://localhost/user_login?username=test&password=test'), 'request ok' );
+  is( $res->content, 'test logged in', 'user logged in ok' );
 }
 
 # invalid user
 {
-    ok( my $res = request('http://localhost/user_login?username=foo&password=bar'), 'request ok' );
-    is( $res->content, 'not logged in', 'user not logged in ok' );
+  ok( my $res = request('http://localhost/user_login?username=foo&password=bar'), 'request ok' );
+  is( $res->content, 'not logged in', 'user not logged in ok' );
 }
-
 
 # log the user out
 {
-    ok( my $res = request('http://localhost/user_logout'), 'request ok' );
-    is( $res->content, 'logged out', 'user logged out ok' );
+  ok( my $res = request('http://localhost/user_logout'), 'request ok' );
+  is( $res->content, 'logged out', 'user logged out ok' );
 }
 
 done_testing;

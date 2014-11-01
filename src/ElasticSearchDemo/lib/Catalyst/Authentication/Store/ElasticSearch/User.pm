@@ -82,7 +82,6 @@ sub load {
     push @{$query->{bool}{must}}, { term => { $key =>  $authinfo->{$key} } };
   }
 
-  # my $username = $authinfo->{username};
   my $user_search = $self->_es->search(index => $self->_index,
 				       type  => $self->_type,
 				       # # term filter: exact value
@@ -175,7 +174,19 @@ sub AUTOLOAD {
 
   return unless $attr =~ /[^A-Z]/;  # skip DESTROY and all-cap methods
 
-  $self->_user->{_source}{$attr} = shift if @_;
+  if (@_) {
+    $self->_user->{_source}{$attr} = shift;
+    
+    # update (i.e. reindex) the whole doc with the new attribute
+    $self->_es->index(index => $self->_index,
+		      type  => $self->_type,
+		      id    => $self->id,
+		      body  => $self->_user->{_source});
+
+    # refresh is needed to immediately see the change
+    $self->_es->indices->refresh(index => $self->_index);  
+  } 
+  
   return $self->get($attr);
   
 }

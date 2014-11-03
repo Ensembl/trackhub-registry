@@ -130,4 +130,34 @@ sub docs {
   return $self->{docs};
 }
 
+#
+# return a list of documents representing users
+# that can authenticate and be authorised
+#
+sub get_doc_data {
+  my $self = shift;
+
+  return 
+    (
+     { # the administrator
+      fullname => "Administrator",
+      password => "test",
+      roles    => ["admin", "user"],
+      username => "admin",
+     },
+     { # a first trackhub content provider
+      fullname => "TrackHub1",
+      password => "trackhub1",
+      roles    => ["user"],
+      username => "trackhub1",
+     },
+     { # a second trackhub content provider
+      fullname => "TrackHub2",
+      password => "trackhub2",
+      roles    => ["user"],
+      username => "trackhub2",
+     },
+    );
+}
+
 1;

@@ -21,13 +21,23 @@ use ElasticSearchDemo::Model::ElasticSearch;
 
 sub new {
   my ($caller, %args) = @_;
-  my ($dir, $index, $type, $mapping) = ($args{dir}, $args{index}, $args{type}, $args{mapping});
+
+  # my ($dir, $index, $type, $mapping) = ($args{dir}, $args{index}, $args{type}, $args{mapping});
+  # defined $dir or croak "Undefined directory arg";
+  # defined $index and defined $type or
+  #   croak "Undefined index|type parameters";
+
+  my ($dir, $index, $trackhub_settings, $auth_settings) = ($args{dir}, $args{index}, $args{trackhub}, $args{authentication});
   defined $dir or croak "Undefined directory arg";
-  defined $index and defined $type or
-    croak "Undefined index|type parameters";
+  defined $index or croak "Undefined index arg";
+  defined $trackhub_settings and defined $auth_settings or
+    croak "Undefined trackhub and/or authentication settings";
 
   my $class = ref($caller) || $caller;
-  my $self = bless({ index => $index, type => $type, mapping => "$dir/$mapping" }, $class);
+  # my $self = bless({ index => $index, type => $type, mapping => "$dir/$mapping" }, $class);
+  my $self = bless({ index => $index, trackhub => $trackhub_settings, auth => $auth_settings }, $class);
+  $self->{trackhub}{mapping} = "$dir/" . $self->{trackhub}{mapping};
+  $self->{auth}{mapping} = "$dir/" . $self->{auth}{mapping};
 
   #
   # add example trackhub documents
@@ -45,6 +55,14 @@ sub new {
     $self->{docs}{$id++} = $doc_path;
   }
 
+  #
+  # add example authenticated users
+  #
+  $id = 1;
+  foreach my $user ($self->get_user_data()) {
+    $self->{users}{$id++} = $user;
+  }
+  
   &ElasticSearchDemo::Utils::es_running() or
     croak "ElasticSearch instance not available";
 
@@ -60,7 +78,7 @@ sub new {
 sub create_index {
   my $self = shift;
 
-  my ($index, $type) = ($self->{index}, $self->{type});
+  my $index = $self->{index};
   my $indices = $self->{es}->indices;
 
   #
@@ -75,32 +93,47 @@ sub create_index {
   $indices->create(index => $index); 
   
   #
-  # create the mapping (trackhub)
+  # create the trackhub mapping
   #
-  my $mapping_json = from_json(&ElasticSearchDemo::Utils::slurp_file($self->{mapping}));
+  exists $self->{trackhub}{type} && exists $self->{trackhub}{mapping} or
+    croak "Missing trackhub parameters (type|mapping)";
   $indices->put_mapping(index => $index,
-			type  => $type,
-			body  => $mapping_json);
+			type  => $self->{trackhub}{type},
+			body  => from_json(&ElasticSearchDemo::Utils::slurp_file($self->{trackhub}{mapping})));
+  my $mapping_json = $indices->get_mapping(index => $index,
+					type  => $self->{trackhub}{type});
+  exists $mapping_json->{$index}{mappings}{trackhub} or croak "TrackHub mapping not created";
+  carp "TrackHub mapping created";
+
+  #
+  # create the authentication/authorisation mapping
+  #
+  exists $self->{auth}{type} && exists $self->{auth}{mapping} or
+    croak "Missing authentication/authorization parameters (type|mapping)";
+  $indices->put_mapping(index => $index,
+			type  => $self->{auth}{type},
+			body  => from_json(&ElasticSearchDemo::Utils::slurp_file($self->{auth}{mapping})));
   $mapping_json = $indices->get_mapping(index => $index,
-					type  => $type);
-  exists $mapping_json->{$index}{mappings}{$type} and carp "Mapping created";
-  
+					type  => $self->{auth}{type});
+  exists $mapping_json->{$index}{mappings}{user} or croak "Authentication/authorisation mapping not created";
+  carp "Authentication/authorisation mapping created";
+
 }
 
 
 # index the couple of example documents 
-# (hardwire in the constructor, at the moment
+# (hardwired in the constructor, at the moment)
 #
-sub index {
+sub index_trackhubs {
   my $self = shift;
 
   #
   # add example trackhub documents
   #
   foreach my $id (keys %{$self->{docs}}) {
-    carp "Indexing document $self->{docs}{$id}";
+    carp "Indexing trackhub document $self->{docs}{$id}";
     $self->{es}->index(index   => $self->{index},
-		       type    => $self->{type},
+		       type    => $self->{trackhub}{type},
 		       id      => $id,
 		       body    => from_json(&ElasticSearchDemo::Utils::slurp_file($self->{docs}{$id})));
   }
@@ -111,6 +144,32 @@ sub index {
   carp "Flushing recent changes";
   $self->{es}->indices->refresh(index => $self->{index});
 }
+
+
+# index the example users for the authentication/authorisation mechanism=
+# (hardwired in the get_user_data method, at the moment)
+#
+sub index_users {
+  my $self = shift;
+
+  #
+  # add example user documents
+  #
+  foreach my $id (keys %{$self->{users}}) {
+    carp "Indexing user $self->{users}{$id}{fullname} document";
+    $self->{es}->index(index   => $self->{index},
+		       type    => $self->{auth}{type},
+		       id      => $id,
+		       body    => $self->{users}{$id});
+  }
+
+  # The refresh() method refreshes the specified indices (or all indices), 
+  # allowing recent changes to become visible to search. 
+  # This process normally happens automatically once every second by default.
+  carp "Flushing recent changes";
+  $self->{es}->indices->refresh(index => $self->{index});
+}
+
 
 #
 # delete everything created 
@@ -134,7 +193,7 @@ sub docs {
 # return a list of documents representing users
 # that can authenticate and be authorised
 #
-sub get_doc_data {
+sub get_user_data {
   my $self = shift;
 
   return 

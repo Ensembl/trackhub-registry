@@ -33,16 +33,41 @@ $indices->delete(index => $index) and carp "Deleting index $index"
 
 # Now, create the index again
 carp "Creating index $index";
-$indices->create(index => $index);
+$indices->create(index => $index,
+#
+# The following configuration generates an error:
+#
+# "Unknown param (mappings) in (create) request"
+# even though the Search::Elasticsearch documentation refer
+# to the official create index documentation which itself
+# mention the mappings configuration option.
+#
+		 # mappings => {
+		 # 	      $type => {
+		 # 			"dynamic_templates" => [
+		 # 						{
+		 # 						 "test" => {
+		 # 							    "match" => "*",
+		 # 							    "match_mapping_type" => "string",
+		 # 							    "mapping" => {
+		 # 									  "type"  => "string",
+		 # 									  "index" => "not_analyzed"
+		 # 									 }
+		 # 							   }
+		 # 						}
+		 # 					       ]
+		 # 		       },
+		 # 	     }
+		);
 
 #
 # create mapping
 #
 # NOTE
 # It's necessary to use dynamic templates in order to tell ES
-# not to index any string field, otherwise fields like auth_key
+# not to index any string field, otherwise fields like auth_key,
 # which might be created with a random pattern containing lower
-# and upper case characters won't be suitable for exact matching
+# and upper case characters, won't be suitable for exact matching
 # and authentication won't find the user with the given field.
 #
 my $mapping = {

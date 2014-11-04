@@ -66,7 +66,7 @@ __PACKAGE__->config(
 		    },
 		    
 		    # API authentication
-		    # Auth with HTTP (basic or digest) credential and Minimal store
+		    # Auth with HTTP (basic or digest) credential and Elasticsearch store
 		    'Plugin::Authentication' => 
 		    {
 		     default_realm => 'test',
@@ -79,12 +79,9 @@ __PACKAGE__->config(
 							password_field => 'password'
 						       },
 					 store => {
-						   class => 'Minimal',
-						   users => { 
-							     test => { 
-								      password => "test"
-								     }
-							    }
+						   class => 'ElasticSearch',
+						   index => 'test',
+						   type  => 'user'
 						  }
 					},
 				testauthkey => {
@@ -97,46 +94,20 @@ __PACKAGE__->config(
 							# NOTE
 							# This is actually not working in combination with a Minimal store,
 							# since this store is just using the username information to locate a
-							# a user and not any other provide piece of info (e.g. auth_key).
-							# The result is that the user will always be authenticated if we
-							# provide an existing used id.
+							# a user and not any other provided piece of info (e.g. auth_key).
+							# The result is that the user will always be authenticated if we just
+							# provide an existing user id.
 							#
 							password_type  => 'none' 
-							# password_type => 'clear',
-							# password_field => 'auth_key'
 						       },
 					 store => {
-						   class => 'Minimal',
-						   users => { 
-							     test => { }
-							    }
+						   class => 'ElasticSearch',
+						   index => 'test',
+						   type  => 'user'
 						  }
 					},
 			       }
 		    },
-				 
-		    # Auth with Password credential and Minimal store
-		    # 'Plugin::Authentication' => 
-		    #  {
-		    #   default_realm => 'example',
-		    #   realms => 
-		    #   {
-		    #    example => 
-		    #    {
-		    #     credential => 
-		    #     {
-		    #  	class => 'Password',
-		    #  	password_type  => 'clear',
-		    #  	password_field => 'password'
-		    #     },
-		    #     store => 
-		    #     {
-		    #  	class => 'Minimal',
-		    #  	users => { test => { password => "test", } },
-		    #     },
-		    #    },
-		    #   }
-		    # },
 		   );
 
 # Start the application

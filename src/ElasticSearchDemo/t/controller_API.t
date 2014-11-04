@@ -19,18 +19,26 @@ use ElasticSearchDemo::Indexer; # index a couple of sample documents
 
 SKIP: {
   skip "Launch an elasticsearch instance for the tests to run fully",
-    96 unless &ElasticSearchDemo::Utils::es_running();
+    68 unless &ElasticSearchDemo::Utils::es_running();
 
   # index test data
   note 'Preparing data for test (indexing sample documents)';
   my $indexer = ElasticSearchDemo::Indexer->new(dir   => "$Bin/../../../docs/trackhub-schema/draft02/examples/",
 						index => 'test',
-						type  => 'trackhub',
-						mapping => 'trackhub_mappings.json');
-  $indexer->index();
+						trackhub => {
+						  type  => 'trackhub',
+						  mapping => 'trackhub_mappings.json'
+						},
+						authentication => {
+						  type  => 'user',
+						  mapping => 'authentication_mappings.json'
+						}
+					       );
+  $indexer->index_trackhubs();
+  $indexer->index_users();
 
   #
-  # Requests with no authentication fail.
+  # Requests with no authentication should fail.
   # Should log in first
   #
   my @endpoints = 
@@ -41,37 +49,16 @@ SKIP: {
      ['/api/trackhub/1', 'POST', 'Update content for a document with the specified ID'],
      ['/api/trackhub/1', 'DELETE', 'Delete document with the specified ID']
     );
-  foreach my $ep (@endpoints) {
-    my ($endpoint, $method) = ($ep->[0], $ep->[1]);
-    my $request;
-    $request = ($method eq 'GET')?GET($endpoint):($method eq 'POST'?POST($endpoint):($method eq 'PUT'?PUT($endpoint):DELETE($endpoint)));
-    ok(my $response = request($request), "Unauthorized $method request to $endpoint");
-    is($response->code, 401, 'Unauthorized response 401');
-    like($response->content, qr/You need to login, get an auth_token/, 'Unauthorized response content');
-  }
 
   #
   # Authenticate
   #
   my $request = GET('/api/login');
-  $request->headers->authorization_basic('test', 'test');
+  $request->headers->authorization_basic('trackhub1', 'trackhub1');
   ok(my $response = request($request), 'Request to log in');
   my $content = from_json($response->content);
   ok(exists $content->{auth_token}, 'Logged in');
   my $auth_token = $content->{auth_token};
-
-  #
-  # Requests to endpoints with no or partial (use just user) API-key based authentication
-  #
-  foreach my $ep (@endpoints) {
-    my ($endpoint, $method) = ($ep->[0], $ep->[1]);
-    my $request;
-    $request = ($method eq 'GET')?GET($endpoint):($method eq 'POST'?POST($endpoint):($method eq 'PUT'?PUT($endpoint):DELETE($endpoint)));
-    $request->headers->header(user => 'test');
-    ok(my $response = request($request), "Unauthorized request to $endpoint");
-    is($response->code, 401, 'Unauthorized response 401');
-    like($response->content, qr/You need to login, get an auth_token/, 'Unauthorized response content');
-  }
 
   #
   # Authenticated requests (using API-key)
@@ -79,7 +66,7 @@ SKIP: {
   # /api (GET): returns the list of endpoints (name/method/description)
   #
   $request = GET('/api');
-  $request->headers->header(user       => 'test');
+  $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'GET request to /api');
   ok($response->is_success, 'Request successful 2xx');
@@ -90,7 +77,7 @@ SKIP: {
   # /api/trackhub (GET): get list of documents with their URIs
   #
   $request = GET('/api/trackhub');
-  $request->headers->header(user       => 'test');
+  $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'GET request to /api/trackhub');
   ok($response->is_success, 'Request successful 2xx');
@@ -103,7 +90,7 @@ SKIP: {
   #
   # request correct document
   $request = GET('/api/trackhub/1');
-  $request->headers->header(user       => 'test');
+  $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'GET Request to /api/trackhub/1');
   ok($response->is_success, 'Request successful 2xx');
@@ -115,7 +102,7 @@ SKIP: {
 
   # request incorrect document
   $request = GET('/api/trackhub/3');
-  $request->headers->header(user       => 'test');
+  $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'GET request to /api/trackhub/3');
   is($response->code, 404, 'Request unsuccessful 404');
@@ -129,7 +116,7 @@ SKIP: {
   # request incorrect document
   $request = POST('/api/trackhub/3',
   		  'Content-type' => 'application/json');
-  $request->headers->header(user       => 'test');
+  $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'POST request to /api/trackhub/3');
   is($response->code, 400, 'Request unsuccessful 400');
@@ -139,7 +126,7 @@ SKIP: {
   # request to update a doc but do not supply data
   $request = POST('/api/trackhub/1',
   		 'Content-type' => 'application/json');
-  $request->headers->header(user       => 'test');
+  $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'POST request to /api/trackhub/1');
   is($response->code, 400, 'Request unsuccessful 400');
@@ -150,7 +137,7 @@ SKIP: {
   $request = POST('/api/trackhub/1',
   		  'Content-type' => 'application/json',
   		  'Content'      => to_json({ test => 'test' }));
-  $request->headers->header(user       => 'test');
+  $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'POST request to /api/trackhub/1');
   ok($response->is_success, 'Doc update request successful');
@@ -163,7 +150,7 @@ SKIP: {
   #
   # request incorrect document
   $request = DELETE('/api/trackhub/3');
-  $request->headers->header(user       => 'test');
+  $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'DELETE request to /api/trackhub/3');
   is($response->code, 404, 'Request unsuccessful 404');
@@ -172,7 +159,7 @@ SKIP: {
 
   # delete doc1
   $request = DELETE('/api/trackhub/1');
-  $request->headers->header(user       => 'test');
+  $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'DELETE request to /api/trackhub/1');
   ok($response->is_success, 'Request successful 2xx');
@@ -181,7 +168,7 @@ SKIP: {
 
   # request for deleted doc should fail
   $request = GET('/api/trackhub/1');
-  $request->headers->header(user       => 'test');
+  $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'GET request to /api/trackhub/1');
   is($response->code, 404, 'Request unsuccessful 404');
@@ -190,7 +177,18 @@ SKIP: {
   like($content->{error}, qr/Could not find/, 'Correct error response');
 
   note "Re-creating index test";
-  $indexer->create_index(); # do not index this time through the indexer, the API will do that
+  $indexer->create_index(); # do not index the documents this time through the indexer, the API will do that
+  $indexer->index_users();
+
+  #
+  # Re-Authenticate since the auth_token is deleted
+  #
+  $request = GET('/api/login');
+  $request->headers->authorization_basic('trackhub1', 'trackhub1');
+  ok($response = request($request), 'Request to log in');
+  $content = from_json($response->content);
+  ok(exists $content->{auth_token}, 'Logged in');
+  $auth_token = $content->{auth_token};
 
   #
   # /api/trackhub/create (PUT): create new document
@@ -198,7 +196,7 @@ SKIP: {
   # request to create a doc but do not supply data
   $request = PUT('/api/trackhub/create',
   		 'Content-type' => 'application/json');
-  $request->headers->header(user       => 'test');
+  $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'PUT request to /api/trackhub/create');
   is($response->code, 400, 'Request unsuccessful 400');
@@ -215,7 +213,7 @@ SKIP: {
   $request = PUT('/api/trackhub/create',
   		 'Content-type' => 'application/json',
   		 'Content'      => &ElasticSearchDemo::Utils::slurp_file($docs->{1}));
-  $request->headers->header(user       => 'test');
+  $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'PUT request to /api/trackhub/create');
   ok($response->is_success, 'Doc create request successful');
@@ -226,7 +224,7 @@ SKIP: {
   $request = PUT('/api/trackhub/create',
   		 'Content-type' => 'application/json',
   		 'Content'      => &ElasticSearchDemo::Utils::slurp_file($docs->{2}));
-  $request->headers->header(user       => 'test');
+  $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'PUT request to /api/trackhub/create');
   ok($response->is_success, 'Doc create request successful');
@@ -238,7 +236,7 @@ SKIP: {
   $request = POST('/api/trackhub/create',
   		  'Content-type' => 'application/json',
   		  'Content'      => &ElasticSearchDemo::Utils::slurp_file($docs->{2}));
-  $request->headers->header(user       => 'test');
+  $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'POST request to /api/trackhub/create');
   ok(!$response->is_success, 'Doc create POST request unsuccessful');
@@ -247,7 +245,7 @@ SKIP: {
   # should now have two documents which we can access
   # via the /api/trackhub endpoint
   $request = GET('/api/trackhub');
-  $request->headers->header(user       => 'test');
+  $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'GET request to /api/trackhub');
   ok($response->is_success, 'Request successful 2xx');

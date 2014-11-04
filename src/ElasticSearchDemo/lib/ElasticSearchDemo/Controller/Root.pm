@@ -118,10 +118,10 @@ sub login :Path('/api/login') Args(0) {
   my ($self, $c) = @_;
 
   $c->authenticate;
-  
+
   # user should exist
-  $c->user->obj->auth_key(String::Random::random_string('.' x 64));
-  $c->user->obj->update();
+  $c->user->auth_key(String::Random::random_string('s' x 64));
+  # $c->user->obj->update();
   # $c->response->headers->header('x-registry-authorization' => $c->user->get('auth_key'));
   
   # $self->status_ok($c, entity => { auth_token => $c->user->get('auth_key') });

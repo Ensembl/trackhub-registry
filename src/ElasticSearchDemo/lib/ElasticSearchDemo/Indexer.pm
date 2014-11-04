@@ -200,7 +200,7 @@ sub get_user_data {
     (
      { # the administrator
       fullname => "Administrator",
-      password => "test",
+      password => "admin",
       roles    => ["admin", "user"],
       username => "admin",
      },

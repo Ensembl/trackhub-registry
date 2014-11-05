@@ -117,7 +117,7 @@ sub search : Chained('/') :PathPart('search') :Args(2) {
 sub login :Path('/api/login') Args(0) {
   my ($self, $c) = @_;
 
-  $c->authenticate;
+  $c->authenticate({}, 'testhttp');
 
   # user should exist
   $c->user->auth_key(String::Random::random_string('s' x 64));

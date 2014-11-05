@@ -13,14 +13,17 @@ requires 'Catalyst::Runtime' => '5.90071';
 requires 'Catalyst::Plugin::ConfigLoader';
 requires 'Catalyst::Plugin::Static::Simple';
 requires 'Catalyst::Action::RenderView';
+requires 'Catalyst::View::TT';
+requires 'Catalyst::View::JSON';
 
-# for session handlng, as per
+# for authentication/session handlng, as per
 # http://www.catalystframework.org/calendar/2007/5
 requires 'Catalyst::Plugin::Authentication';
 requires 'Catalyst::Plugin::Session';
 requires 'Catalyst::Plugin::Session::State::Cookie';
 requires 'Catalyst::Plugin::Session::Store::FastMmap';
-# requires 'Catalyst::Plugin::Session::Store::Minimal';
+requires 'Catalyst::Plugin::StatusMessage';
+requires 'CatalystX::SimpleLogin';
 
 requires 'Moose';
 requires 'namespace::autoclean';

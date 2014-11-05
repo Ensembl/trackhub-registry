@@ -27,6 +27,8 @@ use Catalyst qw/
     StackTrace
 
     Authentication
+    Authorization::Roles
+    +CatalystX::SimpleLogin
 /;
 
     
@@ -69,9 +71,21 @@ __PACKAGE__->config(
 		    # Auth with HTTP (basic or digest) credential and Elasticsearch store
 		    'Plugin::Authentication' => 
 		    {
-		     default_realm => 'test',
+		     default_realm => 'testweb',
 		     realms => {
-				test => {
+				testweb => {
+					 credential => {
+							class => 'Password',
+							password_field => 'password'
+							password_type  => 'clear',
+						       },
+					 store => {
+						   class => 'ElasticSearch',
+						   index => 'test',
+						   type  => 'user'
+						  }
+					},
+				testhttp => {
 					 credential => {
 							class => 'HTTP',
 							type  => 'basic', # 'digest'|'basic|'any'

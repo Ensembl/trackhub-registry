@@ -24,6 +24,8 @@ requires 'Catalyst::Plugin::Session::State::Cookie';
 requires 'Catalyst::Plugin::Session::Store::FastMmap';
 requires 'Catalyst::Plugin::StatusMessage';
 requires 'CatalystX::SimpleLogin';
+requires 'Catalyst::Controller::ActionRole';
+requires 'Catalyst::ActionRole::ACL';
 
 requires 'Moose';
 requires 'namespace::autoclean';
@@ -31,7 +33,6 @@ requires 'Config::General'; # This should reflect the config file format you've 
                  # See Catalyst::Plugin::ConfigLoader for supported formats
 
 requires 'Search::Elasticsearch';
-# requires 'Catalyst::Authentication::Credential::HTTP';
 
 requires 'List::Util';
 

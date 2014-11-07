@@ -23,15 +23,16 @@ use Catalyst qw/
     -Debug
     ConfigLoader
     Static::Simple
-
     StackTrace
-
+    +CatalystX::SimpleLogin
     Authentication
     Authorization::Roles
-    +CatalystX::SimpleLogin
+    Session
+    Session::Store::FastMmap
+    Session::State::Cookie
 /;
 
-    
+#     +CatalystX::SimpleLogin
 extends 'Catalyst';
 
 our $VERSION = '0.01';
@@ -66,7 +67,14 @@ __PACKAGE__->config(
 		     request_timeout => 30,
 		     max_requests    => 10_000
 		    },
-		    
+		    'Plugin::Session' => 
+		    {
+		     flash_to_stash => 1
+		    },
+		    'Controller::Login' => 
+		    {
+		     traits => ['-RenderAsTTTemplate'],
+		    },
 		    # API authentication
 		    # Auth with HTTP (basic or digest) credential and Elasticsearch store
 		    'Plugin::Authentication' => 
@@ -76,7 +84,7 @@ __PACKAGE__->config(
 				testweb => {
 					 credential => {
 							class => 'Password',
-							password_field => 'password'
+							password_field => 'password',
 							password_type  => 'clear',
 						       },
 					 store => {

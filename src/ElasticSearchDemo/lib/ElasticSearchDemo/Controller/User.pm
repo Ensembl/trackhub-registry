@@ -2,7 +2,7 @@ package ElasticSearchDemo::Controller::User;
 use Moose;
 use namespace::autoclean;
 
-BEGIN { extends 'Catalyst::Controller'; }
+BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 
 =head1 NAME
 
@@ -18,17 +18,33 @@ Catalyst Controller.
 
 sub base : Chained('/login/required') PathPart('') CaptureArgs(0) {}
 
-=head2 index
+sub admin : Chained('base') PathPart('') CaptureArgs(0) Does('ACL') RequiresRole('admin') ACLDetachTo('denied') {}
 
-=cut
-
-sub index :Path :Args(0) {
-    my ( $self, $c ) = @_;
-
-    $c->response->body('Matched ElasticSearchDemo::Controller::User in User.');
+sub list : Chained('admin') PathPart('user/list') Args(0) {
+  my ($self, $c) = @_;
+ 
+  # my $users = $c->model('DB::User')->search(
+  # 					    { active => 'Y'},
+  # 					    {
+  # 					     order_by => ['username'],
+  # 					     page     => ($c->req->param('page') || 1),
+  # 					     rows     => 20,
+  # 					    }
+  # 					   );
+  
+  # $c->stash(
+  # 	    users => $users,
+  # 	    pager => $users->pager,
+  # 	   );
+  
 }
 
-
+sub denied : Private {
+  my ($self, $c) = @_;
+ 
+  $c->stash(status_msg => "Access Denied",
+	    template   => "login/login.tt");
+}
 
 =encoding utf8
 

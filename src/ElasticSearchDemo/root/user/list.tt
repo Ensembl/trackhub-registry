@@ -1,0 +1,7 @@
+[% META title = 'MyApp: User Admin' %]
+<div class="page-header">
+  <p>
+    User's list.
+  </p>
+</div>
+

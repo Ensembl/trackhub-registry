@@ -31,11 +31,9 @@ The root page (/)
 sub index :Path :Args(0) {
   my ( $self, $c ) = @_;
 
-  # Hello World
-  # $c->response->body( $c->welcome_message );
-
   # Display the search form
-  $c->stash(template => 'search_form.tt')
+  # $c->stash(template => 'search/search_form.tt');
+  $c->stash(template => 'index.tt', bootstrap => 1);
 }
 
 =head2 default

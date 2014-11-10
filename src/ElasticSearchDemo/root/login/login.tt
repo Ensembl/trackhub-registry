@@ -1,0 +1,4 @@
+[% META title = 'Login' %]
+<div class="page-header">
+  [% render_login_form %]
+</div>

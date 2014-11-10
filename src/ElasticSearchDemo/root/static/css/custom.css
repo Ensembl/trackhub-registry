@@ -1,0 +1,509 @@
+/* Font family e colore di sfondo */
+
+body {
+ background-color: #fcfcfc;
+ font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+/* Classe per applicare un margine inferiore */
+
+.margine-bottom {margin-bottom: 20px;}
+
+/* Stili per sovrascrivere e modificare la Navbar di Bootstrap */
+.navbar {
+  border: none;
+}
+
+.navbar-nav {
+  margin-top: 0;
+}
+
+.navbar-brand {
+ display: inline-block;
+ text-indent: -9999px;
+ width: 190px;
+ height: 50px;
+ background: url(../images/logo.png) center center no-repeat;
+}
+
+.navbar-default {
+ background-color: #fcfcfc;
+}
+
+.navbar-default .navbar-nav > li > a {
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #333333;
+  border-bottom: 1px solid #357ebd;
+}
+
+.navbar-default .navbar-nav > li > a:hover,
+.navbar-default .navbar-nav > li > a:focus {
+  color: #357ebd;
+}
+
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > .active > a:hover,
+.navbar-default .navbar-nav > .active > a:focus {
+  color: #fff;
+  background-color: #357ebd;
+}
+
+.navbar-toggle {
+  border-radius: 0;
+}
+
+.navbar-default .navbar-toggle {
+ border: 1px solid #357ebd;
+}
+
+.navbar-default .navbar-toggle .icon-bar {
+  background-color: #357ebd;
+}
+
+.navbar-default .navbar-collapse {
+  border-color: transparent;
+}
+
+.navbar-default .navbar-nav > .dropdown > a:hover .caret,
+.navbar-default .navbar-nav > .dropdown > a:focus .caret {
+  border-top-color: #357ebd;
+  border-bottom-color: #357ebd;
+}
+
+.navbar-default .navbar-nav > .open > a,
+.navbar-default .navbar-nav > .open > a:hover,
+.navbar-default .navbar-nav > .open > a:focus {
+  color: #fff;
+  background-color: #357ebd;
+}
+
+.navbar-default .navbar-nav > .open > a .caret,
+.navbar-default .navbar-nav > .open > a:hover .caret,
+.navbar-default .navbar-nav > .open > a:focus .caret {
+  border-top-color: #333;
+  border-bottom-color: #333;
+}
+
+.navbar-default .navbar-nav > .dropdown > a .caret {
+  border-top-color: #333;
+  border-bottom-color: #333;
+}
+
+@media screen and (min-width: 768px) {
+ .navbar-default .navbar-nav > li > a {
+  border-bottom: none;
+}
+
+.navbar-default .navbar-nav > li > a:hover,
+.navbar-default .navbar-nav > li > a:focus {
+  border-top: 2px solid #357ebd;
+  padding-top: 13px;
+}
+}
+
+/* Stili per sovrascrivere e modificare i menu dropdown di Bootstrap */
+
+.dropdown-menu {
+ padding: 0 0;
+ border-radius: 0;
+ -webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.175);
+ box-shadow: 0 2px 5px rgba(0, 0, 0, 0.175);
+}
+.dropdown-menu > li > a {
+ padding: 7px 10px;
+ border-bottom: 1px solid #ccc;
+}
+
+
+
+/* Flexslider */
+
+.flexslider {
+ margin: 0 0 30px; 
+ background: #f8f8f8; 
+ border: 0;
+ border-top: 3px solid #357ebd; 
+ position: relative; 
+ -webkit-border-radius: 0; 
+ -moz-border-radius: 0; 
+ -o-border-radius: 0; 
+ border-radius: 0; 
+}
+.flex-control-paging li a {
+ width: 12px; 
+ height: 12px;
+ padding: 2px;
+ background: #357ebd; 
+ cursor: pointer; 
+ text-indent: -9999px; 
+ -webkit-border-radius: 20px; 
+ -moz-border-radius: 20px; 
+ -o-border-radius: 20px; 
+ border-radius: 20px; 
+ box-shadow: none;
+}
+.slides li {position: relative;}
+.flex-caption {
+ position: absolute;
+ top: 35%;
+ right: 8%;
+}
+.flex-caption-text span {
+ display: inline-block;
+ font-size: 34px;
+ font-weight: bold;
+ font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+ margin: 2px 0;
+ padding: 0 15px;
+ background-color: rgba(53, 126, 189, 0.8);
+}
+
+@media screen and (max-width: 767px) {
+ .flex-control-nav, .flex-control-pager, .flex-caption {display: none;}
+}
+
+/* Sezione progetti in evidenza */
+
+.box-progetto {
+ margin-bottom: 10px;
+ padding: 15px;
+ background-color: #86b6de;
+ -webkit-box-shadow: 0 2px 1px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 2px 1px rgba(0, 0, 0, 0.25);
+}
+.box-progetto h3, .box-progetto h4 {margin-top: 0;}
+
+/* Stile per sovrascrivere e modificare le immagini thumbnail di Bootstrap */
+
+.thumbnail,
+.img-thumbnail {
+  border-radius: 0;
+  border: 1px solid #bbbbbb;
+}
+
+/* Stili per sovrascrivere e modificare i bottoni standard di Bootstrap */
+
+.btn {
+  border: 0;
+  border-radius: 0;
+}
+.btn:focus {
+  outline: 0;
+}
+
+
+/* Testata */
+
+.header-sezione {
+  border-bottom: 2px solid #357ebd;
+}
+@media screen and (min-width: 768px) {
+ .header-sezione {
+ margin-left: 0;
+ margin-right: 0; 
+ }
+}
+/* Lavoro in evidenza */
+
+.box-lavoro-evidenza {
+ margin: 15px 0;
+}
+.box-lavoro-evidenza h3 {margin-top: 0}
+
+/* Stile per modificare e sovrascrivere i blockquote di Bootstrap */
+
+blockquote {
+ border-left: 5px solid #357ebd;
+}
+
+/* Pannelli dell'accordion basati sui panel di Bootstrap */
+
+.panel-carousel {
+  padding: 15px;
+  margin-top: 15px;
+  margin-bottom: 20px;
+  background-color: #ffffff;
+  border: 1px solid #dddddd;
+  border-radius: 0;
+  -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+.panel-carousel-heading {
+  margin: -15px -15px 15px;
+  padding: 10px 15px;
+  font-size: 17.5px;
+  font-weight: 500;
+  background-color: #357ebd;
+  color: #fff;
+  border-bottom: 1px solid #dddddd;
+}
+.panel-carousel-footer {
+  margin: 15px -15px -15px;
+  padding: 10px 15px;
+  background-color: #ecf7ff;
+  border-top: 1px solid #dddddd;
+}
+
+.panel-carousel-control {
+  font-size: 16px;
+}
+.panel-carousel-control:hover,
+.panel-carousel-control:focus {
+  text-decoration: none;
+}
+
+/* Stili per modificare e sovrascrivere le nav-tab di Bootstrap */
+
+.nav-tabs {
+  margin-top: 15px;
+  border-bottom: 2px solid #357ebd;
+}
+.nav-tabs > li {
+  float: left;
+  margin-bottom: 0;
+}
+.nav-tabs > li > a {
+  font-size: 14px;
+  font-weight: bold;
+  margin-right: 2px;
+  line-height: 1.428571429;
+  border: 0;
+  border-radius: 0;
+}
+.nav-tabs > li > a:hover {
+  border-color: none;
+}
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:hover,
+.nav-tabs > li.active > a:focus {
+  color: #fff;
+  background-color: #357ebd;
+  border: none;
+  border-bottom-color: transparent;
+  cursor: default;
+}
+.tab-content {padding: 15px 0;}
+
+/* Tabelle servizi */
+
+.servizi {
+ margin-top: 15px;
+ text-align: center;
+}
+.servizi-titolo {
+ background-color: #5cb85c;
+}
+.servizi-prezzo {
+ background-color: #5cb85c;
+ color: #fff;
+}
+.servizi-opzione {
+ background-color: #dff0d8;
+}
+.servizi-footer {
+ background-color: #eeeeee;
+}
+
+.servizi-portfolio {
+ margin-top: 15px;
+ text-align: center;
+}
+.servizi-portfolio-titolo {
+ background-color: #5bc0de;
+}
+.servizi-portfolio-prezzo {
+ background-color: #5bc0de;
+ color: #fff;
+}
+.servizi-portfolio-opzione {
+ background-color: #a4eaff;
+}
+.servizi-portfolio-footer {
+ background-color: #eeeeee;
+}
+
+/* Pulsanti acquisto servizi */
+
+.btn-round-bottom {
+ border-bottom-right-radius: 4px;
+ border-bottom-left-radius: 4px;
+}
+
+/* Footer */
+
+footer {
+ padding: 25px;
+ background-color: #357ebd;
+ color: #fff;
+}
+footer a, footer a:hover {color: #5cb85c;}
+#footer-copy {
+ padding: 10px 0 0 0;
+ border-top: 1px solid #fff;
+}
+
+
+/* Stile per modificare e sovrascrivere l'aspetto degli input di Bootstrap */
+
+.form-control {
+  height: 32px;
+  padding: 6px 12px;
+  color: #333333;
+  border-radius: 0;
+}
+
+
+
+/* Testata portfolio */
+
+.header-portfolio {
+ background-color: #5cb85c;
+ padding: 10px 15px;
+ border-bottom: 2px solid #357ebd;
+}
+
+.header-portfolio > h2 {
+ margin-bottom: 0;
+ margin-top: 0;
+ color: #fff;
+}
+
+/* Stile per modificare e sovrascrivere l'aspetto il componente Breadcrumb di Bootstrap */
+
+.breadcrumb {
+  margin: 0;
+  background-color: transparent;
+  border-radius: 0;
+  font-size: 16px;
+}
+
+.breadcrumb > li + li:before {
+  color: #fff;
+}
+
+.breadcrumb > .active {
+  color: #fff;
+}
+
+
+
+/* Modifica del componente thumbnails per il portfolio */
+
+.portfolio-filtro {margin-top: 15px;}
+
+.portfolio-thumbnail {
+  display: inline-block;
+  display: block;
+  height: auto;
+  max-width: 100%;
+  margin: 15px 0;
+  padding: 4px;
+  line-height: 1.428571429;
+  background-color: #eeeeee;
+  border: 1px solid #5cb85c;
+  border-radius: 0;
+  -webkit-box-shadow: 0 2px 1px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 2px 1px rgba(0, 0, 0, 0.25);
+  -webkit-transition: all 0.2s ease-in-out;
+          transition: all 0.2s ease-in-out;
+}
+.thumbnail {
+  display: inline-block;
+  display: block;
+  height: auto;
+  max-width: 100%;
+  padding: 4px;
+  line-height: 1.428571429;
+  background-color: #ffffff;
+  border: 1px solid #dddddd;
+  border-radius: 4px;
+  -webkit-transition: all 0.2s ease-in-out;
+          transition: all 0.2s ease-in-out;
+}
+
+.portfolio-thumbnail > img,
+.portfolio-thumbnail > a > img,
+.portfolio-img-thumbnail {
+  display: inline-block;
+  height: auto;
+  max-width: 100%;
+}
+
+.portfolio-thumbnail:hover,
+.portfolio-thumbnail:focus {
+  border-color: #357ebd;
+}
+
+.portfolio-thumbnail > img {
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.portfolio-thumbnail .caption {
+  padding: 9px;
+  color: #333333;
+}
+
+/* Stili per sovrascrivere e modificare il componente Pagination di Bootstrap */
+
+.pagination > li > a {
+  background-color: #5cb85c;
+}
+
+
+.pagination > .active > a,
+.pagination > .active > a:hover,
+.pagination > .active > a:focus {
+  color: #999999;
+  background-color: #eeeeee;
+  border-color: #dddddd;
+}
+
+
+/* Titoli pagina contatti */
+
+.contatti-titoli {
+ margin-bottom: 15px;
+ border-bottom: 2px solid #357ebd;
+ padding-bottom: 10px;
+}
+
+/* Stili per sovrascrivere e modificare il componente Accordion/collapse di Bootstrap */
+
+.panel {
+  border: 1px solid #dddddd;
+  border-radius: 0;
+}
+
+.panel-heading {
+  border-top-right-radius: 0;
+  border-top-left-radius: 0;
+}
+
+.panel-title > a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.panel-group .panel {
+  border-radius: 0;
+}
+
+.panel-group .panel + .panel {
+  margin-top: 0;
+}
+
+.panel-default > .panel-heading {
+  background-color: #5cb85c;
+  border-color: #dddddd;
+}
+
+.panel-default > .panel-heading + .panel-collapse .panel-body {
+  border-top-color: #dddddd;
+}
+
+.panel-default > .panel-footer + .panel-collapse .panel-body {
+  border-bottom-color: #dddddd;
+}

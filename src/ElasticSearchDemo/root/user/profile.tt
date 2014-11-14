@@ -1,0 +1,87 @@
+[% META title = 'TrackHub Registry: User Profile' %]
+
+<div>
+  [% FOR field IN form.error_fields %]
+      [% FOR error IN field.errors %]
+          <p><span style="color: red;">[% field.label _ ': ' _ error %]</span></p>
+      [% END %]
+  [% END %]
+</div>
+
+<div class="page-header">
+  <h2>User [% user.username %] Profile</h2>
+</div>
+<div class="row">
+  <div class="col-sm-6">
+  <section id="profile-form" class="margine-bottom">
+    <h3 class="contatti-titoli">Edit your details</h3>
+    <form id="profile_form" class="form-horizontal">
+      <fieldset>
+        <!-- Form Name -->
+        <!--<legend>Please enter your details:</legend>-->
+
+        <!-- First name -->
+	[% f = form.field('first_name') %]
+        <div class="form-group">
+          <label class="col-sm-3 control-label" for="first_name">First Name</label>
+          <div class="col-sm-9">
+            <input id="first_name" name="first_name" class="form-control input-md" type="text" value="[% f.fif %]">
+          </div>
+        </div>
+
+        <!-- Last name -->
+	[% f = form.field('last_name') %]
+        <div class="form-group">
+          <label class="col-sm-3 control-label" for="last_name">Last Name</label>
+          <div class="col-sm-9">
+            <input id="last_name" name="last_name" class="form-control input-md" type="text" value="[% f.fif %]">
+          </div>
+        </div>
+
+        <!-- Affiliation -->
+	[% f = form.field('affiliation') %]
+        <div class="form-group">
+          <label class="col-sm-3 control-label" for="affiliation">Affiliation</label>
+          <div class="col-sm-9">
+            <input id="affiliation" name="affiliation" class="form-control input-md" type="text" value="[% f.fif %]">
+          </div>
+        </div>
+
+        <!-- Email -->
+	[% f = form.field('email') %]
+        <div class="form-group">
+          <label class="col-sm-3 control-label" for="email">Email</label>
+          <div class="col-sm-9">
+            <input id="email" name="email" class="form-control input-md" required="" type="text" value="[% f.fif %]">
+          </div>
+        </div>
+
+        <!-- Password input-->
+	[% f = form.field('password') %]
+        <div class="form-group">
+          <label class="col-sm-3 control-label" for="password">Password</label>
+          <div class="col-sm-9">
+            <input id="password" name="password" class="form-control input-md" required="" type="password" value="[% f.fif %]">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="col-sm-3 control-label" for="password_conf">Password (again)</label>
+          <div class="col-sm-9">
+            <input id="password_conf" name="password_conf" class="form-control input-md" required="" type="password">
+          </div>
+        </div>
+
+        <!-- Button -->
+        <div class="form-group">
+          <label class="col-sm-3 control-label" for="submit"></label>
+          <div class="col-sm-3">
+            <button id="submit" name="submit" class="btn btn-primary">Update</button>
+          </div>
+        </div>
+
+      </fieldset>
+    </form>
+  </section>
+  </div>
+</div>

@@ -1,4 +1,4 @@
-package ElasticSearchDemo::Form::Registration;
+package ElasticSearchDemo::Form::User::Registration;
 use HTML::FormHandler::Moose;
 use namespace::autoclean;
 extends 'HTML::FormHandler';

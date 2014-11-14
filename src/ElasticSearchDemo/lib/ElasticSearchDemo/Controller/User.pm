@@ -3,9 +3,11 @@ use Moose;
 use namespace::autoclean;
 
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
+# BEGIN { extends 'Catalyst::Controller' }
 
 use List::Util 'max';
 use ElasticSearchDemo::Form::User::Registration;
+use ElasticSearchDemo::Form::User::Profile;
 
 =head1 NAME
 
@@ -22,19 +24,55 @@ Catalyst Controller.
 has 'registration_form' => ( isa => 'ElasticSearchDemo::Form::User::Registration', is => 'rw',
     lazy => 1, default => sub { ElasticSearchDemo::Form::User::Registration->new } );
 
-sub base : Chained('/login/required') PathPart('') CaptureArgs(0) {}
+sub base : Chained('/login/required') PathPrefix CaptureArgs(1) {
+  my ($self, $c, $username) = @_;
 
-sub register :Path('/user/register') Args(0) {
+  my $query = { term => { username => $username } };
+  my $user_search = $c->model('ElasticSearch')->search( body => { query => $query } );
+
+  $c->stash(user => $user_search->{hits}{hits}[0]{_source},
+	    id   => $user_search->{hits}{hits}[0]{_id});
+}
+
+sub profile : Chained('base') :Path('profile') Args(0) {
+  my ($self, $c) = @_;
+
+  # TODO
+  # Should complain if user has not been found
+  #
+
+  # Fill in form with user data
+  my $profile_form = ElasticSearchDemo::Form::User::Profile->new(init_object => $c->stash->{user});
+
+  $c->stash(template => "user/profile.tt",
+	    form     => $profile_form);
+  
+  return unless $profile_form->process( params => $c->req->parameters );
+
+  # new profile validated
+  # merge old with new profile, when overlap overwrite the old
+  # entries with the new ones
+  my $new_user_profile = $c->stash->{user};
+  map { $new_user_profile->{$_} = $profile_form->value->{$_} } keys %{$profile_form->value};
+  
+  # update user profile on the backend
+  $c->model('ElasticSearch')->index(index   => 'test',
+				    type    => 'user',
+				    id      => $c->stash->{id},
+				    body    => $new_user_profile);
+
+  $c->model('ElasticSearch')->indices->refresh(index => 'test');
+
+  $c->stash(status_msg => 'Profile updated');
+}
+
+sub register :Path('register') Args(0) {
   my ($self, $c) = @_;
 
   $c->stash(template => "user/register.tt",
 	    form     => $self->registration_form);
 
   return unless $self->registration_form->process( params => $c->req->parameters );
-
-  # use Data::Dumper;
-  # $c->log->debug(Dumper($self->registration_form->fif));
-  # $c->log->debug(Dumper($self->registration_form->value));
 
   # user input is validated
   # look if there's already a user with the provided username
@@ -59,8 +97,15 @@ sub register :Path('/user/register') Args(0) {
     # refresh the index
     $c->model('ElasticSearch')->indices->refresh(index => 'test');
 
-    # redirect to the user profile page
-    
+    # authenticate and redirect to the user profile page
+    if ($c->authenticate({ username => $username,
+			   password => $self->registration_form->value->{password} } )) {
+      $c->res->redirect($c->uri_for($c->controller('User')->action_for('profile'), [$username]));
+      $c->detach;
+    } else {
+      # Set an error message
+      $c->stash(error_msg => "Bad username or password.");
+    }
 
   } else {
     # user with the provided username already exists
@@ -69,7 +114,7 @@ sub register :Path('/user/register') Args(0) {
   }
 }
 
-sub admin : Chained('base') PathPart('') CaptureArgs(0) Does('ACL') RequiresRole('admin') ACLDetachTo('denied') {}
+# sub admin : Chained('base') PathPart('') CaptureArgs(0) Does('ACL') RequiresRole('admin') ACLDetachTo('denied') {}
 
 # sub list : Chained('admin') PathPart('user/list') Args(0) {
 #   my ($self, $c) = @_;

@@ -1,5 +1,5 @@
 [% META title = 'TrackHub Registry: User Profile' %]
-
+[% PROCESS user/user_nav.tt %]
 <div>
   [% FOR field IN form.error_fields %]
       [% FOR error IN field.errors %]
@@ -9,7 +9,7 @@
 </div>
 
 <div class="page-header">
-  <h2>User [% user.username %] Profile</h2>
+  <h3>Profile for user [% user.username %]</h3>
 </div>
 <div class="row">
   <div class="col-sm-6">

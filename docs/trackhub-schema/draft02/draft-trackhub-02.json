@@ -8,18 +8,19 @@
   "type": "object",
 
   "properties": {
+
     "data": {
-      "type": "object", 
+      "type": "array",
 
       "title": "TrackHub Data",
 
-      "description": "Contains data/metadata for a set of tracks defined in the TrauckHub: attribute name is symbolic name of a track, attribute value is the corresponding definition of the data for that particular track.",
+      "description": "Contains data/metadata for a list of tracks defined in the TrackHub. Each track has a name attribute whose value is a property of the configuration object.",
 
-      "patternProperties": {
-        "^[a-zA-z][a-zA-Z0-9_]+$": { "$ref": "#/definitions/track_data" }
-      },
+      "items": { "$ref": "#/definitions/track_data" },
 
-      "additionalProperties": false
+      "minItems": 1,
+	  
+      "uniqueItems": true
     },
 
     "configuration": {
@@ -39,7 +40,7 @@
 
   "additionalProperties": false,
 
-  "required": [ "data", "configuration" ],
+  "required": [ "name", "version", "data", "configuration" ],
 
   "definitions": {
 

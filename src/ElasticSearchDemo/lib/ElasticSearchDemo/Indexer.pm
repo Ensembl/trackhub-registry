@@ -278,7 +278,7 @@ sub get_user_data {
       first_name   => "Track",
       last_name   => "Hub3",
       affiliation => "Sanger",
-      email       => "trackhub2\@sanger.ac.uk",
+      email       => "trackhub3\@sanger.ac.uk",
       fullname    => "TrackHub3",
       password    => "trackhub3",
       roles       => ["user"],

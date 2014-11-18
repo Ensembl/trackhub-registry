@@ -345,6 +345,11 @@ SKIP: {
   $content = from_json($response->content);
   is($content->{owner}, 'trackhub1', 'Correct trackhub owner');
 
+  note "Re-creating index test";
+  $indexer->create_index();
+  $indexer->index_trackhubs();
+  $indexer->index_users();
+
 }
 
 done_testing();

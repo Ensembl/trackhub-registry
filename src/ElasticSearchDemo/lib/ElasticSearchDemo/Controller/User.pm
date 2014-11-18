@@ -101,6 +101,8 @@ sub delete : Chained('base') Path('delete') Args(1) Does('ACL') RequiresRole('ad
 				     type    => 'user',
 				     id      => $id);
   $c->model('ElasticSearch')->indices->refresh(index => 'test');
+
+  # redirect to the list of providers page
   $c->detach('list_providers', [$c->stash->{user}{username}]);
 }
 
@@ -110,8 +112,15 @@ sub delete : Chained('base') Path('delete') Args(1) Does('ACL') RequiresRole('ad
 sub list_trackhubs : Chained('base') :Path('trackhubs') Args(0) {
   my ($self, $c) = @_;
 
-  my $columns = [];
+  my $columns = [ 'name', 'description', 'version', 'status' ];
   my $trackhubs;
+  my $query = { query => { term => { owner => $c->user->username } } };
+
+  foreach my $doc (@{$c->model('ElasticSearch')->search(index => 'test', 
+						      type => 'trackhub',
+						      body  => $query)->{hits}{hits}}) {
+    push @{$trackhubs}, $doc->{_source};
+  }
 
   $c->stash(trackhubs => $trackhubs,
 	    columns   => $columns,

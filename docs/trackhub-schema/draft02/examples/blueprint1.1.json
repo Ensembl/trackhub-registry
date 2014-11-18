@@ -1,4 +1,8 @@
 {
+  "name": "Blueprint example 1",
+  "description": "An example of trackhub DB from the Blueprint project (1 track)",
+  "version": "0.01",
+
   "data": [
     {
       "name": "bpDnaseRegionsC0010K46DNaseEBI",

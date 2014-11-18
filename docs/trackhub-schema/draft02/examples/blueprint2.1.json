@@ -1,4 +1,8 @@
 {
+  "name": "Blueprint example 2",
+  "description": "An example of trackhub DB from the Blueprint project (4 tracks)",
+  "version": "0.01",
+
   "data": [
     {
       "name": "bpDnaseRegionsBP_BP_DG-75_d01DNaseHOTSPOT_peakEMBL-EBI",

@@ -38,6 +38,7 @@ SKIP: {
 						}
 					       );
   $indexer->index_trackhubs();
+  $indexer->index_users();
 
   my $es = ElasticSearchDemo::Model::ElasticSearch->new();
 
@@ -46,8 +47,8 @@ SKIP: {
   #
   # no args default to get all docs
   #
-  my $docs = $es->query();
-  is(scalar @{$docs->{hits}{hits}}, 2, "Doc counts when requesting all documents match");
+  my $docs = $es->query(type => 'trackhub');
+  is(scalar @{$docs->{hits}{hits}}, 4, "Doc counts when requesting all documents match");
 
   #
   # Test getting documents by IDs
@@ -72,7 +73,7 @@ SKIP: {
   is(scalar @{$doc->{data}}, 4, "Fetch correct document");
 
   # getting document by non-existant ID
-  $args{id} = 3;
+  $args{id} = 5;
   throws_ok { $es->find(%args) }
     qr/Missing/, "Request document by incorrect ID"
 }

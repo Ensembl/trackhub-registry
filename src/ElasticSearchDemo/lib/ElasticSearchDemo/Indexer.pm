@@ -22,11 +22,6 @@ use ElasticSearchDemo::Model::ElasticSearch;
 sub new {
   my ($caller, %args) = @_;
 
-  # my ($dir, $index, $type, $mapping) = ($args{dir}, $args{index}, $args{type}, $args{mapping});
-  # defined $dir or croak "Undefined directory arg";
-  # defined $index and defined $type or
-  #   croak "Undefined index|type parameters";
-
   my ($dir, $index, $trackhub_settings, $auth_settings) = ($args{dir}, $args{index}, $args{trackhub}, $args{authentication});
   defined $dir or croak "Undefined directory arg";
   defined $index or croak "Undefined index arg";
@@ -40,29 +35,79 @@ sub new {
   $self->{auth}{mapping} = "$dir/" . $self->{auth}{mapping};
 
   #
-  # add example trackhub documents
+  # Add example trackhub documents
+  # Considering multiple copies of the same
+  # documents but assigning them to different
+  # owners
   #
   # NOTE
   # Adding version [1-2].1 as in original [1-2]
   # search doesn't work as it's not indexing
   # the fields
   #
-  my @doclist = ('blueprint1.1.json', 'blueprint2.1.json');
-  my $id = 1;
-  foreach my $doc (@doclist) {
-    my $doc_path = "$dir/$doc";
-    -e $doc_path or croak "File $doc_path does not exist";
-    $self->{docs}{$id++} = $doc_path;
-  }
+  $self->{docs} = [
+		      {
+		       id    => 1,
+		       file  => "$dir/blueprint1.1.json",
+		       owner => 'trackhub1'
+		      },
+		      {
+		       id    => 2,
+		       file  => "$dir/blueprint2.1.json",
+		       owner => 'trackhub1'
+		      },
+		      {
+		       id    => 3,
+		       file  => "$dir/blueprint1.1.json",
+		       owner => 'trackhub2'
+		      },
+		      {
+		       id    => 4,
+		       file  => "$dir/blueprint2.1.json",
+		       owner => 'trackhub3'
+		      },
+		     ];
 
-  #
-  # add example authenticated users
-  #
-  $id = 1;
-  foreach my $user ($self->get_user_data()) {
-    $self->{users}{$id++} = $user;
-  }
-  
+  # add example users, name should match the owners of the above docs
+  $self->{users} = [
+		    {		# the administrator
+		     fullname => "Administrator",
+		     password => "admin",
+		     roles    => ["admin", "user"],
+		     username => "admin",
+		    },
+		    {		# a first trackhub content provider
+		     first_name  => "Track",
+		     last_name   => "Hub1",
+		     affiliation => "EMBL-EBI",
+		     email       => "trackhub1\@ebi.ac.uk",
+		     fullname    => "TrackHub1",
+		     password    => "trackhub1",
+		     roles       => ["user"],
+		     username    => "trackhub1",
+		    },
+		    {		# a second trackhub content provider
+		     first_name  => "Track",
+		     last_name   => "Hub2",
+		     affiliation => "UCSC",
+		     email       => "trackhub2\@ucsc.edu",
+		     fullname    => "TrackHub2",
+		     password    => "trackhub2",
+		     roles       => ["user"],
+		     username    => "trackhub2",
+		    },
+		    {		# a third trackhub content provider
+		     first_name  => "Track",
+		     last_name   => "Hub3",
+		     affiliation => "Sanger",
+		     email       => "trackhub2\@sanger.ac.uk",
+		     fullname    => "TrackHub3",
+		     password    => "trackhub3",
+		     roles       => ["user"],
+		     username    => "trackhub3",
+		    },
+		   ];
+
   &ElasticSearchDemo::Utils::es_running() or
     croak "ElasticSearch instance not available";
 
@@ -120,9 +165,8 @@ sub create_index {
 
 }
 
-
-# index the couple of example documents 
-# (hardwired in the constructor, at the moment)
+#
+# index the example documents 
 #
 sub index_trackhubs {
   my $self = shift;
@@ -130,12 +174,20 @@ sub index_trackhubs {
   #
   # add example trackhub documents
   #
-  foreach my $id (keys %{$self->{docs}}) {
-    carp "Indexing trackhub document $self->{docs}{$id}";
+  foreach my $doc (@{$self->{docs}}) {
+    carp "Indexing trackhub document $doc->{file}";
+    -e $doc->{file} or 
+      croak "$doc->{file} does not exist or it's not accessible";
+    
+    # load doc from JSON, add owner
+    my $doc_data = from_json(&ElasticSearchDemo::Utils::slurp_file($doc->{file}));
+    $doc_data->{owner} = $doc->{owner};
+
+    # index doc
     $self->{es}->index(index   => $self->{index},
 		       type    => $self->{trackhub}{type},
-		       id      => $id,
-		       body    => from_json(&ElasticSearchDemo::Utils::slurp_file($self->{docs}{$id})));
+		       id      => $doc->{id},
+		       body    => $doc_data);
   }
 
   # The refresh() method refreshes the specified indices (or all indices), 
@@ -145,27 +197,21 @@ sub index_trackhubs {
   $self->{es}->indices->refresh(index => $self->{index});
 }
 
-
+#
 # index the example users for the authentication/authorisation mechanism=
-# (hardwired in the get_user_data method, at the moment)
 #
 sub index_users {
   my $self = shift;
 
-  #
-  # add example user documents
-  #
-  foreach my $id (keys %{$self->{users}}) {
-    carp "Indexing user $self->{users}{$id}{fullname} document";
+  my $id = 1;
+  foreach my $user (@{$self->{users}}) {
+    carp "Indexing user $user->{fullname} document";
     $self->{es}->index(index   => $self->{index},
 		       type    => $self->{auth}{type},
-		       id      => $id,
-		       body    => $self->{users}{$id});
+		       id      => $id++,
+		       body    => $user);
   }
 
-  # The refresh() method refreshes the specified indices (or all indices), 
-  # allowing recent changes to become visible to search. 
-  # This process normally happens automatically once every second by default.
   carp "Flushing recent changes";
   $self->{es}->indices->refresh(index => $self->{index});
 }
@@ -181,7 +227,7 @@ sub delete {
 }
 
 #
-# get the list of id => doc_path
+# get the list of doc data
 #
 sub docs {
   my $self = shift;
@@ -199,22 +245,44 @@ sub get_user_data {
   return 
     (
      { # the administrator
+      id       => 1,
       fullname => "Administrator",
       password => "admin",
       roles    => ["admin", "user"],
       username => "admin",
      },
      { # a first trackhub content provider
-      fullname => "TrackHub1",
-      password => "trackhub1",
-      roles    => ["user"],
-      username => "trackhub1",
+      id          => 2,
+      first_name   => "Track",
+      last_name   => "Hub1",
+      affiliation => "EMBL-EBI",
+      email       => "trackhub1\@ebi.ac.uk",
+      fullname    => "TrackHub1",
+      password    => "trackhub1",
+      roles       => ["user"],
+      username    => "trackhub1",
      },
      { # a second trackhub content provider
-      fullname => "TrackHub2",
-      password => "trackhub2",
-      roles    => ["user"],
-      username => "trackhub2",
+      id          => 3,
+      first_name   => "Track",
+      last_name   => "Hub2",
+      affiliation => "UCSC",
+      email       => "trackhub2\@ucsc.edu",
+      fullname    => "TrackHub2",
+      password    => "trackhub2",
+      roles       => ["user"],
+      username    => "trackhub2",
+     },
+     { # a third trackhub content provider
+      id          => 4,
+      first_name   => "Track",
+      last_name   => "Hub3",
+      affiliation => "Sanger",
+      email       => "trackhub2\@sanger.ac.uk",
+      fullname    => "TrackHub3",
+      password    => "trackhub3",
+      roles       => ["user"],
+      username    => "trackhub3",
      },
     );
 }

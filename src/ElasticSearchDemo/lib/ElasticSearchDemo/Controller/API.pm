@@ -57,7 +57,9 @@ sub begin : Private {
   $c->detach('status_unauthorized', 
 	     [ message => "You need to login, get an auth_token and make requests using the token" ] )
     unless $authorized;
-  
+
+  $c->stash(user => $c->req->headers->{'user'});
+
   # $c->detach('/api/error', [ 'You need to login, get an auth_token and make requests using the token' ])
   #   unless $authorized;
 }
@@ -107,9 +109,8 @@ sub list_endpoints :Path('/api') Args(0) {
 
 =head2 trackhub_list
 
-Return list of available documents, as document IDs 
-mapped to the URI of the resource which represents 
-the document
+Return list of available documents for a given user, as document IDs 
+mapped to the URI of the resource which represents the document
 
 Action for /api/trackhub (GET), no arguments
 
@@ -122,8 +123,11 @@ sub trackhub_list :Path('/api/trackhub') Args(0) ActionClass('REST') {
 sub trackhub_list_GET { 
   my ($self, $c) = @_;
 
-  # no query arg default to get all docs
-  my $docs = $c->model('ElasticSearch')->query(index => 'test', type => 'trackhub');
+  # get all docs for the given user
+  my $query = { query => { term => { owner => $c->stash->{user} } } };
+  my $docs = $c->model('ElasticSearch')->search(index => 'test', 
+						type => 'trackhub',
+					        body  => $query);
 
   my %trackhubs;
   foreach my $doc (@{$docs->{hits}{hits}}) {
@@ -165,6 +169,9 @@ sub trackhub_create_PUT {
 
   my $id = $c->stash()->{'id'};
   if ($id) {
+    # set the owner of the doc as the current user
+    $new_doc_data->{owner} = $c->stash->{user};
+
     $c->model('ElasticSearch')->index(index   => 'test',
 				      type    => 'trackhub',
 				      id      => $id,
@@ -216,7 +223,11 @@ sub trackhub_GET {
 
   my $trackhub = $c->stash()->{'trackhub'};
   if ($trackhub) {
-    $self->status_ok($c, entity => $trackhub) if $trackhub;
+    if ($trackhub->{owner} eq $c->stash->{user}) {
+      $self->status_ok($c, entity => $trackhub) if $trackhub;
+    } else {
+      $self->status_bad_request($c, message => "Cannot fetch: document (ID: $doc_id) does not belong to user $c->stash->{user}");
+    }
   } else {
     $self->status_not_found($c, message => "Could not find trackhub $doc_id");    
   }
@@ -237,12 +248,18 @@ sub trackhub_POST {
   return $self->status_bad_request($c, message => "Cannot update: document (ID: $doc_id) does not exist")
     unless $c->stash()->{'trackhub'};
 
+  return $self->status_bad_request($c, message => "Cannot update: document (ID: $doc_id) does not belong to user $c->stash->{user}")
+    unless $c->stash->{'trackhub'}{owner} eq $c->stash->{user};
+
   my $new_doc_data = $c->req->data;
 
   # if the client didn't supply any data, 
   # they didn't send a properly formed request
   return $self->status_bad_request($c, message => "You must provide a doc to modify!")
     unless defined $new_doc_data;
+
+  # set the owner as the current user
+  $new_doc_data->{owner} = $c->stash->{user};
 
   #
   # Updates in Elasticsearch
@@ -278,6 +295,9 @@ sub trackhub_DELETE {
 
   my $trackhub = $c->stash()->{'trackhub'};
   if ($trackhub) {
+    return $self->status_bad_request($c, message => "Cannot delete: document (ID: $doc_id) does not belong to user $c->stash->{user}")
+    unless $trackhub->{owner} eq $c->stash->{user};
+
     #
     # http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/delete-doc.html
     #

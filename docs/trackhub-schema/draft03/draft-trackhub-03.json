@@ -33,7 +33,7 @@
 
       "title": "TruckHub Configuration",
 
-      "description": "Contains display and configuration properties for the tracks speficied in the data attribute.",
+      "description": "Contains display and configuration properties for the tracks speficied in the data object.",
 
       "patternProperties": {
         "^[a-zA-z][a-zA-Z0-9_]+$": { "$ref": "#/definitions/track_configuration" }
@@ -176,6 +176,17 @@
 
 	  "uniqueItems": true
 	},
+
+        "study_variable": {
+	  "type": "array",
+
+	  "items": {
+	    "type": "object",
+	    "properties": { "description": { "type": "string" } }
+	  },
+	  "minItems": 1,
+	  "uniqueItems": true
+	},
      
         "custom": {
 	  "type": "array",
@@ -242,7 +253,91 @@
 
     "proteomics_track_data": {
       "allOf": [
-        { "$ref": "#/definitions/generic_track_data" }
+        { "$ref": "#/definitions/generic_track_data" },
+	{ "properties": {
+	    "instruments": {
+	      "type": "array",
+
+	      "description": "A list of instruments used in the experiment",
+
+	      "items": { "$ref": "#/definitions/instrument" },
+	      "minItems": 1,
+	      "uniqueItems": true
+	    },
+
+	    "search_engine_score": {
+	      "type": "array",
+
+	      "description": "The order of the search engine scores should reflect their importance for the identification and be used to determine the identification's rank.",
+
+	      "items": { "type": "number" },
+	      "minItems": 1
+	    },
+	    
+	    "false_discovery_rate": {
+	      "type": "string",
+	      
+	      "description": "The file's false discovery rate(s) reported at the PSM, peptide and/or protein level. False Localisation Rate (FLD) for the reporting of the modifications can also be reported here. Multiple parameters MUST be separated by '|'." 
+	    },
+
+	    "fixed_mod": {
+	      "type": "array",
+
+	      "description": "Parameters describing fixed modifications searched for.",
+
+	      "items": { "type": "string" },
+	      "minItems": 1,
+	      "uniqueItems": true
+	    },
+
+	    "variable_mod": {
+	      "type": "array",
+
+	      "description": "Parameters describing variable modifications searched for.",
+
+	      "items": { "type": "string" },
+	      "minItems": 1,
+	      "uniqueItems": true
+	    },
+
+	    "quantification_method": {
+	      "type": "string",
+
+	      "description": "The quantification method used in the experiment."
+	    },
+
+	    "protein_quantification_unit": {
+	      "type": "string",
+
+	      "description": "Defines what type of units is reported in the protein quantification fields."
+	    },
+
+	    "peptide_quantification_unit": {
+	      "type": "string",
+
+	      "description": "Defines what type of units is reported in the peptide quantification fields."
+	    },
+
+	    "ms_runs": {
+	      "type": "array",
+
+	      "items": { "$ref": "#/definitions/ms_run" },
+	      "minItems": 1,
+	      "uniqueItems": true
+	    },
+
+	    "assays": {
+	      "type": "array",
+	      
+      	      "items": { "$ref": "#/definitions/assay" },
+	      "minItems": 1,
+	      "uniqueItems": true
+	    }
+
+	  },
+	  
+	  "additionalProperties": false
+	}
       ]
     },
 
@@ -403,6 +498,93 @@
 
 	"ontology_uri": { "type": "string", "format": "uri" }
       }
+    },
+
+    "instrument": {
+      "type": "object",
+
+      "description": "An instrument used in an experiment.",
+
+      "properties": {
+        "name": { "type": "string" },
+	
+	"source": { "type": "string" },
+
+	"analyser": {
+	  "type": "array",
+
+	  "description": "The instrument analyser types used in the experiment",
+
+	  "items": { "type": "string" },
+	  "minItems": 1,
+	  "uniqueItems": true
+	},
+
+	"detector": { "type": "string" }
+      },
+
+      "additionalProperties": false
+    },
+
+    "ms_run": {
+      "type": "object",
+
+      "properties": {
+        "format": {
+	  "type": "string",
+
+	  "description": "A parameter specifying the data format of the external MS data file. If format is present, id_format should also be present."
+	},
+
+	"id_format": {
+	  "type": "string",
+	  
+	  "description": "A parameter specifying the id format of the external MS data file. If id_format is present, format should also be present."
+	},
+
+	"location": {
+	  "type": "string",
+
+	  "description": "Location of the external data file. If the actual location of the MS data run is unknown, a 'null' MUST be used as a placed holder value.",
+
+	  "oneOf": [
+	    { "type": "string", "format": "uri" },
+            { "type": "string", "enum": [ "null" ] }
+          ]
+	},
+	
+	"fragmentation_method": {
+	  "type": "string",
+
+	  "description": "Parameters describing all the types of fragmentation used in a given ms run. Multiple parameters MUST be separated by '|'."
+	}
+      },
+
+      "additionalProperties": false
+    },
+
+    "assay": {
+      "type": "object",
+
+      "properties": {
+        "quantification_reagent": { 
+	  "type": "string",
+
+	  "description": "The reagent used to label the sample in the assay."
+	},
+
+	"quantification_mod": {
+	  "type": "array",
+
+	  "description": "A list of modifications associated with a quantification reagent.",
+
+	  "items": { "type": "string" },
+	  "minItems": 1,
+	  "uniqueItems": true
+	}
+      },
+
+      "additionalProperties": false
     },
 
     "track_configuration": {

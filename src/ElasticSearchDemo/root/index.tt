@@ -4,6 +4,7 @@
   <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p>
 </div>-->
 
+<!--
 <header class="header-sezione">
  <h2>The Home for TrackHubs</h2>
 </header>
@@ -14,9 +15,16 @@
       <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec velit nec velit blandit imperdiet. Duis metus enim, fringilla at auctor tincidunt, euismod eget massa. Nulla hendrerit, velit sed suscipit pellentesque, ipsum massa fringilla ex, quis vestibulum purus arcu sed dolor. Mauris a pulvinar metus, et molestie lorem. Quisque sit amet magna vestibulum, pulvinar ligula in, tristique nibh. Aliquam vitae sodales nunc. Integer at lacinia risus. Integer consectetur eu lorem eget maximus. Mauris eget nisl magna. In non lectus orci. Sed vehicula metus felis, non pellentesque justo feugiat ullamcorper. Duis scelerisque risus urna, ac porta elit rhoncus et. Nam nec ex non massa fermentum ultrices.</p>
      <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p>
     </div>
-  </div><!-- /.col-sm-12 -->
+  </div>
 </div>
 </section>
+-->
+<div class="jumbotron">
+  <h1>Home of TrackHubs</h1>
+  <p>Welcome to the TrackHub Registry, a centralised, global collection of publicly accessible TrackHubs, similar in goals to the <a href="http://www.dasregistry.org" target="_blank">DAS registry</a>, for third parties to advertise TrackHubs, and to make it easier for researchers around the world to discover and use TrackHubs containing different types of genomic research data.</p>
+  <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p>
+</div>
+
 <section id="">
 <div class="row">
   <div class="col-sm-6">

@@ -270,7 +270,7 @@
 
 	      "description": "The order of the search engine scores should reflect their importance for the identification and be used to determine the identification's rank.",
 
-	      "items": { "type": "number" },
+	      "items": { "type": "string" },
 	      "minItems": 1
 	    },
 	    
@@ -462,8 +462,8 @@
     "assembly": { 
       "type": "string",
 
-      "title": "Assembly accession",
-      "description": "The assembly accession the track relates to",
+      "title": "Assembly id",
+      "description": "The NCBI assembly identifier (accession and version) the track relates to",
 
       "pattern": "^GCA_[0-9]+.[0-9]+$"
     },

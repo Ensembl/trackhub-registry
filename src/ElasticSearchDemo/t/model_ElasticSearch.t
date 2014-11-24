@@ -26,7 +26,7 @@ SKIP: {
   skip "Launch an elasticsearch instance for the tests to run fully",
     6 unless &ElasticSearchDemo::Utils::es_running();
 
-  my $indexer = ElasticSearchDemo::Indexer->new(dir   => "$Bin/../../../docs/trackhub-schema/draft02/examples/",
+  my $indexer = ElasticSearchDemo::Indexer->new(dir   => "$Bin/trackhub-examples/",
 						index => 'test',
 						trackhub => {
 						  type  => 'trackhub',

@@ -23,7 +23,7 @@ SKIP: {
 
   # index test data
   note 'Preparing data for test (indexing sample documents)';
-  my $indexer = ElasticSearchDemo::Indexer->new(dir   => "$Bin/../../../docs/trackhub-schema/draft02/examples/",
+  my $indexer = ElasticSearchDemo::Indexer->new(dir   => "$Bin/trackhub-examples/",
 						index => 'test',
 						trackhub => {
 						  type  => 'trackhub',

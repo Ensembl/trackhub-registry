@@ -67,6 +67,8 @@
       "description": "Track data/metadata properties common to all domain-specific tracks (e.g. epigenomics, proteomics).",
 
       "properties": {
+        "name": { "type": "string" },
+
         "organism": {
 	  "type": "object",
 
@@ -92,9 +94,7 @@
 
       },
       
-      "additionalProperties": false,
-
-      "required": [ "organism", "assembly" ]
+      "required": [ "name", "organism", "assembly" ]
     },
 
     "epigenomics_track_data": {
@@ -144,7 +144,8 @@
 
     "proteomics_track_data": {
       "allOf": [
-        { "$ref": "#/definitions/generic_track_data" }
+        { "$ref": "#/definitions/generic_track_data" },
+	{ "properties": { "experiment": { "type": "string" } }, "additionalProperties": false }
       ]
     },
 
@@ -423,8 +424,8 @@
 
 	    "showTopScorers": { "type": "integer" }
 	  },
-
-	  "required": [ "type", "bigDataUrl" ]
+	  
+	  "required": [ "type" ]
 	}
       ]  
     },
@@ -537,7 +538,7 @@
 	    "yLineMark": { "type": "number" }	    
 	  },
 
-	  "required": [ "type", "bigDataUrl" ]
+	  "required": [ "type" ]
 	}
       ]    
     },
@@ -632,7 +633,7 @@
 	    
 	  },
 
-	  "required": [ "type", "bigDataUrl" ]
+	  "required": [ "type" ]
 	}
       ]      
     },
@@ -655,7 +656,7 @@
 
 	  },
 
-	  "required": [ "type", "bigDataUrl" ]
+	  "required": [ "type" ]
 	}
       ]      
     },
@@ -701,8 +702,9 @@
 
 	    "group": { "type": "string" }
 	  },
-	  
-	  "required": [ "container", "subtracks" ]
+
+	  "required": [ "container", "subtracks" ],
+    	  "additionalProperties": false
 	}
       ]
     },
@@ -776,7 +778,8 @@
 
 	  },
 
-	  "required": [ "container" ]
+	  "required": [ "container" ],
+  	  "additionalProperties": false
 	}
       ]
     },
@@ -911,7 +914,7 @@
 	    
 	  }
 	}
-      ]      
+      ]
     },
 
     "aggregate_track": {
@@ -953,8 +956,9 @@
 	      "description": "Subtracks in an overlay have individual colors. Use this setting to show the color associated with each on the track configuration page."
 	    }
 	  },
-	  
-	  "required": [ "container", "aggregate", "subtracks" ]
+	 
+	  "required": [ "container", "aggregate", "subtracks" ],
+  	  "additionalProperties": false
 	}
       ]
     },

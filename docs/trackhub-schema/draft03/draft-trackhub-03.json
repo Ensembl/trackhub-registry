@@ -588,8 +588,6 @@
     "track_configuration": {
       "title": "Track display and configuration properties.",
 
-      "description": "",
-
       "oneOf": [
 	 { "$ref": "#/definitions/bigBed_track" },
 	 { "$ref": "#/definitions/bigWig_track" },
@@ -861,7 +859,7 @@
 	    "showTopScorers": { "type": "integer" }
 	  },
 
-	  "required": [ "type", "bigDataUrl" ]
+	  "required": [ "type" ]
 	}
       ]  
     },
@@ -974,7 +972,7 @@
 	    "yLineMark": { "type": "number" }	    
 	  },
 
-	  "required": [ "type", "bigDataUrl" ]
+	  "required": [ "type" ]
 	}
       ]    
     },
@@ -1092,7 +1090,7 @@
 
 	  },
 
-	  "required": [ "type", "bigDataUrl" ]
+	  "required": [ "type" ]
 	}
       ]      
     },
@@ -1139,7 +1137,8 @@
 	    "group": { "type": "string" }
 	  },
 	  
-	  "required": [ "container", "subtracks" ]
+	  "required": [ "container", "subtracks" ],
+	  "additionalProperties": false
 	}
       ]
     },
@@ -1213,7 +1212,8 @@
 
 	  },
 
-	  "required": [ "container" ]
+	  "required": [ "container" ],
+	  "additionalProperties": false
 	}
       ]
     },
@@ -1391,7 +1391,8 @@
 	    }
 	  },
 	  
-	  "required": [ "container", "aggregate", "subtracks" ]
+	  "required": [ "container", "aggregate", "subtracks" ],
+	  "additionalProperties": false
 	}
       ]
     },

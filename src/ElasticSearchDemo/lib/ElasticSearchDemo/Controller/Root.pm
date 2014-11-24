@@ -43,9 +43,9 @@ Standard 404 error page
 =cut
 
 sub default :Path {
-    my ( $self, $c ) = @_;
-    $c->response->body( 'Page not found' );
-    $c->response->status(404);
+  my ( $self, $c ) = @_;
+  $c->response->body( 'Page not found' );
+  $c->response->status(404);
 }
 
 =head2 end
@@ -55,6 +55,16 @@ Attempt to render a view, if needed.
 =cut
 
 sub end : ActionClass('RenderView') {}
+
+=head2 learn_more
+
+The page linked by the "Learn More" button in the front page
+
+=cut 
+
+sub learn_more :Path {
+  my ($self, $c) = @_;
+}
 
 =head2 search
 

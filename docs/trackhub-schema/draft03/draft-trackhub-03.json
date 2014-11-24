@@ -201,9 +201,7 @@
 	}   
       },
       
-      "additionalProperties": false,
-
-      "required": [ "name" ]
+      "required": [ "name", "species", "assembly" ]
     },
 
     "epigenomics_track_data": {
@@ -448,7 +446,7 @@
     "species": {
       "type": "object",
 
-      "title": "Organism",
+      "title": "Species",
       "description": "Information about the organism the track relates to",
 
       "properties": {

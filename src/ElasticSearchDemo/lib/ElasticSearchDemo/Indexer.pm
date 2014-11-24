@@ -40,30 +40,25 @@ sub new {
   # documents but assigning them to different
   # owners
   #
-  # NOTE
-  # Adding version [1-2].1 as in original [1-2]
-  # search doesn't work as it's not indexing
-  # the fields
-  #
   $self->{docs} = [
 		      {
 		       id    => 1,
-		       file  => "$dir/blueprint1.1.json",
+		       file  => "$dir/blueprint1.json",
 		       owner => 'trackhub1'
 		      },
 		      {
 		       id    => 2,
-		       file  => "$dir/blueprint2.1.json",
+		       file  => "$dir/blueprint2.json",
 		       owner => 'trackhub1'
 		      },
 		      {
 		       id    => 3,
-		       file  => "$dir/blueprint1.1.json",
+		       file  => "$dir/blueprint1.json",
 		       owner => 'trackhub2'
 		      },
 		      {
 		       id    => 4,
-		       file  => "$dir/blueprint2.1.json",
+		       file  => "$dir/blueprint2.json",
 		       owner => 'trackhub3'
 		      },
 		     ];

@@ -22,7 +22,7 @@
 <div class="jumbotron">
   <h1>Home of TrackHubs</h1>
   <p>Welcome to the TrackHub Registry, a centralised, global collection of publicly accessible TrackHubs, similar in goals to the <a href="http://www.dasregistry.org" target="_blank">DAS registry</a>, for third parties to advertise TrackHubs, and to make it easier for researchers around the world to discover and use TrackHubs containing different types of genomic research data.</p>
-  <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p>
+  <p><a class="btn btn-primary btn-lg" href="[% c.uri_for('/learn_more') %]" role="button">Learn more</a></p>
 </div>
 
 <section id="">

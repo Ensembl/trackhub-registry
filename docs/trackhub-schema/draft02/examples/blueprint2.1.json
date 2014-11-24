@@ -111,12 +111,12 @@
       "container": "composite",
       "type": "bed",
       "standard_fields": 3,
+      "dragAndDrop": true,
 
       "shortLabel": "Blueprint",
       "longLabel": "Blueprint",
 
       "visibility": "full",
-      "dragAndDrop": true,
       "priority": 4,
 
       "subgroups": [
@@ -238,7 +238,6 @@
 	    }
 	  }
 	}
-
       }
     }
   }

@@ -241,49 +241,7 @@ sub docs {
 sub get_user_data {
   my $self = shift;
 
-  return 
-    (
-     { # the administrator
-      id       => 1,
-      fullname => "Administrator",
-      password => "admin",
-      roles    => ["admin", "user"],
-      username => "admin",
-     },
-     { # a first trackhub content provider
-      id          => 2,
-      first_name   => "Track",
-      last_name   => "Hub1",
-      affiliation => "EMBL-EBI",
-      email       => "trackhub1\@ebi.ac.uk",
-      fullname    => "TrackHub1",
-      password    => "trackhub1",
-      roles       => ["user"],
-      username    => "trackhub1",
-     },
-     { # a second trackhub content provider
-      id          => 3,
-      first_name   => "Track",
-      last_name   => "Hub2",
-      affiliation => "UCSC",
-      email       => "trackhub2\@ucsc.edu",
-      fullname    => "TrackHub2",
-      password    => "trackhub2",
-      roles       => ["user"],
-      username    => "trackhub2",
-     },
-     { # a third trackhub content provider
-      id          => 4,
-      first_name   => "Track",
-      last_name   => "Hub3",
-      affiliation => "Sanger",
-      email       => "trackhub3\@sanger.ac.uk",
-      fullname    => "TrackHub3",
-      password    => "trackhub3",
-      roles       => ["user"],
-      username    => "trackhub3",
-     },
-    );
+  return $self->{users};
 }
 
 1;

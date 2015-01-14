@@ -54,7 +54,7 @@
         </ul>
 	<form class="navbar-form navbar-right" role="search">
           <div class="form-group">
-            <input type="text" class="form-control" placeholder="Enter the search term...">
+            <input type="text" class="form-control" placeholder="Enter the search terms...">
           </div>
           <button type="submit" class="btn btn-primary">Search</button>
         </form>
@@ -73,7 +73,7 @@
     <footer>
       <div class="row">
 	<div class="col-sm-12">
-	  <p class="right">&copy; 2014 TrackHub Registry. &middot; <a href="#">Privacy</a></p>
+	  <p class="right">&copy; 2015 TrackHub Registry. &middot; <a href="#">Privacy</a></p>
 	</div>
       </div>
     </footer>

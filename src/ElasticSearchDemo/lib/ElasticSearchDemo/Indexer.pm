@@ -66,12 +66,14 @@ sub new {
   # add example users, name should match the owners of the above docs
   $self->{users} = [
 		    {		# the administrator
+		     id       => 1,
 		     fullname => "Administrator",
 		     password => "admin",
 		     roles    => ["admin", "user"],
 		     username => "admin",
 		    },
 		    {		# a first trackhub content provider
+		     id          => 2,
 		     first_name  => "Track",
 		     last_name   => "Hub1",
 		     affiliation => "EMBL-EBI",
@@ -82,6 +84,7 @@ sub new {
 		     username    => "trackhub1",
 		    },
 		    {		# a second trackhub content provider
+		     id          => 3,
 		     first_name  => "Track",
 		     last_name   => "Hub2",
 		     affiliation => "UCSC",
@@ -92,10 +95,11 @@ sub new {
 		     username    => "trackhub2",
 		    },
 		    {		# a third trackhub content provider
+		     id          => 4,
 		     first_name  => "Track",
 		     last_name   => "Hub3",
 		     affiliation => "Sanger",
-		     email       => "trackhub2\@sanger.ac.uk",
+		     email       => "trackhub3\@sanger.ac.uk",
 		     fullname    => "TrackHub3",
 		     password    => "trackhub3",
 		     roles       => ["user"],
@@ -141,7 +145,7 @@ sub create_index {
 			type  => $self->{trackhub}{type},
 			body  => from_json(&ElasticSearchDemo::Utils::slurp_file($self->{trackhub}{mapping})));
   my $mapping_json = $indices->get_mapping(index => $index,
-					type  => $self->{trackhub}{type});
+					   type  => $self->{trackhub}{type});
   exists $mapping_json->{$index}{mappings}{trackhub} or croak "TrackHub mapping not created";
   carp "TrackHub mapping created";
 
@@ -198,12 +202,12 @@ sub index_trackhubs {
 sub index_users {
   my $self = shift;
 
-  my $id = 1;
   foreach my $user (@{$self->{users}}) {
     carp "Indexing user $user->{fullname} document";
+    my $id = delete $user->{id};
     $self->{es}->index(index   => $self->{index},
 		       type    => $self->{auth}{type},
-		       id      => $id++,
+		       id      => $id,
 		       body    => $user);
   }
 

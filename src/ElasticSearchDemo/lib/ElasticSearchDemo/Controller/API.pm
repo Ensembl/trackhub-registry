@@ -226,10 +226,10 @@ sub trackhub_GET {
     if ($trackhub->{owner} eq $c->stash->{user}) {
       $self->status_ok($c, entity => $trackhub) if $trackhub;
     } else {
-      $self->status_bad_request($c, message => "Cannot fetch: document (ID: $doc_id) does not belong to user $c->stash->{user}");
+      $self->status_bad_request($c, message => sprintf "Cannot fetch: document (ID: %d) does not belong to user %s", $doc_id, $c->stash->{user});
     }
   } else {
-    $self->status_not_found($c, message => "Could not find trackhub $doc_id");    
+    $self->status_not_found($c, message => "Could not find trackhub doc (ID: $doc_id)");    
   }
 }
 
@@ -243,12 +243,13 @@ with the specified ID
 sub trackhub_POST {
   my ($self, $c, $doc_id) = @_;
   
-  # if the doc with that ID doesn't exist,
-  # cannot update the doc
+  # cannot update the doc if:
+  # - the doc with that ID doesn't exist
+  # - it doesn't belong to the user
   return $self->status_bad_request($c, message => "Cannot update: document (ID: $doc_id) does not exist")
     unless $c->stash()->{'trackhub'};
 
-  return $self->status_bad_request($c, message => "Cannot update: document (ID: $doc_id) does not belong to user $c->stash->{user}")
+  return $self->status_bad_request($c, message => sprintf "Cannot update: document (ID: %d) does not belong to user %s", $doc_id, $c->stash->{user})
     unless $c->stash->{'trackhub'}{owner} eq $c->stash->{user};
 
   my $new_doc_data = $c->req->data;
@@ -295,7 +296,7 @@ sub trackhub_DELETE {
 
   my $trackhub = $c->stash()->{'trackhub'};
   if ($trackhub) {
-    return $self->status_bad_request($c, message => "Cannot delete: document (ID: $doc_id) does not belong to user $c->stash->{user}")
+    return $self->status_bad_request($c, message => sprintf "Cannot delete: document (ID: %d) does not belong to user %s", $doc_id, $c->stash->{user})
     unless $trackhub->{owner} eq $c->stash->{user};
 
     #

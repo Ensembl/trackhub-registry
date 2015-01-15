@@ -23,7 +23,7 @@ SKIP: {
 
   # index test data
   note 'Preparing data for test (indexing sample documents)';
-  my $indexer = ElasticSearchDemo::Indexer->new(dir   => "$Bin/../../../docs/trackhub-schema/draft02/examples/",
+  my $indexer = ElasticSearchDemo::Indexer->new(dir   => "$Bin/trackhub-examples/",
 						index => 'test',
 						trackhub => {
 						  type  => 'trackhub',
@@ -45,9 +45,10 @@ SKIP: {
     (
      ['/api/trackhub', 'GET', 'Return the list of available docs'],
      ['/api/trackhub/create', 'PUT', 'Create new trackhub document'],
-     ['/api/trackhub/1', 'GET', 'Return content for a document with the specified ID'],
-     ['/api/trackhub/1', 'POST', 'Update content for a document with the specified ID'],
-     ['/api/trackhub/1', 'DELETE', 'Delete document with the specified ID']
+     # the following docs belong to user trackhub2, as set by the Indexer
+     ['/api/trackhub/3', 'GET', 'Return content for a document with the specified ID'],
+     ['/api/trackhub/3', 'POST', 'Update content for a document with the specified ID'],
+     ['/api/trackhub/3', 'DELETE', 'Delete document with the specified ID']
     );
   foreach my $ep (@endpoints) {
     my ($endpoint, $method) = ($ep->[0], $ep->[1]);
@@ -151,7 +152,6 @@ SKIP: {
       like($content->{error}, qr/You must provide a doc/, 'Correct error response');
     } 
   }
-
 
 }
 

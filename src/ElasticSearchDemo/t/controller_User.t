@@ -2,6 +2,10 @@ use strict;
 use warnings;
 use Test::More;
 
+BEGIN {
+  use FindBin qw/$Bin/;
+  use lib "$Bin/../lib";
+}
 
 use Catalyst::Test 'ElasticSearchDemo';
 use ElasticSearchDemo::Controller::User;

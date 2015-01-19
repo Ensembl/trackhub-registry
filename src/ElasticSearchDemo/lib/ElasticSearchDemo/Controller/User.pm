@@ -117,8 +117,8 @@ sub list_trackhubs : Chained('base') :Path('trackhubs') Args(0) {
   my $query = { query => { term => { owner => $c->user->username } } };
 
   foreach my $doc (@{$c->model('ElasticSearch')->search(index => 'test', 
-						      type => 'trackhub',
-						      body  => $query)->{hits}{hits}}) {
+							type => 'trackhub',
+							body  => $query)->{hits}{hits}}) {
     push @{$trackhubs}, $doc->{_source};
   }
 

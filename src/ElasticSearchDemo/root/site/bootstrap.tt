@@ -52,9 +52,9 @@
           <li><a href="[% c.uri_for('/login') %]">Login</a></li>
         [% END %]
         </ul>
-	<form class="navbar-form navbar-right" role="search">
+	<form class="navbar-form navbar-right" role="search" method="post" action="[% c.uri_for('/search') %]">
           <div class="form-group">
-            <input type="text" class="form-control" placeholder="Enter the search terms...">
+            <input type="text" name="q" class="form-control" placeholder="Enter the search terms...">
           </div>
           <button type="submit" class="btn btn-primary">Search</button>
         </form>

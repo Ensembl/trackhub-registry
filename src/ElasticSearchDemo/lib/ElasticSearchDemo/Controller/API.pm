@@ -170,13 +170,14 @@ sub trackhub_create_PUT {
     # set the owner of the doc as the current user
     $new_doc_data->{owner} = $c->stash->{user};
 
-    $c->model('Search')->index(index   => 'test',
-			       type    => 'trackhub',
+    my $config = ElasticSearchDemo->config()->{'Model::Search'};
+    $c->model('Search')->index(index   => $config->{index},
+			       type    => $config->{type},
 			       id      => $id,
 			       body    => $new_doc_data);
 
     # refresh the index
-    $c->model('Search')->indices->refresh(index => 'test');
+    $c->model('Search')->indices->refresh(index => $config->{index});
 
   } else {
     $c->detach('/api/error', [ "Couldn't determine doc ID" ]);
@@ -261,16 +262,16 @@ sub trackhub_POST {
   # However, this just gets merged with the existing document, so the only way to actually
   # update a document is to retrieve it, change it, then reindex the whole document.
   #
-  $c->model('Search')->index(index   => 'test',
-			     type    => 'trackhub',
+  my $config = ElasticSearchDemo->config()->{'Model::Search'};
+  $c->model('Search')->index(index   => $config->{index},
+			     type    => $config->{type},
 			     id      => $doc_id,
 			     body    => $new_doc_data);
 
   # refresh the index
-  $c->model('Search')->indices->refresh(index => 'test');
+  $c->model('Search')->indices->refresh(index => $config->{index});
 
-  $self->status_ok( $c,
-		    entity   => $c->model('Search')->get_trackhub_by_id($doc_id));
+  $self->status_ok( $c, entity => $c->model('Search')->get_trackhub_by_id($doc_id));
   
 }
 
@@ -300,8 +301,9 @@ sub trackhub_DELETE {
     # The delete() method will delete the document with the specified 
     # index, type and id, or will throw a Missing error.
     #
-    $c->model('Search')->delete(index   => 'test',
-				type    => 'trackhub',
+    my $config = ElasticSearchDemo->config()->{'Model::Search'};
+    $c->model('Search')->delete(index   => $config->{index},
+				type    => $config->{type},
 				id      => $doc_id);
 
     $self->status_ok($c, entity => $trackhub) if $trackhub;

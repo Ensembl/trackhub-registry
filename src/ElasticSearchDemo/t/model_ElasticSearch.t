@@ -15,21 +15,22 @@ use Data::Dumper;
 use ElasticSearchDemo::Utils; # slurp_file, es_running
 use ElasticSearchDemo::Indexer;
 
-use_ok 'ElasticSearchDemo::Model::ElasticSearch';
+use_ok 'ElasticSearchDemo::Model::Search';
 
-my $es = ElasticSearchDemo::Model::ElasticSearch->new();
+my $es = ElasticSearchDemo::Model::Search->new();
 
-isa_ok($es, 'ElasticSearchDemo::Model::ElasticSearch');
+isa_ok($es, 'ElasticSearchDemo::Model::Search');
 is($es->nodes, 'localhost:9200', 'Correct default nodes');
 
 SKIP: {
   skip "Launch an elasticsearch instance for the tests to run fully",
     6 unless &ElasticSearchDemo::Utils::es_running();
 
+  my $config = ElasticSearchDemo->config()->{'Model::Search'};
   my $indexer = ElasticSearchDemo::Indexer->new(dir   => "$Bin/trackhub-examples/",
-						index => 'test',
+						index => $config->{index},
 						trackhub => {
-						  type  => 'trackhub',
+						  type  => $config->{type},
 						  mapping => 'trackhub_mappings.json'
 						},
 						authentication => {
@@ -38,43 +39,33 @@ SKIP: {
 						}
 					       );
   $indexer->index_trackhubs();
-  $indexer->index_users();
 
-  my $es = ElasticSearchDemo::Model::ElasticSearch->new();
+  my $es = ElasticSearchDemo::Model::Search->new();
 
   #
   # Test getting all documents
   #
   # no args default to get all docs
   #
-  my $docs = $es->query(type => 'trackhub');
+  my $docs = $es->search_trackhubs();
   is(scalar @{$docs->{hits}{hits}}, 4, "Doc counts when requesting all documents match");
 
   #
   # Test getting documents by IDs
   #
-  # missing args throws exception
-  my %args;   
-  throws_ok { $es->find(%args) }
-    qr/Missing/, "Fetch doc without required arguments";
-  $args{index} = 'test';
-  $args{id} = 1;
-  throws_ok { $es->find(%args) }
+  # missing arg throws exception
+  throws_ok { $es->get_trackhub_by_id }
     qr/Missing/, "Fetch doc without required arguments";
 
   # getting existing documents
-  $args{id} = 1;
-  $args{type} = 'trackhub';
-  my $doc = $es->find(%args);
+  my $doc = $es->get_trackhub_by_id(1);
   is($doc->{data}[0]{name}, "bpDnaseRegionsC0010K46DNaseEBI", "Fetch correct document");
   
-  $args{id} = 2;
-  $doc = $es->find(%args);
+  $doc = $es->get_trackhub_by_id(2);
   is(scalar @{$doc->{data}}, 4, "Fetch correct document");
 
   # getting document by non-existant ID
-  $args{id} = 5;
-  throws_ok { $es->find(%args) }
+  throws_ok { $es->get_trackhub_by_id(5) }
     qr/Missing/, "Request document by incorrect ID"
 }
 

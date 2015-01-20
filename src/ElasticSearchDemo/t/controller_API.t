@@ -23,10 +23,11 @@ SKIP: {
 
   # index test data
   note 'Preparing data for test (indexing sample documents)';
+  my $config = ElasticSearchDemo->config()->{'Model::Search'};
   my $indexer = ElasticSearchDemo::Indexer->new(dir   => "$Bin/trackhub-examples/",
-						index => 'test',
+						index => $config->{index},
 						trackhub => {
-						  type  => 'trackhub',
+						  type  => $config->{type},
 						  mapping => 'trackhub_mappings.json'
 						},
 						authentication => {

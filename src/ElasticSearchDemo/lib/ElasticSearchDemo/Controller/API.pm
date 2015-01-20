@@ -124,10 +124,8 @@ sub trackhub_list_GET {
   my ($self, $c) = @_;
 
   # get all docs for the given user
-  my $query = { query => { term => { owner => $c->stash->{user} } } };
-  my $docs = $c->model('Search')->search(index => 'test', 
-						type => 'trackhub',
-					        body  => $query);
+  my $query = { term => { owner => $c->stash->{user} } };
+  my $docs = $c->model('Search')->search_trackhubs(query => $query);
 
   my %trackhubs;
   foreach my $doc (@{$docs->{hits}{hits}}) {
@@ -151,7 +149,7 @@ sub trackhub_create :Path('/api/trackhub/create') Args(0) ActionClass('REST') {
   my ($self, $c) = @_;
 
   # get the list of existing document IDs
-  my $docs = $c->model('Search')->query(index => 'test', type => 'trackhub');
+  my $docs = $c->model('Search')->search_trackhubs();
 
   # determine the ID of the doc to create
   my $current_max_id = max( map { $_->{_id} } @{$docs->{hits}{hits}} );
@@ -173,9 +171,9 @@ sub trackhub_create_PUT {
     $new_doc_data->{owner} = $c->stash->{user};
 
     $c->model('Search')->index(index   => 'test',
-				      type    => 'trackhub',
-				      id      => $id,
-				      body    => $new_doc_data);
+			       type    => 'trackhub',
+			       id      => $id,
+			       body    => $new_doc_data);
 
     # refresh the index
     $c->model('Search')->indices->refresh(index => 'test');
@@ -186,9 +184,7 @@ sub trackhub_create_PUT {
 
   $self->status_created( $c,
 			 location => $c->uri_for( '/api/trackhub/' . $id )->as_string,
-			 entity   => $c->model('Search')->find( index => 'test',
-								       type  => 'trackhub',
-								       id    => $id));
+			 entity   => $c->model('Search')->get_trackhub_by_id($id));
 }
 
 =head2 trackhub 
@@ -200,15 +196,10 @@ Actions for /api/trackhub/:id (GET|POST|DELETE)
 sub trackhub :Path('/api/trackhub') Args(1) ActionClass('REST') {
   my ($self, $c, $doc_id) = @_;
 
-  my %args = 
-    ( index => 'test',
-      type  => 'trackhub',
-      id    => $doc_id);
-
   # if the doc with that ID doesn't exist, ES throws exception
   # intercept but do nothing, as the GET method will handle
   # the situation in a REST appropriate way.
-  eval { $c->stash(trackhub => $c->model('Search')->find(%args)); };
+  eval { $c->stash(trackhub => $c->model('Search')->get_trackhub_by_id($doc_id)); };
 }
 
 =head2 trackhub_GET
@@ -271,17 +262,15 @@ sub trackhub_POST {
   # update a document is to retrieve it, change it, then reindex the whole document.
   #
   $c->model('Search')->index(index   => 'test',
-				    type    => 'trackhub',
-				    id      => $doc_id,
-				    body    => $new_doc_data);
+			     type    => 'trackhub',
+			     id      => $doc_id,
+			     body    => $new_doc_data);
 
   # refresh the index
   $c->model('Search')->indices->refresh(index => 'test');
 
   $self->status_ok( $c,
-		    entity   => $c->model('Search')->find( index => 'test',
-								  type  => 'trackhub',
-								  id    => $doc_id));
+		    entity   => $c->model('Search')->get_trackhub_by_id($doc_id));
   
 }
 
@@ -312,8 +301,8 @@ sub trackhub_DELETE {
     # index, type and id, or will throw a Missing error.
     #
     $c->model('Search')->delete(index   => 'test',
-				       type    => 'trackhub',
-				       id      => $doc_id);
+				type    => 'trackhub',
+				id      => $doc_id);
 
     $self->status_ok($c, entity => $trackhub) if $trackhub;
   } else {

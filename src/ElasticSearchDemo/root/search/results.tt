@@ -12,8 +12,7 @@
 [% META title = 'Search Results' %]
  
 Total hits: [% results.hits.total %]<br/>
-Index: [% index %]<br/>
-Type: [% type %]<br/>
+<hr>
 [% FOREACH item IN results.hits.hits %]
 <pre>
   [% Dumper.dump(item) -%]<br/>
@@ -23,4 +22,4 @@ Type: [% type %]<br/>
 
 [% # Provide a link back to the search page.  'c.uri_for' builds -%]
 [% # a full URI; e.g., 'http://localhost:3000'      -%]
-<p><a href="[% c.uri_for('/') %]">Return to search</a></p>
+<!--<p><a href="[% c.uri_for('/') %]">Return to search</a></p>-->

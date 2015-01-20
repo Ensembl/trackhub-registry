@@ -17,7 +17,7 @@ use LWP;
 use JSON;
 
 use ElasticSearchDemo::Utils;
-use ElasticSearchDemo::Model::ElasticSearch;
+use ElasticSearchDemo::Model::Search;
 
 sub new {
   my ($caller, %args) = @_;
@@ -110,7 +110,7 @@ sub new {
   &ElasticSearchDemo::Utils::es_running() or
     croak "ElasticSearch instance not available";
 
-  $self->{es} = ElasticSearchDemo::Model::ElasticSearch->new();
+  $self->{es} = ElasticSearchDemo::Model::Search->new();
   $self->create_index();
 
   return $self;

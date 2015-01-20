@@ -65,7 +65,9 @@ __PACKAGE__->config(
 		    {
 		     nodes           => 'localhost:9200',
 		     request_timeout => 30,
-		     max_requests    => 10_000
+		     max_requests    => 10_000,
+		     index           => 'test',
+		     type            => 'trackhub'
 		    },
 		    'Plugin::Session' => 
 		    {

@@ -67,7 +67,10 @@ __PACKAGE__->config(
 		     request_timeout => 30,
 		     max_requests    => 10_000,
 		     index           => 'test',
-		     type            => 'trackhub'
+		     type            => {
+					 trackhub => 'trackhub',
+					 user     => 'user'
+					}
 		    },
 		    'Plugin::Session' => 
 		    {

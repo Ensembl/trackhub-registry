@@ -125,7 +125,7 @@ sub trackhub_list_GET {
 
   # get all docs for the given user
   my $query = { query => { term => { owner => $c->stash->{user} } } };
-  my $docs = $c->model('ElasticSearch')->search(index => 'test', 
+  my $docs = $c->model('Search')->search(index => 'test', 
 						type => 'trackhub',
 					        body  => $query);
 
@@ -151,7 +151,7 @@ sub trackhub_create :Path('/api/trackhub/create') Args(0) ActionClass('REST') {
   my ($self, $c) = @_;
 
   # get the list of existing document IDs
-  my $docs = $c->model('ElasticSearch')->query(index => 'test', type => 'trackhub');
+  my $docs = $c->model('Search')->query(index => 'test', type => 'trackhub');
 
   # determine the ID of the doc to create
   my $current_max_id = max( map { $_->{_id} } @{$docs->{hits}{hits}} );
@@ -172,13 +172,13 @@ sub trackhub_create_PUT {
     # set the owner of the doc as the current user
     $new_doc_data->{owner} = $c->stash->{user};
 
-    $c->model('ElasticSearch')->index(index   => 'test',
+    $c->model('Search')->index(index   => 'test',
 				      type    => 'trackhub',
 				      id      => $id,
 				      body    => $new_doc_data);
 
     # refresh the index
-    $c->model('ElasticSearch')->indices->refresh(index => 'test');
+    $c->model('Search')->indices->refresh(index => 'test');
 
   } else {
     $c->detach('/api/error', [ "Couldn't determine doc ID" ]);
@@ -186,7 +186,7 @@ sub trackhub_create_PUT {
 
   $self->status_created( $c,
 			 location => $c->uri_for( '/api/trackhub/' . $id )->as_string,
-			 entity   => $c->model('ElasticSearch')->find( index => 'test',
+			 entity   => $c->model('Search')->find( index => 'test',
 								       type  => 'trackhub',
 								       id    => $id));
 }
@@ -208,7 +208,7 @@ sub trackhub :Path('/api/trackhub') Args(1) ActionClass('REST') {
   # if the doc with that ID doesn't exist, ES throws exception
   # intercept but do nothing, as the GET method will handle
   # the situation in a REST appropriate way.
-  eval { $c->stash(trackhub => $c->model('ElasticSearch')->find(%args)); };
+  eval { $c->stash(trackhub => $c->model('Search')->find(%args)); };
 }
 
 =head2 trackhub_GET
@@ -270,16 +270,16 @@ sub trackhub_POST {
   # However, this just gets merged with the existing document, so the only way to actually
   # update a document is to retrieve it, change it, then reindex the whole document.
   #
-  $c->model('ElasticSearch')->index(index   => 'test',
+  $c->model('Search')->index(index   => 'test',
 				    type    => 'trackhub',
 				    id      => $doc_id,
 				    body    => $new_doc_data);
 
   # refresh the index
-  $c->model('ElasticSearch')->indices->refresh(index => 'test');
+  $c->model('Search')->indices->refresh(index => 'test');
 
   $self->status_ok( $c,
-		    entity   => $c->model('ElasticSearch')->find( index => 'test',
+		    entity   => $c->model('Search')->find( index => 'test',
 								  type  => 'trackhub',
 								  id    => $doc_id));
   
@@ -311,7 +311,7 @@ sub trackhub_DELETE {
     # The delete() method will delete the document with the specified 
     # index, type and id, or will throw a Missing error.
     #
-    $c->model('ElasticSearch')->delete(index   => 'test',
+    $c->model('Search')->delete(index   => 'test',
 				       type    => 'trackhub',
 				       id      => $doc_id);
 

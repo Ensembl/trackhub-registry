@@ -1,4 +1,4 @@
-package ElasticSearchDemo::Model::ElasticSearch;
+package ElasticSearchDemo::Model::Search;
 
 #
 # Meant to provide conventient methods to support the REST API

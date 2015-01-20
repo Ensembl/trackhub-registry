@@ -66,57 +66,57 @@ sub learn_more :Path {
   my ($self, $c) = @_;
 }
 
-=head2 search
+# =head2 search
 
-Perform a search
+# Perform a search
 
-=cut 
+# =cut 
 
-# DEPRECATION WARNING: The Regex dispatch type is deprecated.
-#   The standalone Catalyst::DispatchType::Regex distribution
-#   has been temporarily included as a prerequisite of
-#   Catalyst::Runtime, but will be dropped in the future. Convert
-#   to Chained methods or include Catalyst::DispatchType::Regex
-#   as a prerequisite for your application.
-#
-# Something like this?
-# handles /search?q=...
-# sub search : Chained('/') :PathPart('search') :Args(0) { # Args ends the chain, is zero because args are passed as GET parameters
-#
-# handles /search/:index/:type/?q=...
-sub search : Chained('/') :PathPart('search') :Args(2) { 
-# see https://metacpan.org/pod/Catalyst::Manual::Tutorial::04_BasicCRUD
-#
-# sub search :Regex('^search$') { # :Local  {
-  my ($self, $c, $index, $type) = @_;
-  $index ||= 'test';
-  $type ||= 'trackhub';
-  my $params = $c->req->params;
-  my $query = $params->{'q'};
-  my $search = $c->model('ElasticSearch');
-  my $results = $search->search(index => $index,
-				type  => $type,
-				# body  => { query => { term => { alignment_software => $params->{'q'} } } }, # term filter: exact value
-				# http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/_finding_exact_values.html
-				# The term filter isn’t very useful on its own though. As discussed in Query DSL, the search API 
-				# expects a query, not a filter. To use our term filter, we need to wrap it with a filtered query:
-				# body  => { 
-				# query => {
-				# 	    "filtered" => { 
-				# 			   query => { "match_all" => {} }, # returns all documents (default, can omit)
-				# 			   filter => { term => { _all => $params->{'q'} } }
-				# 			   }
-				# 	    }
-				# },									       
-				body  => { query => { match => { _all => $params->{'q'} } } } # match query: full text search
-			       );
+# # DEPRECATION WARNING: The Regex dispatch type is deprecated.
+# #   The standalone Catalyst::DispatchType::Regex distribution
+# #   has been temporarily included as a prerequisite of
+# #   Catalyst::Runtime, but will be dropped in the future. Convert
+# #   to Chained methods or include Catalyst::DispatchType::Regex
+# #   as a prerequisite for your application.
+# #
+# # Something like this?
+# # handles /search?q=...
+# # sub search : Chained('/') :PathPart('search') :Args(0) { # Args ends the chain, is zero because args are passed as GET parameters
+# #
+# # handles /search/:index/:type/?q=...
+# sub search : Chained('/') :PathPart('search') :Args(2) { 
+# # see https://metacpan.org/pod/Catalyst::Manual::Tutorial::04_BasicCRUD
+# #
+# # sub search :Regex('^search$') { # :Local  {
+#   my ($self, $c, $index, $type) = @_;
+#   $index ||= 'test';
+#   $type ||= 'trackhub';
+#   my $params = $c->req->params;
+#   my $query = $params->{'q'};
+#   my $search = $c->model('Search');
+#   my $results = $search->search(index => $index,
+# 				type  => $type,
+# 				# body  => { query => { term => { alignment_software => $params->{'q'} } } }, # term filter: exact value
+# 				# http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/_finding_exact_values.html
+# 				# The term filter isn’t very useful on its own though. As discussed in Query DSL, the search API 
+# 				# expects a query, not a filter. To use our term filter, we need to wrap it with a filtered query:
+# 				# body  => { 
+# 				# query => {
+# 				# 	    "filtered" => { 
+# 				# 			   query => { "match_all" => {} }, # returns all documents (default, can omit)
+# 				# 			   filter => { term => { _all => $params->{'q'} } }
+# 				# 			   }
+# 				# 	    }
+# 				# },									       
+# 				body  => { query => { match => { _all => $params->{'q'} } } } # match query: full text search
+# 			       );
 
-  $c->stash(index => $index);
-  $c->stash(type => $type);
-  $c->stash(results => $results);
-  $c->stash(template => 'search_results.tt')
+#   $c->stash(index => $index);
+#   $c->stash(type => $type);
+#   $c->stash(results => $results);
+#   $c->stash(template => 'search_results.tt')
 
-}
+# }
 
 =head2 login
 

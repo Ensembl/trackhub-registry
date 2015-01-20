@@ -47,7 +47,7 @@ sub base : Chained('/login/required') PathPrefix CaptureArgs(1) {
   # 	    id   => $c->user->id);
 
   my $query = { term => { username => $username } };
-  my $user_search = $c->model('ElasticSearch')->search( body => { query => $query } );
+  my $user_search = $c->model('Search')->search( body => { query => $query } );
 
   $c->stash(user => $user_search->{hits}{hits}[0]{_source},
   	    id   => $user_search->{hits}{hits}[0]{_id});
@@ -78,12 +78,12 @@ sub profile : Chained('base') :Path('profile') Args(0) {
   map { $new_user_profile->{$_} = $profile_form->value->{$_} } keys %{$profile_form->value};
   
   # update user profile on the backend
-  $c->model('ElasticSearch')->index(index   => 'test',
+  $c->model('Search')->index(index   => 'test',
 				    type    => 'user',
 				    id      => $c->stash->{id},
 				    body    => $new_user_profile);
 
-  $c->model('ElasticSearch')->indices->refresh(index => 'test');
+  $c->model('Search')->indices->refresh(index => 'test');
 
   $c->stash(status_msg => 'Profile updated');
 }
@@ -97,10 +97,10 @@ sub delete : Chained('base') Path('delete') Args(1) Does('ACL') RequiresRole('ad
   Catalyst::Exception->throw("Unable to find user id")
       unless defined $id;
   
-  $c->model('ElasticSearch')->delete(index   => 'test',
+  $c->model('Search')->delete(index   => 'test',
 				     type    => 'user',
 				     id      => $id);
-  $c->model('ElasticSearch')->indices->refresh(index => 'test');
+  $c->model('Search')->indices->refresh(index => 'test');
 
   # redirect to the list of providers page
   $c->detach('list_providers', [$c->stash->{user}{username}]);
@@ -116,7 +116,7 @@ sub list_trackhubs : Chained('base') :Path('trackhubs') Args(0) {
   my $trackhubs;
   my $query = { query => { term => { owner => $c->user->username } } };
 
-  foreach my $doc (@{$c->model('ElasticSearch')->search(index => 'test', 
+  foreach my $doc (@{$c->model('Search')->search(index => 'test', 
 							type => 'trackhub',
 							body  => $query)->{hits}{hits}}) {
     push @{$trackhubs}, $doc->{_source};
@@ -136,8 +136,8 @@ sub list_providers : Chained('base') Path('providers') Args(0) Does('ACL') Requi
   # get all user info, attach id
   my $users;
   # map { push @{$users}, $_->{_source} }
-  #   @{$c->model('ElasticSearch')->query(index => 'test', type => 'user')->{hits}{hits}};
-  foreach my $user_data (@{$c->model('ElasticSearch')->query(index => 'test', type => 'user')->{hits}{hits}}) {
+  #   @{$c->model('Search')->query(index => 'test', type => 'user')->{hits}{hits}};
+  foreach my $user_data (@{$c->model('Search')->query(index => 'test', type => 'user')->{hits}{hits}}) {
     my $user = $user_data->{_source};
     # don't want to show admin user to himself
     next if $user->{username} eq 'admin';
@@ -166,27 +166,27 @@ sub register :Path('register') Args(0) {
   my $username = $self->registration_form->value->{username};
   my $query = { term => { username => $username } };
   my $user_exists = 
-    $c->model('ElasticSearch')->count( body => { query => $query } )->{count};
+    $c->model('Search')->count( body => { query => $query } )->{count};
   
   unless ($user_exists) {
     # user with the provided username does not exist
     # proceed with registration
     
     # get the max user ID to assign the ID to the new user
-    my $users = $c->model('ElasticSearch')->query(index => 'test', type => 'user');
+    my $users = $c->model('Search')->query(index => 'test', type => 'user');
     my $current_max_id = max( map { $_->{_id} } @{$users->{hits}{hits}} );
 
     # add default user role to user 
     my $user_data = $self->registration_form->value;
     $user_data->{roles} = [ 'user' ];
 
-    $c->model('ElasticSearch')->index(index   => 'test',
+    $c->model('Search')->index(index   => 'test',
 				      type    => 'user',
 				      id      => $current_max_id?$current_max_id + 1:1,
 				      body    => $user_data);
 
     # refresh the index
-    $c->model('ElasticSearch')->indices->refresh(index => 'test');
+    $c->model('Search')->indices->refresh(index => 'test');
 
     # authenticate and redirect to the user profile page
     if ($c->authenticate({ username => $username,

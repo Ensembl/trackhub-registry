@@ -24,6 +24,9 @@ Catalyst Controller.
 sub index :Path :Args(0) {
   my ( $self, $c ) = @_;
 
+  #
+  # TODO: index and type from configs
+  #
   my $index = 'test';
   my $type = 'trackhub';
   
@@ -31,10 +34,13 @@ sub index :Path :Args(0) {
   my $query = $params->{'q'};
 
   #
-  # Query check
+  # TODO: query check
   #
 
-  my $search = $c->model('ElasticSearch');
+  #
+  # TODO: handle exceptions and errors from the Elasticsearch API
+  #
+  my $search = $c->model('Search'); 
   my $results = $search->search(index => $index,
 				type  => $type,
 				# body  => { query => { term => { alignment_software => $params->{'q'} } } }, # term filter: exact value
@@ -60,7 +66,13 @@ sub index :Path :Args(0) {
     
 }
 
+=head2 end
 
+Attempt to render a view, if needed.
+
+=cut
+
+sub end : ActionClass('RenderView') {}
 
 =encoding utf8
 

@@ -43,12 +43,20 @@ SKIP: {
   my $es = ElasticSearchDemo::Model::Search->new();
 
   #
-  # Test getting all documents
+  # Test search getting all documents
   #
-  # no args default to get all docs
+  # - getting all documents: no args
   #
   my $docs = $es->search_trackhubs();
   is(scalar @{$docs->{hits}{hits}}, 4, "Doc counts when requesting all documents match");
+  #
+  # - getting docs for a certain user: use term filter
+  $docs = $es->search_trackhubs(query => { term => { owner => 'trackhub1' } });
+  is(scalar @{$docs->{hits}{hits}}, 2, "Doc counts when requesting docs for a certain user");
+
+  $docs = $es->search_trackhubs(query => { term => { owner => 'trackhub3' } });
+  is(scalar @{$docs->{hits}{hits}}, 1, "Doc counts when requesting docs for a certain user");
+
 
   #
   # Test getting documents by IDs

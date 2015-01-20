@@ -172,7 +172,7 @@ sub trackhub_create_PUT {
 
     my $config = ElasticSearchDemo->config()->{'Model::Search'};
     $c->model('Search')->index(index   => $config->{index},
-			       type    => $config->{type},
+			       type    => $config->{type}{trackhub},
 			       id      => $id,
 			       body    => $new_doc_data);
 
@@ -264,7 +264,7 @@ sub trackhub_POST {
   #
   my $config = ElasticSearchDemo->config()->{'Model::Search'};
   $c->model('Search')->index(index   => $config->{index},
-			     type    => $config->{type},
+			     type    => $config->{type}{trackhub},
 			     id      => $doc_id,
 			     body    => $new_doc_data);
 
@@ -303,7 +303,7 @@ sub trackhub_DELETE {
     #
     my $config = ElasticSearchDemo->config()->{'Model::Search'};
     $c->model('Search')->delete(index   => $config->{index},
-				type    => $config->{type},
+				type    => $config->{type}{trackhub},
 				id      => $doc_id);
 
     $self->status_ok($c, entity => $trackhub) if $trackhub;

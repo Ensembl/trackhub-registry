@@ -33,7 +33,7 @@ sub search_trackhubs {
   # index and type parameter
   my $config = ElasticSearchDemo->config()->{'Model::Search'};
   $args{index} = $config->{index};
-  $args{type}  = $config->{type};
+  $args{type}  = $config->{type}{trackhub};
 
   # this is what Search::Elasticsearch expect 
   $args{body} = { query => $args{query} };
@@ -54,8 +54,8 @@ sub get_trackhub_by_id {
     unless defined $id;
 
   my $config = ElasticSearchDemo->config()->{'Model::Search'};
-  return $self->_es->get_source(index => $config->{index}, # add required (by Search::Elasticsearch)
-				type  => $config->{type},  # index and type parameter 
+  return $self->_es->get_source(index => $config->{index},           # add required (by Search::Elasticsearch)
+				type  => $config->{type}{trackhub},  # index and type parameter 
 				id    => $id);
 }
 

@@ -27,11 +27,11 @@ SKIP: {
   my $indexer = ElasticSearchDemo::Indexer->new(dir   => "$Bin/trackhub-examples/",
 						index => $config->{index},
 						trackhub => {
-						  type  => $config->{type},
+						  type  => $config->{type}{trackhub},
 						  mapping => 'trackhub_mappings.json'
 						},
 						authentication => {
-						  type  => 'user',
+						  type  => $config->{type}{user},
 						  mapping => 'authentication_mappings.json'
 						}
 					       );

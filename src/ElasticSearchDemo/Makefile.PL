@@ -12,6 +12,7 @@ all_from 'lib/ElasticSearchDemo.pm';
 requires 'Catalyst::Runtime' => '5.90071';
 requires 'Catalyst::Plugin::ConfigLoader';
 requires 'Catalyst::Plugin::Static::Simple';
+requires 'Catalyst::Plugin::StackTrace';
 requires 'Catalyst::Action::RenderView';
 requires 'Catalyst::View::TT';
 requires 'Catalyst::View::JSON';
@@ -19,6 +20,8 @@ requires 'Catalyst::View::JSON';
 # for authentication/session handlng, as per
 # http://www.catalystframework.org/calendar/2007/5
 requires 'Catalyst::Plugin::Authentication';
+requires 'Catalyst::Plugin::Authorization::Roles';
+requires 'Catalyst::Authentication::Credential::HTTP';
 requires 'Catalyst::Plugin::Session';
 requires 'Catalyst::Plugin::Session::State::Cookie';
 requires 'Catalyst::Plugin::Session::Store::FastMmap';
@@ -28,6 +31,7 @@ requires 'Catalyst::Controller::ActionRole';
 requires 'Catalyst::ActionRole::ACL';
 
 requires 'Moose';
+requires 'MooseX::NonMoose';
 requires 'namespace::autoclean';
 requires 'Config::General'; # This should reflect the config file format you've chosen
                  # See Catalyst::Plugin::ConfigLoader for supported formats

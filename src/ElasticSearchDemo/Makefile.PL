@@ -32,9 +32,12 @@ requires 'namespace::autoclean';
 requires 'Config::General'; # This should reflect the config file format you've chosen
                  # See Catalyst::Plugin::ConfigLoader for supported formats
 
-requires 'Search::Elasticsearch';
+# for handling profile and registration forms
+requires 'HTML::FormHandler::Moose';
 
 requires 'List::Util';
+requires 'String::Random';
+requires 'Search::Elasticsearch';
 
 test_requires 'Test::More' => '0.88';
 catalyst;

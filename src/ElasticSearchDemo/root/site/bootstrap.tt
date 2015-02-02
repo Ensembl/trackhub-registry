@@ -27,6 +27,7 @@
 
   <body>
     <!-- Header e barra di navigazione -->
+    <img style="position: absolute; top: 0; right: 0; border: 0; z-index: 1031;" src="/static/images/ico_beta.png" />
     <header>
     <nav class="navbar navbar-default">
     <div class="container">

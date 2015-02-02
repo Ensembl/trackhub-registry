@@ -62,7 +62,17 @@ The page linked by the "Learn More" button in the front page
 
 =cut 
 
-sub learn_more :Path {
+sub learn_more :Path('/more') {
+  my ($self, $c) = @_;
+}
+
+=head2 submit
+
+The page linked by the "How to Submit" button in the front page
+
+=cut 
+
+sub submit :Path('/submit_trackhubs') {
   my ($self, $c) = @_;
 }
 

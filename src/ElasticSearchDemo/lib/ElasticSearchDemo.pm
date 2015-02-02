@@ -60,18 +60,6 @@ __PACKAGE__->config(
 		    { 
 		     driver => { General => { -ForceArray => 1}, },
 		    },
-		    # the model (to index and search)
-		    'Model::Search' => 
-		    {
-		     nodes           => 'localhost:9200',
-		     request_timeout => 30,
-		     max_requests    => 10_000,
-		     index           => 'test',
-		     type            => {
-					 trackhub => 'trackhub',
-					 user     => 'user'
-					}
-		    },
 		    'Plugin::Session' => 
 		    {
 		     flash_to_stash => 1
@@ -80,61 +68,73 @@ __PACKAGE__->config(
 		    {
 		     traits => ['-RenderAsTTTemplate'],
 		    },
-		    # API authentication
-		    # Auth with HTTP (basic or digest) credential and Elasticsearch store
-		    'Plugin::Authentication' => 
-		    {
-		     default_realm => 'testweb',
-		     realms => {
-				testweb => {
-					 credential => {
-							class => 'Password',
-							password_field => 'password',
-							password_type  => 'clear',
-						       },
-					 store => {
-						   class => 'ElasticSearch',
-						   index => 'test',
-						   type  => 'user'
-						  }
-					},
-				testhttp => {
-					 credential => {
-							class => 'HTTP',
-							type  => 'basic', # 'digest'|'basic|'any'
-							password_type  => 'clear',
-							password_field => 'password'
-						       },
-					 store => {
-						   class => 'ElasticSearch',
-						   index => 'test',
-						   type  => 'user'
-						  }
-					},
-				testauthkey => {
-					 credential => {
-							class => 'Password',
-							# No password check is done.  An attempt is made to retrieve the user 
-							# based on the information provided in the $c->authenticate() call. 
-							# If a user is found, authentication is considered to be successful.
-							#
-							# NOTE
-							# This is actually not working in combination with a Minimal store,
-							# since this store is just using the username information to locate a
-							# a user and not any other provided piece of info (e.g. auth_key).
-							# The result is that the user will always be authenticated if we just
-							# provide an existing user id.
-							#
-							password_type  => 'none' 
-						       },
-					 store => {
-						   class => 'ElasticSearch',
-						   index => 'test',
-						   type  => 'user'
-						  }
-					},
-			       }
-		    },
+		    # # the model (to index and search)
+		    # 'Model::Search' => 
+		    # {
+		    #  nodes           => 'localhost:9200',
+		    #  request_timeout => 30,
+		    #  max_requests    => 10_000,
+		    #  index           => 'test',
+		    #  type            => {
+		    # 			 trackhub => 'trackhub',
+		    # 			 user     => 'user'
+		    # 			}
+		    # },
+		    # # API authentication
+		    # # Auth with HTTP (basic or digest) credential and Elasticsearch store
+		    # 'Plugin::Authentication' => 
+		    # {
+		    #  default_realm => 'testweb',
+		    #  realms => {
+		    # 		testweb => {
+		    # 			 credential => {
+		    # 					class => 'Password',
+		    # 					password_field => 'password',
+		    # 					password_type  => 'clear',
+		    # 				       },
+		    # 			 store => {
+		    # 				   class => 'ElasticSearch',
+		    # 				   index => 'test',
+		    # 				   type  => 'user'
+		    # 				  }
+		    # 			},
+		    # 		testhttp => {
+		    # 			 credential => {
+		    # 					class => 'HTTP',
+		    # 					type  => 'basic', # 'digest'|'basic|'any'
+		    # 					password_type  => 'clear',
+		    # 					password_field => 'password'
+		    # 				       },
+		    # 			 store => {
+		    # 				   class => 'ElasticSearch',
+		    # 				   index => 'test',
+		    # 				   type  => 'user'
+		    # 				  }
+		    # 			},
+		    # 		testauthkey => {
+		    # 			 credential => {
+		    # 					class => 'Password',
+		    # 					# No password check is done.  An attempt is made to retrieve the user 
+		    # 					# based on the information provided in the $c->authenticate() call. 
+		    # 					# If a user is found, authentication is considered to be successful.
+		    # 					#
+		    # 					# NOTE
+		    # 					# This is actually not working in combination with a Minimal store,
+		    # 					# since this store is just using the username information to locate a
+		    # 					# a user and not any other provided piece of info (e.g. auth_key).
+		    # 					# The result is that the user will always be authenticated if we just
+		    # 					# provide an existing user id.
+		    # 					#
+		    # 					password_type  => 'none' 
+		    # 				       },
+		    # 			 store => {
+		    # 				   class => 'ElasticSearch',
+		    # 				   index => 'test',
+		    # 				   type  => 'user'
+		    # 				  }
+		    # 			},
+		    # 	       }
+		    # },
 		   );
 
 # Start the application

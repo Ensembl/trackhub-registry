@@ -160,6 +160,31 @@ sub search {
   return $result;
 }
 
+sub _doc_to_item {
+  my ($self, $doc) = @_;
+ 
+  my $values = $doc->{_source} || $doc->{fields};
+  $values->{_index} = $doc->{_index};
+  $values->{_version} = $doc->{_version};
+  return Data::SearchEngine::Item->new(
+				       id      => $doc->{_id},
+				       score   => $doc->{_score} || 0,
+				       values  => $values,
+				      );
+}
+ 
+sub find_by_id {
+  my ($self, $index, $type, $id) = @_;
+ 
+  my $doc = $self->_es->get(
+			    index => $index,
+			    type => $type,
+			    id => $id
+			   );
+ 
+  return $self->_doc_to_item($doc);
+}
+
 no Moose;
 __PACKAGE__->meta->make_immutable;
 

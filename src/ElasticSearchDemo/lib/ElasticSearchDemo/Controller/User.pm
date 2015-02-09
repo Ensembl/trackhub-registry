@@ -46,8 +46,11 @@ sub base : Chained('/login/required') PathPrefix CaptureArgs(1) {
   # $c->stash(user => $c->user->get_object()->{_source},
   # 	    id   => $c->user->id);
 
+  my $config = ElasticSearchDemo->config()->{'Model::Search'};
   my $query = { term => { username => $username } };
-  my $user_search = $c->model('Search')->search( body => { query => $query } );
+  my $user_search = $c->model('Search')->search( index => $config->{index},
+						 type  => $config->{type}{user},
+						 body => { query => $query } );
 
   $c->stash(user => $user_search->{hits}{hits}[0]{_source},
   	    id   => $user_search->{hits}{hits}[0]{_id});
@@ -78,12 +81,13 @@ sub profile : Chained('base') :Path('profile') Args(0) {
   map { $new_user_profile->{$_} = $profile_form->value->{$_} } keys %{$profile_form->value};
   
   # update user profile on the backend
-  $c->model('Search')->index(index   => 'test',
-				    type    => 'user',
-				    id      => $c->stash->{id},
-				    body    => $new_user_profile);
+  my $config = ElasticSearchDemo->config()->{'Model::Search'};
+  $c->model('Search')->index(index   => $config->{index},
+			     type    => $config->{type}{user},
+			     id      => $c->stash->{id},
+			     body    => $new_user_profile);
 
-  $c->model('Search')->indices->refresh(index => 'test');
+  $c->model('Search')->indices->refresh(index => $config->{index});
 
   $c->stash(status_msg => 'Profile updated');
 }
@@ -96,11 +100,12 @@ sub delete : Chained('base') Path('delete') Args(1) Does('ACL') RequiresRole('ad
 
   Catalyst::Exception->throw("Unable to find user id")
       unless defined $id;
-  
-  $c->model('Search')->delete(index   => 'test',
-				     type    => 'user',
-				     id      => $id);
-  $c->model('Search')->indices->refresh(index => 'test');
+
+  my $config = ElasticSearchDemo->config()->{'Model::Search'};
+  $c->model('Search')->delete(index   => $config->{index},
+			      type    => $config->{type}{user},
+			      id      => $id);
+  $c->model('Search')->indices->refresh(index => $config->{index});
 
   # redirect to the list of providers page
   $c->detach('list_providers', [$c->stash->{user}{username}]);
@@ -114,11 +119,9 @@ sub list_trackhubs : Chained('base') :Path('trackhubs') Args(0) {
 
   my $columns = [ 'name', 'description', 'version', 'status' ];
   my $trackhubs;
-  my $query = { query => { term => { owner => $c->user->username } } };
+  my $query = { term => { owner => $c->user->username } };
 
-  foreach my $doc (@{$c->model('Search')->search(index => 'test', 
-							type => 'trackhub',
-							body  => $query)->{hits}{hits}}) {
+  foreach my $doc (@{$c->model('Search')->search_trackhubs(query => $query)->{hits}{hits}}) {
     push @{$trackhubs}, $doc->{_source};
   }
 
@@ -137,7 +140,10 @@ sub list_providers : Chained('base') Path('providers') Args(0) Does('ACL') Requi
   my $users;
   # map { push @{$users}, $_->{_source} }
   #   @{$c->model('Search')->query(index => 'test', type => 'user')->{hits}{hits}};
-  foreach my $user_data (@{$c->model('Search')->query(index => 'test', type => 'user')->{hits}{hits}}) {
+
+  my $config = ElasticSearchDemo->config()->{'Model::Search'};
+  foreach my $user_data (@{$c->model('Search')->search(index => $config->{index}, 
+						       type  => $config->{type}{user})->{hits}{hits}}) {
     my $user = $user_data->{_source};
     # don't want to show admin user to himself
     next if $user->{username} eq 'admin';
@@ -173,24 +179,26 @@ sub register :Path('register') Args(0) {
     # proceed with registration
     
     # get the max user ID to assign the ID to the new user
-    my $users = $c->model('Search')->query(index => 'test', type => 'user');
+    my $config = ElasticSearchDemo->config()->{'Model::Search'};
+    my $users = $c->model('Search')->search(index => $config->{index}, type => $config->{type}{user});
     my $current_max_id = max( map { $_->{_id} } @{$users->{hits}{hits}} );
 
     # add default user role to user 
     my $user_data = $self->registration_form->value;
     $user_data->{roles} = [ 'user' ];
 
-    $c->model('Search')->index(index   => 'test',
-				      type    => 'user',
-				      id      => $current_max_id?$current_max_id + 1:1,
-				      body    => $user_data);
+    $c->model('Search')->index(index => $config->{index},
+			       type  => $config->{type}{user},
+			       id      => $current_max_id?$current_max_id + 1:1,
+			       body    => $user_data);
 
     # refresh the index
-    $c->model('Search')->indices->refresh(index => 'test');
+    $c->model('Search')->indices->refresh(index => $config->{index});
 
     # authenticate and redirect to the user profile page
     if ($c->authenticate({ username => $username,
 			   password => $self->registration_form->value->{password} } )) {
+      $c->stash(status_msg => sprintf "Welcome user %s", $username);
       $c->res->redirect($c->uri_for($c->controller('User')->action_for('profile'), [$username]));
       $c->detach;
     } else {

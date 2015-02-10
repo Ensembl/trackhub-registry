@@ -50,6 +50,78 @@ has 'transport' => (
     default => '+Search::Elasticsearch::Transport'
 );
 
+#
+# Data::SearchEngine|Data::SearchEngine::Modifiable' requires the methods 
+# 'add', 'present', 'remove', 'remove_by_id', and 'update'
+#
+# this is to update, change according to new interface , e.g. bulk_index not supported
+sub add {
+  my ($self, $items, $options) = @_;
+ 
+  my @docs;
+  foreach my $item (@{ $items }) {
+ 
+    my %data = %{ $item->values };
+ 
+    my %doc = (
+	       index => delete($data{index}),
+	       type => delete($data{type}),
+	       id => $item->id,
+	       data => \%data
+	      );
+    # Check for a version
+    if (exists($data{'_version'})) {
+      $doc{version} = delete($data{'_version'});
+    }
+    push(@docs, \%doc);
+  }
+  $self->_es->bulk_index(\@docs);
+}
+ 
+ 
+ 
+sub present {
+  my ($self, $item) = @_;
+ 
+  my $data = $item->values;
+ 
+  try {
+    my $result = $self->_es->get(
+				 index => delete($data->{index}),
+				 type => delete($data->{type}),
+				 id => $item->id
+				);
+  } catch {
+    # ElasticSearch throws an exception if the document isn't there.
+    return 0;
+  }
+ 
+    return 1;
+}
+ 
+sub remove {
+  die("not implemented");
+}
+ 
+ 
+sub remove_by_id {
+  my ($self, $item) = @_;
+ 
+  my $data = $item->values;
+ 
+  $self->_es->delete(
+		     index => $data->{index},
+		     type => $data->{type},
+		     id => $item->id
+		    );
+}
+ 
+sub update {
+  my $self = shift;
+ 
+  $self->add(@_);
+}
+ 
 sub search {
   my ($self, $query, $filter_combine) = @_;
  

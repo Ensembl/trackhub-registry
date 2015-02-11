@@ -4,6 +4,9 @@ use namespace::autoclean;
 
 BEGIN { extends 'Catalyst::Controller'; }
 
+use Data::SearchEngine::ElasticSearch::Query;
+use Data::SearchEngine::ElasticSearch;
+
 =head1 NAME
 
 ElasticSearchDemo::Controller::Search - Catalyst Controller
@@ -25,43 +28,47 @@ sub index :Path :Args(0) {
   my ( $self, $c ) = @_;
 
   #
-  # TODO: index and type from configs
+  # TODO: 
+  # - query check
+  # - handle exceptions and errors from the Elasticsearch API
   #
-  my $index = 'test';
-  my $type = 'trackhub';
-  
   my $params = $c->req->params;
-  my $query = $params->{'q'};
+  my $config = ElasticSearchDemo->config()->{'Model::Search'};
+  my $fields = [ 'name', 'description', 'version' ];
+  my $query = 
+    Data::SearchEngine::ElasticSearch::Query->new(index     => $config->{index},
+  						  data_type => $config->{type}{trackhub},
+  						  page      => 1, # should be action param
+  						  fields    => $fields,
+  						  type      => 'match',
+  						  query     => { _all => $params->{'q'} }
+  						  );
+  my $se = Data::SearchEngine::ElasticSearch->new();
+  my $results = $se->search($query);
 
-  #
-  # TODO: query check
-  #
+  # my $search = $c->model('Search'); 
+  # my $results = $search->search(index => $config->{index},
+  # 				type  => $config->{type}{trackhub},
+  # 				# http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/_finding_exact_values.html
+  # 				# The term filter isn’t very useful on its own though. As discussed in Query DSL, the search API 
+  # 				# expects a query, not a filter. To use our term filter, we need to wrap it with a filtered query:
+  # 				# body  => { 
+  # 				# query => {
+  # 				# 	    "filtered" => { 
+  # 				# 			   query => { "match_all" => {} }, # returns all documents (default, can omit)
+  # 				# 			   filter => { term => { _all => $params->{'q'} } }
+  # 				# 			   }
+  # 				# 	    }
+  # 				# },									       
+  # 				body  => { fields    => [ 'name', 'description', 'version' ],
+  # 					   query => { match => { _all => $params->{'q'} } } } # match query: full text search
+  # 			       );
 
-  #
-  # TODO: handle exceptions and errors from the Elasticsearch API
-  #
-  my $search = $c->model('Search'); 
-  my $results = $search->search(index => $index,
-				type  => $type,
-				# body  => { query => { term => { alignment_software => $params->{'q'} } } }, # term filter: exact value
-				# http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/_finding_exact_values.html
-				# The term filter isn’t very useful on its own though. As discussed in Query DSL, the search API 
-				# expects a query, not a filter. To use our term filter, we need to wrap it with a filtered query:
-				# body  => { 
-				# query => {
-				# 	    "filtered" => { 
-				# 			   query => { "match_all" => {} }, # returns all documents (default, can omit)
-				# 			   filter => { term => { _all => $params->{'q'} } }
-				# 			   }
-				# 	    }
-				# },									       
-				body  => { query => { match => { _all => $params->{'q'} } } } # match query: full text search
-			       );
 
-  $c->stash(index => $index);
-  $c->stash(type => $type);
-  $c->stash(results => $results);
-  $c->stash(template => 'search/results.tt');
+
+  $c->stash(columns => $fields,
+	    results => $results,
+	    template => 'search/results.tt');
 
     
 }

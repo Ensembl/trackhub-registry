@@ -10,7 +10,13 @@
 [% # interpolation -- if you need dynamic/interpolated content in your   -%]
 [% # title, set "$c->stash(title => $something)" in the controller).     -%]
 [% META title = 'Search Results' %]
- 
+
+<!--
+<pre>
+[% Dumper.dump(results) %]
+</pre>
+-->
+<!-- 
 Total hits: [% results.hits.total %]<br/>
 <hr>
 [% FOREACH item IN results.hits.hits %]
@@ -19,6 +25,40 @@ Total hits: [% results.hits.total %]<br/>
 </pre>
 <hr>
 [% END %]
+-->
+
+<!--
+[% FOREACH item = results.items %]
+<pre>
+  [% Dumper.dump(item) -%]<br/>
+</pre>
+[% END %]
+-->
+
+<div class="page-header">
+  <h3>Search Results</h3>
+</div>
+<div class="row">
+  <table id="users" class="table table-bordered table-striped tablesorter" summary="The list of trackhubs">
+    <thead>
+      <tr>
+        [% FOR column IN columns %]
+        <th scope="col">[% column %]</th>
+        [% END %]
+      </tr>
+    </thead>
+    <tbody>
+      [% FOREACH item = results.items %] 
+      <tr>
+        [% FOR column IN columns %]
+        <td>[% item.get_value(column) | html %]</td>
+        [% END %]
+      </tr>
+      [% END %]
+    </tbody>
+  </table>
+</div>
+
 
 [% # Provide a link back to the search page.  'c.uri_for' builds -%]
 [% # a full URI; e.g., 'http://localhost:3000'      -%]

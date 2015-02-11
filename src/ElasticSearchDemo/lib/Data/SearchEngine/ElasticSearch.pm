@@ -143,9 +143,12 @@ sub search {
  
   $options->{index} = $query->index;
   # restrict the search to a particular data type
-  # this the reason Data::SearchEngine::ElasticSearch::Query
-  # has been created by inheriting from Data::SearchEngine::Query
-  $options->{type}  = $query->data_type;
+  # Class Data::SearchEngine::ElasticSearch::Query
+  # has been introduced to support specifying data type
+  # in the query.
+  # The new Query inherits from Data::SearchEngine::Query
+  $options->{type} = $query->data_type
+    if $query->has_datatype;
 
   if ($query->has_debug) {
     # Turn on explain

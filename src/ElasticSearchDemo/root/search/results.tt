@@ -11,11 +11,6 @@
 [% # title, set "$c->stash(title => $something)" in the controller).     -%]
 [% META title = 'Search Results' %]
 
-<!--
-<pre>
-[% Dumper.dump(results) %]
-</pre>
--->
 <!-- 
 Total hits: [% results.hits.total %]<br/>
 <hr>
@@ -24,14 +19,6 @@ Total hits: [% results.hits.total %]<br/>
   [% Dumper.dump(item) -%]<br/>
 </pre>
 <hr>
-[% END %]
--->
-
-<!--
-[% FOREACH item = results.items %]
-<pre>
-  [% Dumper.dump(item) -%]<br/>
-</pre>
 [% END %]
 -->
 
@@ -48,7 +35,7 @@ Total hits: [% results.hits.total %]<br/>
       </tr>
     </thead>
     <tbody>
-      [% FOREACH item = results.items %] 
+      [% FOREACH item = items %] 
       <tr>
         [% FOR column IN columns %]
         <td>[% item.get_value(column) | html %]</td>
@@ -59,6 +46,22 @@ Total hits: [% results.hits.total %]<br/>
   </table>
 </div>
 
+[% # bootstrap pagination %]
+[% # simple pagination %]
+<ul class="pager">
+[% IF pager.current_page != pager.first_page AND pager.first_page != pager.previous_page %]
+  <li><a href="[% c.uri_for('/search', { q => query_string, page => pager.first_page }) %]">First</a></li>
+[% END %]
+[% IF pager.previous_page %]
+  <li><a href="[% c.uri_for('/search', { q => query_string, page => pager.previous_page })%]">Previous</a></li>
+[% END %]
+[% IF pager.next_page %]
+  <li><a href="[% c.uri_for('/search', { q => query_string, page => pager.next_page })%]">Next</a></li>
+[% END %]
+[% IF pager.current_page != pager.last_page AND pager.last_page != pager.next_page %]
+  <li><a href="[% c.uri_for('/search', { q => query_string, page => pager.last_page }) %]">Last</a></li>
+[% END %]
+</ul>
 
 [% # Provide a link back to the search page.  'c.uri_for' builds -%]
 [% # a full URI; e.g., 'http://localhost:3000'      -%]

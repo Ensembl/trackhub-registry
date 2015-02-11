@@ -27,7 +27,7 @@ use Data::SearchEngine::ElasticSearch::Results;
 
 has '_es' => (
     is => 'ro',
-    isa => 'Search::Elasticsearch',
+    isa => 'Search::Elasticsearch::Client::Direct',
     lazy => 1,
     default => sub {
         my $self = shift;
@@ -129,19 +129,31 @@ sub search {
     $filter_combine = 'and';
   }
  
+  # the options hash contains a set of parameters allowed
+  # in the request body
+  # see http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-request-body.html
   my $options;
+
+  # see http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-queries.html
+  # for a list of possible queries
   if ($query->has_query) {
     die "Queries must have a type." unless $query->has_type;
-    $options->{query} = { $query->type => $query->query };
+    $options->{body}{query} = { $query->type => $query->query };
   }
  
   $options->{index} = $query->index;
- 
+  # restrict the search to a particular data type
+  # this the reason Data::SearchEngine::ElasticSearch::Query
+  # has been created by inheriting from Data::SearchEngine::Query
+  $options->{type}  = $query->data_type;
+
   if ($query->has_debug) {
     # Turn on explain
     $options->{explain} = 1;
   }
  
+  # this has to be reviewed, since the search API expects a query
+  # not a filter. Filters need to be wrapped in a filtered query
   my @facet_cache = ();
   if ($query->has_filters) {
     foreach my $filter ($query->filter_names) {
@@ -150,6 +162,10 @@ sub search {
     $options->{filter}->{$filter_combine} = \@facet_cache;
   }
  
+  # and this one too
+  # See http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-facets.html
+  # "Facets are deprecated and will be removed in a future release. You are encouraged to migrate 
+  #  to aggregations instead"
   if ($query->has_facets) {
     # Copy filters used in the overall query into each facet, thereby
     # limiting the facets to only counting against the filtered bits.
@@ -235,7 +251,30 @@ sub search {
 sub _doc_to_item {
   my ($self, $doc) = @_;
  
-  my $values = $doc->{_source} || $doc->{fields};
+  # If fields are specified as a parameter of the search body,
+  # ES returns each field wrapped in an arrayref. 
+  # A way to prevent this is to specify a fielddata_fields param,
+  # as indicated in the ES documentation, see
+  # http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-search.html
+  # Unfortunately, either ES or Search::Elasticsearch does complain
+  # in case fielddata_fields is specified.
+  # In this case, loop over each field returned and grab the
+  # first element of the corresponding arrayref
+  
+  # my $values = $doc->{_source} || $doc->{fields};
+  my $values;
+  if ($doc->{_source}) {
+    $values = $doc->{_source};
+  } else {
+    die "fields should have been specified"
+      unless $doc->{fields};
+    foreach my $field (keys %{$doc->{fields}}) {
+      $values->{$field} = $doc->{fields}{$field};
+      $values->{$field} = $doc->{fields}{$field}[0]
+	if ref($doc->{fields}{$field}) =~ /ARRAY/;
+    }
+  }
+
   $values->{_index} = $doc->{_index};
   $values->{_version} = $doc->{_version};
   return Data::SearchEngine::Item->new(

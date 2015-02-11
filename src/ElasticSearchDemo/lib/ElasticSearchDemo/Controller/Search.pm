@@ -33,16 +33,23 @@ sub index :Path :Args(0) {
   # - handle exceptions and errors from the Elasticsearch API
   #
   my $params = $c->req->params;
+
+  my $page = $params->{page} || 1;
+  $page = 1 if $page !~ /^\d+$/;
+  my $entries_per_page = $params->{entries_per_page} || 2;
+
   my $config = ElasticSearchDemo->config()->{'Model::Search'};
+  my ($index, $type) = ($config->{index}, $config->{type}{trackhub});
   my $fields = [ 'name', 'description', 'version' ];
+
   my $query = 
-    Data::SearchEngine::ElasticSearch::Query->new(index     => $config->{index},
-  						  data_type => $config->{type}{trackhub},
-  						  page      => 1, # should be action param
+    Data::SearchEngine::ElasticSearch::Query->new(index     => $index,
+  						  data_type => $type,
+  						  page      => $page,
+						  count     => $entries_per_page, 
   						  fields    => $fields,
   						  type      => 'match',
-  						  query     => { _all => $params->{'q'} }
-  						  );
+  						  query     => { _all => $params->{q} });
   my $se = Data::SearchEngine::ElasticSearch->new();
   my $results = $se->search($query);
 
@@ -64,11 +71,12 @@ sub index :Path :Args(0) {
   # 					   query => { match => { _all => $params->{'q'} } } } # match query: full text search
   # 			       );
 
-
-
-  $c->stash(columns => $fields,
-	    results => $results,
-	    template => 'search/results.tt');
+;
+  $c->stash(columns         => $fields,
+	    query_string    => $params->{q},
+	    items           => $results->items,
+	    pager           => $results->pager,
+	    template        => 'search/results.tt');
 
     
 }

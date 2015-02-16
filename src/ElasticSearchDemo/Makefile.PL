@@ -43,6 +43,10 @@ requires 'List::Util';
 requires 'String::Random';
 requires 'Search::Elasticsearch';
 
+requires 'Compress::Zlib';
+requires 'Compress::Bzip2';
+requires 'IO::Uncompress::Bunzip2';
+
 test_requires 'Test::More' => '0.88';
 catalyst;
 

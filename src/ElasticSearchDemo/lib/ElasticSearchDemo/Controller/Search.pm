@@ -36,7 +36,7 @@ sub index :Path :Args(0) {
 
   my $page = $params->{page} || 1;
   $page = 1 if $page !~ /^\d+$/;
-  my $entries_per_page = $params->{entries_per_page} || 2;
+  my $entries_per_page = $params->{entries_per_page} || 10;
 
   my $config = ElasticSearchDemo->config()->{'Model::Search'};
   my ($index, $type) = ($config->{index}, $config->{type}{trackhub});

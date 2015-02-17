@@ -1,0 +1,244 @@
+{
+  "name": "Blueprint example 2",
+  "description": "An example of trackhub DB from the Blueprint project (4 tracks)",
+  "version": "0.01",
+
+  "data": [
+    {
+      "name": "bpDnaseRegionsBP_BP_DG-75_d01DNaseHOTSPOT_peakEMBL-EBI",
+      "organism": { "taxid": 9606, "scientific_name": "Homo sapiens" },
+      "assembly": "GCA_000001405.15",
+
+      "molecule": "genomic_DNA",
+      "disease": "None",
+      "biomaterial_type": "Primary_cells",
+      "sample_id": "EGAN00001070025",
+      "donor_id": "C0010K46",
+      "donor_age": "60-65",
+      "donor_health_status": "Healthy",
+      "donor_sex": "Female",
+      "donor_ethnicity": "Northern_European",
+      "cell_type": "CD14-positive, _CD16-negative_classical_monocyte",
+      "tissue_type": "Venous_blood",
+      "library_strategy": "DNAse-Seq",
+      "experiment_type": "Chromatin-_accessibility",
+      "experiment_id": "EGAX00001084791",
+      "alignment_software": "BWA",
+      "alignment_software_version": "0.5.9",
+      "analysis_software": "Hotspot",
+      "analysis_software_version": "v3",
+      "analysis_group": "EMBL-EBI"
+    },
+    {
+      "name": "bpDnaseRegionsBP_BP_U-266_d01DNaseHOTSPOT_peakEMBL-EBI",
+      "organism": { "taxid": 9606, "scientific_name": "Homo sapiens" },
+      "assembly": "GCA_000001405.15",
+
+      "line": "BL-2",
+      "differentiation_stage": "B_cell",
+      "medium": "RPMI_1640_+_10%FBS_+_1%_Glutamine",
+      "sex": "Male",
+      "molecule": "genomic_DNA",
+      "disease": "Sporadic_Burkitt_lymphoma",
+      "disease_ontology_uri": "http://ncimeta.nci.nih.gov/ncibrowser/ConceptReport.jsp?dictionary=NCI%20MetaThesaurus&amp;code=C1336077",
+      "biomaterial_type": "Cell_line",
+      "sample_ontology_uri": "http://www.ebi.ac.uk/efo/EFO_0001639",
+      "sample_id": "ERS333897",
+      "library_strategy": "DNAse-Seq",
+      "experiment_type": "H3K27ac",
+      "experiment_id": "EGAX00001084792",
+      "alignment_software": "BWA",
+      "alignment_software_version": "0.5.9",
+      "analysis_software": "Hotspot",
+      "analysis_software_version": "v3",
+      "analysis_group": "EMBL-EBI"
+    },
+    {
+      "name": "bpDnaseRegionsBP_BP_DG-75_d01DNasewiggler_peakEMBL-EBI",
+      "organism": { "taxid": 9606, "scientific_name": "Homo sapiens" },
+      "assembly": "GCA_000001405.15",
+
+      "molecule": "genomic_DNA",
+      "disease": "None",
+      "biomaterial_type": "Primary_tissue",
+      "sample_id": "EGAN00001070027",
+      "donor_id": "C0010K46",
+      "donor_age": "60-65",
+      "donor_health_status": "Healthy",
+      "donor_sex": "Female",
+      "donor_ethnicity": "Northern_European",
+      "tissue_type": "Venous_blood",
+      "tissue_depot": "median_cubital_vein",
+      "library_strategy": "DNAse-Seq",
+      "experiment_type": "Chromatin-_accessibility",
+      "experiment_id": "EGAX00001084792",
+      "alignment_software": "BWA",
+      "alignment_software_version": "0.5.9",
+      "analysis_software": "Hotspot",
+      "analysis_software_version": "v3",
+      "analysis_group": "EMBL-EBI",
+      "sample_ontology_uri": "http://purl.obolibrary.org/obo/CL_0000775"
+    },
+    {
+      "name": "bpDnaseRegionsBP_BP_U-266_d01DNasewiggler_peakEMBL-EBI",
+      "organism": { "taxid": 9606, "scientific_name": "Homo sapiens" },
+      "assembly": "GCA_000001405.15",
+
+      "molecule": "genomic_DNA",
+      "disease": "None",
+      "biomaterial_type": "Primary_Cell_Culture",
+      "cell_type": "macrophage",
+      "sample_id": "EGAN00001070028",
+      "donor_id": "C0010K46",
+      "donor_age": "60-65",
+      "donor_health_status": "Healthy",
+      "donor_sex": "Female",
+      "donor_ethnicity": "Northern_European",
+      "culture_conditions": "http://www.blueprint-epigenome.eu/UserFiles/file/Protocols/UCAM_BluePrint_Macrophage.pdf",
+      "library_strategy": "DNAse-Seq",
+      "experiment_type": "Chromatin-_accessibility",
+      "experiment_id": "EGAX00001084792",
+      "alignment_software": "BWA",
+      "alignment_software_version": "0.5.9",
+      "analysis_software": "Hotspot",
+      "analysis_software_version": "v3",
+      "analysis_group": "EMBL-EBI",
+      "sample_ontology_uri": "http://purl.obolibrary.org/obo/CL_0000235"
+    }
+  ],
+  "configuration": {
+    "bp": {
+      "container": "composite",
+      "type": "bed",
+      "standard_fields": 3,
+      "dragAndDrop": true,
+
+      "shortLabel": "Blueprint",
+      "longLabel": "Blueprint",
+
+      "visibility": "full",
+      "priority": 4,
+
+      "subgroups": [
+        {
+	  "tag": "experiment",
+	  "title": "Experiment",
+	  "membership": [ { "tag": "DNase", "title": "DNase" } ],
+	  "dimension": 1,
+	  "sortOrder": "asc"
+	},
+        {
+	  "tag": "analysis_type",
+	  "title": "Analysis_type",
+	  "membership": [ { "tag": "HOTSPOT_peak", "title": "HOTSPOT_peak" }, { "tag": "wiggler", "title": "wiggler" } ],
+	  "dimension": 3,
+	  "sortOrder": "asc"
+	},
+        {
+	  "tag": "sample_description",
+	  "title": "Sample_description",
+	  "membership": [ { "tag": "DG-75", "title": "DG-75" }, { "tag": "U-266", "title": "U-266" } ],
+	  "dimension": 2,
+	  "sortOrder": "asc"
+	},
+        {
+	  "tag": "view",
+	  "title": "View",
+	  "membership": [ { "tag": "Region", "title": "Region" }, { "tag": "Signal", "title": "Signal" } ],
+	  "sortOrder": "asc"
+	},
+        {
+	  "tag": "analysis_group",
+	  "title": "Analysis_group",
+	  "membership": [ { "tag": "EMBL-EBI", "title": "EMBL-EBI" } ],
+	  "dimension": 4,
+	  "sortOrder": "asc"
+	}
+      ],
+
+      "views": {
+        "regions": {
+	  "type": "bigBed",
+	  "shortLabel": "Blueprint Regions",
+	  "visibility": "dense",
+
+	  "subtracks": {
+	    "bpDnaseRegionsBP_BP_DG-75_d01DNaseHOTSPOT_peakEMBL-EBI": {
+	      "type": "bigBed",
+	      "standard_fields": 6,
+	      "non_standard_fields": false,
+	      "bigDataUrl": "http://.../BP_DG-75_d01.DNase.hotspot_v3.20130819.bb",
+	      "shortLabel": "DG-75.DNase.DG-75",
+	      "longLabel": "DG-75 DNase DG-75 peaks from NCMLS",
+	      "color": { "red": 8, "green": 104, "blue": 172 },
+	      "subgroups": [
+	        "#/configuration/bp/subgroups/0/membership/0",
+		"#/configuration/bp/subgroups/2/membership/0",
+		"#/configuration/bp/subgroups/1/membership/0",
+		"#/configuration/bp/subgroups/3/membership/0",
+		"#/configuration/bp/subgroups/4/membership/0"
+	      ]
+	    },
+	    "bpDnaseRegionsBP_BP_U-266_d01DNaseHOTSPOT_peakEMBL-EBI": {
+	      "type": "bigBed",
+	      "standard_fields": 6,
+	      "non_standard_fields": false,
+	      "bigDataUrl": "http://.../BP_U-266_d01.DNase.hotspot_v3.20130819.bb",
+	      "shortLabel": "U-266.DNase.U-266",
+	      "longLabel": "U-266 DNase U-266 peaks from NCMLS",
+	      "color": { "red": 8, "green": 104, "blue": 172 },
+	      "subgroups": [
+	        "#/configuration/bp/subgroups/0/membership/0",
+		"#/configuration/bp/subgroups/2/membership/1",
+		"#/configuration/bp/subgroups/1/membership/0",
+		"#/configuration/bp/subgroups/3/membership/0",
+		"#/configuration/bp/subgroups/4/membership/0"
+	      ]	      
+	    }
+	  }
+	},
+
+        "signal": {
+	  "type": "bigWig",
+	  "shortLabel": "Blueprint Signal",
+	  "visibility": "pack",
+	  "autoScale": false,
+	  "maxHeightPixels": { "max": 64, "default": 32, "min": 16 },
+	  
+	  "subtracks": {
+	    "bpDnaseSignalBP_BP_DG-75_d01DNasewigglerEMBL-EBIwiggler": {
+	      "type": "bigWig",
+	      "range": [ 0, 100 ],
+	      "bigDataUrl": "http://.../BP_DG-75_d01.DNase.wiggler.20130819.bw",
+	      "shortLabel": "DG-75.DNase.DG-75",
+	      "longLabel": "DG-75 DNase DG-75 signal from NCMLS",
+	      "color": { "red": 8, "green": 104, "blue": 172 },
+	      "subgroups": [
+	        "#/configuration/bp/subgroups/0/membership/0",
+		"#/configuration/bp/subgroups/2/membership/0",
+		"#/configuration/bp/subgroups/1/membership/1",
+		"#/configuration/bp/subgroups/3/membership/1",
+		"#/configuration/bp/subgroups/4/membership/0"
+	      ]
+	    },
+	    "bpDnaseSignalBP_BP_U-266_d01DNasewigglerEMBL-EBIwiggler": {
+	      "type": "bigWig",
+	      "range": [ 0, 100 ],
+	      "bigDataUrl": "http://.../BP_U-266_d01.DNase.wiggler.20130819.bw",
+	      "shortLabel": "U-266.DNase.U-266",
+	      "longLabel": "U-266 DNase U-266 signal from NCMLS",
+	      "color": { "red": 8, "green": 104, "blue": 172 },
+	      "subgroups": [
+	        "#/configuration/bp/subgroups/0/membership/0",
+		"#/configuration/bp/subgroups/2/membership/1",
+		"#/configuration/bp/subgroups/1/membership/1",
+		"#/configuration/bp/subgroups/3/membership/1",
+		"#/configuration/bp/subgroups/4/membership/0"
+	      ]	      
+	    }
+	  }
+	}
+      }
+    }
+  }
+}

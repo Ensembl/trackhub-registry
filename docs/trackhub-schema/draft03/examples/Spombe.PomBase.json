@@ -1,0 +1,297 @@
+{
+  "name": "PomBase",
+  "description": "PomBase TrackHub DB",
+  "version": "EG25",
+  "data": [
+    {
+      "name": "NRhind_01_all_P",
+      "species": {
+        "taxid": "284812",
+        "scientific_name": "Schizosaccharomyces pombe"
+      },
+      "assembly": "GCA_000002945.2",
+      "sample_id": "SPAC2F7.03c"
+    },
+    {
+      "name": "NRhind_02_all_N",
+      "species": {
+        "taxid": "284812",
+        "scientific_name": "Schizosaccharomyces pombe"
+      },
+      "assembly": "GCA_000002945.2",
+      "sample_id": "SPAC2F7.03c"
+    },
+    {
+      "name": "NRhind_03_log_P",
+      "species": {
+        "taxid": "284812",
+        "scientific_name": "Schizosaccharomyces pombe"
+      },
+      "assembly": "GCA_000002945.2",
+      "sample_id": "SPAC2F7.03c"
+    },
+    {
+      "name": "NRhind_04_log_N",
+      "species": {
+        "taxid": "284812",
+        "scientific_name": "Schizosaccharomyces pombe"
+      },
+      "assembly": "GCA_000002945.2",
+      "sample_id": "SPAC2F7.03c"
+    },
+    {
+      "name": "NRhind_05_ds_P",
+      "species": {
+        "taxid": "284812",
+        "scientific_name": "Schizosaccharomyces pombe"
+      },
+      "assembly": "GCA_000002945.2",
+      "sample_id": "SPAC2F7.03c"
+    },
+    {
+      "name": "NRhind_06_ds_N",
+      "species": {
+        "taxid": "284812",
+        "scientific_name": "Schizosaccharomyces pombe"
+      },
+      "assembly": "GCA_000002945.2",
+      "sample_id": "SPAC2F7.03c"
+    },
+    {
+      "name": "NRhind_07_hs_P",
+      "species": {
+        "taxid": "284812",
+        "scientific_name": "Schizosaccharomyces pombe"
+      },
+      "assembly": "GCA_000002945.2",
+      "sample_id": "SPAC2F7.03c"
+    },
+    {
+      "name": "NRhind_08_hs_N",
+      "species": {
+        "taxid": "284812",
+        "scientific_name": "Schizosaccharomyces pombe"
+      },
+      "assembly": "GCA_000002945.2",
+      "sample_id": "SPAC2F7.03c"
+    },
+    {
+      "name": "NRhind_09_plat_P",
+      "species": {
+        "taxid": "284812",
+        "scientific_name": "Schizosaccharomyces pombe"
+      },
+      "assembly": "GCA_000002945.2",
+      "sample_id": "SPAC2F7.03c"
+    },
+    {
+      "name": "NRhind_10_plat_N",
+      "species": {
+        "taxid": "284812",
+        "scientific_name": "Schizosaccharomyces pombe"
+      },
+      "assembly": "GCA_000002945.2",
+      "sample_id": "SPAC2F7.03c"
+    },
+    {
+      "name": "Bitton_IBP_24709818",
+      "species": {
+        "taxid": "284812",
+        "scientific_name": "Schizosaccharomyces pombe"
+      },
+      "assembly": "GCA_000002945.2",
+      "sample_id": "SPAC2F7.03c"
+    },
+    {
+      "name": "JMatapolyAplus",
+      "species": {
+        "taxid": "284812",
+        "scientific_name": "Schizosaccharomyces pombe"
+      },
+      "assembly": "GCA_000002945.2",
+      "sample_id": "SPAC2F7.03c"
+    },
+    {
+      "name": "JMatapolyAminus",
+      "species": {
+        "taxid": "284812",
+        "scientific_name": "Schizosaccharomyces pombe"
+      },
+      "assembly": "GCA_000002945.2",
+      "sample_id": "SPAC2F7.03c"
+    },
+    {
+      "name": "MSchlackow_01_ac_P",
+      "species": {
+        "taxid": "284812",
+        "scientific_name": "Schizosaccharomyces pombe"
+      },
+      "assembly": "GCA_000002945.2",
+      "sample_id": "SPAC2F7.03c"
+    },
+    {
+      "name": "MSchlackow_02_ac_N",
+      "species": {
+        "taxid": "284812",
+        "scientific_name": "Schizosaccharomyces pombe"
+      },
+      "assembly": "GCA_000002945.2",
+      "sample_id": "SPAC2F7.03c"
+    }
+  ],
+  "configuration": {
+    "bp": {
+      "shortLabel": "PomBase Tracks",
+      "longLabel": "PomBase Tracks",
+      "views": {
+        "polyA": {
+          "subtracks": {
+            "JMatapolyAplus": {
+              "long_name": "Poly(A) sites - mRNA end sequencing - 972 h- (forward strand) - Mata (2013)",
+              "description": "EuropePMC:  <a href='http://europepmc.org/abstract/MED/23900342'>Mata 2013</a>",
+              "short_name": "Mata (2013)",
+              "bigDataUrl": "http://ftp.ebi.ac.uk/pub/databases/pombase/DATASET/JuanMata_polyA/polyA_plus.bw",
+              "type": "bigWig",
+              "visibility": "full",
+              "color": {"red": 38, "green": 59, "blue": 33}
+            },
+            "JMatapolyAminus": {
+              "long_name": "Poly(A) sites - mRNA end sequencing - 972 h- (reverse strand) - Mata (2013)",
+              "description": "EuropePMC:  <a href='http://europepmc.org/abstract/MED/23900342'>Mata 2013</a>)",
+              "short_name": "Mata (2013)",
+              "bigDataUrl": "http://ftp.ebi.ac.uk/pub/databases/pombase/DATASET/JuanMata_polyA/polyA_minus.bw",
+              "type": "bigWig",
+              "visibility": "full",
+              "color": {"red": 38, "green": 59, "blue": 33}
+            },
+            "MSchlackow_01_ac_P": {
+              "long_name": "Poly(A) sites - RNA-Seq - all data (forward strand) - Schlackow (2013)",
+              "description": "EuropePMC: <a href='http://europepmc.org/abstract/MED/24152550'>Schlackow <em>et al</em> 2013</a>",
+              "short_name": "Schlackow (2013)",
+              "bigDataUrl": "http://ftp.ebi.ac.uk/pub/databases/pombase/DATASET/MSchlackow_polyA/All_combined_P.bw",
+              "type": "bigWig",
+              "visibility": "full",
+              "color": {"red": 38, "green": 59, "blue": 33}
+            },
+            "MSchlackow_02_ac_N": {
+              "long_name": "Poly(A) sites - RNA-Seq - all  data (reverse strand) - Schlackow (2013)",
+              "description": "EuropePMC: <a href='http://europepmc.org/abstract/MED/24152550'>Schlackow <em>et al</em> 2013</a>",
+              "short_name": "Schlackow (2013)",
+              "bigDataUrl": "http://ftp.ebi.ac.uk/pub/databases/pombase/DATASET/MSchlackow_polyA/All_combined_N.bw",
+              "type": "bigWig",
+              "visibility": "full",
+              "color": {"red": 38, "green": 59, "blue": 33}
+            }
+          }
+        },
+        "intron_branch_point": {
+          "subtracks": {
+            "Bitton_IBP_24709818": {
+              "long_name": "Intron Branch Point - RNA-Seq - Bitton (2014)",
+              "description": "EuropePMC: <a href='http://europepmc.org/abstract/MED/24709818'>Bitton <em>et al</em> 2014</a>",
+              "short_name": "Bitton (2014)",
+              "bigDataUrl": "http://ftp.ebi.ac.uk/pub/databases/pombase/DATASET/Bitton_IBP_24709818/BranchPoint_v2.bed",
+              "type": "bed",
+              "visibility": "full",
+              "color": {"red": 38, "green": 59, "blue": 33}
+            }
+          }
+        },
+        "transcriptome": {
+          "subtracks": {
+            "NRhind_01_all_P": {
+              "long_name": "Transcripts - RNA-Seq - all data (forward strand) - Rhind (2011)",
+              "description": "EuropePMC: <a href='http://europepmc.org/abstract/MED/21511999'>Rhind <em>et al</em> 2011</a>)",
+              "short_name": "Rhind (2011)",
+              "bigDataUrl": "http://ftp.ebi.ac.uk/pub/databases/pombase/DATASET/NRhind_Transcriptome/Spom_all_61G9EAAXX_and_61G9UAAXX.+.sorted.bam",
+              "type": "rnaseq",
+              "visibility": "full",
+              "color": {"red": 38, "green": 59, "blue": 33}
+            },
+            "NRhind_02_all_N": {
+              "long_name": "Transcripts - RNA-Seq - all data (reverse strand) - Rhind (2011)",
+              "description": "EuropePMC: <a href='http://europepmc.org/abstract/MED/21511999'>Rhind <em>et al</em> 2011</a>)",
+              "short_name": "Rhind (2011)",
+              "bigDataUrl": "http://ftp.ebi.ac.uk/pub/databases/pombase/DATASET/NRhind_Transcriptome/Spom_all_61G9EAAXX_and_61G9UAAXX.-.sorted.bam",
+              "type": "rnaseq",
+              "visibility": "full",
+              "color": {"red": 38, "green": 59, "blue": 33}
+            },
+            "NRhind_03_log_P": {
+              "long_name": "Transcripts - RNA-Seq - log phase (forward strand) - Rhind (2011)",
+              "description": "EuropePMC: <a href='http://europepmc.org/abstract/MED/21511999'>Rhind <em>et al</em> 2011</a>)",
+              "short_name": "Rhind (2011)",
+              "bigDataUrl": "http://ftp.ebi.ac.uk/pub/databases/pombase/DATASET/NRhind_Transcriptome/Spom_log_61G9EAAXX_and_61G9UAAXX.+.sorted.bam",
+              "type": "rnaseq",
+              "visibility": "full",
+              "color": {"red": 38, "green": 59, "blue": 33}
+            },
+            "NRhind_04_log_N": {
+              "long_name": "Transcripts - RNA-Seq - log phase (reverse strand) - Rhind (2011)",
+              "description": "Log Phase mapped to the forward strand as described by <a href='http://europepmc.org/abstract/MED/21511999'>Rhind <em>et al</em> 2011</a>)",
+              "short_name": "Rhind (2011)",
+              "bigDataUrl": "http://ftp.ebi.ac.uk/pub/databases/pombase/DATASET/NRhind_Transcriptome/Spom_log_61G9EAAXX_and_61G9UAAXX.-.sorted.bam",
+              "type": "rnaseq",
+              "visibility": "full",
+              "color": {"red": 38, "green": 59, "blue": 33}
+            },
+            "NRhind_05_ds_P": {
+              "long_name": "Transcripts - RNA-Seq - glucose depletion (forward strand) - Rhind (2011)",
+              "description": "EuropePMC: <a href='http://europepmc.org/abstract/MED/21511999'>Rhind <em>et al</em> 2011</a>)",
+              "short_name": "Rhind (2011)",
+              "bigDataUrl": "http://ftp.ebi.ac.uk/pub/databases/pombase/DATASET/NRhind_Transcriptome/Spom_ds_61G9EAAXX_and_61G9UAAXX.+.sorted.bam",
+              "type": "rnaseq",
+              "visibility": "full",
+              "color": {"red": 38, "green": 59, "blue": 33}
+            },
+            "NRhind_06_ds_N": {
+              "long_name": "Transcripts - RNA-Seq - glucose depletion (reverse strand) - Rhind (2011)",
+              "description": "EuropePMC: <a href='http://europepmc.org/abstract/MED/21511999'>Rhind <em>et al</em> 2011</a>)",
+              "short_name": "Rhind (2011)",
+              "bigDataUrl": "http://ftp.ebi.ac.uk/pub/databases/pombase/DATASET/NRhind_Transcriptome/Spom_ds_61G9EAAXX_and_61G9UAAXX.-.sorted.bam",
+              "type": "rnaseq",
+              "visibility": "full",
+              "color": {"red": 38, "green": 59, "blue": 33}
+            },
+            "NRhind_07_hs_P": {
+              "long_name": "Transcripts - RNA-Seq - heat shock (forward strand) - Rhind (2011)",
+              "description": "EuropePMC: <a href='http://europepmc.org/abstract/MED/21511999'>Rhind <em>et al</em> 2011</a>)",
+              "short_name": "Rhind (2011)",
+              "bigDataUrl": "http://ftp.ebi.ac.uk/pub/databases/pombase/DATASET/NRhind_Transcriptome/Spom_hs_61G9EAAXX_and_61G9UAAXX.+.sorted.bam",
+              "type": "rnaseq",
+              "visibility": "full",
+              "color": {"red": 38, "green": 59, "blue": 33}
+            },
+            "NRhind_08_hs_N": {
+              "long_name": "Transcripts - RNA-Seq - heat shock (reverse strand) - Rhind (2011)",
+              "description": "EuropePMC: <a href='http://europepmc.org/abstract/MED/21511999'>Rhind <em>et al</em> 2011</a>)",
+              "short_name": "Rhind (2011)",
+              "bigDataUrl": "http://ftp.ebi.ac.uk/pub/databases/pombase/DATASET/NRhind_Transcriptome/Spom_hs_61G9EAAXX_and_61G9UAAXX.-.sorted.bam",
+              "type": "rnaseq",
+              "visibility": "full",
+              "color": {"red": 38, "green": 59, "blue": 33}
+            },
+            "NRhind_09_plat_P": {
+              "long_name": "Transcripts - RNA-Seq - stationary phase (forward strand) - Rhind (2011)",
+              "description": "EuropePMC: <a href='http://europepmc.org/abstract/MED/21511999'>Rhind <em>et al</em> 2011</a>)",
+              "short_name": "Rhind (2011)",
+              "bigDataUrl": "http://ftp.ebi.ac.uk/pub/databases/pombase/DATASET/NRhind_Transcriptome/Spom_plat_61G9EAAXX_and_61G9UAAXX.+.sorted.bam",
+              "type": "rnaseq",
+              "visibility": "full",
+              "color": {"red": 38, "green": 59, "blue": 33}
+            },
+            "NRhind_10_plat_N": {
+              "long_name": "Transcripts - RNA-Seq - stationary phase (reverse strand) - Rhind (2011)",
+              "description": "EuropePMC: <a href='http://europepmc.org/abstract/MED/21511999'>Rhind <em>et al</em> 2011</a>)",
+              "short_name": "Rhind (2011)",
+              "bigDataUrl": "http://ftp.ebi.ac.uk/pub/databases/pombase/DATASET/NRhind_Transcriptome/Spom_plat_61G9EAAXX_and_61G9UAAXX.-.sorted.bam",
+              "type": "rnaseq",
+              "visibility": "full",
+              "color": {"red": 38, "green": 59, "blue": 33}
+            }
+          }
+        }
+      }
+    }
+  }
+}

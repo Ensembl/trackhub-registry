@@ -1,4 +1,8 @@
 {
+  "name": "Blueprint example 1",
+  "description": "An example of trackhub DB from the Blueprint project (1 track)",
+  "version": "0.01",
+
   "data": [
     {
       "name": "bpDnaseRegionsC0010K46DNaseEBI",
@@ -34,6 +38,7 @@
     "bpDnaseRegionsC0010K46DNaseEBI": {
       "shortLabel": "C0010K.DNase.Mono",
       "longLabel": "C0010K DNase monocytes peaks (EBI)",
+      "visibility": "full",
       "bigDataUrl": "http://ftp.ebi.ac.uk/pub/databases/blueprint/data/homo_sapiens/Peripheral_blood/C0010K/Monocytes/DNase-Hypersensitivity//C0010K46.DNase.hotspot_v3_20130415.bb",
       "type": "bigBed",
       "standard_fields": 6,

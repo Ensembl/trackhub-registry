@@ -1,0 +1,68 @@
+[% # Use the TT Dumper plugin to Data::Dumper variables to the browser   -%]
+[% # Not a good idea for production use, though. :-)  'Indent=1' is      -%]
+[% # optional, but prevents "massive indenting" of deeply nested objects -%]
+[% USE Dumper(Indent=1) -%]
+ 
+[% # Set the page title.  META can 'go back' and set values in templates -%]
+[% # that have been processed 'before' this template (here it's updating -%]
+[% # the title in the root/src/wrapper.tt2 wrapper template).  Note that -%]
+[% # META only works on simple/static strings (i.e. there is no variable -%]
+[% # interpolation -- if you need dynamic/interpolated content in your   -%]
+[% # title, set "$c->stash(title => $something)" in the controller).     -%]
+[% META title = 'Search Results' %]
+
+<!-- 
+Total hits: [% results.hits.total %]<br/>
+<hr>
+[% FOREACH item IN results.hits.hits %]
+<pre>
+  [% Dumper.dump(item) -%]<br/>
+</pre>
+<hr>
+[% END %]
+-->
+
+<div class="page-header">
+  <h3>Search Results</h3>
+</div>
+<div class="row">
+  <table id="users" class="table table-bordered table-striped tablesorter" summary="The list of trackhubs">
+    <thead>
+      <tr>
+        [% FOR column IN columns %]
+        <th scope="col">[% column %]</th>
+        [% END %]
+      </tr>
+    </thead>
+    <tbody>
+      [% FOREACH item = items %] 
+      <tr>
+        [% FOR column IN columns %]
+        <td>[% item.get_value(column) | html %]</td>
+        [% END %]
+      </tr>
+      [% END %]
+    </tbody>
+  </table>
+</div>
+
+[% # bootstrap pagination %]
+[% # simple pagination %]
+<ul class="pager">
+[% IF pager.current_page != pager.first_page AND pager.first_page != pager.previous_page %]
+  <li><a href="[% c.uri_for('/search', { q => query_string, page => pager.first_page }) %]">First</a></li>
+[% END %]
+[% IF pager.previous_page %]
+  <li><a href="[% c.uri_for('/search', { q => query_string, page => pager.previous_page })%]">Previous</a></li>
+[% END %]
+[% IF pager.next_page %]
+  <li><a href="[% c.uri_for('/search', { q => query_string, page => pager.next_page })%]">Next</a></li>
+[% END %]
+[% IF pager.current_page != pager.last_page AND pager.last_page != pager.next_page %]
+  <li><a href="[% c.uri_for('/search', { q => query_string, page => pager.last_page }) %]">Last</a></li>
+[% END %]
+</ul>
+
+[% # Provide a link back to the search page.  'c.uri_for' builds -%]
+[% # a full URI; e.g., 'http://localhost:3000'      -%]
+<!--<p><a href="[% c.uri_for('/') %]">Return to search</a></p>-->

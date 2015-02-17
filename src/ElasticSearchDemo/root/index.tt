@@ -1,0 +1,45 @@
+<!--<div class="page-header">
+  <h1>TrackHub Registry &amp; Catalyst Example</h1>
+  <p class="lead bg-info">This a centralised, global collection of publicly accessible TrackHubs.</p>
+  <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p>
+</div>-->
+
+<!--
+<header class="header-sezione">
+ <h2>The Home for TrackHubs</h2>
+</header>
+<section id="presentazione">
+<div class="row">
+  <div class="col-sm-12">
+    <div class="box-lavoro-evidenza">
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec velit nec velit blandit imperdiet. Duis metus enim, fringilla at auctor tincidunt, euismod eget massa. Nulla hendrerit, velit sed suscipit pellentesque, ipsum massa fringilla ex, quis vestibulum purus arcu sed dolor. Mauris a pulvinar metus, et molestie lorem. Quisque sit amet magna vestibulum, pulvinar ligula in, tristique nibh. Aliquam vitae sodales nunc. Integer at lacinia risus. Integer consectetur eu lorem eget maximus. Mauris eget nisl magna. In non lectus orci. Sed vehicula metus felis, non pellentesque justo feugiat ullamcorper. Duis scelerisque risus urna, ac porta elit rhoncus et. Nam nec ex non massa fermentum ultrices.</p>
+     <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p>
+    </div>
+  </div>
+</div>
+</section>
+-->
+<div class="jumbotron">
+  <h2>Home of TrackHubs</h2>
+  <p>Welcome to the TrackHub Registry, a centralised, global collection of publicly accessible TrackHubs, similar in goals to the <a href="http://www.dasregistry.org" target="_blank">DAS registry</a>, for third parties to advertise TrackHubs, and to make it easier for researchers around the world to discover and use TrackHubs containing different types of genomic research data.</p>
+  <p><a class="btn btn-primary btn-lg" href="/more" role="button">Learn more</a></p>
+</div>
+
+<section id="">
+<div class="row">
+  <div class="col-sm-6">
+    <div class="box-progetto">
+      <h3>Submit Data <span class="glyphicon glyphicon-upload"></span></h3>
+      <p>External TrackHub providers can register themselves and submit their TrackHubs to the registry. Registration and submission happen programatically via our RESTful API. Once submitted and validated, the TrackHubs become available for search by other users worldwide, allowing for automatic and rapid integration into a genome browser.</p>
+      <a href="[% c.uri_for('/submit_trackhubs') %]" class="btn btn-primary">How to Submit</a>
+    </div>
+  </div><!-- /.col-sm-6 -->
+  <div class="col-sm-6">
+    <div class="box-progetto">
+      <h3>Access Data <span class="glyphicon glyphicon-search"></span></h3>
+      <p>TrackHubs can be searched based on metadata information. Free text search is provided from the search box in the header of all TrackHub Registry web pages. Advanced search options are available for more specific and customised searches.</p>
+      <a href="#" class="btn btn-primary">Advanced Search</a>
+    </div>
+  </div><!-- /.col-sm-6 -->
+</div>
+</section>

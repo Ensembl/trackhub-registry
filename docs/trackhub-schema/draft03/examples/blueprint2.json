@@ -1,8 +1,12 @@
 {
+  "name": "Blueprint example 2",
+  "description": "An example of trackhub DB from the Blueprint project (4 tracks)",
+  "version": "0.01",
+
   "data": [
     {
       "name": "bpDnaseRegionsBP_BP_DG-75_d01DNaseHOTSPOT_peakEMBL-EBI",
-      "organism": { "taxid": 9606, "scientific_name": "Homo sapiens" },
+      "species": { "taxid": 9606, "scientific_name": "Homo sapiens" },
       "assembly": "GCA_000001405.15",
 
       "molecule": "genomic_DNA",
@@ -27,7 +31,7 @@
     },
     {
       "name": "bpDnaseRegionsBP_BP_U-266_d01DNaseHOTSPOT_peakEMBL-EBI",
-      "organism": { "taxid": 9606, "scientific_name": "Homo sapiens" },
+      "species": { "taxid": 9606, "scientific_name": "Homo sapiens" },
       "assembly": "GCA_000001405.15",
 
       "line": "BL-2",
@@ -51,7 +55,7 @@
     },
     {
       "name": "bpDnaseRegionsBP_BP_DG-75_d01DNasewiggler_peakEMBL-EBI",
-      "organism": { "taxid": 9606, "scientific_name": "Homo sapiens" },
+      "species": { "taxid": 9606, "scientific_name": "Homo sapiens" },
       "assembly": "GCA_000001405.15",
 
       "molecule": "genomic_DNA",
@@ -77,7 +81,7 @@
     },
     {
       "name": "bpDnaseRegionsBP_BP_U-266_d01DNasewiggler_peakEMBL-EBI",
-      "organism": { "taxid": 9606, "scientific_name": "Homo sapiens" },
+      "species": { "taxid": 9606, "scientific_name": "Homo sapiens" },
       "assembly": "GCA_000001405.15",
 
       "molecule": "genomic_DNA",
@@ -107,12 +111,12 @@
       "container": "composite",
       "type": "bed",
       "standard_fields": 3,
+      "dragAndDrop": true,
 
       "shortLabel": "Blueprint",
       "longLabel": "Blueprint",
 
       "visibility": "full",
-      "dragAndDrop": true,
       "priority": 4,
 
       "subgroups": [
@@ -234,7 +238,6 @@
 	    }
 	  }
 	}
-
       }
     }
   }

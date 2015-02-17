@@ -1,0 +1,15 @@
+[% # Use the TT Dumper plugin to Data::Dumper variables to the browser   -%]
+[% # Not a good idea for production use, though. :-)  'Indent=1' is      -%]
+[% # optional, but prevents "massive indenting" of deeply nested objects -%]
+[% USE Dumper(Indent=1) -%]
+ 
+[% META title = 'Available Endpoints' %]
+
+<p align="center">
+<table> 
+<tr><th>Endpoint</th><th>Method</th><th>Description</th></tr>
+[% FOREACH ep IN endpoints %]
+<tr><td>[% ep.0 %]</td><td>[% ep.1 %]</td><td>[% ep.2 %]</td></tr>
+[% END %]
+</table>
+</p>

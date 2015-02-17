@@ -1,0 +1,31 @@
+[% META title = 'TrackHub Providers' %]
+[% PROCESS user/user_nav.tt %]
+
+<div class="page-header">
+  <h3>TrackHub Providers</h3>
+</div>
+<div class="row">
+  <table id="users" class="table table-bordered table-striped tablesorter" summary="The list of all trackhub providers">
+    <thead>
+      <tr>
+        [% FOR column IN columns %]
+        <th scope="col">[% column %]</th>
+        [% END %]
+      </tr>
+    </thead>
+    <tbody>
+      [% FOR user IN users %]
+      <tr>
+        [% FOR column IN columns %]
+        <td>[% user.$column | html %]</td>
+        [% END %]
+        <td>
+          <div class="btn-group">
+          <a class="btn btn-xs" href="[% c.uri_for(c.controller.action_for('delete'), ['admin',user.id]) %]" rel="tooltip" title="Delete"><span class="glyphicon glyphicon-trash"></span></a>
+          </div>
+        </td>
+      </tr>
+      [% END %]
+    </tbody>
+  </table>
+</div>

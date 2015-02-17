@@ -1,0 +1,26 @@
+[% META title = 'TrackHubs' %]
+[% PROCESS user/user_nav.tt %]
+
+<div class="page-header">
+  <h3>TrackHubs</h3>
+</div>
+<div class="row">
+  <table id="trackhubs" class="table table-bordered table-striped tablesorter" summary="The list of all trackhubs">
+    <thead>
+      <tr>
+        [% FOR column IN columns %]
+        <th scope="col">[% column %]</th>
+        [% END %]
+      </tr>
+    </thead>
+    <tbody>
+      [% FOR trackhub IN trackhubs %]
+      <tr>
+        [% FOR column IN columns %]
+        <td>[% trackhub.$column | html %]</td>
+        [% END %]
+      </tr>
+      [% END %]
+    </tbody>
+  </table>
+</div>

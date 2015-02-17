@@ -1,0 +1,49 @@
+{
+  "name": "Blueprint example 1",
+  "description": "An example of trackhub DB from the Blueprint project (1 track)",
+  "version": "0.01",
+
+  "data": [
+    {
+      "name": "bpDnaseRegionsC0010K46DNaseEBI",
+      "species": {
+        "taxid": 9606,
+	"scientific_name": "Homo sapiens"
+      },
+
+      "assembly": "GCA_000001405.15",
+
+      "molecule": "genomic_DNA",
+      "disease": "None",
+      "biomaterial_type": "Primary_cells",
+      "sample_id": "EGAN00001070025",
+      "donor_id": "C0010K46",
+      "donor_age": "60-65",
+      "donor_health_status": "Healthy",
+      "donor_sex": "Female",
+      "donor_ethnicity": "Northern_European",
+      "cell_type": "CD14-positive, _CD16-negative_classical_monocyte",
+      "tissue_type": "Venous_blood",
+      "library_strategy": "DNAse-Seq",
+      "experiment_type": "Chromatin-_accessibility",
+      "experiment_id": "EGAX00001084791",
+      "alignment_software": "BWA",
+      "alignment_software_version": "0.5.9",
+      "analysis_software": "Hotspot",
+      "analysis_software_version": "v3",
+      "analysis_group": "EMBL-EBI"
+    }
+  ],
+  "configuration": {
+    "bpDnaseRegionsC0010K46DNaseEBI": {
+      "shortLabel": "C0010K.DNase.Mono",
+      "longLabel": "C0010K DNase monocytes peaks (EBI)",
+      "visibility": "full",
+      "bigDataUrl": "http://ftp.ebi.ac.uk/pub/databases/blueprint/data/homo_sapiens/Peripheral_blood/C0010K/Monocytes/DNase-Hypersensitivity//C0010K46.DNase.hotspot_v3_20130415.bb",
+      "type": "bigBed",
+      "standard_fields": 6,
+      "non_standard_fields": false,
+      "color": { "red": 8, "green": 104, "blue": 172 }
+    }
+  }
+}

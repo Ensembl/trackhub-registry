@@ -1,0 +1,8 @@
+[% META title = 'Search the TrackHub Registry' -%]
+<div class="page-header">                                                                                        
+  <h2>Search for TrackHubs</h2>
+  <form method="post" action="[% c.uri_for('search') %]/test/trackhub">
+    <input type="text" name="q">
+    <input type="submit" name="Submit" value="Submit">
+  </form>
+</div>

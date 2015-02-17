@@ -8,18 +8,24 @@
   "type": "object",
 
   "properties": {
+    "name": { "type": "string" },
+
+    "description": { "type": "string" },
+
+    "version": { "type": "string" },
+
     "data": {
-      "type": "object", 
+      "type": "array",
 
       "title": "TrackHub Data",
 
-      "description": "Contains data/metadata for a set of tracks defined in the TrauckHub: attribute name is symbolic name of a track, attribute value is the corresponding definition of the data for that particular track.",
+      "description": "Contains data/metadata for a list of tracks defined in the TrackHub. Each track has a name attribute whose value is a property of the configuration object.",
 
-      "patternProperties": {
-        "^[a-zA-z][a-zA-Z0-9_]+$": { "$ref": "#/definitions/track_data" }
-      },
+      "items": { "$ref": "#/definitions/track_data" },
 
-      "additionalProperties": false
+      "minItems": 1,
+	  
+      "uniqueItems": true
     },
 
     "configuration": {
@@ -27,7 +33,7 @@
 
       "title": "TruckHub Configuration",
 
-      "description": "Contains display and configuration properties for the tracks speficied in the data attribute.",
+      "description": "Contains display and configuration properties for the tracks speficied in the data object.",
 
       "patternProperties": {
         "^[a-zA-z][a-zA-Z0-9_]+$": { "$ref": "#/definitions/track_configuration" }
@@ -39,7 +45,7 @@
 
   "additionalProperties": false,
 
-  "required": [ "data", "configuration" ],
+  "required": [ "name", "version", "data", "configuration" ],
 
   "definitions": {
 
@@ -58,37 +64,144 @@
       "type": "object",
 
       "title": "Generic track data/metadata",
+
       "description": "Track data/metadata properties common to all domain-specific tracks (e.g. epigenomics, proteomics).",
 
       "properties": {
-        "organism": {
-	  "type": "object",
+        "name": { 
+	  "type": "string",
 
-	  "title": "Organism",
-	  "description": "Information about the organism the track relates to",
+	  "description": "The name of the track. It should corresponds to one entry in the configuration object."
+	},
 
-          "properties": {
-	    "taxid": { "type": "integer", "minimum": 0, "exclusiveMinimum": true },
-	    "scientific_name": { "type": "string" }
+	"title": { "type": "string" },
+
+	"description": { "type": "string" },
+
+        "species": { "$ref": "#/definitions/species" },
+
+	"assembly": { "$ref": "#/definitions/assembly" },
+
+	"contacts": {
+	  "type": "array",
+
+	  "description": "A list of contacts related to the track.",
+
+	  "items": { "$ref": "#/definitions/contact" },
+
+	  "minItems": 1,
+	  
+	  "uniqueItems": true
+	},
+
+	"publications": {
+	  "type": "array",
+
+	  "description": "A list of publications related to the track.",
+
+	  "items": { "$ref": "#/definitions/publication" },
+
+	  "minItems": 1,
+	  
+	  "uniqueItems": true
+	},
+	
+	"software": {
+	  "type": "array",
+
+	  "description": "A list of software used to analyse the data. The order should reflect the order in which the tools were used.",
+
+	  "items": {
+	    "type": "object",
+
+	    "properties": {
+      	      "type": { "type": "string" },
+	      
+	      "name": { "type": "string" },
+	      
+	      "version": { "type": "string" },
+	      
+	      "setting": {
+	        "type": "array",
+
+		"description": "A list of settings used for a particular software.",
+		
+		"items": { "type": "string" },
+
+		"minItems": 1,
+
+		"uniqueItems": true
+	      }
+	    }
 	  },
 
-	  "required": [ "taxid" ]
-        },
+          "minItems": 1,
 
-	"assembly": { 
-          "type": "string",
+	  "uniqueItems": true
 
-	  "title": "Assembly accession",
-	  "description": "The assembly accession the track relates to",
+	},
 
-	  "pattern": "^GCA_[0-9]+.[0-9]+$"
-        }
+	"uri": {
+	  "type": "array",
 
+  	  "description": "A list of URIs pointing to the source data, e.g. PRIDE experiment or a PeptideAtlas build.",
+
+	  "items": { "type": "string", "format": "uri" },
+
+	  "minItems": 1,
+
+	  "uniqueItems": true
+	},
+	
+	"samples": {
+	  "type": "array",
+
+	  "description": "A list of samples analysed.",
+
+	  "items": { "$ref": "#/definitions/sample" },
+
+	  "minItems": 1,
+
+	  "uniqueItems": true
+	},
+
+	"sample_processing": {
+	  "type": "array",
+
+	  "description": "A list of parameters describing sample processing steps. The order of the data processing items should reflect the order these processing steps were performed in. If multiple parameters are given for a step these MUST be separated by a '|'.",
+
+	  "items": { "type": "string" },
+
+	  "minItems": 1,
+
+	  "uniqueItems": true
+	},
+
+        "study_variable": {
+	  "type": "array",
+
+	  "items": {
+	    "type": "object",
+	    "properties": { "description": { "type": "string" } }
+	  },
+	  "minItems": 1,
+	  "uniqueItems": true
+	},
+     
+        "custom": {
+	  "type": "array",
+
+	  "description": "Any additional parameters describing the analyses reported.",
+
+	  "items": { "type": "string" },
+
+	  "minItems": 1,
+
+	  "uniqueItems": true
+	}   
       },
       
-      "additionalProperties": false,
-
-      "required": [ "organism", "assembly" ]
+      "required": [ "name", "species", "assembly" ]
     },
 
     "epigenomics_track_data": {
@@ -138,14 +251,342 @@
 
     "proteomics_track_data": {
       "allOf": [
-        { "$ref": "#/definitions/generic_track_data" }
+        { "$ref": "#/definitions/generic_track_data" },
+	{ "properties": {
+	    "instruments": {
+	      "type": "array",
+
+	      "description": "A list of instruments used in the experiment",
+
+	      "items": { "$ref": "#/definitions/instrument" },
+	      "minItems": 1,
+	      "uniqueItems": true
+	    },
+
+	    "search_engine_score": {
+	      "type": "array",
+
+	      "description": "The order of the search engine scores should reflect their importance for the identification and be used to determine the identification's rank.",
+
+	      "items": { "type": "string" },
+	      "minItems": 1
+	    },
+	    
+	    "false_discovery_rate": {
+	      "type": "string",
+	      
+	      "description": "The file's false discovery rate(s) reported at the PSM, peptide and/or protein level. False Localisation Rate (FLD) for the reporting of the modifications can also be reported here. Multiple parameters MUST be separated by '|'." 
+	    },
+
+	    "fixed_mod": {
+	      "type": "array",
+
+	      "description": "Parameters describing fixed modifications searched for.",
+
+	      "items": { "type": "string" },
+	      "minItems": 1,
+	      "uniqueItems": true
+	    },
+
+	    "variable_mod": {
+	      "type": "array",
+
+	      "description": "Parameters describing variable modifications searched for.",
+
+	      "items": { "type": "string" },
+	      "minItems": 1,
+	      "uniqueItems": true
+	    },
+
+	    "quantification_method": {
+	      "type": "string",
+
+	      "description": "The quantification method used in the experiment."
+	    },
+
+	    "protein_quantification_unit": {
+	      "type": "string",
+
+	      "description": "Defines what type of units is reported in the protein quantification fields."
+	    },
+
+	    "peptide_quantification_unit": {
+	      "type": "string",
+
+	      "description": "Defines what type of units is reported in the peptide quantification fields."
+	    },
+
+	    "ms_runs": {
+	      "type": "array",
+
+	      "items": { "$ref": "#/definitions/ms_run" },
+	      "minItems": 1,
+	      "uniqueItems": true
+	    },
+
+	    "assays": {
+	      "type": "array",
+	      
+      	      "items": { "$ref": "#/definitions/assay" },
+	      "minItems": 1,
+	      "uniqueItems": true
+	    }
+
+	  },
+	  
+	  "additionalProperties": false
+	}
       ]
+    },
+
+    "contact": {
+      "type": "object",
+
+      "properties": {
+        "name": { "type": "string" },
+
+	"affiliation": { "type": "string" },
+
+	"email": { "type": "string", "format": "email" }
+      }      
+    },
+
+    "publication": {
+      "type": "object",
+
+      "properties": {
+        "pmid": { 
+	  "type": "integer",
+
+	  "description": "The PubMed ID",
+
+	  "minimum": 1
+	},
+
+	"doi": { 
+	  "type": "string",
+
+	  "description": "The Digital Object Identifier"
+	}
+      }
+    },
+
+    "sample": {
+      "type": "object",
+
+      "properties": {
+        "id": { "type": "string" },
+
+	"description": { "type": "string" },
+
+	"ontology_uri": { "type": "string", "format": "uri" },
+
+	"species": {
+	  "type": "array",
+
+	  "description": "The respective species of the samples analysed. It's an array since we can have, e.g. different samples from different species (combinations) analysed as biological replicates.",
+
+	  "items": { "$ref": "#/definitions/species" },
+
+	  "minItems": 1,
+
+	  "uniqueItems": true	  
+	},
+
+	"tissue": {
+	  "type": "array",
+
+	  "description": "The respective tissue(s) of the sample.",
+
+	  "items": { "type": "string" },
+
+	  "minItems": 1,
+
+	  "uniqueItems": true
+	},
+
+	"cell_type": {
+	  "type": "array",
+
+	  "description": "The respective cell type(s) of the sample.",
+
+	  "items": { "type": "string" },
+
+	  "minItems": 1,
+
+	  "uniqueItems": true
+	},
+
+	"disease": {
+	  "type": "array",
+
+	  "description": "The respective disease(s) of the sample.",
+
+	  "items": { "type": "string" },
+
+	  "minItems": 1,
+
+	  "uniqueItems": true
+	},
+
+	"custom": {
+	  "type": "array",
+
+	  "description": "Parameters describing the sample's additional properties.",
+
+	  "items": { "type": "string" },
+
+	  "minItems": 1,
+
+	  "uniqueItems": true
+	}
+      }
+    },
+
+    "species": {
+      "type": "object",
+
+      "title": "Species",
+      "description": "Information about the organism the track relates to",
+
+      "properties": {
+        "taxid": { "type": "integer", "minimum": 0, "exclusiveMinimum": true },
+	"scientific_name": { "type": "string" }
+      },
+
+      "required": [ "taxid" ]
+    },
+
+    "assembly": { 
+      "type": "string",
+
+      "title": "Assembly id",
+      "description": "The NCBI assembly identifier (accession and version) the track relates to",
+
+      "pattern": "^GCA_[0-9]+.[0-9]+$"
+    },
+
+    "tissue": {
+      "type": "object",
+
+      "properties": {
+        "type": { "type": "string" },
+	      
+        "depot": { "type": "string" },
+
+        "ontology_uri": { "type": "string", "format": "uri" }
+      }
+    },
+
+    "cell_type": {
+      "type": "object",
+
+      "properties": {
+        "name": { "type": "string" },
+
+	"ontology_uri": { "type": "string", "format": "uri" }
+      }
+    },
+
+    "disease": {
+      "type": "object",
+
+      "properties": {
+        "name": { "type": "string" },
+
+	"ontology_uri": { "type": "string", "format": "uri" }
+      }
+    },
+
+    "instrument": {
+      "type": "object",
+
+      "description": "An instrument used in an experiment.",
+
+      "properties": {
+        "name": { "type": "string" },
+	
+	"source": { "type": "string" },
+
+	"analyser": {
+	  "type": "array",
+
+	  "description": "The instrument analyser types used in the experiment",
+
+	  "items": { "type": "string" },
+	  "minItems": 1,
+	  "uniqueItems": true
+	},
+
+	"detector": { "type": "string" }
+      },
+
+      "additionalProperties": false
+    },
+
+    "ms_run": {
+      "type": "object",
+
+      "properties": {
+        "format": {
+	  "type": "string",
+
+	  "description": "A parameter specifying the data format of the external MS data file. If format is present, id_format should also be present."
+	},
+
+	"id_format": {
+	  "type": "string",
+	  
+	  "description": "A parameter specifying the id format of the external MS data file. If id_format is present, format should also be present."
+	},
+
+	"location": {
+	  "type": "string",
+
+	  "description": "Location of the external data file. If the actual location of the MS data run is unknown, a 'null' MUST be used as a placed holder value.",
+
+	  "oneOf": [
+	    { "type": "string", "format": "uri" },
+            { "type": "string", "enum": [ "null" ] }
+          ]
+	},
+	
+	"fragmentation_method": {
+	  "type": "string",
+
+	  "description": "Parameters describing all the types of fragmentation used in a given ms run. Multiple parameters MUST be separated by '|'."
+	}
+      },
+
+      "additionalProperties": false
+    },
+
+    "assay": {
+      "type": "object",
+
+      "properties": {
+        "quantification_reagent": { 
+	  "type": "string",
+
+	  "description": "The reagent used to label the sample in the assay."
+	},
+
+	"quantification_mod": {
+	  "type": "array",
+
+	  "description": "A list of modifications associated with a quantification reagent.",
+
+	  "items": { "type": "string" },
+	  "minItems": 1,
+	  "uniqueItems": true
+	}
+      },
+
+      "additionalProperties": false
     },
 
     "track_configuration": {
       "title": "Track display and configuration properties.",
-
-      "description": "",
 
       "oneOf": [
 	 { "$ref": "#/definitions/bigBed_track" },
@@ -418,7 +859,7 @@
 	    "showTopScorers": { "type": "integer" }
 	  },
 
-	  "required": [ "type", "bigDataUrl" ]
+	  "required": [ "type" ]
 	}
       ]  
     },
@@ -531,7 +972,7 @@
 	    "yLineMark": { "type": "number" }	    
 	  },
 
-	  "required": [ "type", "bigDataUrl" ]
+	  "required": [ "type" ]
 	}
       ]    
     },
@@ -649,7 +1090,7 @@
 
 	  },
 
-	  "required": [ "type", "bigDataUrl" ]
+	  "required": [ "type" ]
 	}
       ]      
     },
@@ -696,7 +1137,8 @@
 	    "group": { "type": "string" }
 	  },
 	  
-	  "required": [ "container", "subtracks" ]
+	  "required": [ "container", "subtracks" ],
+	  "additionalProperties": false
 	}
       ]
     },
@@ -770,7 +1212,8 @@
 
 	  },
 
-	  "required": [ "container" ]
+	  "required": [ "container" ],
+	  "additionalProperties": false
 	}
       ]
     },
@@ -948,7 +1391,8 @@
 	    }
 	  },
 	  
-	  "required": [ "container", "aggregate", "subtracks" ]
+	  "required": [ "container", "aggregate", "subtracks" ],
+	  "additionalProperties": false
 	}
       ]
     },

@@ -1,0 +1,10 @@
+{
+  "trackhub": {
+    "properties": {
+      "configuration": {
+        "type": "object",
+	"enabled": false
+      }
+    }
+  }
+}

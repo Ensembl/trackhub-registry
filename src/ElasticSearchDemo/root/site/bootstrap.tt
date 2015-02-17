@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" ><![endif]-->
+<!--[if gt IE 8]><!--><html class="no-js" ><!--<![endif]-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="The TrackHub Registry">
+    <meta name="author" content="">
+
+    <title>[% template.title or "The TrackHub Registry" %]</title>
+
+    <!-- Fogli di stile -->
+    <link href='http://fonts.googleapis.com/css?family=Lato:400,700,900,400italic' rel='stylesheet' type='text/css'>
+    <link href="/static/bootstrap/css/bootstrap.css" rel="stylesheet" media="screen">
+    <link href="/static/css/tablesorter.css" rel="stylesheet">
+    <link href="/static/css/custom.css" rel="stylesheet" media="screen">
+
+    <!-- Modernizr -->
+    <script src="/static/js/modernizr.custom.js"></script>
+    <!-- respond.js per IE8 -->
+    <!--[if lt IE 9]>
+    <script src="/static/js/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+    <!-- Header e barra di navigazione -->
+    <img style="position: absolute; top: 0; right: 0; border: 0; z-index: 1031;" src="/static/images/ico_beta.png" />
+    <header>
+    <nav class="navbar navbar-default">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="[% c.uri_for('/') %]">TrackHub Registry</a>
+      </div> 
+      <div class="collapse navbar-collapse navbar-responsive-collapse">
+        <ul class="nav navbar-nav">
+          <li><a href="#">About</a></li>
+          <li><a href="#">Help</a></li>
+          <li><a href="#">Contacts</a></li>
+        </ul>
+	<ul class="nav navbar-nav navbar-right">
+	[% IF c.user_exists %]
+          <li><a href="[% c.uri_for('/logout') %]">Logout</a></li>
+        [% ELSE %]
+          <li><a href="[% c.uri_for('/user/register') %]">Register</a></li>
+          <li><a href="[% c.uri_for('/login') %]">Login</a></li>
+        [% END %]
+        </ul>
+	<form class="navbar-form navbar-right" role="search" method="post" action="[% c.uri_for('/search') %]">
+          <div class="form-group">
+            <input type="text" name="q" class="form-control" placeholder="Enter the search terms...">
+          </div>
+          <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+      </div><!-- /.nav-collapse -->
+    </div>
+    </nav><!-- /.navbar -->
+    </header><!-- /header -->
+
+    <div class="container">
+      [%# Status and error messages %]
+      <span class="message">[% status_msg %]</span>
+      <span style="color: red;">[% error_msg %]</span>
+      [% content %]
+    </div>
+
+    <footer>
+      <div class="row">
+	<div class="col-sm-12">
+	  <p class="right">&copy; 2015 TrackHub Registry. &middot; <a href="#">Privacy</a></p>
+	</div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+  </body>
+</html>

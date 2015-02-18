@@ -4,15 +4,7 @@ use strict;
 use warnings;
 
 use LWP;
-
-#
-# TODO
-# Have to use this until I implement with Moose
-#
-BEGIN {
-  use FindBin qw/$Bin/;
-  use lib "$Bin/..";
-}
+use HTTP::Tiny;
 
 sub slurp_file {
   my $file = shift;
@@ -27,6 +19,20 @@ sub slurp_file {
   }
   
   return $string;
+}
+
+sub internet_connection_ok {
+  #
+  # For some reason, Net::Ping doeesn't reach the host
+  # even if the connection is ok and ping works
+  # on the command line
+  #
+  # my $p = Net::Ping->new();
+  # my $ok = $p->ping("www.google.com", 5);
+  # $p->close();
+  # return $ok;
+  
+  return HTTP::Tiny->new()->request('GET', "http://www.google.com")->{success};
 }
 
 sub es_running {

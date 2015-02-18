@@ -37,6 +37,23 @@ sub new {
   return $self;
 }
 
+sub assemblies {
+  my $self = shift;
+  
+  return keys %{$self->genomes};
+}
+
+sub trackdb_conf_for_assembly {
+  my ($self, $assembly) = @_;
+  defined $assembly or
+    Catalyst::Exception->throw("Undefined assembly");
+
+  exists $self->genomes->{$assembly} or
+    Catalyst::Exception->throw("Cannot retrieve data for assembly $assembly");
+
+  return $self->genomes->{$assembly};
+}
+
 sub _get_hub_info {
   my $self = shift;
   my $url = $self->url;

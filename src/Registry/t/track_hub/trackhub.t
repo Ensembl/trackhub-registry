@@ -36,8 +36,12 @@ SKIP: {
   is($th->genomesFile, 'genomes.txt', 'Hub genomes file');
   is($th->email, "blueprint-info\@ebi.ac.uk", 'Hub contact email');
   like($th->descriptionUrl, qr/http:\/\/www.blueprint-epigenome.eu\/index.cfm/, 'Hub description URL');
-  is_deeply($th->genomes, { hg19 => [ "$URL/hg19/tracksDb.txt" ] }, 'Hub trackDb assembly info');
 
+  is(scalar $th->assemblies, 1, 'Number of assemblies');
+  is(($th->assemblies)[0], 'hg19', 'Stored assembly');
+  is_deeply($th->genomes, { hg19 => [ "$URL/hg19/tracksDb.txt" ] }, 'Hub trackDb assembly info');
+  throws_ok { $th->trackdb_conf_for_assembly } qr/Undefined/, 'Throws if assembly not defined';
+  is_deeply($th->trackdb_conf_for_assembly('hg19'), [ "$URL/hg19/tracksDb.txt" ], 'TrackDB conf for assembly');
 }
 
 sub internet_connection_ok {

@@ -23,10 +23,10 @@ throws_ok { Registry::TrackHub->new(url => $WRONG_URL) } qr/check the source URL
 #
 
 SKIP: {
-  skip "No Internet connection: cannot test TrackHub access", 7
+  skip "No Internet connection: cannot test TrackHub access", 8
     unless internet_connection_ok();
 
-  my $URL = "ftp://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub/";
+  my $URL = "ftp://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub";
   my $th = Registry::TrackHub->new(url => $URL);
   isa_ok($th, 'Registry::TrackHub');
 
@@ -36,7 +36,7 @@ SKIP: {
   is($th->genomesFile, 'genomes.txt', 'Hub genomes file');
   is($th->email, "blueprint-info\@ebi.ac.uk", 'Hub contact email');
   like($th->descriptionUrl, qr/http:\/\/www.blueprint-epigenome.eu\/index.cfm/, 'Hub description URL');
-  is_deeply($th->genomes, { hg19 => [ 'ftp://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub/hg19/tracksDb.txt' ] }, 'Hub trackDb assembly info');
+  is_deeply($th->genomes, { hg19 => [ "$URL/hg19/tracksDb.txt" ] }, 'Hub trackDb assembly info');
 
 }
 
@@ -54,8 +54,5 @@ sub internet_connection_ok {
   use HTTP::Tiny;
   return HTTP::Tiny->new()->request('GET', "http://www.google.com")->{success};
 }
-
-# use Data::Dumper;
-# print Dumper($th);
 
 done_testing();

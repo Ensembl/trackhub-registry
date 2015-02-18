@@ -9,6 +9,8 @@ BEGIN {
   use lib "$Bin/../../lib";
 }
 
+use Registry::Utils;
+
 use_ok 'Registry::TrackHub';
 
 throws_ok { Registry::TrackHub->new() } qr/Undefined/, 'Throws if URL not passed';
@@ -24,7 +26,7 @@ throws_ok { Registry::TrackHub->new(url => $WRONG_URL) } qr/check the source URL
 
 SKIP: {
   skip "No Internet connection: cannot test TrackHub access", 8
-    unless internet_connection_ok();
+    unless Registry::Utils::internet_connection_ok();
 
   my $URL = "ftp://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub";
   my $th = Registry::TrackHub->new(url => $URL);
@@ -42,21 +44,6 @@ SKIP: {
   is_deeply($th->genomes, { hg19 => [ "$URL/hg19/tracksDb.txt" ] }, 'Hub trackDb assembly info');
   throws_ok { $th->trackdb_conf_for_assembly } qr/Undefined/, 'Throws if assembly not defined';
   is_deeply($th->trackdb_conf_for_assembly('hg19'), [ "$URL/hg19/tracksDb.txt" ], 'TrackDB conf for assembly');
-}
-
-sub internet_connection_ok {
-  #
-  # For some reason, Net::Ping doeesn't reach the host
-  # even if the connection is ok and ping works
-  # on the command line
-  #
-  # my $p = Net::Ping->new();
-  # my $ok = $p->ping("www.google.com", 5);
-  # $p->close();
-  # return $ok;
-  
-  use HTTP::Tiny;
-  return HTTP::Tiny->new()->request('GET', "http://www.google.com")->{success};
 }
 
 done_testing();

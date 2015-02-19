@@ -14,7 +14,7 @@ use Registry::Utils;
 
 use_ok 'Registry::TrackHub::Parser';
 
-throws_ok { Registry::TrackHub::Parser->new() } qr/Undefined/, 'Throws if files are not passed';
+throws_ok { Registry::TrackHub::Parser->new() } qr/Undefined/, 'Throws if mandatory argument not passed';
 
 
 SKIP: {
@@ -35,8 +35,9 @@ SKIP: {
   is(scalar keys %{$tracks}, 1445, 'Number of tracks');
 
   #
-  # check data for a number of random tracks
-  note("Checking composite higher level track 'bp'");
+  # check data for a number of tracks
+  #
+  note("Checking composite higher level track (bp)");
   my $track = $tracks->{bp};
   ok($track, 'Track data exists');
   is($track->{shortLabel}, 'Blueprint', 'Correct shortLabel');
@@ -66,7 +67,7 @@ SKIP: {
   like($metadata->{SAMPLE_ONTOLOGY_URI}, qr/UBERON_0013756/, 'Correct SAMPLE_ONTOLOGY_URI metadata');
   is($metadata->{CELL_TYPE}, 'CD14-positive,_CD16-negative_classical_monocyte', 'Correct CELL_TYPE metadata');
 
-  note("Checking another random (bpHistoneModsC00264H1H3K27me3MACS2_wigglerEMBL-EBIwiggler)");
+  note("Checking another random track (bpHistoneModsC00264H1H3K27me3MACS2_wigglerEMBL-EBIwiggler)");
   $track = $tracks->{'bpHistoneModsC00264H1H3K27me3MACS2_wigglerEMBL-EBIwiggler'};
   ok($track, 'Track data exists');
   is($track->{shortLabel}, 'C00264.K27me3.wig.mono', 'Correct shortLabel');

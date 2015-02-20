@@ -39,4 +39,13 @@ sub new {
 }
 
 
+sub to_json_1 {
+  my ($self, %args) = @_;
+  my ($trackhub, $tracks) = ($args{trackhub}, $args{tracks});
+  defined $trackhub and defined $tracks or
+    Catalyst::Exception->throw("Undefined trackhub and/or tracks argument");
+
+  return to_json({ test => 'test' });
+}
+
 1;

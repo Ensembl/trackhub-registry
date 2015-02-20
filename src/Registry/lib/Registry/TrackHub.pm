@@ -6,6 +6,7 @@ package Registry::TrackHub;
 use strict;
 use warnings;
 
+use Registry::TrackHub::Genome;
 use Registry::Utils::URL qw(read_file);
 use Catalyst::Exception;
 

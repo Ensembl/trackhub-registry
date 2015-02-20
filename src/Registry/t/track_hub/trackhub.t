@@ -39,11 +39,17 @@ SKIP: {
   is($th->email, "blueprint-info\@ebi.ac.uk", 'Hub contact email');
   like($th->descriptionUrl, qr/http:\/\/www.blueprint-epigenome.eu\/index.cfm/, 'Hub description URL');
 
-  is(scalar $th->assemblies, 1, 'Number of assemblies');
-  is(($th->assemblies)[0], 'hg19', 'Stored assembly');
-  is_deeply($th->genomes, { hg19 => [ "$URL/hg19/tracksDb.txt" ] }, 'Hub trackDb assembly info');
-  throws_ok { $th->trackdb_conf_for_assembly } qr/Undefined/, 'Throws if assembly not defined';
-  is_deeply($th->trackdb_conf_for_assembly('hg19'), [ "$URL/hg19/tracksDb.txt" ], 'TrackDB conf for assembly');
+  is(scalar $th->assemblies, 1, 'Number of genomes');
+  is(($th->assemblies)[0], 'hg19', 'Stored genome assembly data');
+  #
+  # Should probably do the following as Registry::TrackHub::Genome
+  # specific tests. I presume this is ok since the specific trackDb
+  # attribute information is created and manipulated by the module
+  # tested here.
+  #
+  my $genome = $th->get_genome('hg19');
+  isa_ok($genome, 'Registry::TrackHub::Genome');
+  is_deeply($genome->trackDb, [ "$URL/hg19/tracksDb.txt" ], 'Hub trackDb assembly info');
 }
 
 done_testing();

@@ -38,6 +38,35 @@ sub new {
   return $self;
 }
 
+sub translate {
+  my ($self, $url, $assembly) = @_;
+
+  my $dispatch = 
+    {
+     1 => sub { $self->to_json_1(@_) }
+    }->{$self->version};
+
+  Catalyst::Exception->throw(sprintf "Version %d not supported", $self->version) 
+      unless $dispatch;
+
+  my $trackhub = Registry::TrackHub->new(url => $URL);
+  
+  my $docs;
+  my $parser;
+  unless ($assembly) { # translate tracksDB for all assemblies stored in the Hub
+    foreach my $assembly ($trackhub->assemblies) {
+      $parser = Registry::TrackHub::Parser->new(files => $trackhub->trackdb_conf_for_assembly($assembly));
+      push @{$docs}, $dispatch->(trackhub => $trackhub, 
+				 tracks   => $parser->parse);
+    }
+  } else {
+    $parser = Registry::TrackHub::Parser->new(files => $trackhub->trackdb_conf_for_assembly($assembly));
+    push @{$docs}, $dispatch->(trackhub => $trackhub, 
+			       tracks   => $parser->parse);
+  }
+
+  return $docs;
+}
 
 sub to_json_1 {
   my ($self, %args) = @_;

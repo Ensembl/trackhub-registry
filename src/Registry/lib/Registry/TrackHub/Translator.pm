@@ -49,7 +49,7 @@ sub translate {
   Catalyst::Exception->throw(sprintf "Version %d not supported", $self->version) 
       unless $dispatch;
 
-  my $trackhub = Registry::TrackHub->new(url => $URL);
+  my $trackhub = Registry::TrackHub->new(url => $url);
   
   my $docs;
   my $parser;
@@ -65,6 +65,8 @@ sub translate {
 			       tracks   => $parser->parse);
   }
 
+  scalar @{$docs} or 
+    Catalyst::Exception->throw("Something went wrong. Couldn't get any translated JSON from hub");
   return $docs;
 }
 

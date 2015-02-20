@@ -95,13 +95,15 @@ sub _get_hub_info {
   $content = $response->{content};
 
   (my $genome_file = $content) =~ s/\r//g;
-  my %genome_info;
+  my $genomes;
   my @lines = split /\n/, $genome_file;
   my ($genome, $file, %ok_genomes);
   foreach (split /\n/, $genome_file) {
     my ($k, $v) = split(/\s/, $_);
+    next unless $k =~ /^\w/;
     if ($k =~ /genome/) {
       $genome = $v;
+      $genomes->{$genome} = Registry::TrackHub::Genome->new(assembly => $genome);
       ## Check if any of these genomes are available on this site,
       ## because we don't want to waste time parsing them if not!
       # if ($assembly_lookup && $assembly_lookup->{$genome}) {
@@ -110,18 +112,16 @@ sub _get_hub_info {
       # else {
       #  $genome = undef;
       # }
-    } elsif ($genome && $k =~ /trackDb/) {
-      $file = $v;
-      $genome_info{$genome} = $file;
-      ($genome, $file) = (undef, undef);
+    } else {
+      $genomes->{$genome}->$k($v);
     }
   }
 
   ## Parse list of config files
   my @errors;
 
-  foreach my $genome (keys %genome_info) {
-    $file = $genome_info{$genome};
+  foreach my $genome (keys %{$genomes}) {
+    $file = $genome_info->{$genome}->trackDb;
  
     $response = read_file("$url/$file", $file_args); 
     push @errors, "$genome ($url/$file): " . @{$response->{error}}
@@ -143,16 +143,16 @@ sub _get_hub_info {
     
     if (scalar @track_list) {
       ## replace trackDb file location with list of track files
-      $genome_info{$genome} = \@track_list;
+      $genomes->{$genome}->trackDb(\@track_list);
     } else {
-      $genome_info{$genome} = [ "$url/$file" ];
+      $genomes->{$genome}->trackDb([ "$url/$file" ]);
     }
   }
 
   Catalyst::Exception->throw(join("\n", @errors)) if scalar @errors;
 
   map { $self->$_($hub_details{$_}) } keys %hub_details;
-  $self->genomes(\%genome_info);
+  $self->genomes($genomes);
 
   return;
 }

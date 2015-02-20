@@ -27,7 +27,7 @@ SKIP: {
 
   my $URL = "ftp://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub";
   my $th = Registry::TrackHub->new(url => $URL);
-  $parser = Registry::TrackHub::Parser->new(files => $th->trackdb_conf_for_assembly('hg19'));
+  $parser = Registry::TrackHub::Parser->new(files => $th->get_genome('hg19')->trackDb);
   isa_ok($parser, 'Registry::TrackHub::Parser');
 
   # now parse the tracksDB file

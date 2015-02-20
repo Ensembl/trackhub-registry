@@ -43,6 +43,16 @@ sub assemblies {
   return keys %{$self->genomes};
 }
 
+sub get_genome {
+  my ($self, $assembly) = @_;
+  defined $assembly or Catalyst::Exception->throw("Cannot get genome data: undefined assembly argument");
+
+  exists $self->genomes->{$assembly} or
+    Catalyst::Exception->throw("No genome data for assembly $assembly");
+
+  return $self->genomes->{$assembly};
+}
+
 sub trackdb_conf_for_assembly {
   my ($self, $assembly) = @_;
   defined $assembly or
@@ -121,7 +131,7 @@ sub _get_hub_info {
   my @errors;
 
   foreach my $genome (keys %{$genomes}) {
-    $file = $genome_info->{$genome}->trackDb;
+    $file = $genomes->{$genome}->trackDb;
  
     $response = read_file("$url/$file", $file_args); 
     push @errors, "$genome ($url/$file): " . @{$response->{error}}

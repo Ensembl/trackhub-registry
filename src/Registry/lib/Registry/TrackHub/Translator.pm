@@ -87,7 +87,7 @@ sub to_json_1_0 {
     {
      version => '1.0',
      hub     => $trackhub->longLabel,
-     # add the original trackDb file
+     # add the original trackDb file(s) content
      trackdb => $genome->get_trackdb_content
     };
 

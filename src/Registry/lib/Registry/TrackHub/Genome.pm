@@ -36,7 +36,7 @@ sub new {
 sub get_trackdb_content {
   my $self = shift;
   defined $self->trackDb or
-    Catalyst::Exception->throw("Undefined trackDb files");
+    Catalyst::Exception->throw("Cannot get content: undefined trackDb file(s)");
 
   my $content;
   foreach my $file (@{$self->trackDb}) {

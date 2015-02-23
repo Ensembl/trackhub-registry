@@ -30,7 +30,6 @@ sub AUTOLOAD {
 sub new {
   my ($class, %args) = @_;
   
-  $args{version} ||= Registry->config()->{TrackHub}{json}{version};
   defined $args{version} or Catalyst::Exception->throw("Undefined version");
 
   my $self = \%args;

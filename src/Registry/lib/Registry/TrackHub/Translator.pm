@@ -293,12 +293,12 @@ $synonym2assembly =
    fr3 => 'FUGU5',
    # fr2 => '', # not found
    # fr1 => '', # not found
-   # lamprey, not found
-   # petMar2 => '',
-   # petMar1 => '',
-   # lizard, not found
-   # anoCar2 => 'AnoCar2',
-   # anoCar1 => 'AnoCar1',
+   # lamprey
+   petMar2 => 'Petromyzon_marinus-7.0',
+   # petMar1 => '', # not found
+   # lizard (Anolis carolinensis)
+   anoCar2 => 'AnoCar2.0',
+   # anoCar1 => 'AnoCar1', # not found
    # medaka
    # oryLat2 => '', # not found
    # medium ground finch
@@ -307,11 +307,11 @@ $synonym2assembly =
    oreNil2 => 'Orenil1.1',
    # painted turtle
    chrPic1 => 'Chrysemys_picta_bellii-3.0.1',
-   # stickleback, not found
-   # gasAcu1 => '',
+   # stickleback
+   # gasAcu1 => '', # not found
    # tetraodon
    # tetNig2 => '',
-   # tetNig1 => '',
+   tetNig1 => 'ASM18073v1',
    # turkey
    melGal1 => 'Turkey_2.01',
    # xenopus tropicalis

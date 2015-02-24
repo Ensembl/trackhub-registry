@@ -329,6 +329,60 @@ $synonym2assembly =
    # danRer3 => 'Zv5', # not found on NCBI
    # danRer2 => 'Zv4', # not found on NCBI
    # danRer1 => 'Zv3', # not found on NCBI
+   #
+   # Deuterostomes
+   #
+   # C. intestinalis
+   # ci2 => '', # not found
+   ci1 => 'v1.0',
+   # lancelet, not found
+   # braFlo1 => '',
+   # Strongylocentrotus purpuratus
+   strPur2 => 'Spur_v2.1',
+   strPur1 => 'Spur_0.5', # no syn on NCBI
+   #
+   # Insects
+   #
+   # Apis mellifera
+   apiMel2 => 'Amel_2.0', # no syn on NCBI
+   # apiMel1 => 'v.Amel_1.2', # no v.Amel_1.2 entry on NCBI
+   # Anopheles gambiae
+   # anoGam1 => 'v.MOZ2', # not found
+   # Drosophila ananassae
+   droAna3 => 'dana_caf1', # no droAna3 UCSC syn
+   # droAna2 => '', # not found
+   # droAna1 => '', # not found
+   # Drosophila erecta
+   droEre2 => 'dere_caf1', # no droEre2 UCSC syn
+   # droEre1 => '', # not found
+   # Drosophila grimshawi
+   droGri2 => 'dgri_caf1', # no droGri2 UCSC syn
+   droGri1 => '', # not found
+   # Drosophila melanogaster
+   dm6 => 'Release 6 plus ISO1 MT',
+   dm3 => 'Release 5',
+   # dm2 => 'Release 4', # no Release 4 
+   # dm1 => 'Release 3', # no Release 3
+   # Drosophila mojavensis
+   droMoj3 => 'dmoj_caf1', # no droMoj3 UCSC syn
+   # droMoj2 => '', # not found
+   # droMoj1 => '', # not found
+   # Drosophila persimilis
+   droPer1 => 'dper_caf1',
+   # Drosophila pseudoobscura, not found
+   # dp3 => '',
+   # dp2 => '',
+   # Drosophila sechellia
+   droSec1 => 'dsec_caf1',
+   # Drosophila simulans
+   droSim1 => 'dsim_caf1', # not sure, several v1 for different strains on NCBI
+   # Drosophila virilis
+   droVir3 => 'dvir_caf1', # no droVir3 UCSC syn
+   # droVir2 => '', # not found
+   # droVir1 => '', # not found
+   # Drosophila yakuba
+   # droYak2 => '', # not found
+   # droYak1 => '', # not found
   };
 
 sub _add_genome_info {

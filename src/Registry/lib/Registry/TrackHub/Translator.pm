@@ -138,64 +138,64 @@ $synonym2assembly =
    # armadillo
    dasNov3 => 'Dasnov3.0',
    # bushbaby
-   otoGar3 => 'OtoGar3', # not found on NCBI
+   otoGar3 => 'OtoGar3',
    # baboon
-   papHam1 => 'Pham_1.0', # not found on NCBI
+   # papHam1 => 'Pham_1.0', # not found on NCBI
    papAnu2 => 'Panu_2.0',
    # cat
    felCat5 => 'Felis_catus-6.2',
    felCat4 => 'catChrV17e',
-   # felCat3 => ? no name found
+   # felCat3 => '', # no name found
    # chimp
    panTro4 => 'Pan_troglodytes-2.1.4',
    panTro3 => 'Pan_troglodytes-2.1.3',
-   panTro2 => 'Pan_troglodytes-2.1', # no synonym reported by NCBI
+   panTro2 => 'Pan_troglodytes-2.1', # no syn on NCBI
    # panTro1 => '', # not found
    # chinese hamster
-   criGri1 => 'C_griseus_v1.0', # no synonym reported by NCBI
+   criGri1 => 'C_griseus_v1.0', # no syn on NCBI
    # cow
-   bosTau8 => 'Bos_taurus_UMD_3.1.1', # no synonym reported by NCBI
+   bosTau8 => 'Bos_taurus_UMD_3.1.1', # no syn on NCBI
    bosTau7 => 'Btau_4.6.1',
    bosTau6 => 'Bos_taurus_UMD_3.1', # no synonym reported by NCBI
    bosTau4 => 'Btau_4.0',
    bosTau3 => 'Btau_3.1', # no synonym reported by NCBI
-   bosTau2 => 'Btau_2.0', # no Btau_2.0 entry in NCBI
-   bosTau1 => 'Btau_1.0', # no Btau_1.0 entry in NCBI
+   # bosTau2 => 'Btau_2.0', # no Btau_2.0 entry in NCBI
+   # bosTau1 => 'Btau_1.0', # no Btau_1.0 entry in NCBI
    # dog
    canFam3 => 'CanFam3.1',
    canFam2 => 'CanFam2.0',
    # canFam1 => '', # not found on NCBI
    # dolphin
-   turTru2 => 'Ttru_1.4' # not found on NCBI
+   turTru2 => 'Ttru_1.4'
    # elephant
    loxAfr3 => 'Loxafr3.0',
    # ferret
    musFur1 => 'MusPutFur1.0',
    # gibbon
    nomLeu3 => 'Nleu_3.0',
-   nomLeu2 => 'Nleu1.1', # no Nleu1.1 found on NCBI
-   nomLeu1 => 'Nleu1.0', # no Nleu1.0 found on NCBI
+   nomLeu2 => 'Nleu1.1',
+   nomLeu1 => 'Nleu1.0', 
    # gorilla
    gorGor3 => 'gorGor3.1',
    # guinea pig
    cavPor3 => 'Cavpor3.0',
    # hedgehog
-   # eriEur2 => 'EriEur2.0', # no hedgehog data on NCBI
-   # eriEur1 => '',
+   eriEur2 => 'EriEur2.0', # no syn on NCBI
+   # eriEur1 => 'Draft_v1', # no Draft_v1 entry in NCBI
    # horse
    equCab2 => 'EquCab2.0',
    # equCab1 => 'EquCab1.0', # no EquCab1.0 entry on NCBI
-   # kangaroo rat, not found
+   # kangaroo rat (Dipodomys merriami), not found
    # dipOrd1 => 'DipOrd1.0',
-   # manatee, not found
-   # triMan1 => 'TriManLat1.0',
-   # marmoset, not found
-   # calJac3 => 'Callithrix_jacchus-v3.2',
-   # calJac1 => 'Callithrix_jacchus-v2.0.2',
-   # megabat, not found
-   # pteVam1 => 'Ptevap1.0',
-   # microbat, not found
-   # myoLuc2 => 'MyoLuc2.0',
+   # manatee
+   triMan1 => 'TriManLat1.0',
+   # marmoset
+   calJac3 => 'Callithrix_jacchus-v3.2',
+   # calJac1 => 'Callithrix_jacchus-v2.0.2', # no Callithrix_jacchus-v2.0.2 entry on NCBI
+   # megabat
+   pteVam1 => 'Ptevap1.0',
+   # microbat
+   myoLuc2 => 'Myoluc2.0',
    # minke whale
    balAcu1 => 'BalAcu1.0', # no synonym in NCBI
    # mouse
@@ -210,25 +210,26 @@ $synonym2assembly =
    # mm2 => 'MGSCv3', # no MGSCv3 entry
    # mm1 => 'MGSCv2', # no MGSCv2 entry
    # mouse lemur, not found
-   # micMur1 => 'MicMur1.0',
+   micMur1 => 'ASM16544v1', # no MicMur1.0 entry on NCBI
    # naked mole rat
    hetGla2 => 'HetGla_female_1.0',
    hetGla1 => 'HetGla_1.0', # no synonym on NCBI
-   # opossum, not found
-   # monDom5 => 'MonDom5',
-   # monDom4 => 'MonDom4',
-   # monDom1 => 'MonDom1',
+   # opossum
+   monDom5 => 'MonDom5',
+   # monDom4 => 'MonDom4', # no MonDom4 entry
+   # monDom1 => 'MonDom1', # no MonDom1 entry
    # orangutan
-   # ponAbe2 => 'Pongo_albelii-2.0.2', # NCBI reports the following
+   # ponAbe2 => 'Pongo_albelii-2.0.2', # NCBI reports instead
    ponAbe2 => 'P_pygmaeus_2.0.2',
-   # panda, not found
-   # ailMel1 => 'AilMel 1.0',
+   # panda
+   ailMel1 => 'AilMel 1.0',
    # pig
    susScr3 => 'Sscrofa10.2',
    susScr2 => 'Sscrofa9.2', # no syn on NCBI
-   # pika, not found
-   # ochPri3 => 'OchPri3.0',
-   # ochPri2 => 'OchPri2',
+   # pika
+   ochPri3 => 'OchPri3.0', # no syn on NCBI
+   # ochPri2 => 'OchPri2', # NCBI reports instead
+   ochPri2 => 'ASM16482v1', 
    # platypus
    ornAna1 => 'Ornithorhynchus_anatinus-5.0.1', # no syn on NCBI
    # rabbit
@@ -240,34 +241,33 @@ $synonym2assembly =
    # rn3 => 'RGSC_v3.1', # not found
    # rn2 => 'RGSC_v2.1', # not found
    # rn1 => 'RGSC_v1.0', # not found
-   hetGla2 => 'HetGla_female_1.0', # not reported by UCSC
-   # rhesus, not found
-   # rheMac3 => 'CR_1.0',
-   # rheMac2 => 'v1.0 Mmul_051212',
-   # rheMac1 => 'Mmul_0.1',
+   # rhesus (Macaca mulatta)
+   rheMac3 => 'CR_1.0',
+   rheMac2 => 'Mmul_051212',
+   # rheMac1 => 'Mmul_0.1', # not found
    # rock hyrax
    proCap1 => 'Procap1.0',
    # sheep
    oviAri3 => 'Oar_v3.1',
    # oviAri1 => '', # not found
-   # shrew, not found
-   # sorAra2 => 'SorAra2.0',
-   # sorAra1 => 'SorAra1.0',
-   # sloth, not found
-   # choHof1 => 'ChoHof1.0',
+   # shrew
+   sorAra2 => 'SorAra2.0',
+   # sorAra1 => 'SorAra1.0', # not found
+   # sloth
+   choHof1 => 'ChoHof1.0',
    # squirrel
-   # speTri2 => 'SpeTri2.0', # no SpeTri2.0 on NCBI
-   # squirrel monkey, not found
-   # saiBol1 => 'SaiBol1.0',
+   speTri2 => 'SpeTri2.0',
+   # squirrel monkey
+   saiBol1 => 'SaiBol1.0',
    # tarsier
    tarSyr1 => 'Tarsyr1.0',
    # tasmanian devil
    sarHar1 => 'Devil_ref v7.0',
-   # tenrec, not found
-   # echTel2 => 'EchTel2.0',
-   # echTel1 => 'echTel1',
-   # tree shrew, not found
-   # tupBel1 => 'Tupbel1.0',
+   # tenrec
+   echTel2 => 'EchTel2.0',
+   # echTel1 => 'echTel1', # not found
+   # tree shrew
+   # tupBel1 => 'Tupbel1.0', # no Tupebel1.0 found
    # wallaby
    macEug2 => 'Meug_1.1', # no syn on NCBI
    # white rhinoceros

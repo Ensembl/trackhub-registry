@@ -123,6 +123,9 @@ sub to_json_1_0 {
 
 $synonym2assembly = 
   {
+   #
+   # Mammals
+   #
    # human
    hg38 => 'GRCh38',
    hg19 => 'GRCh37',
@@ -269,6 +272,63 @@ $synonym2assembly =
    macEug2 => 'Meug_1.1', # no syn on NCBI
    # white rhinoceros
    cerSim1 => 'CerSimSim1.0',
+   #
+   # Vertebrates
+   #
+   # american alligator
+   allMis1 => 'allMis0.2',
+   # atlantic cod
+   gadMor1 => 'GadMor_May2010',
+   # budgerigar
+   melUnd1 => 'elopsittacus_undulatus_6.3',
+   # chicken
+   galGal4 => 'Gallus_gallus-4.0',
+   galGal3 => 'Gallus_gallus-2.1',
+   # galGal2 => 'Gallus-gallus-1.0', # no Gallus-gallus-1.0 on NCBI
+   # coelacanth
+   latCha1 => 'LatCha1',
+   # elephant shark
+   calMil1 => 'Callorhinchus_milli_6.1.3', # no syn on NCBI
+   # fugu
+   fr3 => 'FUGU5',
+   # fr2 => '', # not found
+   # fr1 => '', # not found
+   # lamprey, not found
+   # petMar2 => '',
+   # petMar1 => '',
+   # lizard, not found
+   # anoCar2 => 'AnoCar2',
+   # anoCar1 => 'AnoCar1',
+   # medaka
+   # oryLat2 => '', # not found
+   # medium ground finch
+   geoFor1 => 'GeoFor_1.0', # no syn on NCBI
+   # nile tilapia
+   oreNil2 => 'Orenil1.1',
+   # painted turtle
+   chrPic1 => 'Chrysemys_picta_bellii-3.0.1',
+   # stickleback, not found
+   # gasAcu1 => '',
+   # tetraodon
+   # tetNig2 => '',
+   # tetNig1 => '',
+   # turkey
+   melGal1 => 'Turkey_2.01',
+   # xenopus tropicalis
+   xenTro3 => 'v4.2',
+   # xenTro2 => 'v4.1', # not found
+   # xenTro2 => 'v3.0', # not found
+   # zebra finch
+   # taeGut2 => '', # not found
+   taeGut1 => 'Taeniopygia_guttata-3.2.4',
+   # zebrafish
+   danRer7 => 'Zv9',
+   danRer6 => 'Zv8', # no syn on on NCBI
+   danRer5 => 'Zv7',
+   # danRer4 => 'Zv6', # not found on NCBI
+   # danRer3 => 'Zv5', # not found on NCBI
+   # danRer2 => 'Zv4', # not found on NCBI
+   # danRer1 => 'Zv3', # not found on NCBI
   };
 
 sub _add_genome_info {

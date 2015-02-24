@@ -383,6 +383,39 @@ $synonym2assembly =
    # Drosophila yakuba
    # droYak2 => '', # not found
    # droYak1 => '', # not found
+   #
+   # Nematodes
+   #
+   # Caenorhabditis brenneri
+   caePb2 => 'C_brenneri-6.0.1', # not sure (not 2008)
+   # caePb1 => '', # not found
+   # Caenorhabditis briggsae 
+   cb3 => 'Cb3',
+   # cb1 => '', # not found
+   # Caenorhabditis elegans
+   ce10 => 'WBcel215',
+   # ce6  => '', # not found
+   # ce4  => '',
+   # ce2  => '',
+   # ce1  => '',
+   # Caenorhabditis japonica
+   # caeJap1 => '', # not found
+   # Caenorhabditis remanei
+   # caeRem3 => '', # not found
+   # caeRem2 => '',
+   # Pristionchus pacificus
+   # priPac1 => '', # not found
+   #
+   # Other
+   #
+   # sea hare
+   aplCal1 => 'Aplcal2.0',
+   # Yeast
+   sacCer3 => 'R64-1-1',
+   # sacCer2 => '', # not found
+   # sacCer1 => '', # not found
+   # ebola virus
+   # eboVir3 => '', # not found
   };
 
 sub _add_genome_info {

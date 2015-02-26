@@ -10,18 +10,30 @@ BEGIN {
 }
 
 use JSON;
+use Registry::GenomeAssembly::Schema;
 use Registry::Utils;
 
 use_ok 'Registry::TrackHub::Translator';
 
-throws_ok { Registry::TrackHub::Translator->new() } qr/Undefined/, "Throws if version undefined";
-
 my $version = '1.0';
-my $translator = Registry::TrackHub::Translator->new(version => $version);
+
+throws_ok { Registry::TrackHub::Translator->new() } qr/Undefined/, "Throws if required args are both undefined";
+throws_ok { Registry::TrackHub::Translator->new(version => $version) } qr/Undefined/, "Throws if one required args is undefined";
+
+my $gcschema = 
+  Registry::GenomeAssembly::Schema->connect("DBI:Oracle:host=ora-vm5-003.ebi.ac.uk;sid=ETAPRO;port=1571", 
+					    'gc_reader', 
+					    'reader', 
+					    { 'RaiseError' => 1, 'PrintError' => 0 });
+my $gc_assembly_set = $gcschema->resultset('GCAssemblySet');
+
+my $translator = Registry::TrackHub::Translator->new(version => $version, 
+						     gc_assembly_set => $gc_assembly_set);
 isa_ok($translator, 'Registry::TrackHub::Translator');
 is($translator->version, $version, 'JSON version');
 
-throws_ok { Registry::TrackHub::Translator->new(version => '0.1')->translate } 
+throws_ok { Registry::TrackHub::Translator->new(version => '0.1', 
+						gc_assembly_set => $gc_assembly_set)->translate } 
   qr/not supported/, "Throws when translate to unsupported version";
 
 
@@ -29,7 +41,8 @@ SKIP: {
   skip "No Internet connection: cannot test TrackHub translation", 8
     unless Registry::Utils::internet_connection_ok();
 
-  $translator = Registry::TrackHub::Translator->new(version => $version);
+  $translator = Registry::TrackHub::Translator->new(version => $version,
+						    gc_assembly_set => $gc_assembly_set);
   isa_ok($translator, 'Registry::TrackHub::Translator');
   throws_ok { $translator->translate } qr/Undefined/, "Throws if translate have missing arguments";
 
@@ -44,13 +57,14 @@ SKIP: {
   my $doc = from_json($json_docs->[0]);
   is($doc->{version}, '1.0', 'Correct JSON version');
   is($doc->{hub}, 'Blueprint Epigenomics Data Hub', 'Correct Hub');
-  is_deeply($doc->{species}, { taxid => 9606, scientific_name => 'Homo sapiens'}, 'Correct species');
-  is_deeply($doc->{assembly}, { name => 'GRCh37', accession => 'GCA_000001405.1', synonyms => 'hg19' }, 'Correct assembly');
+  is_deeply($doc->{species}, { tax_id => 9606, 
+			       scientific_name => 'Homo sapiens', 
+			       common_name => 'human' }, 'Correct species');
+  is_deeply($doc->{assembly}, { name => 'GRCh37', 
+				long_name => 'Genome Reference Consortium Human Build 37 (GRCh37)',
+				accession => 'GCA_000001405.1', 
+				synonyms => 'hg19' }, 'Correct assembly');
 
-  use Data::Dumper;
-  open my $FH, ">th.json" or die "Cannot open file: $!\n";
-  print $FH Dumper($doc);
-  close $FH;
 }
 
 done_testing();

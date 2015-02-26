@@ -277,55 +277,55 @@ $synonym2assembly =
    # Vertebrates
    #
    # american alligator
-   allMis1 => 'allMis0.2',
+   allMis1 => 'GCA_000281125.1', # 'allMis0.2',
    # atlantic cod
-   gadMor1 => 'GadMor_May2010',
+   gadMor1 => 'GCA_000231765.1', # 'GadMor_May2010',
    # budgerigar
-   melUnd1 => 'elopsittacus_undulatus_6.3',
+   melUnd1 => 'GCA_000238935.1', # 'Melopsittacus_undulatus_6.3',
    # chicken
-   galGal4 => 'Gallus_gallus-4.0',
-   galGal3 => 'Gallus_gallus-2.1',
+   galGal4 => 'GCA_000002315.2', # 'Gallus_gallus-4.0',
+   galGal3 => 'GCA_000002315.1', # 'Gallus_gallus-2.1',
    # galGal2 => 'Gallus-gallus-1.0', # no Gallus-gallus-1.0 on NCBI
    # coelacanth
-   latCha1 => 'LatCha1',
+   latCha1 => 'GCA_000225785.1', # 'LatCha1',
    # elephant shark
-   calMil1 => 'Callorhinchus_milli_6.1.3', # no syn on NCBI
+   calMil1 => 'GCA_000165045.2', # 'Callorhinchus_milli-6.1.3', # no syn on NCBI
    # fugu
-   fr3 => 'FUGU5',
+   fr3 => 'GCA_000180615.2', # 'FUGU5',
    # fr2 => '', # not found
    # fr1 => '', # not found
    # lamprey
-   petMar2 => 'Petromyzon_marinus-7.0',
+   petMar2 => 'GCA_000148955.1', # 'Petromyzon_marinus-7.0',
    # petMar1 => '', # not found
    # lizard (Anolis carolinensis)
-   anoCar2 => 'AnoCar2.0',
+   anoCar2 => 'GCA_000090745.2', # 'AnoCar2.0',
    # anoCar1 => 'AnoCar1', # not found
    # medaka
    # oryLat2 => '', # not found
    # medium ground finch
-   geoFor1 => 'GeoFor_1.0', # no syn on NCBI
+   geoFor1 => 'GCA_000277835.1', # 'GeoFor_1.0', # no syn on NCBI
    # nile tilapia
-   oreNil2 => 'Orenil1.1',
+   oreNil2 => 'GCA_000188235.2', # 'Orenil1.1',
    # painted turtle
-   chrPic1 => 'Chrysemys_picta_bellii-3.0.1',
+   chrPic1 => 'GCA_000241765.1', # 'Chrysemys_picta_bellii-3.0.1',
    # stickleback
    # gasAcu1 => '', # not found
    # tetraodon
    # tetNig2 => '',
-   tetNig1 => 'ASM18073v1',
+   tetNig1 => 'GCA_000180735.1', # 'ASM18073v1',
    # turkey
-   melGal1 => 'Turkey_2.01',
+   melGal1 => 'GCA_000146605.2', # 'Turkey_2.01',
    # xenopus tropicalis
-   xenTro3 => 'v4.2',
+   xenTro3 => 'GCA_000004195.1', # 'v4.2',
    # xenTro2 => 'v4.1', # not found
    # xenTro2 => 'v3.0', # not found
    # zebra finch
    # taeGut2 => '', # not found
-   taeGut1 => 'Taeniopygia_guttata-3.2.4',
+   taeGut1 => 'GCA_000151805.2', # 'Taeniopygia_guttata-3.2.4',
    # zebrafish
-   danRer7 => 'Zv9',
-   danRer6 => 'Zv8', # no syn on on NCBI
-   danRer5 => 'Zv7',
+   danRer7 => 'GCA_000002035.2', # 'Zv9',
+   danRer6 => 'GCA_000002035.1', # 'Zv8', # no syn on on NCBI
+   danRer5 => 'GCF_000002035.1', # 'Zv7',
    # danRer4 => 'Zv6', # not found on NCBI
    # danRer3 => 'Zv5', # not found on NCBI
    # danRer2 => 'Zv4', # not found on NCBI
@@ -461,9 +461,6 @@ sub _add_genome_info {
   # Get species (tax id, scientific name, common name)
   # and assembly info from the assembly set table in the GC database
   #
-  # TODO
-  # Handle the case when we have a RefSeq Assembly ID
-  #
   my $gc_assembly_set = $self->gc_assembly_set;
   my $as = $gc_assembly_set->find($assembly_id);
   Catalyst::Exception::throw->("Unable to find GC assembly set entry for $assembly_id")
@@ -478,7 +475,7 @@ sub _add_genome_info {
 
   $doc->{assembly}{accession} = $assembly_id;
   $doc->{assembly}{name} = $as->name;
-  $doc->{assembly}{long_name} = $as->long_name;
+  $doc->{assembly}{long_name} = $as->long_name if $as->long_name; # sometimes not defined
   $doc->{assembly}{synonyms} = $assembly_syn;
 
   return;

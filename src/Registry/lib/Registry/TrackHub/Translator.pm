@@ -144,135 +144,135 @@ $synonym2assembly =
    # papHam1 => 'Pham_1.0', # not found on NCBI
    papAnu2 => 'GCA_000264685.1', # 'Panu_2.0',
    # cat
-   felCat5 => 'Felis_catus-6.2',
-   felCat4 => 'catChrV17e',
+   felCat5 => 'GCA_000181335.2', # 'Felis_catus-6.2',
+   felCat4 => 'GCA_000003115.1', # 'catChrV17e',
    # felCat3 => '', # no name found
    # chimp
-   panTro4 => 'Pan_troglodytes-2.1.4',
-   panTro3 => 'Pan_troglodytes-2.1.3',
-   panTro2 => 'Pan_troglodytes-2.1', # no syn on NCBI
+   panTro4 => 'GCA_000001515.4', # 'Pan_troglodytes-2.1.4',
+   panTro3 => 'GCA_000001515.3', # 'Pan_troglodytes-2.1.3',
+   panTro2 => 'GCF_000001515.3', # 'Pan_troglodytes-2.1', # no syn on NCBI
    # panTro1 => '', # not found
    # chinese hamster
-   criGri1 => 'C_griseus_v1.0', # no syn on NCBI
+   criGri1 => 'GCA_000419365.1', # 'C_griseus_v1.0', # no syn on NCBI
    # cow
-   bosTau8 => 'Bos_taurus_UMD_3.1.1', # no syn on NCBI
-   bosTau7 => 'Btau_4.6.1',
-   bosTau6 => 'Bos_taurus_UMD_3.1', # no synonym reported by NCBI
-   bosTau4 => 'Btau_4.0',
-   bosTau3 => 'Btau_3.1', # no synonym reported by NCBI
+   bosTau8 => 'GCA_000003055.5', # 'Bos_taurus_UMD_3.1.1', # no syn on NCBI
+   bosTau7 => 'GCA_000003205.4', # 'Btau_4.6.1',
+   bosTau6 => 'GCA_000003055.3', # 'Bos_taurus_UMD_3.1', # no synonym reported by NCBI
+   bosTau4 => 'GCF_000003205.2', # 'Btau_4.0',
+   bosTau3 => 'GCF_000003205.1', # 'Btau_3.1', # no synonym reported by NCBI
    # bosTau2 => 'Btau_2.0', # no Btau_2.0 entry in NCBI
    # bosTau1 => 'Btau_1.0', # no Btau_1.0 entry in NCBI
    # dog
-   canFam3 => 'CanFam3.1',
-   canFam2 => 'CanFam2.0',
+   canFam3 => 'GCA_000002285.2', # 'CanFam3.1',
+   canFam2 => 'GCA_000002285.1', # 'CanFam2.0',
    # canFam1 => '', # not found on NCBI
    # dolphin
-   turTru2 => 'Ttru_1.4'
+   turTru2 => 'GCA_000151865.2', # 'Ttru_1.4'
    # elephant
-   loxAfr3 => 'Loxafr3.0',
+   loxAfr3 => 'GCA_000001905.1', # 'Loxafr3.0',
    # ferret
-   musFur1 => 'MusPutFur1.0',
+   musFur1 => 'GCA_000215625.1', # 'MusPutFur1.0',
    # gibbon
-   nomLeu3 => 'Nleu_3.0',
-   nomLeu2 => 'Nleu1.1',
-   nomLeu1 => 'Nleu1.0', 
+   nomLeu3 => 'GCA_000146795.3', # 'Nleu_3.0',
+   nomLeu2 => 'GCA_000146795.2', # 'Nleu1.1',
+   nomLeu1 => 'GCA_000146795.1', # 'Nleu1.0', 
    # gorilla
-   gorGor3 => 'gorGor3.1',
+   gorGor3 => 'GCA_000151905.1', # 'gorGor3.1',
    # guinea pig
-   cavPor3 => 'Cavpor3.0',
+   cavPor3 => 'GCA_000151735.1', # 'Cavpor3.0',
    # hedgehog
-   eriEur2 => 'EriEur2.0', # no syn on NCBI
+   eriEur2 => 'GCA_000296755.1', # 'EriEur2.0', # no syn on NCBI
    # eriEur1 => 'Draft_v1', # no Draft_v1 entry in NCBI
    # horse
-   equCab2 => 'EquCab2.0',
+   equCab2 => 'GCA_000002305.1', # 'EquCab2.0',
    # equCab1 => 'EquCab1.0', # no EquCab1.0 entry on NCBI
    # kangaroo rat (Dipodomys merriami), not found
    # dipOrd1 => 'DipOrd1.0',
    # manatee
-   triMan1 => 'TriManLat1.0',
+   triMan1 => 'GCA_000243295.1', # 'TriManLat1.0',
    # marmoset
-   calJac3 => 'Callithrix_jacchus-v3.2',
+   calJac3 => 'GCA_000004665.1', # 'Callithrix_jacchus-v3.2',
    # calJac1 => 'Callithrix_jacchus-v2.0.2', # no Callithrix_jacchus-v2.0.2 entry on NCBI
    # megabat
-   pteVam1 => 'Ptevap1.0',
+   pteVam1 => 'GCA_000151845.1', # 'Ptevap1.0',
    # microbat
-   myoLuc2 => 'Myoluc2.0',
+   myoLuc2 => 'GCA_000147115.1', # 'Myoluc2.0',
    # minke whale
-   balAcu1 => 'BalAcu1.0', # no synonym in NCBI
+   balAcu1 => 'GCA_000493695.1', # 'BalAcu1.0', # no synonym in NCBI
    # mouse
-   mm10 => 'GRCm38',
-   mm9 => 'MGSCv37',
-   mm8 => 'MGSCv36',
-   mm7 => 'MGSCv35',
+   mm10 => 'GCA_000001635.2', # 'GRCm38',
+   mm9 => 'GCA_000001635.1', # 'MGSCv37',
+   mm8 => 'GCF_000001635.15', # 'MGSCv36',
+   mm7 => 'GCF_000001635.14', # 'MGSCv35',
    # mm6 => 'MGSCv34', # no MGSCv34 entry
    # mm5 => 'MGSCv33', # no MGSCv33 entry
    # mm4 => 'MGSCv32', # no MGSCv32 entry
    # mm3 => 'MGSCv30', # no MGSCv30 entry
    # mm2 => 'MGSCv3', # no MGSCv3 entry
    # mm1 => 'MGSCv2', # no MGSCv2 entry
-   # mouse lemur, not found
-   micMur1 => 'ASM16544v1', # no MicMur1.0 entry on NCBI
+   # mouse lemur
+   micMur1 => 'GCA_000165445.1', # 'ASM16544v1', # no MicMur1.0 entry on NCBI
    # naked mole rat
-   hetGla2 => 'HetGla_female_1.0',
-   hetGla1 => 'HetGla_1.0', # no synonym on NCBI
+   hetGla2 => 'GCA_000247695.1', # 'HetGla_female_1.0',
+   hetGla1 => 'GCA_000230445.1', # 'HetGla_1.0', # no synonym on NCBI
    # opossum
-   monDom5 => 'MonDom5',
+   monDom5 => 'GCF_000002295.2', # 'MonDom5',
    # monDom4 => 'MonDom4', # no MonDom4 entry
    # monDom1 => 'MonDom1', # no MonDom1 entry
    # orangutan
    # ponAbe2 => 'Pongo_albelii-2.0.2', # NCBI reports instead
-   ponAbe2 => 'P_pygmaeus_2.0.2',
+   ponAbe2 => 'GCA_000001545.3', # 'P_pygmaeus_2.0.2',
    # panda
-   ailMel1 => 'AilMel 1.0',
+   ailMel1 => 'GCA_000004335.1', # 'AilMel_1.0',
    # pig
-   susScr3 => 'Sscrofa10.2',
-   susScr2 => 'Sscrofa9.2', # no syn on NCBI
+   susScr3 => 'GCA_000003025.4', # 'Sscrofa10.2',
+   susScr2 => 'GCA_000003025.2', # 'Sscrofa9.2', # no syn on NCBI
    # pika
-   ochPri3 => 'OchPri3.0', # no syn on NCBI
+   ochPri3 => 'GCA_000292845.1', # 'OchPri3.0', # no syn on NCBI
    # ochPri2 => 'OchPri2', # NCBI reports instead
-   ochPri2 => 'ASM16482v1', 
+   ochPri2 => 'GCA_000164825.1', # 'ASM16482v1', 
    # platypus
-   ornAna1 => 'Ornithorhynchus_anatinus-5.0.1', # no syn on NCBI
+   ornAna1 => 'GCF_000002275.2', # 'Ornithorhynchus_anatinus-5.0.1', # no syn on NCBI
    # rabbit
-   oryCun2 => 'OryCun2.0',
+   oryCun2 => 'GCA_000003625.1', # 'OryCun2.0',
    # rat
-   rn6 => 'Rnor_6.0',
-   rn5 => 'Rnor_5.0',
-   rn4 => 'RGSC_v3.4', # no syn on NCBI
+   rn6 => 'GCA_000001895.4', # 'Rnor_6.0',
+   rn5 => 'GCA_000001895.3', # 'Rnor_5.0',
+   rn4 => 'GCF_000001895.3', # 'RGSC_v3.4', # no syn on NCBI
    # rn3 => 'RGSC_v3.1', # not found
    # rn2 => 'RGSC_v2.1', # not found
    # rn1 => 'RGSC_v1.0', # not found
    # rhesus (Macaca mulatta)
-   rheMac3 => 'CR_1.0',
-   rheMac2 => 'Mmul_051212',
+   rheMac3 => 'GCA_000230795.1', # 'CR_1.0',
+   rheMac2 => 'GCA_000002255.1', # 'Mmul_051212',
    # rheMac1 => 'Mmul_0.1', # not found
    # rock hyrax
-   proCap1 => 'Procap1.0',
+   proCap1 => 'GCA_000152225.1', # 'Procap1.0',
    # sheep
-   oviAri3 => 'Oar_v3.1',
+   oviAri3 => 'GCA_000298735.1', # 'Oar_v3.1',
    # oviAri1 => '', # not found
    # shrew
-   sorAra2 => 'SorAra2.0',
+   sorAra2 => 'GCA_000181275.2', # 'SorAra2.0',
    # sorAra1 => 'SorAra1.0', # not found
    # sloth
-   choHof1 => 'ChoHof1.0',
+   choHof1 => 'GCA_000164785.1', # 'ChoHof1.0',
    # squirrel
-   speTri2 => 'SpeTri2.0',
+   speTri2 => 'GCA_000236235.1', # 'SpeTri2.0',
    # squirrel monkey
-   saiBol1 => 'SaiBol1.0',
+   saiBol1 => 'GCA_000235385.1', # 'SaiBol1.0',
    # tarsier
-   tarSyr1 => 'Tarsyr1.0',
+   tarSyr1 => 'GCA_000164805.1', # 'Tarsyr1.0',
    # tasmanian devil
-   sarHar1 => 'Devil_ref v7.0',
+   sarHar1 => 'GCA_000189315.1', # 'Devil_ref v7.0',
    # tenrec
-   echTel2 => 'EchTel2.0',
+   echTel2 => 'GCA_000313985.1', # 'EchTel2.0',
    # echTel1 => 'echTel1', # not found
    # tree shrew
    # tupBel1 => 'Tupbel1.0', # no Tupebel1.0 found
    # wallaby
-   macEug2 => 'Meug_1.1', # no syn on NCBI
+   macEug2 => 'GCA_000004035.1', # 'Meug_1.1', # no syn on NCBI
    # white rhinoceros
-   cerSim1 => 'CerSimSim1.0',
+   cerSim1 => 'GCA_000283155.1', # 'CerSimSim1.0',
    #
    # Vertebrates
    #

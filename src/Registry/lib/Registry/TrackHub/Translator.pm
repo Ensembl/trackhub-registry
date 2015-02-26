@@ -335,50 +335,50 @@ $synonym2assembly =
    #
    # C. intestinalis
    # ci2 => '', # not found
-   ci1 => 'v1.0',
+   ci1 => 'GCA_000183065.1', # 'v1.0',
    # lancelet, not found
    # braFlo1 => '',
    # Strongylocentrotus purpuratus
-   strPur2 => 'Spur_v2.1',
-   strPur1 => 'Spur_0.5', # no syn on NCBI
+   strPur2 => 'GCF_000002235.2', # 'Spur_v2.1',
+   strPur1 => 'GCF_000002235.1', # 'Spur_0.5', # no syn on NCBI
    #
    # Insects
    #
    # Apis mellifera
-   apiMel2 => 'Amel_2.0', # no syn on NCBI
+   apiMel2 => 'GCF_000002195.1', # 'Amel_2.0', # no syn on NCBI
    # apiMel1 => 'v.Amel_1.2', # no v.Amel_1.2 entry on NCBI
    # Anopheles gambiae
    # anoGam1 => 'v.MOZ2', # not found
    # Drosophila ananassae
-   droAna3 => 'dana_caf1', # no droAna3 UCSC syn
+   droAna3 => 'GCA_000005115.1', # 'dana_caf1', # no droAna3 UCSC syn
    # droAna2 => '', # not found
    # droAna1 => '', # not found
    # Drosophila erecta
-   droEre2 => 'dere_caf1', # no droEre2 UCSC syn
+   droEre2 => 'GCA_000005135.1', # 'dere_caf1', # no droEre2 UCSC syn
    # droEre1 => '', # not found
    # Drosophila grimshawi
-   droGri2 => 'dgri_caf1', # no droGri2 UCSC syn
-   droGri1 => '', # not found
+   droGri2 => 'GCA_000005155.1', # 'dgri_caf1', # no droGri2 UCSC syn
+   # droGri1 => '', # not found
    # Drosophila melanogaster
-   dm6 => 'Release 6 plus ISO1 MT',
-   dm3 => 'Release 5',
+   dm6 => 'GCA_000001215.4', # 'Release 6 plus ISO1 MT',
+   dm3 => 'GCA_000001215.2', # 'Release 5',
    # dm2 => 'Release 4', # no Release 4 
    # dm1 => 'Release 3', # no Release 3
    # Drosophila mojavensis
-   droMoj3 => 'dmoj_caf1', # no droMoj3 UCSC syn
+   droMoj3 => 'GCA_000005175.1', # 'dmoj_caf1', # no droMoj3 UCSC syn
    # droMoj2 => '', # not found
    # droMoj1 => '', # not found
    # Drosophila persimilis
-   droPer1 => 'dper_caf1',
+   droPer1 => 'GCA_000005195.1', # 'dper_caf1',
    # Drosophila pseudoobscura, not found
    # dp3 => '',
    # dp2 => '',
    # Drosophila sechellia
-   droSec1 => 'dsec_caf1',
+   droSec1 => 'GCA_000005215.1', # 'dsec_caf1',
    # Drosophila simulans
-   droSim1 => 'dsim_caf1', # not sure, several v1 for different strains on NCBI
+   droSim1 => 'GCA_000259055.1', # 'dsim_caf1', # not sure, several v1 for different strains on NCBI
    # Drosophila virilis
-   droVir3 => 'dvir_caf1', # no droVir3 UCSC syn
+   droVir3 => 'GCA_000005245.1', # 'dvir_caf1', # no droVir3 UCSC syn
    # droVir2 => '', # not found
    # droVir1 => '', # not found
    # Drosophila yakuba
@@ -388,13 +388,13 @@ $synonym2assembly =
    # Nematodes
    #
    # Caenorhabditis brenneri
-   caePb2 => 'C_brenneri-6.0.1', # not sure (not 2008)
+   caePb2 => 'GCA_000143925.1', # 'C_brenneri-6.0.1', # not sure (not 2008)
    # caePb1 => '', # not found
    # Caenorhabditis briggsae 
-   cb3 => 'Cb3',
+   cb3 => 'GCA_000004555.2', # 'Cb3',
    # cb1 => '', # not found
    # Caenorhabditis elegans
-   ce10 => 'WBcel215',
+   ce10 => 'GCA_000002985.2', # 'WBcel215',
    # ce6  => '', # not found
    # ce4  => '',
    # ce2  => '',
@@ -410,9 +410,9 @@ $synonym2assembly =
    # Other
    #
    # sea hare
-   aplCal1 => 'Aplcal2.0',
+   aplCal1 => 'GCA_000002075.1', # 'Aplcal2.0',
    # Yeast
-   sacCer3 => 'R64-1-1',
+   sacCer3 => 'GCA_000146045.2', # 'R64-1-1',
    # sacCer2 => '', # not found
    # sacCer1 => '', # not found
    # ebola virus

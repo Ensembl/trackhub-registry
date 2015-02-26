@@ -13,7 +13,7 @@ use Catalyst::Exception;
 use Registry::TrackHub;
 use Registry::TrackHub::Parser;
 
-use vars qw($AUTOLOAD, $synonym2assembly);
+use vars qw($AUTOLOAD $synonym2assembly);
 
 sub AUTOLOAD {
   my $self = shift;
@@ -432,7 +432,7 @@ sub _add_genome_info {
   # i.e. an entry in the genome collection db
   #
   my $assembly_syn = $genome->assembly;
-  my $assembly_id = $synonym2assembly{$assebly_syn};
+  my $assembly_id = $synonym2assembly->{$assembly_syn};
 
   #
   # TODO

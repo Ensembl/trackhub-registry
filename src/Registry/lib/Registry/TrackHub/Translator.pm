@@ -31,6 +31,7 @@ sub new {
   my ($class, %args) = @_;
   
   defined $args{version} or Catalyst::Exception->throw("Undefined version");
+  defined $args{gc_assembly_set} or Catalyst::Exception->throw("Undefined Genome Collection Assembly ResultSet");
 
   my $self = \%args;
   bless $self, $class;
@@ -113,35 +114,35 @@ sub to_json_1_0 {
 }
 
 #
-# TODO
+# TODO?
+# Move to a configuration file?
 #
-# Add species/assembly info
+# A map from UCSC assembly db names to NCBI assembly set accessions
 #
 # I presume this can be shared across translations
 # to different versions
 #
-
 $synonym2assembly = 
   {
    #
    # Mammals
    #
    # human
-   hg38 => 'GRCh38',
-   hg19 => 'GRCh37',
-   hg18 => 'NCBI36',
-   hg17 => 'NCBI35',
-   hg16 => 'NCBI34',
+   hg38 => 'GCA_000001405.15', # 'GRCh38',
+   hg19 => 'GCA_000001405.1', # 'GRCh37',
+   hg18 => 'GCF_000001405.12', #'NCBI36',
+   hg17 => 'GCF_000001405.11', # 'NCBI35',
+   hg16 => 'GCF_000001405.10', # 'NCBI34',
    # alpaca
-   vicPac2 => 'Vicugna_pacos-2.0.1',
-   vicPac1 => 'VicPac1.0',
+   vicPac2 => 'GCA_000164845.2', # 'Vicugna_pacos-2.0.1',
+   vicPac1 => 'GCA_000164845.1', # 'VicPac1.0', # no NCBI syn
    # armadillo
-   dasNov3 => 'Dasnov3.0',
+   dasNov3 => 'GCA_000208655.2', # 'Dasnov3.0',
    # bushbaby
-   otoGar3 => 'OtoGar3',
+   otoGar3 => 'GCA_000181295.3', # 'OtoGar3',
    # baboon
    # papHam1 => 'Pham_1.0', # not found on NCBI
-   papAnu2 => 'Panu_2.0',
+   papAnu2 => 'GCA_000264685.1', # 'Panu_2.0',
    # cat
    felCat5 => 'Felis_catus-6.2',
    felCat4 => 'catChrV17e',
@@ -418,15 +419,69 @@ $synonym2assembly =
    # eboVir3 => '', # not found
   };
 
+#
+# Add species/assembly info
+#
 sub _add_genome_info {
   my ($self, $genome, $doc) = @_;
+  defined $genome and defined $doc or
+    Catalyst::Exception->throw("Undefined genome and/or doc arguments");
 
-  $doc->{species}{taxid} = 9606;
-  $doc->{species}{scientific_name} = 'Homo sapiens';
+  #
+  # Map the (UCSC) assembly synonym to NCBI assembly entry,
+  # i.e. an entry in the genome collection db
+  #
+  my $assembly_syn = $genome->assembly;
+  my $assembly_id = $synonym2assembly{$assebly_syn};
 
-  $doc->{assembly}{name} = 'GRCh37';
-  $doc->{assembly}{accession} = 'GCA_000001405.1';
-  $doc->{assembly}{synonyms} = 'hg19';
+  #
+  # TODO
+  #
+  # If the assembly id is not found, it means the assembly
+  # is not supported by the UCSC genome browser.
+  # The trackhub provider must be able to provide additional fields,
+  # e.g. the scientific name of the organism.
+  # The assembly should be indicated in the html page
+  # provided by htmlPath attribute, but how do we parse the page?
+  #
+  # Option:
+  #   Select an assembly from the organism name. If there's more than 1, 
+  #   select the most up-to-date.
+  #
+  # At the moment, just throw an exception.
+  # When submitters discover the error, we can find out which assembly
+  # id they mean and update the mappings accordingly
+  #
+  # unless ($assembly_id) {    
+  # } 
+  Catalyst::Exception->throw("Unable to find an NCBI assembly id from $assembly_syn")
+      unless defined $assembly_id;
+
+  #
+  # Get species (tax id, scientific name, common name)
+  # and assembly info from the assembly set table in the GC database
+  #
+  # TODO
+  # Handle the case when we have a RefSeq Assembly ID
+  #
+  my $gc_assembly_set = $self->gc_assembly_set;
+  my $as = $gc_assembly_set->find($assembly_id);
+  Catalyst::Exception::throw->("Unable to find GC assembly set entry for $assembly_id")
+      unless $as;
+
+  my ($tax_id, $scientific_name, $common_name) = 
+    ($as->tax_id, $as->scientific_name, $as->common_name);
+  
+  $doc->{species}{tax_id} = $tax_id if $tax_id;
+  $doc->{species}{scientific_name} = $scientific_name if $scientific_name;
+  $doc->{species}{common_name} = $common_name if $common_name;
+
+  $doc->{assembly}{accession} = $assembly_id;
+  $doc->{assembly}{name} = $as->name;
+  $doc->{assembly}{long_name} = $as->long_name;
+  $doc->{assembly}{synonyms} = $assembly_syn;
+
+  return;
 }
 
 1;

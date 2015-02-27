@@ -125,6 +125,9 @@ sub to_json_1_0 {
 $synonym2assembly = 
   {
    #
+   # These mappings have been derived from the list of UCSC genome releases at:
+   # https://genome.ucsc.edu/FAQ/FAQreleases.html
+   #
    # Mammals
    #
    # human
@@ -417,6 +420,154 @@ $synonym2assembly =
    # sacCer1 => '', # not found
    # ebola virus
    # eboVir3 => '', # not found
+   #
+   # And the following mappings have been derived by looking
+   # the UCSC synonyms for the assemblies in the public hubs at:
+   # http://genome.ucsc.edu/cgi-bin/hgHubConnect
+   #
+   # http://smithlab.usc.edu/trackdata/methylation/hub.txt
+   #
+   # Arabidopsis thaliana
+   tair10 => 'GCA_000001735.1', # TAIR10
+   tair9  => 'GCA_000001735.1', # TAIR9
+   #
+   # http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt
+   #
+   # Arabidopsis thaliana
+   araTha1 => 'GCA_000001735.1', # TAIR10
+   # Ricinus communis
+   ricCom1 => 'GCA_000151685.2', # JCVI_RCG_1.1
+   # brassica rapa
+   braRap1 => 'GCA_000309985.1', # Brapa_1.0
+   #
+   # http://genome-test.cse.ucsc.edu/~nknguyen/ecoli/publicHubs/pangenome/hub.txt
+   #
+   # Escherichia coli 042
+   EscherichiaColi042Uid161985 => 'GCA_000027125.1', # ASM2712v1
+   # Escherichia coli 536
+   EscherichiaColi536Uid58531 => 'GCA_000013305.1', # ASM1330v1
+   # Escherichia coli 55989
+   EscherichiaColi55989Uid59383 => 'GCA_000026245.1', # ASM2624v1
+   # Escherichia coli ABU 83972
+   EscherichiaColiAbu83972Uid161975 => 'GCA_000148365.1', # ASM14836v1
+   # Escherichia coli APEC O1
+   EscherichiaColiApecO1Uid58623 => 'GCA_000014845.1', # ASM1484v1
+   # Escherichia coli ATCC 8739
+   EscherichiaColiAtcc8739Uid58783 => 'GCA_000019385.1', # ASM1938v1 
+   # Escherichia coli BL21 DE3
+   EscherichiaColiBl21De3Uid161947 => 'GCA_000022665.2', # ASM2266v1
+   EscherichiaColiBl21De3Uid161949 => 'GCA_000009565.2', # ASM956v1
+   # Escherichia coli BL21 Gold DE3 pLysS AG
+   EscherichiaColiBl21GoldDe3PlyssAgUid59245 => 'GCA_000023665.1', # ASM2366v1
+   # Escherichia coli BW2952
+   EscherichiaColiBw2952Uid59391 => 'GCA_000022345.1', # ASM2234v1
+   EscherichiaColiBRel606Uid58803 => '', # 
+   EscherichiaColiCft073Uid57915 => '', # 
+   EscherichiaColiDh1Uid161951 => '', #
+   EscherichiaColiDh1Uid162051 => '', #
+   EscherichiaColiCloneDI14Uid162049 => '', #
+   EscherichiaColiCloneDI2Uid162047 => '', #
+   EscherichiaColiE24377aUid58395 => '', #
+   EscherichiaColiEd1aUid59379 => '', #
+   EscherichiaColiEtecH10407Uid161993 => '', #
+   EscherichiaColiHsUid58393 => '', #
+   EscherichiaColiIai1Uid59377 => '', #
+   EscherichiaColiIai39Uid59381 => '', #
+   EscherichiaColiIhe3034Uid162007 => '', #
+   EscherichiaColiK12SubstrDh10bUid58979 => '', #
+   EscherichiaColiK12SubstrMg1655Uid57779 => '', #
+   EscherichiaColiK12SubstrW3110Uid161931 => '', #
+   EscherichiaColiKo11flUid162099 => '', #
+   EscherichiaColiKo11flUid52593 => '', #
+   EscherichiaColiLf82Uid161965 => '', #
+   EscherichiaColiNa114Uid162139 => '', #
+   EscherichiaColiO103H212009Uid41013 => '', #
+   EscherichiaColiO104H42009el2050Uid175905 => '', #
+   EscherichiaColiO104H42009el2071Uid176128 => '', #
+   EscherichiaColiO104H42011c3493Uid176127 => '', #
+   EscherichiaColiO111H11128Uid41023 => '', #
+   EscherichiaColiO127H6E234869Uid59343 => '', #
+   EscherichiaColiO157H7Ec4115Uid59091 => '', #
+   EscherichiaColiO157H7Edl933Uid57831 => '', #
+   EscherichiaColiO157H7SakaiUid57781 => '', #
+   EscherichiaColiO157H7Tw14359Uid59235 => '', #
+   EscherichiaColiO26H1111368Uid41021 => '', #
+   EscherichiaColiO55H7Cb9615Uid46655 => '', #
+   EscherichiaColiO55H7Rm12579Uid162153 => '', #
+   EscherichiaColiO7K1Ce10Uid162115 => '', #
+   EscherichiaColiO83H1Nrg857cUid161987 => '', #
+   EscherichiaColiP12bUid162061 => '', #
+   EscherichiaColiS88Uid62979 => '', #
+   EscherichiaColiSe11Uid59425 => '', #
+   EscherichiaColiSe15Uid161939 => '', #
+   EscherichiaColiSms35Uid58919 => '', #
+   ShigellaBoydiiSb227Uid58215 => '', #
+   ShigellaBoydiiCdc308394Uid58415 => '', #
+   ShigellaDysenteriaeSd197Uid58213 => '', #
+   ShigellaFlexneri2002017Uid159233 => '', #
+   ShigellaFlexneri2a2457tUid57991 => '', #
+   ShigellaFlexneri2a301Uid62907 => '', #
+   ShigellaFlexneri58401Uid58583 => '', #
+   ShigellaSonneiSs046Uid58217 => '', #
+   ShigellaSonnei53gUid84383 => '', #
+   EscherichiaColiUm146Uid162043 => '', #
+   EscherichiaColiUmn026Uid62981 => '', #
+   EscherichiaColiUmnk88Uid161991 => '', #
+   EscherichiaColiUti89Uid58541 => '', #
+   EscherichiaColiWUid162011 => '', #
+   EscherichiaColiWUid162101 => '', #
+   EscherichiaColiXuzhou21Uid163995 => '', #
+   #
+   # http://hgwdev.cse.ucsc.edu/~jcarmstr/crocBrowserRC2/hub.txt
+   #
+   # American alligator
+   allMis2 => 'GCA_000281125.1', # Couldn't find NCBI entry, mapped to same as allMis1 
+   # Anc00 => '', # No public assembly
+   # ..
+   # Anc21 => '',
+   # Melopsittacus undulatus (entry already exist)
+   # melUnd1 => 'GCA_000238935.1', # Melopsittacus_undulatus_6.3
+   # Ficedula albicollis
+   ficAlb2 => 'GCA_000247815.2', # FicAlb1.5
+   # Crocodile
+   croPor2 => 'GCA_000768395.1', # Cpor_2.0
+   # Gavialis gangeticus
+   ghaGan1 => 'GCA_000775435.1', # ggan_v0.2
+   # Chelonia mydas
+   cheMyd1 => 'GCA_000344595.1', # CheMyd_1.0
+   # Lizard (anoCar2, entry already exist)
+   # Anas platyrynchos
+   anaPla1 => 'GCA_000355885.1', # BGI_duck_1.0
+   # Medium ground finch (geoFor1, entry already exist)
+   # Ostrich
+   strCam0 => 'GCA_000698965.1', # ASM69896v1
+   # Painted turtle (chrPic1, entry already exist)
+   # Amazona vittata
+   amaVit1 => 'GCA_000332375.1', # AV1 
+   # Falco peregrinus
+   falPer1 => 'GCA_000337955.1', # F_peregrinus_v1.0
+   # Columba livia
+   colLiv1 => 'GCA_000337935.1', # Cliv_1.0
+   # Falco cherrug
+   falChe1 => 'GCA_000337975.1', # F_cherrug_v1.0
+   # Ara macao
+   araMac1 => 'GCA_000400695.1', # SMACv1.1
+   # Soft cell turtle
+   pelSin1 => 'GCA_000230535.1', # PelSin_1.0
+   # Spiny soft cell turtle
+   apaSpi1 => 'GCA_000385615.1', # ASM38561v1
+   # Tibetan ground jay
+   pseHum1 => 'GCA_000331425.1', # PseHum1.0
+   # Turkey (melGal1 , entry already present)
+   # White throated sparrow
+   zonAlb1 => 'GCA_000385455.1', # Zonotrichia_albicollis-1.0.1
+   # Taeniopygia guttata
+   taeGut2 => 'GCA_000151805.2', # Taeniopygia_guttata-3.2.4 (same as taeGut1)
+   #
+   # http://devlaeminck.bio.uci.edu/RogersUCSC/hub.txt
+   #
+   # Drosophila simulans w501
+   'Dsim-w501' => 'GCA_000754195.2', # ASM75419v2
   };
 
 #

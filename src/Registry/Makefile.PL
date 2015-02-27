@@ -47,6 +47,13 @@ requires 'Compress::Zlib';
 requires 'Compress::Bzip2';
 requires 'IO::Uncompress::Bunzip2';
 
+# For accessing the Genome Collection Assemby database
+requires 'DBD::Oracle';
+requires 'Math::Base36';
+requires 'DBIx::Class';
+requires 'Catalyst::Model::DBIC::Schema';
+requires 'DBIx::Class::Cursor::Cached';
+
 test_requires 'Test::More' => '0.88';
 catalyst;
 

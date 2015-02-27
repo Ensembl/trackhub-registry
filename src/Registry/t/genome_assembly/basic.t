@@ -16,13 +16,10 @@ my $schema = Registry::GenomeAssembly::Schema->connect("DBI:Oracle:host=ora-vm5-
 						       { 'RaiseError' => 1, 'PrintError' => 0 });
 isa_ok($schema, 'Registry::GenomeAssembly::Schema');
 
-# my $assembly_sets = $schema->resultset('GCAssemblySet');
-# use Data::Dumper; print Dumper($assembly_sets);
-# foreach my $set ($schema->resultset('GCAssemblySet')->all) {
-#   printf "%s\t%s\n", $set->set_acc, $set->name;
-# }
+my $set_acc = 'GCA_000001405.15';
 
-my $assembly_set = $schema->resultset('GCAssemblySet')->find('GCA_000001405.15');
+note "Testing access to $set_acc data";
+my $assembly_set = $schema->resultset('GCAssemblySet')->find($set_acc);
 
 my %expected = (
 		'long_name' => 'Genome Reference Consortium Human Build 38',

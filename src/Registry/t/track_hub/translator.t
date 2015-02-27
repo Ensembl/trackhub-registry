@@ -38,7 +38,7 @@ throws_ok { Registry::TrackHub::Translator->new(version => '0.1',
 
 
 SKIP: {
-  skip "No Internet connection: cannot test TrackHub translation", 8
+  skip "No Internet connection: cannot test TrackHub translation on public Track Hubs", 9
     unless Registry::Utils::internet_connection_ok();
 
   $translator = Registry::TrackHub::Translator->new(version => $version,

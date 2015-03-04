@@ -43,6 +43,7 @@ requires 'List::Util';
 requires 'String::Random';
 requires 'Search::Elasticsearch';
 
+# for file utils
 requires 'Compress::Zlib';
 requires 'Compress::Bzip2';
 requires 'IO::Uncompress::Bunzip2';

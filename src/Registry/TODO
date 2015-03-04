@@ -16,6 +16,9 @@
 - Data::SearchEngine::ElasticSearch
   - search method options to comply with ES API
 
+- Reimplement Catalyst::Model::ElasticSearch/Registry::Model::Search
+  in terms of Data::SearchEngine::ElasticSearch?
+
 - Validation class
   use python validator underneath
 
@@ -42,4 +45,6 @@
  - search result page, properly styled search result entry
    with tabbed links to view the hub and load it into Ensembl
    (see physical notes)
-   
+
+- Prototype
+ - install oracle development tools 11.1.0.6.0

@@ -83,7 +83,7 @@
 
       "title": "Track metadata",
 
-      "description": "Contains metadata for a collection of tracks defined in the TrackHub. Each track has a name attribute whose value is a property of the configuration object.",
+      "description": "Contains metadata for a collection of tracks defined in the TrackHub. Each track metadata has an id attribute which is used as a property key to fetch the corresponding configuration in the configuration object.",
 
       "items": { "$ref": "#/definitions/track_data" },
 
@@ -140,7 +140,7 @@
     "track": {
       "type": "object",
 
-      "description": "Contains display and configuration properties common to all track types.",
+      "description": "Contains display and configuration properties for all basic track types.",
 
       "patternProperties": {
         "^[a-zA-z][a-zA-Z0-9_]+$": { "type": "string" }
@@ -294,11 +294,13 @@
 	    },
 
 	    "members": {
-	      "type": "object",
+	      "type": "array",
 
-	      "patternProperties": {
-                "^[a-zA-z][a-zA-Z0-9_]+$": { "$ref": "#/definitions/track" }
-      	      }
+	      "items": { "$ref": "#/definitions/track" },
+
+	      "minItems": 1,
+
+	      "uniqueItems": true
 	    },
 
 	  },
@@ -328,11 +330,13 @@
 	    },
 
 	    "members": {
-	      "type": "object",
+	      "type": "array",
 
-	      "patternProperties": {
-                "^[a-zA-z][a-zA-Z0-9_]+$": { "$ref": "#/definitions/track" }
-      	      }
+	      "items": { "$ref": "#/definitions/track" },
+
+	      "minItems": 1,
+
+	      "uniqueItems": true
 	    },
 
 	    "aggregate": {

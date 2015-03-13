@@ -24,9 +24,17 @@ sub AUTOLOAD {
 sub new {
   my ($class, $args) = @_;
 
-  my $self;
-  $self->{tree_ids} = {}; # a complete list of unique identifiers in the tree, and their nodes
-  $self->{$_}       = $args->{$_} for keys %{$args || {}};
+  my $self =
+    {
+     # id => 'random string??',
+     child_nodes          => [],
+     parent_node          => 0,
+     next_sibling         => 0,
+     previous_sibling     => 0,
+     tree_ids             => {} # a complete list of unique identifiers in the tree, and their nodes
+    };
+  # overwrites previous args
+  $self->{$_} = $args->{$_} for keys %{$args || {}};
   bless $self, $class;
 
   defined $self->{id} or die "Undefined node id";
@@ -41,25 +49,50 @@ sub create_node {
 sub get_node {
 }
 
-sub parent_node {
-}
-
 sub get_all_nodes {
 }
 
+sub is_leaf { return !$_[0]->has_child_nodes; }
+
 sub has_child_nodes {
+  return scalar @{shift->child_nodes}?1:0;
 }
 
-sub previous_sibling {
+sub first_child {
+  return shift->child_nodes->[0] || undef;
 }
 
-sub next_sibling {
+sub last_child {
+  return shift->child_nodes->[-1] || undef;
 }
 
+# previous|next_sibling attributes are set when
+# child is appended
+sub previous { return $_[0]->previous_sibling; }
+
+sub next { return $_[0]->next_sibling; }
+
+sub append { return $_[0]->append_child($_[1]); }
+
+# Appends a child node (or creates a new child node before appending)
+# @param New node 
+# @return New node if success, undef otherwise
 sub append_child {
+  my ($self, $child) = @_;
+
+  $child->parent_node($self);
+  if ($self->has_child_nodes) {
+    $child->previous_sibling($self->last_child);
+    $self->last_child->next_sibling($child);
+  }
+  push @{$self->child_nodes}, $child;
+  return $child;
 }
 
-sub prepend_chid {
-}
+# sub prepend { return $_[0]->prepend_child($_[1]); }
+
+# sub prepend_chid {
+#   my $self = shift;
+# }
 
 1;

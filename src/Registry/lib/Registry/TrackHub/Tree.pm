@@ -7,6 +7,8 @@ package Registry::TrackHub::Tree;
 use strict;
 use warnings;
 
+use Registry::TrackHub::Tree;
+
 use vars qw($AUTOLOAD);
 
 sub AUTOLOAD {
@@ -27,6 +29,7 @@ sub new {
   my $self =
     {
      # id => 'random string??',
+     data                 => {},
      child_nodes          => [],
      parent_node          => 0,
      next_sibling         => 0,
@@ -44,9 +47,26 @@ sub new {
 }
 
 sub create_node {
+  my ($self, $id, $data) = @_;
+  defined $id or die "Undefined id";
+  defined $data or die "Undefined data";
+
+  if (exists $self->tree_ids->{$id}) {
+    my $node = $self->get_node($id);
+    $node->data->{$_} = $data->{$_} for keys %$data;
+    
+    return $node;
+  }
+  
+  return Registry::TrackHub::Tree->new({ id        => $id,
+					 data      => $data || {},
+					 tree_ids  => $self->tree_ids,
+				       });
 }
 
 sub get_node {
+  my ($self, $id) = @_;
+  return $self->{tree_ids}{$id};
 }
 
 sub get_all_nodes {

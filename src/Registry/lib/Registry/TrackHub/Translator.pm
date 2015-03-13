@@ -11,6 +11,7 @@ use JSON;
 use Catalyst::Exception;
 
 use Registry::TrackHub;
+use Registry::TrackHub::ConfigurationTree;
 use Registry::TrackHub::Parser;
 
 use vars qw($AUTOLOAD $synonym2assembly);
@@ -97,6 +98,7 @@ sub to_json_1_0 {
   # now the tracks, metadata and display/configuration
   my $tracks = Registry::TrackHub::Parser->new(files => $genome->trackDb)->parse;
 
+  # set each track metadata, prepare the configuration object
   foreach my $track (keys %{$tracks}) {
     my $metadata = { id => $track, 
 		     # longLabel should be present since mandatory for UCSC
@@ -106,10 +108,17 @@ sub to_json_1_0 {
     push @{$doc->{data}}, $metadata;
 
     delete $tracks->{$track}{metadata};
-    map { $doc->{configuration}{$track}{$_} = $tracks->{$track}{$_} }
-      keys %{$tracks->{$track}};
   }
 
+  # set the configuration part of the document according to the track hierarchy,
+  # i.e. composites should have members
+  my $ctree = Registry::TrackHub::Tree->new({ id => 'root' });
+  $self->_make_configuration_tree($ctree, $tracks);
+
+  # now can recursively descend the hierarchy and 
+  # build the configuration object
+  map { $self->_make_configuration_object_1_0($doc, $_) } @{$self->child_nodes};
+  
   return to_json($doc);
 }
 
@@ -619,7 +628,8 @@ sub _add_genome_info {
 
   my ($tax_id, $scientific_name, $common_name) = 
     ($as->tax_id, $as->scientific_name, $as->common_name);
-  
+  # TODO: taxid and scientific name are mandatory
+
   $doc->{species}{tax_id} = $tax_id if $tax_id;
   $doc->{species}{scientific_name} = $scientific_name if $scientific_name;
   $doc->{species}{common_name} = $common_name if $common_name;

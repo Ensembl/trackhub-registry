@@ -76,6 +76,10 @@ sub translate {
   return $docs;
 }
 
+##################################################################################
+#             
+# Version 1.0 
+#             
 sub to_json_1_0 {
   my ($self, %args) = @_;
   my ($trackhub, $assembly) = ($args{trackhub}, $args{assembly});
@@ -117,10 +121,30 @@ sub to_json_1_0 {
 
   # now can recursively descend the hierarchy and 
   # build the configuration object
-  map { $self->_make_configuration_object_1_0($doc, $_) } @{$self->child_nodes};
+  map { $doc->{configuration}{$_->id} = $self->_make_configuration_object_1_0($_) } 
+    @{$ctree->child_nodes};
   
   return to_json($doc);
 }
+
+
+sub _make_configuration_object_1_0 {
+  my ($self, $node) = @_;
+  defined $node or die "Undefined args";
+  
+  # add the configuration as they are specified
+  my $node_conf = {};
+  map { $node_conf->{$_} = $node->data->{$_} } keys %{$node->data};
+  delete $node_conf->{track};
+
+  # now add the configuration of the children, if any, as an array of members
+  map { push @{$node_conf->{members}, $self->_make_configuration_object_1_0($_) }
+	  @{$node->child_nodes};
+		 
+}
+#
+##################################################################################
+
 
 sub _make_configuration_tree {
   my ($self, $tree, $tracks) = @_;

@@ -122,6 +122,29 @@ sub to_json_1_0 {
   return to_json($doc);
 }
 
+sub _make_configuration_tree {
+  my ($self, $tree, $tracks) = @_;
+  defined $tree or die "Undefined tree";
+  defined $tracks or die "Undefined tracks";
+
+  foreach (sort { !$b->{'parent'} <=> !$a->{'parent'} } values %$tracks) {
+    if ($_->{'parent'}) {
+      my $parent = $tree->get_node($_->{'parent'});
+      
+      if ($parent) {
+        $parent->append($tree->create_node($_->{'track'}, $_));
+      } else {
+        $redo{$_->{'track'}} = $_;
+      }
+    } else {
+      $tree->append($tree->create_node($_->{'track'}, $_));
+    }
+  }
+
+  $self->_make_configuration_tree($tree, \%redo) 
+    if scalar keys %redo;
+}
+
 #
 # TODO?
 # Move to a configuration file?

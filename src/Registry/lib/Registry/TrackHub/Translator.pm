@@ -137,14 +137,16 @@ sub _make_configuration_object_1_0 {
   my ($self, $node) = @_;
   defined $node or die "Undefined args";
   
-  # add the configuration as they are specified
+  # add the configuration attributes as they are specified
   my $node_conf = {};
   map { $node_conf->{$_} = $node->data->{$_} } keys %{$node->data};
-  delete $node_conf->{track};
+  # delete $node_conf->{track};
 
-  # now add the configuration of the children, if any, as an array of members
-  push @{$node_conf->{members}}, $self->_make_configuration_object_1_0($_) 
-    for @{$node->child_nodes};
+  # now add the configuration of the children, if any
+  for my $child (@{$node->child_nodes}) {
+    my $child_conf = $self->_make_configuration_object_1_0($child);
+    $node_conf->{members}{$child_conf->{track}} = $child_conf;
+  }
 
   return $node_conf;
 }

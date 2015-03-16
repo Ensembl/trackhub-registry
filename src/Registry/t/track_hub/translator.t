@@ -66,12 +66,12 @@ SKIP: {
 				synonyms => 'hg19' }, 'Correct assembly');
 
   note "Checking container (bp) metadata";
-  my $metadata = $doc->{data};
-  my $bp = grep { $_->{id} eq 'bp' } @{$metadata};
-  is($bp->{name}, 'Blueprint', 'Container name');
+  my $metadata = grep { $_->{id} eq 'bp' } @{$doc->{data}};
+  ok($metadata, "Track metadata exists");
+  is($metadata->{name}, 'Blueprint', 'Container name');
   
   note "Checking metadata of random track (bpHistoneModsC0010KH1H3K36me3MACS2_broad_peakEMBL-EBI)";
-  my $metadata = grep { $_->{id} eq 'bpHistoneModsC0010KH1H3K36me3MACS2_broad_peakEMBL-EBI' } @{$metadata};
+  $metadata = grep { $_->{id} eq 'bpHistoneModsC0010KH1H3K36me3MACS2_broad_peakEMBL-EBI' } @{$doc->{data}};
   ok($metadata, "Track metadata exists");
   is($metadata->{name}, "C0010K H3K36me3 MACS2_broad_peak CD14-positive, CD16-negative classical monocyte peak from NCMLS", 
      "Corrent name");
@@ -80,7 +80,7 @@ SKIP: {
   is($metadata->{CELL_TYPE}, 'CD14-positive,_CD16-negative_classical_monocyte', 'Correct CELL_TYPE metadata');
 
   note("Checking another random track (bpHistoneModsC00264H1H3K27me3MACS2_wigglerEMBL-EBIwiggler)");
-  $metadata = grep { $_->{id} eq 'bpHistoneModsC00264H1H3K27me3MACS2_wigglerEMBL-EBIwiggler' } @{$metadata};
+  $metadata = grep { $_->{id} eq 'bpHistoneModsC00264H1H3K27me3MACS2_wigglerEMBL-EBIwiggler' } @{$doc->{data}};
   ok($metadata, "Track metadata exists");
   is($metadata->{name}, "C00264 H3K27me3 MACS2_wiggler CD14-positive, CD16-negative classical monocyte signal from NCMLS", 
      "Corrent name");

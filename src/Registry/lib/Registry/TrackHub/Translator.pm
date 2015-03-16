@@ -11,7 +11,7 @@ use JSON;
 use Catalyst::Exception;
 
 use Registry::TrackHub;
-use Registry::TrackHub::ConfigurationTree;
+use Registry::TrackHub::Tree;
 use Registry::TrackHub::Parser;
 
 use vars qw($AUTOLOAD $synonym2assembly);
@@ -104,9 +104,14 @@ sub to_json_1_0 {
 
   # set each track metadata, prepare the configuration object
   foreach my $track (keys %{$tracks}) {
+    # 
+    # NOTE: at least a track can be searched by ID and NAME (longLabel)
+    #
     my $metadata = { id => $track, 
 		     # longLabel should be present since mandatory for UCSC
-		     name => $tracks->{$track}{longLabel} }; 
+		     name => $tracks->{$track}{longLabel} };
+
+    # add specific metadata, if ever present
     map { $metadata->{$_} = $tracks->{$track}{metadata}{$_} }
       keys %{$tracks->{$track}{metadata}};
     push @{$doc->{data}}, $metadata;
@@ -138,9 +143,10 @@ sub _make_configuration_object_1_0 {
   delete $node_conf->{track};
 
   # now add the configuration of the children, if any, as an array of members
-  map { push @{$node_conf->{members}, $self->_make_configuration_object_1_0($_) }
-	  @{$node->child_nodes};
-		 
+  push @{$node_conf->{members}}, $self->_make_configuration_object_1_0($_) 
+    for @{$node->child_nodes};
+
+  return $node_conf;
 }
 #
 ##################################################################################
@@ -151,6 +157,7 @@ sub _make_configuration_tree {
   defined $tree or die "Undefined tree";
   defined $tracks or die "Undefined tracks";
 
+  my %redo;
   foreach (sort { !$b->{'parent'} <=> !$a->{'parent'} } values %$tracks) {
     if ($_->{'parent'}) {
       my $parent = $tree->get_node($_->{'parent'});

@@ -220,6 +220,72 @@ SKIP: {
       
     }
   }
+
+  note "Checking translation of DNA Methylation trackhub";
+  $URL = "http://smithlab.usc.edu/trackdata/methylation";
+  $json_docs = $translator->translate($URL, 'mm10');
+  is(scalar @{$json_docs}, 1, "Number of translated track dbs");
+  my $doc = from_json($json_docs->[0]);
+
+  is_deeply($doc->{species}, { tax_id => 10090, 
+			       scientific_name => 'Mus musculus', 
+			       common_name => 'house mouse' }, 'Correct species');
+  is_deeply($doc->{assembly}, { name => 'GRCm38',
+				long_name => 'Genome Reference Consortium Mouse Build 38',
+				accession => 'GCA_000001635.2', 
+				synonyms => 'mm10' }, 'Correct assembly');
+
+  # check metadata and configuration
+  is(scalar @{$doc->{data}}, 649, "Number of data tracks");
+
+  my $metadata = first { $_->{id} eq 'Liu_Mouse_2014' } @{$doc->{data}};
+  ok($metadata, "Track metadata exists");
+  is($metadata->{id}, 'Liu_Mouse_2014', 'Track id');
+  is($metadata->{name}, 'Setdb1 is required for germline development and silencing of H3K9me3-marked endogenous retroviruses in primordial germ cells', 'Track name');
+  my $conf = $doc->{configuration}{Liu_Mouse_2014};
+  ok($conf, "Track configuration exists");
+  is(scalar keys %{$conf->{members}}, 6, "Number of composite members");
+  my $member = $conf->{members}{AMRLiu_Mouse_2014};
+  ok($member, "Child configuration exists");
+  is($member->{shortLabel}, 'AMR', "Member shortLabel");
+  is(scalar keys %{$member->{members}}, 2, "Number of view members");
+  my $member_member = $member->{members}{LiuMouse2014_MouseE13MalePGCSetdb1KOAMR};
+  ok($member_member, "View member exists");
+  is($member_member->{type}, "bigbed", "View member type");
+  is($member_member->{longLabel}, "Mouse_E13-Male-PGC-Setdb1-KO_AMR", "View member longLabel");
+  is($member_member->{bigDataUrl}, "http://smithlab.usc.edu/methbase/data/Liu-Mouse-2014/Mouse_E13-Male-PGC-Setdb1-KO/tracks_mm10/Mouse_E13-Male-PGC-Setdb1-KO.amr.bb", "View member bigDataUrl");
+
+  $metadata = first { $_->{id} eq 'Lister_Brain_2013' } @{$doc->{data}};
+  ok($metadata, "Track metadata exists");
+  is($metadata->{id}, 'Lister_Brain_2013', 'Track id');
+  is($metadata->{name}, 'Global Epigenomic Reconfiguration During Mammalian Brain Development', 'Track name');
+  $conf = $doc->{configuration}{Lister_Brain_2013};
+  ok($conf, "Track configuration exists");
+  is(scalar keys %{$conf->{members}}, 6, "Number of composite members");
+  $member = $conf->{members}{ReadLister_Brain_2013};
+  ok($member, "Child configuration exists");
+  is($member->{shortLabel}, 'Read', "Member shortLabel");
+  is(scalar keys %{$member->{members}}, 15, "Number of view members");
+  $member_member = $member->{members}{ListerBrain2013_MouseFrontCortexNeuronMale7WkRead};
+  ok($member_member, "View member exists");
+  is($member_member->{type}, "bigwig", "View member type");
+  is($member_member->{longLabel}, "Mouse_FrontCortexNeuronMale7Wk_Read", "View member longLabel");
+  is($member_member->{bigDataUrl}, "http://smithlab.usc.edu/methbase/data/Lister-Brain-2013/Mouse_FrontCortexNeuronMale7Wk/tracks_mm10/Mouse_FrontCortexNeuronMale7Wk.read.bw", "View member bigDataUrl");
+
+  # note "Checking Roadmap Epigenomics Data VizHub";
+  # $URL = "http://smithlab.usc.edu/trackdata/methylation";
+  # $json_docs = $translator->translate($URL, 'mm10');
+  # is(scalar @{$json_docs}, 1, "Number of translated track dbs");
+  # my $doc = from_json($json_docs->[0]);
+
+  # is_deeply($doc->{species}, { tax_id => 10090, 
+  # 			       scientific_name => 'Mus musculus', 
+  # 			       common_name => 'house mouse' }, 'Correct species');
+  # is_deeply($doc->{assembly}, { name => 'GRCm38',
+  # 				long_name => 'Genome Reference Consortium Mouse Build 38',
+  # 				accession => 'GCA_000001635.2', 
+  # 				synonyms => 'mm10' }, 'Correct assembly');
+
 }
 
 done_testing();

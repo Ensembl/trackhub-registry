@@ -65,6 +65,38 @@ SKIP: {
 				accession => 'GCA_000001405.1', 
 				synonyms => 'hg19' }, 'Correct assembly');
 
+  note "Checking container (bp) metadata";
+  my $metadata = $doc->{data};
+  my $bp = grep { $_->{id} eq 'bp' } @{$metadata};
+  is($bp->{name}, 'Blueprint', 'Container name');
+  
+  note "Checking metadata of random track (bpHistoneModsC0010KH1H3K36me3MACS2_broad_peakEMBL-EBI)";
+  my $metadata = grep { $_->{id} eq 'bpHistoneModsC0010KH1H3K36me3MACS2_broad_peakEMBL-EBI' } @{$metadata};
+  ok($metadata, "Track metadata exists");
+  is($metadata->{name}, "C0010K H3K36me3 MACS2_broad_peak CD14-positive, CD16-negative classical monocyte peak from NCMLS", 
+     "Corrent name");
+  is($metadata->{MOLECULE}, 'genomic_DNA', 'Correct MOLECULE metadata');
+  like($metadata->{SAMPLE_ONTOLOGY_URI}, qr/UBERON_0013756/, 'Correct SAMPLE_ONTOLOGY_URI metadata');
+  is($metadata->{CELL_TYPE}, 'CD14-positive,_CD16-negative_classical_monocyte', 'Correct CELL_TYPE metadata');
+
+  note("Checking another random track (bpHistoneModsC00264H1H3K27me3MACS2_wigglerEMBL-EBIwiggler)");
+  $metadata = grep { $_->{id} eq 'bpHistoneModsC00264H1H3K27me3MACS2_wigglerEMBL-EBIwiggler' } @{$metadata};
+  ok($metadata, "Track metadata exists");
+  is($metadata->{name}, "C00264 H3K27me3 MACS2_wiggler CD14-positive, CD16-negative classical monocyte signal from NCMLS", 
+     "Corrent name");
+  is($metadata->{EPIRR_ID}, 'IHECRE00000135.1', 'Correct EPIRR_ID metadata');
+  is($metadata->{BIOMATERIAL_TYPE}, 'Primary_Cell', 'Correct metadata');
+  is($metadata->{SAMPLE_ID}, 'ERS158623', 'Correct SAMPLE_ID metadata');
+
+  note "Checking display and configuration options";
+  is(scalar keys $doc->{configuration}, 1, "One root object");
+  is(scalar keys $doc->{configuration}{bp}{members}, 2, "Two views under container object");
+
+  #
+  # TODO
+  # - finish test hierarchy
+  # - test other public hubs
+  #
 }
 
 done_testing();

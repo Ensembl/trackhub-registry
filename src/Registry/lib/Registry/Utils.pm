@@ -21,6 +21,15 @@ sub slurp_file {
   return $string;
 }
 
+# Runs the given command and returns a list of exit code and output
+sub run_cmd {
+  my ($self, $cmd) = @_;
+  my $output = `$cmd 2>&1`;
+  my $rc = $? >> 8;
+  die "Cannot run program '$cmd'. Return code was ${rc}. Program output was $output" if $rc;
+  return ($rc, $output);
+}
+
 sub internet_connection_ok {
   #
   # For some reason, Net::Ping doeesn't reach the host

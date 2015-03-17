@@ -1,12 +1,15 @@
 - JSON spec 1.0
-  - data/configuration
-  - configuration is a tree of hierarchically organised track configurations
-  - each configuration is an associative array of key/value (string) pairs
+  X data/configuration
+  X configuration is a tree of hierarchically organised track configurations
+  X track configuration is an associative array of key/value (string) pairs 
 
 - Registry::TrackHub::Translator
-  - finish mapping of UCSC synonyms to assembly accession IDs
-  - translate the hierarchy as well
-  - test with various public track hubs and assemblies
+  X finish mapping of UCSC synonyms to assembly accession IDs
+  X translate the hierarchy as well
+  X test with various public track hubs and assemblies
+  |
+  ----> ERROR: the existing parser cannot parse metadata as key=value
+               pairs containing quotes with spaces
   - validation according to given schema version
   - store original trackDb file as attribute?
     should not be necessary if the configurations are represented as as tree, 
@@ -45,6 +48,7 @@
  - search result page, properly styled search result entry
    with tabbed links to view the hub and load it into Ensembl
    (see physical notes)
+ - new dev GWAS catalog provides a good example of a search interface
 
 - Prototype
  - install oracle development tools 11.1.0.6.0

@@ -94,7 +94,7 @@ sub _parse_file_content {
       if ($key eq 'type') {
         my @values = split /\s+/, $value;
         my $type   = lc shift @values;
-           $type   = 'vcf' if $type eq 'vcftabix';
+	$type   = 'vcf' if $type eq 'vcftabix';
         
         $tracks->{$id}{$key} = $type;
         

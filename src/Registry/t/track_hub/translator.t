@@ -9,6 +9,8 @@ BEGIN {
   use lib "$Bin/../../lib";
 }
 
+local $SIG{__WARN__} = sub {};
+
 use JSON;
 use List::Util qw(first);
 use Registry::GenomeAssembly::Schema;
@@ -51,55 +53,57 @@ SKIP: {
   throws_ok { $translator->translate($WRONG_URL, 'hg18') } qr/check the source/, "Throws if translate is given wrong URL";
 
   my ($URL, $json_docs);
-  # note "Checking translation of Bluprint trackhub";
-  # $URL = "ftp://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub";
-  # throws_ok { $translator->translate($URL, 'hg18') } qr/No genome data/, "Throws if translate is given wrong assembly";
 
-  # $json_docs = $translator->translate($URL, 'hg19');
-  # is(scalar @{$json_docs}, 1, "Correct number of translations");
+  #
+  # Test Bluprint Track Data Hub
+  #
+  note "Checking translation of Bluprint trackhub";
+  $URL = "ftp://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub";
+  throws_ok { $translator->translate($URL, 'hg18') } qr/No genome data/, "Throws if translate is given wrong assembly";
 
-  # my $doc = from_json($json_docs->[0]);
-  # is($doc->{version}, '1.0', 'Correct JSON version');
-  # is($doc->{hub}, 'Blueprint Epigenomics Data Hub', 'Correct Hub');
-  # is_deeply($doc->{species}, { tax_id => 9606, 
-  # 			       scientific_name => 'Homo sapiens', 
-  # 			       common_name => 'human' }, 'Correct species');
-  # is_deeply($doc->{assembly}, { name => 'GRCh37', 
-  # 				long_name => 'Genome Reference Consortium Human Build 37 (GRCh37)',
-  # 				accession => 'GCA_000001405.1', 
-  # 				synonyms => 'hg19' }, 'Correct assembly');
+  $json_docs = $translator->translate($URL, 'hg19');
+  is(scalar @{$json_docs}, 1, "Correct number of translations");
 
-  # note "Checking container (bp) metadata";
-  # my $metadata = first { $_->{id} eq 'bp' } @{$doc->{data}};
-  # ok($metadata, "Track metadata exists");
-  # is($metadata->{name}, 'Blueprint', 'Container name');
+  my $doc = from_json($json_docs->[0]);
+  is($doc->{version}, '1.0', 'Correct JSON version');
+  is($doc->{hub}, 'Blueprint Epigenomics Data Hub', 'Correct Hub');
+  is_deeply($doc->{species}, { tax_id => 9606, 
+  			       scientific_name => 'Homo sapiens', 
+  			       common_name => 'human' }, 'Correct species');
+  is_deeply($doc->{assembly}, { name => 'GRCh37', 
+  				long_name => 'Genome Reference Consortium Human Build 37 (GRCh37)',
+  				accession => 'GCA_000001405.1', 
+  				synonyms => 'hg19' }, 'Correct assembly');
+
+  note "Checking container (bp) metadata";
+  my $metadata = first { $_->{id} eq 'bp' } @{$doc->{data}};
+  ok($metadata, "Track metadata exists");
+  is($metadata->{name}, 'Blueprint', 'Container name');
   
-  # note "Checking metadata of random track (bpHistoneModsC0010KH1H3K36me3MACS2_broad_peakEMBL-EBI)";
-  # $metadata = first { $_->{id} eq 'bpHistoneModsC0010KH1H3K36me3MACS2_broad_peakEMBL-EBI' } @{$doc->{data}};
-  # ok($metadata, "Track metadata exists");
-  # is($metadata->{name}, "C0010K H3K36me3 MACS2_broad_peak CD14-positive, CD16-negative classical monocyte peak from NCMLS", 
-  #    "Corrent name");
-  # is($metadata->{MOLECULE}, 'genomic_DNA', 'Correct MOLECULE metadata');
-  # like($metadata->{SAMPLE_ONTOLOGY_URI}, qr/UBERON_0013756/, 'Correct SAMPLE_ONTOLOGY_URI metadata');
-  # is($metadata->{CELL_TYPE}, 'CD14-positive,_CD16-negative_classical_monocyte', 'Correct CELL_TYPE metadata');
+  note "Checking metadata of random track (bpHistoneModsC0010KH1H3K36me3MACS2_broad_peakEMBL-EBI)";
+  $metadata = first { $_->{id} eq 'bpHistoneModsC0010KH1H3K36me3MACS2_broad_peakEMBL-EBI' } @{$doc->{data}};
+  ok($metadata, "Track metadata exists");
+  is($metadata->{name}, "C0010K H3K36me3 MACS2_broad_peak CD14-positive, CD16-negative classical monocyte peak from NCMLS", 
+     "Corrent name");
+  is($metadata->{MOLECULE}, 'genomic_DNA', 'Correct MOLECULE metadata');
+  like($metadata->{SAMPLE_ONTOLOGY_URI}, qr/UBERON_0013756/, 'Correct SAMPLE_ONTOLOGY_URI metadata');
+  is($metadata->{CELL_TYPE}, 'CD14-positive,_CD16-negative_classical_monocyte', 'Correct CELL_TYPE metadata');
 
-  # note("Checking another random track (bpHistoneModsC00264H1H3K27me3MACS2_wigglerEMBL-EBIwiggler)");
-  # $metadata = first { $_->{id} eq 'bpHistoneModsC00264H1H3K27me3MACS2_wigglerEMBL-EBIwiggler' } @{$doc->{data}};
-  # ok($metadata, "Track metadata exists");
-  # is($metadata->{name}, "C00264 H3K27me3 MACS2_wiggler CD14-positive, CD16-negative classical monocyte signal from NCMLS", 
-  #    "Corrent name");
-  # is($metadata->{EPIRR_ID}, 'IHECRE00000135.1', 'Correct EPIRR_ID metadata');
-  # is($metadata->{BIOMATERIAL_TYPE}, 'Primary_Cell', 'Correct metadata');
-  # is($metadata->{SAMPLE_ID}, 'ERS158623', 'Correct SAMPLE_ID metadata');
+  note("Checking another random track (bpHistoneModsC00264H1H3K27me3MACS2_wigglerEMBL-EBIwiggler)");
+  $metadata = first { $_->{id} eq 'bpHistoneModsC00264H1H3K27me3MACS2_wigglerEMBL-EBIwiggler' } @{$doc->{data}};
+  ok($metadata, "Track metadata exists");
+  is($metadata->{name}, "C00264 H3K27me3 MACS2_wiggler CD14-positive, CD16-negative classical monocyte signal from NCMLS", 
+     "Corrent name");
+  is($metadata->{EPIRR_ID}, 'IHECRE00000135.1', 'Correct EPIRR_ID metadata');
+  is($metadata->{BIOMATERIAL_TYPE}, 'Primary_Cell', 'Correct metadata');
+  is($metadata->{SAMPLE_ID}, 'ERS158623', 'Correct SAMPLE_ID metadata');
 
-  # note "Checking display and configuration options";
-  # is(scalar keys $doc->{configuration}, 1, "One root object");
-  # is(scalar keys $doc->{configuration}{bp}{members}, 2, "Two views under container object");
-
+  note "Checking display and configuration options";
+  is(scalar keys $doc->{configuration}, 1, "One root object");
+  is(scalar keys $doc->{configuration}{bp}{members}, 2, "Two views under container object");
   
   #
-  # TODO
-  # - test other public hubs
+  # Test other public Track Data Hubs
   #
   note "Checking translation of Plants trackhub";
   $URL = "http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants";
@@ -272,19 +276,43 @@ SKIP: {
   is($member_member->{longLabel}, "Mouse_FrontCortexNeuronMale7Wk_Read", "View member longLabel");
   is($member_member->{bigDataUrl}, "http://smithlab.usc.edu/methbase/data/Lister-Brain-2013/Mouse_FrontCortexNeuronMale7Wk/tracks_mm10/Mouse_FrontCortexNeuronMale7Wk.read.bw", "View member bigDataUrl");
 
-  # note "Checking Roadmap Epigenomics Data VizHub";
-  # $URL = "http://smithlab.usc.edu/trackdata/methylation";
-  # $json_docs = $translator->translate($URL, 'mm10');
-  # is(scalar @{$json_docs}, 1, "Number of translated track dbs");
-  # my $doc = from_json($json_docs->[0]);
+  note "Checking Roadmap Epigenomics Data VizHub";
+  $URL = "http://vizhub.wustl.edu/VizHub/RoadmapReleaseAll.txt";
+  $json_docs = $translator->translate($URL);
+  is(scalar @{$json_docs}, 1, "Number of translated track dbs");
+  $doc = from_json($json_docs->[0]);
 
-  # is_deeply($doc->{species}, { tax_id => 10090, 
-  # 			       scientific_name => 'Mus musculus', 
-  # 			       common_name => 'house mouse' }, 'Correct species');
-  # is_deeply($doc->{assembly}, { name => 'GRCm38',
-  # 				long_name => 'Genome Reference Consortium Mouse Build 38',
-  # 				accession => 'GCA_000001635.2', 
-  # 				synonyms => 'mm10' }, 'Correct assembly');
+  is_deeply($doc->{species}, { tax_id => 9606, 
+  			       scientific_name => 'Homo sapiens', 
+  			       common_name => 'human' }, 'Correct species');
+  is_deeply($doc->{assembly}, { name => 'GRCh37', 
+  				long_name => 'Genome Reference Consortium Human Build 37 (GRCh37)',
+  				accession => 'GCA_000001405.1', 
+  				synonyms => 'hg19' }, 'Correct assembly');
+
+  $metadata = first { $_->{id} eq 'BFLL_mRNA_14_58' } @{$doc->{data}};
+  ok($metadata, "Track metadata exists");
+
+  #
+  # WARNING
+  #
+  # the following tests on the content of metadata fail since the existing parser
+  # is not capable of extracting key=value pairs containing double quotes (with spaces).
+  # Need to inform web about this and wait for a suitable parser, or rewrite that 
+  # part on my own.
+  #
+  is($metadata->{name}, "UW Fetal Lung Left mRNA-Seq Donor H-23914 Library lib-RNA.RS18158 EA Release 9", 
+     "Corrent name");
+  is($metadata->{sample_common_name}, "Fetal Lung, Left", 'Correct sample common name metadata');
+  is($metadata->{extraction_protocol}, "Qiagen TissueLyser and RNeasy Lipid Tx Mini kit", 'Correct extraction protocol metadata');
+
+  $metadata = first { $_->{id} eq 'XBMC_H3K9me3_TC010A' } @{$doc->{data}};
+  ok($metadata, "Track metadata exists");
+  is($metadata->{name}, "Peripheral_Blood_Mononuclear_Primary_Cells H3K9me3 Histone Modification by Chip-seq Signal from REMC/UCSF (Hotspot_Score=0.1958 Pcnt=66 DonorID:TC010)", 
+     "Corrent name");
+  is($metadata->{biomaterial_provider}, "Weiss Lab UCSF", 'Correct biomaterial provider metadata');
+  is($metadata->{chip_protocol}, "Farnham Lab Protocol", 'Correct chip protocol metadata');
+  is($metadata->{chip_antibody}, 'H3K9me3', 'Correct chip antibody metadata');
 
 }
 

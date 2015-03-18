@@ -8,8 +8,6 @@ use strict;
 use warnings;
 
 use JSON;
-use Catalyst::Exception;
-
 use Registry::TrackHub;
 use Registry::TrackHub::Tree;
 use Registry::TrackHub::Parser;
@@ -31,8 +29,8 @@ sub AUTOLOAD {
 sub new {
   my ($class, %args) = @_;
   
-  defined $args{version} or Catalyst::Exception->throw("Undefined version");
-  defined $args{gc_assembly_set} or Catalyst::Exception->throw("Undefined Genome Collection Assembly ResultSet");
+  defined $args{version} or die "Undefined version";
+  defined $args{gc_assembly_set} or die "Undefined Genome Collection Assembly ResultSet";
 
   my $self = \%args;
   bless $self, $class;
@@ -52,8 +50,8 @@ sub translate {
      '1.0' => sub { $self->to_json_1_0(@_) }
     }->{$self->version};
 
-  Catalyst::Exception->throw(sprintf "Version %d not supported", $self->version) 
-      unless $dispatch;
+  die sprintf "Version %d not supported", $self->version
+    unless $dispatch;
 
   my $trackhub = Registry::TrackHub->new(url => $url);
   
@@ -71,7 +69,7 @@ sub translate {
   }
 
   scalar @{$docs} or 
-    Catalyst::Exception->throw("Something went wrong. Couldn't get any translated JSON from hub");
+    die "Something went wrong. Couldn't get any translated JSON from hub";
 
   return $docs;
 }
@@ -84,7 +82,7 @@ sub to_json_1_0 {
   my ($self, %args) = @_;
   my ($trackhub, $assembly) = ($args{trackhub}, $args{assembly});
   defined $trackhub and defined $assembly or
-    Catalyst::Exception->throw("Undefined trackhub and/or assembly argument");
+    die "Undefined trackhub and/or assembly argument";
 
   my $genome = $trackhub->get_genome($assembly);
 
@@ -642,7 +640,7 @@ $synonym2assembly =
 sub _add_genome_info {
   my ($self, $genome, $doc) = @_;
   defined $genome and defined $doc or
-    Catalyst::Exception->throw("Undefined genome and/or doc arguments");
+    die "Undefined genome and/or doc arguments";
 
   #
   # Map the (UCSC) assembly synonym to NCBI assembly entry,
@@ -671,8 +669,8 @@ sub _add_genome_info {
   #
   # unless ($assembly_id) {    
   # } 
-  Catalyst::Exception->throw("Unable to find an NCBI assembly id from $assembly_syn")
-      unless defined $assembly_id;
+  die "Unable to find an NCBI assembly id from $assembly_syn"
+    unless defined $assembly_id;
 
   #
   # Get species (tax id, scientific name, common name)
@@ -680,9 +678,9 @@ sub _add_genome_info {
   #
   my $gc_assembly_set = $self->gc_assembly_set;
   my $as = $gc_assembly_set->find($assembly_id);
-  Catalyst::Exception::throw->("Unable to find GC assembly set entry for $assembly_id")
-      unless $as;
-
+  die "Unable to find GC assembly set entry for $assembly_id"
+    unless $as;
+  
   my ($tax_id, $scientific_name, $common_name) = 
     ($as->tax_id, $as->scientific_name, $as->common_name);
   # TODO: taxid and scientific name are mandatory

@@ -40,10 +40,23 @@ sub validate {
   my $cmd = sprintf("validate.py -s %s -f %s", $self->{schema}, $file);
   my ($rc, $output) = Registry::Utils::run_cmd($cmd);
   
-  # die sprintf "File %s validation failed (schema: %s):\n%s", $file, $self->{schema}, $output
-  #   if $output;
+  # Handle here the unexpected, the python validation script cannot run,
+  # e.g. the schema is badly formatted
+  die "Cannot run command $cmd\nReturn code is $rc. Program output is:\n$output" if $rc;
 
-  return $output;
+  print $output;
+
+  # insert here whatever condition on the output 
+  # is interpreted to be a failure
+  #
+  # better to raise an exception, so we can emit an output
+  # which indeed is interesting only if the doc does not validate
+  # the caller decides what to do, stop or continue
+  #
+  die "$output" if $output; 
+
+  # success
+  return 1;
 }
 
 1;

@@ -35,6 +35,7 @@ my $translator = Registry::TrackHub::Translator->new(version => $version,
 isa_ok($translator, 'Registry::TrackHub::Translator');
 is($translator->version, $version, 'JSON version');
 
+throws_ok { $translator->translate } qr/Undefined/, "Throws if translate have missing arguments";
 throws_ok { Registry::TrackHub::Translator->new(version => '0.1', 
 						gc_assembly_set => $gc_assembly_set)->translate } 
   qr/not supported/, "Throws when translate to unsupported version";
@@ -43,11 +44,6 @@ throws_ok { Registry::TrackHub::Translator->new(version => '0.1',
 SKIP: {
   skip "No Internet connection: cannot test TrackHub translation on public Track Hubs", 9
     unless Registry::Utils::internet_connection_ok();
-
-  $translator = Registry::TrackHub::Translator->new(version => $version,
-						    gc_assembly_set => $gc_assembly_set);
-  isa_ok($translator, 'Registry::TrackHub::Translator');
-  throws_ok { $translator->translate } qr/Undefined/, "Throws if translate have missing arguments";
 
   my $WRONG_URL = "ftp://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub/xxx/trackDb.txt";
   throws_ok { $translator->translate($WRONG_URL, 'hg18') } qr/check the source/, "Throws if translate is given wrong URL";
@@ -229,7 +225,7 @@ SKIP: {
   $URL = "http://smithlab.usc.edu/trackdata/methylation";
   $json_docs = $translator->translate($URL, 'mm10');
   is(scalar @{$json_docs}, 1, "Number of translated track dbs");
-  my $doc = from_json($json_docs->[0]);
+  $doc = from_json($json_docs->[0]);
 
   is_deeply($doc->{species}, { tax_id => 10090, 
 			       scientific_name => 'Mus musculus', 
@@ -242,7 +238,7 @@ SKIP: {
   # check metadata and configuration
   is(scalar @{$doc->{data}}, 649, "Number of data tracks");
 
-  my $metadata = first { $_->{id} eq 'Liu_Mouse_2014' } @{$doc->{data}};
+  $metadata = first { $_->{id} eq 'Liu_Mouse_2014' } @{$doc->{data}};
   ok($metadata, "Track metadata exists");
   is($metadata->{id}, 'Liu_Mouse_2014', 'Track id');
   is($metadata->{name}, 'Setdb1 is required for germline development and silencing of H3K9me3-marked endogenous retroviruses in primordial germ cells', 'Track name');

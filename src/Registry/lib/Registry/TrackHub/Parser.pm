@@ -7,7 +7,6 @@ use strict;
 use warnings;
 
 use Registry::Utils::URL qw(read_file);
-use Catalyst::Exception;
 
 use vars qw($AUTOLOAD);
 
@@ -40,8 +39,8 @@ sub parse {
   my $tracks = {};
   foreach (@{$self->files}) {
     my $response = read_file($_, { 'nice' => 1 });
-    Catalyst::Exception->throw(join("\n", @{$response->{error}})) 
-	if $response->{error};
+    die join("\n", @{$response->{error}})
+      if $response->{error};
   
     $self->_parse_file_content($tracks, $response->{content} =~ s/\r//gr, $_);
   }
@@ -193,8 +192,8 @@ sub _parse_file_content {
   
   # Make sure the track hierarchy is ok
   foreach (values %{$tracks}) {
-    Catalyst::Exception->throw(sprintf "File %s: parent track %s is missing", $file, $_->{'parent'})
-	if $_->{'parent'} && !$tracks->{$_->{'parent'}};
+    die sprintf "File %s: parent track %s is missing", $file, $_->{'parent'}
+      if $_->{'parent'} && !$tracks->{$_->{'parent'}};
   }
   
 }

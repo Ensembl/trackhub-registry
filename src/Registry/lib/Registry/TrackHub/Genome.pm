@@ -8,7 +8,6 @@ use strict;
 use warnings;
 
 use Registry::Utils::URL qw(read_file);
-use Catalyst::Exception;
 
 use vars qw($AUTOLOAD);
 
@@ -36,13 +35,13 @@ sub new {
 sub get_trackdb_content {
   my $self = shift;
   defined $self->trackDb or
-    Catalyst::Exception->throw("Cannot get content: undefined trackDb file(s)");
+    die "Cannot get content: undefined trackDb file(s)";
 
   my $content;
   foreach my $file (@{$self->trackDb}) {
     my $response = read_file($file, { nice => 1 });
-    Catalyst::Exception->throw(join("\n", @{$response->{error}})) 
-	if $response->{error};
+    die join("\n", @{$response->{error}})
+      if $response->{error};
     
     push @{$content}, $response->{content} =~ s/\r//gr;
   }

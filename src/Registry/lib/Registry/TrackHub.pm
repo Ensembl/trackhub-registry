@@ -8,7 +8,6 @@ use warnings;
 
 use Registry::TrackHub::Genome;
 use Registry::Utils::URL qw(read_file);
-use Catalyst::Exception;
 
 use vars qw($AUTOLOAD);
 
@@ -46,10 +45,10 @@ sub assemblies {
 
 sub get_genome {
   my ($self, $assembly) = @_;
-  defined $assembly or Catalyst::Exception->throw("Cannot get genome data: undefined assembly argument");
+  defined $assembly or die "Cannot get genome data: undefined assembly argument";
 
   exists $self->genomes->{$assembly} or
-    Catalyst::Exception->throw("No genome data for assembly $assembly");
+    die "No genome data for assembly $assembly";
 
   return $self->genomes->{$assembly};
 }
@@ -75,7 +74,7 @@ sub _get_hub_info {
  
   if ($response->{error}) {
     push @{$response->{error}}, "Please the check the source URL in a web browser.";
-    Catalyst::Exception->throw(join("\n", @{$response->{error}}));
+    die join("\n", @{$response->{error}});
   }
   $content = $response->{'content'};
 
@@ -86,11 +85,11 @@ sub _get_hub_info {
     my @line = split /\s/, $_, 2;
     $hub_details{$line[0]} = $line[1];
   }
-  Catalyst::Exception->throw('No genomesFile found') unless $hub_details{genomesFile};
+  die 'No genomesFile found' unless $hub_details{genomesFile};
  
   ## Now get genomes file and parse 
   $response = read_file("$url/$hub_details{'genomesFile'}", $file_args); 
-  Catalyst::Exception->throw(join("\n", @{$response->{error}})) if $response->{error};
+  die join("\n", @{$response->{error}}) if $response->{error};
   
   $content = $response->{content};
 
@@ -149,7 +148,7 @@ sub _get_hub_info {
     }
   }
 
-  Catalyst::Exception->throw(join("\n", @errors)) if scalar @errors;
+  die join("\n", @errors) if scalar @errors;
 
   map { $self->$_($hub_details{$_}) } keys %hub_details;
   $self->genomes($genomes);

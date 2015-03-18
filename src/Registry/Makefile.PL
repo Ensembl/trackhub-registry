@@ -39,6 +39,7 @@ requires 'Config::General'; # This should reflect the config file format you've 
 # for handling profile and registration forms
 requires 'HTML::FormHandler::Moose';
 
+requires 'File::Temp';
 requires 'List::Util';
 requires 'String::Random';
 requires 'Search::Elasticsearch';

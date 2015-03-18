@@ -23,10 +23,18 @@ sub slurp_file {
 
 # Runs the given command and returns a list of exit code and output
 sub run_cmd {
-  my ($self, $cmd) = @_;
+  my $cmd = shift;
   my $output = `$cmd 2>&1`;
   my $rc = $? >> 8;
-  die "Cannot run program '$cmd'. Return code was ${rc}. Program output was $output" if $rc;
+
+  # my ($rc, $output);
+  # open CMD, '-|', $cmd;
+  # my $line;
+  # while (defined($line=<CMD>)) {
+  #   $output .= $line;
+  # }
+  # close CMD;
+
   return ($rc, $output);
 }
 

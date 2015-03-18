@@ -51,8 +51,7 @@ SKIP: {
   # my ($fh, $filename) = tempfile( DIR => '.', SUFFIX => '.json');
   # print $fh $json_docs->[0];
   
-  my $validation = $validator->validate("blueprint.json");
-  print $validation, "\n";
+  ok($validator->validate("blueprint.json"), "Validate correct document");
 }
 
 done_testing();

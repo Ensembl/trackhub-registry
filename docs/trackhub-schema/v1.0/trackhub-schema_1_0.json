@@ -38,7 +38,12 @@
       "title": "The organism/species of this collection of tracks.",
 
       "properties": {
-        "tax_id": { "type": "integer", "minimum": 0, "exclusiveMinimum": true },
+        "tax_id": {
+	  "oneOf": [
+	    { "type": "integer", "minimum": 0, "exclusiveMinimum": true },
+	    { "type": "string", "pattern": "^[1-9][0-9]+?$" }
+   	  ]
+	},
 	"scientific_name": { "type": "string" },
 	"common_name": { "type": "string" }
       },
@@ -97,7 +102,7 @@
 
       "title": "Track configuration",
 
-      "description": "Contains display and configuration properties for the tracks speficied in the data object.",
+      "description": "Contains display and configuration properties for the tracks specified in the data object.",
 
       "patternProperties": {
         "^[a-zA-z][a-zA-Z0-9_]+$": { "$ref": "#/definitions/track_configuration" }
@@ -122,6 +127,7 @@
         "^[a-zA-z][a-zA-Z0-9_]+$": { "type": "string" }
       },
 
+      "additionalProperties": false
     },
 
     "track_configuration": {
@@ -143,10 +149,25 @@
       "description": "Contains display and configuration properties for all basic track types.",
 
       "patternProperties": {
-        "^[a-zA-z][a-zA-Z0-9_]+$": { "type": "string" }
+        "^[a-zA-z][a-zA-Z0-9_]+$": {
+	  "oneOf": [
+	     { "type": "string" },
+	     { "type": "number" },
+	     { "type": "array", 
+	       "items": { 
+	          "oneOf": [
+		     { "type": "string" },
+		     { "type": "number" }
+		  ]
+	       }
+	    }
+	  ]
+	}
       },
 
-      "required": [ "shortLabel", "longLabel", "bigDataUrl" ]
+      "required": [ "shortLabel", "longLabel" ],
+
+      "additionalProperties": true
     },
 
     "super_track": {
@@ -154,162 +175,146 @@
 
       "description": "This hierarchical may be thought of as a folder that holds other tracks. The Browser currently supports only one level of supertrack folders. Generally the subtracks of a supertrack are of differing types. If all the children are of the same type, it is often better to use the 'compositeTrack' grouping described below. If all of the children are wig or bigWig tracks, it may be of interest to use a signal overlay 'container multiWig' grouping. Signal overlay tracks display the signal data from several subtracks as colored transparencies, making it possible to see the data of several tracks together in a condensed view.",
 
-      "allOf": [
-        { "$ref": "#/definitions/track" },
+	"properties": {
+	   "superTrack": { "type": "string" },
 
-	{ "properties": {
-	    "superTrack": { "type": "string" },
+	   "members": {
+	     "type": "object",
 
-	    "members": {
-	      "type": "array",
+	     "patternProperties": { 
+	       "^[a-zA-z][a-zA-Z0-9_]+$": {
+	         "oneOf": [
+	           { "$ref": "#/definitions/track" },
+	           { "$ref": "#/definitions/composite_track" },
+	           { "$ref": "#/definitions/aggregate_track" }
+	         ]
+	       }
+	     },
 
-	      "items": { 
-	        "oneOf": [
-	          { "$ref": "#/definitions/track" },
-	          { "$ref": "#/definitions/composite_track" },
-	          { "$ref": "#/definitions/aggregate_track" }
-	        ]
-	      },
+	     "additionalProperties": false
+	   },
 
-	      "minItems": 1,
-
-	      "uniqueItems": true
-	    },
-
-	    "group": { "type": "string" }
-	  },
+	   "group": { "type": "string" }
+	 },
 	  
-	  "required": [ "superTrack", "members" ],
-
-	  "additionalProperties": true
-	}
-      ]
-    },
+	 "additionalProperties": true
+     },
 
     "composite_track": {
       "title": "Composite track display and configuration properties",
 
       "description": "Composite tracks are another level of hierarchy and are meant to group very similar tracks (called 'subtracks') together such that they can all share the same configuration settings. In its simplest form a composite holds tracks all of the same type (such as bigBed). Initially, all track within the set are configured identically. Usually only some of the subtracks are visible by default, and these will have the same display mode (e.g., dense) and optional settings (e.g., viewLimits). While default settings cover the entire composite of related tracks, in most cases individual subtracks can be configured by the user independently of the composite settings. However, once individual subtrack settings are made, they can be overridden by new choices made at the composite level.",
 
-      "allOf": [
-        { "$ref": "#/definitions/track" },
+	"properties": {
+	   "compositeTrack": { "type": "string" },
 
-	{ "properties": {
-	    "compositeTrack": { "type": "string" },
-
-	    "allButtonPair": {  "type": "string", "enum": [ "on" ] },
+	   "allButtonPair": {  "type": "string", "enum": [ "on" ] },
 	    
-	    "centerLabelsDense": { "type": "string", "enum": [ "on", "off" ] },
+	   "centerLabelsDense": { "type": "string", "enum": [ "on", "off" ] },
 
-	    "dragAndDrop": { "type": "string", "enum": [ "subTracks" ] },
+	   "dragAndDrop": { "type": "string", "enum": [ "subTracks" ] },
 
-	    "subGroup1": { 
-	      "type": "object",
+	   "subGroup1": { 
+	     "type": "object",
 
-	      "patternProperties": {
-                "^[a-zA-z][a-zA-Z0-9_]+$": { "type": "string" }
-      	      }
-	    },
+	     "patternProperties": {
+               "^[a-zA-z][a-zA-Z0-9_]+$": { "type": "string" }
+      	     }
+	   },
 
-	    "subGroup2": { 
-	      "type": "object",
+	   "subGroup2": { 
+	     "type": "object",
 
-	      "patternProperties": {
-                "^[a-zA-z][a-zA-Z0-9_]+$": { "type": "string" }
-      	      }
-	    },
+	     "patternProperties": {
+               "^[a-zA-z][a-zA-Z0-9_]+$": { "type": "string" }
+      	     }
+	   },
 
-	    "subGroup3": { 
-	      "type": "object",
+	   "subGroup3": { 
+	     "type": "object",
 
-	      "patternProperties": {
-                "^[a-zA-z][a-zA-Z0-9_]+$": { "type": "string" }
-      	      }
-	    },
+	     "patternProperties": {
+               "^[a-zA-z][a-zA-Z0-9_]+$": { "type": "string" }
+      	     }
+	   },
 
-	    "subGroup4": { 
-	      "type": "object",
+	   "subGroup4": { 
+	     "type": "object",
 
-	      "patternProperties": {
-                "^[a-zA-z][a-zA-Z0-9_]+$": { "type": "string" }
-      	      }
-	    },
+	     "patternProperties": {
+               "^[a-zA-z][a-zA-Z0-9_]+$": { "type": "string" }
+      	     }
+	   },
 
-	    "subGroup5": { 
-	      "type": "object",
+	   "subGroup5": { 
+	     "type": "object",
 
-	      "patternProperties": {
-                "^[a-zA-z][a-zA-Z0-9_]+$": { "type": "string" }
-      	      }
-	    },
+	     "patternProperties": {
+               "^[a-zA-z][a-zA-Z0-9_]+$": { "type": "string" }
+      	     }
+	   },
 
-	    "subGroup6": { 
-	      "type": "object",
+	   "subGroup6": { 
+	     "type": "object",
 
-	      "patternProperties": {
-                "^[a-zA-z][a-zA-Z0-9_]+$": { "type": "string" }
-      	      }
-	    },
+	     "patternProperties": {
+               "^[a-zA-z][a-zA-Z0-9_]+$": { "type": "string" }
+      	     }
+	   },
 
-	    "subGroup7": { 
-	      "type": "object",
+	   "subGroup7": { 
+	     "type": "object",
 
-	      "patternProperties": {
-                "^[a-zA-z][a-zA-Z0-9_]+$": { "type": "string" }
-      	      }
-	    },
+	     "patternProperties": {
+               "^[a-zA-z][a-zA-Z0-9_]+$": { "type": "string" }
+      	     }
+	   },
 
-	    "subGroup8": { 
-	      "type": "object",
+	   "subGroup8": { 
+	     "type": "object",
 
-	      "patternProperties": {
-                "^[a-zA-z][a-zA-Z0-9_]+$": { "type": "string" }
-      	      }
-	    },
+	     "patternProperties": {
+               "^[a-zA-z][a-zA-Z0-9_]+$": { "type": "string" }
+      	     }
+	   },
 
-	    "subGroup9": { 
-	      "type": "object",
+	   "subGroup9": { 
+	     "type": "object",
 
-	      "patternProperties": {
-                "^[a-zA-z][a-zA-Z0-9_]+$": { "type": "string" }
-      	      }
-	    },
+	     "patternProperties": {
+               "^[a-zA-z][a-zA-Z0-9_]+$": { "type": "string" }
+      	     }
+	   },
 
-	    "dimensions": { 
-	      "type": "object",
+	   "dimensions": { 
+	     "type": "object",
 
-	      "patternProperties": {
-                "^[a-zA-z][a-zA-Z0-9_]+$": { "type": "string" }
-      	      }
-	    },
+	     "patternProperties": {
+               "^[a-zA-z][a-zA-Z0-9_]+$": { "type": "string" }
+      	     }
+	   },
 
-	    "filterComposite": { "type": "string" },
+	   "filterComposite": { "type": "string" },
 
-	    "sortOrder": { 
-	      "type": "object",
+	   "sortOrder": { 
+	     "type": "object",
 
-	      "patternProperties": {
-                "^[a-zA-z][a-zA-Z0-9_]+$": { "type": "string", "enum": [ "+", "-" ] }
-      	      }
-	    },
+	     "patternProperties": {
+               "^[a-zA-z][a-zA-Z0-9_]+$": { "type": "string", "enum": [ "+", "-" ] }
+      	     }
+	   },
 
-	    "members": {
-	      "type": "array",
+	   "members": {
+	     "type": "object",
 
-	      "items": { "$ref": "#/definitions/track" },
+	     "patternProperties": { 
+	       "^[a-zA-z][a-zA-Z0-9_]+$": { "$ref": "#/definitions/track" }
+	     },
 
-	      "minItems": 1,
+	     "additionalProperties": false
+	   }
 
-	      "uniqueItems": true
-	    },
-
-	  },
-
-	  "required": [ "compositeTrack", "members" ],
-
-	  "additionalProperties": true
-	}
-      ]
+	 }
     },
 
     "aggregate_track": {
@@ -318,42 +323,34 @@
 
       "description": "In some instances, data from multiple tracks is so closely related that it makes sense to view it as a single track. The premiere example of this is the signal overlay track (i.e. 'multiWig'). Signal overlay tracks display the signal data from several subtracks combined in several different ways, making it possible to see the data of several tracks together in a condensed view. The default overlay method for multiWigs is as colored transparencies, in which all the graphs are drawn on top of one other in such a way that overlapping regions are a different color. Another choice is solid overlay, where all the graphs are still drawn overlapping each other, but without transparency. A third choice is stacked where the values of the subtracks are stacked on top of one another with no overlap such that the total height of the wiggle is the sum of all the values in the subtracks. The value of the overlay track surpasses simply condensing the image. Occasionally this is the most effective way to identify hidden relationships in the underlying data. The overlay track should not be overused, however. Attempts to overlay too many subtracks can hide important information as regions with many layered signals become too dark to interpret. More than eight subtracks in a single overlay may prove less than ideal. As with composites, it is important for the multiWig tracks to have the same data dimensions, i.e. a signal height of 100 should be interpretable in the same way for the whole set of tracks. While this is true for a composite or view, it is especially important for overlay tracks. You cannot reasonably overlay a signal from 0-1 with another signal from 0-1000. Signal overlay tracks are declared much like simple composites. Like simple composites, all subtrack types should be identical and the container itself should be declared as the same type (e.g. 'bigWig'). Also like a composite, the container parent should have common settings for all children. Unlike composites, containers can have neither subgroups nor views. Additionally, all subtracks within a container are configured as one; there is no independent configuration of individual subtracks. Even when the user sets the overlay method to none and the subtracks are viewed as separate signals, they are still configured as a set.",
 
-      "allOf": [
-        { "$ref": "#/definitions/track" },
+	"properties": {
 
-	{ "properties": {
+	  "container": {
+	    "type": "string",
 
-	    "container": {
-	      "type": "string",
-
-	      "enum": [ "multiWig" ]
-	    },
-
-	    "members": {
-	      "type": "array",
-
-	      "items": { "$ref": "#/definitions/track" },
-
-	      "minItems": 1,
-
-	      "uniqueItems": true
-	    },
-
-	    "aggregate": {
-	      "type": "string",
-
-	      "enum": [ "transparentOverlay", "stacked", "solidOverlay", "none" ]
-	    },
-
-	    "showSubtrackColorOnUi": { "type": "string", "enum": [ "on" ] },
+	    "enum": [ "multiWig" ]
 	  },
-	  
-	  "required": [ "container", "aggregate", "members" ],
 
-	  "additionalProperties": false
+	  "members": {
+	    "type": "object",
+
+	    "patternProperties": { 
+	      "^[a-zA-z][a-zA-Z0-9_]+$": { "$ref": "#/definitions/track" }
+	    },
+
+	    "additionalProperties": false
+	  },
+
+	  "aggregate": {
+	    "type": "string",
+
+	    "enum": [ "transparentOverlay", "stacked", "solidOverlay", "none" ]
+	  },
+
+	  "showSubtrackColorOnUi": { "type": "string", "enum": [ "on" ] }
 	}
-      ]
-    }
+	  
+     }	
     
   }
 }

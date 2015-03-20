@@ -105,12 +105,15 @@ sub to_json_1_0 {
     # 
     # NOTE: at least a track can be searched by ID and NAME (longLabel)
     #
-    my $metadata = { id => $track, 
-		     # longLabel should be present since mandatory for UCSC
-		     name => $tracks->{$track}{longLabel} };
+    my $metadata = { id => $track }; 
+    # longLabel should be present since mandatory for UCSC
+    # Do not rely on it, see Blueprint track db
+    $metadata->{name} = $tracks->{$track}{longLabel} || $tracks->{$track}{shortLabel};
+    # we don't want null attribute values, enforced in the schema
+    delete $metadata->{name} unless defined $metadata->{name};
 
     # add specific metadata, if ever present
-    map { $metadata->{$_} = $tracks->{$track}{metadata}{$_} }
+    map { $metadata->{$_} = $tracks->{$track}{metadata}{$_} if defined $tracks->{$track}{metadata}{$_} }
       keys %{$tracks->{$track}{metadata}};
     push @{$doc->{data}}, $metadata;
 

@@ -131,23 +131,16 @@
     },
 
     "track_configuration": {
-      "type": "object",
 
       "title": "Track display and configuration properties.",
 
-      "description": "Contains display and configuration properties for all basic track types.",
-
-      "patternProperties": {
-        "^[a-zA-z][a-zA-Z0-9_]+$": { "$ref": "#/definitions/track" }
-      }
-    },
-
-    "track": {
       "type": "object",
 
+      "description": "Contains display and configuration properties for all track types.",
+
       "patternProperties": {
-         "^[a-zA-z][a-zA-Z0-9_]+$": {
-	   "oneOf": [
+        "^[a-zA-z][a-zA-Z0-9_]+$": {
+	  "oneOf": [
 	     { "type": "string" },
 	     { "type": "number" },
 	     { "type": "array", 
@@ -157,16 +150,17 @@
 		     { "type": "number" }
 		  ]
 	       }
-	    },
-	    { "type": "object",
-	    
-	      "patternProperties": {
-	         "^[a-zA-z][a-zA-Z0-9_]+$": { "$ref": "#/definitions/track" }
+	     },
+	     { "type": "object",
+	      "patternProperties": { 
+	        "^[a-zA-z][a-zA-Z0-9_]+$": { "$ref": "#/definitions/track_configuration" }
 	      }
 	    }
 	  ]
 	}
-      }
-    }    
+      },
+
+      "additionalProperties": true
+    }
   }
 }

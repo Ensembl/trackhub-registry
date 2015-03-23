@@ -29,15 +29,7 @@ SKIP: {
   skip "No Internet connection: cannot test TrackHub validation on public Track Hubs", 9
     unless Registry::Utils::internet_connection_ok();
 
-  # my $gcschema = 
-  #   Registry::GenomeAssembly::Schema->connect("DBI:Oracle:host=ora-vm5-003.ebi.ac.uk;sid=ETAPRO;port=1571", 
-  # 					      'gc_reader', 
-  # 					      'reader', 
-  # 					      { 'RaiseError' => 1, 'PrintError' => 0 });
-  # my $gc_assembly_set = $gcschema->resultset('GCAssemblySet');
-
-  # my $translator = Registry::TrackHub::Translator->new(version => $version,
-  # 						       gc_assembly_set => $gc_assembly_set);
+  # my $translator = Registry::TrackHub::Translator->new(version => $version);
   # isa_ok($translator, 'Registry::TrackHub::Translator');
 
   # my ($URL, $json_docs);
@@ -51,7 +43,8 @@ SKIP: {
   # my ($fh, $filename) = tempfile( DIR => '.', SUFFIX => '.json');
   # print $fh $json_docs->[0];
   
-  ok($validator->validate("blueprint.json"), "Validate correct document");
+  ok($validator->validate("$Bin/blueprint.json"), "Validate correct document");
+  
 }
 
 done_testing();

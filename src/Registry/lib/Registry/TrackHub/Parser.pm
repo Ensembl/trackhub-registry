@@ -98,9 +98,15 @@ sub _parse_file_content {
         $tracks->{$id}{$key} = $type;
         
         if ($type eq 'bigbed') {
+	  # this does not work for views,
+	  # standard fields remains undefined
           $tracks->{$id}{'standard_fields'}   = shift @values;
-          $tracks->{$id}{'additional_fields'} = $values[0] eq '+' ? 1 : 0;
-          $tracks->{$id}{'configurable'}      = $values[0] eq '.' ? 1 : 0; # Don't really care for now
+	  if (defined $tracks->{$id}{'standard_fields'}) {
+	    $tracks->{$id}{'additional_fields'} = $values[0] eq '+' ? 1 : 0;
+	    $tracks->{$id}{'configurable'}      = $values[0] eq '.' ? 1 : 0; # Don't really care for now
+	  } else {
+	    delete $tracks->{$id}{'standard_fields'};
+	  }
         } elsif ($type eq 'bigwig') {
           $tracks->{$id}{'signal_range'} = \@values;
         }

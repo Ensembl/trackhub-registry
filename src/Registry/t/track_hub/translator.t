@@ -51,13 +51,13 @@ SKIP: {
 
   my $doc = from_json($json_docs->[0]);
 
-  # use Data::Dumper;
-  # open my $FH, ">$Bin/blueprint.dat" or die "Cannot open blueprint.dat: $!\n";
-  # print $FH Dumper $doc;
-  # close $FH;
-  # open $FH, ">$Bin/blueprint.json" or die "Cannot open blueprint.json: $!\n";
-  # print $FH $json_docs->[0];
-  # close $FH;
+  use Data::Dumper;
+  open my $FH, ">$Bin/blueprint.dat" or die "Cannot open blueprint.dat: $!\n";
+  print $FH Dumper $doc;
+  close $FH;
+  open $FH, ">$Bin/blueprint.json" or die "Cannot open blueprint.json: $!\n";
+  print $FH $json_docs->[0];
+  close $FH;
 
   is($doc->{version}, '1.0', 'Correct JSON version');
   is($doc->{hub}, 'Blueprint Epigenomics Data Hub', 'Correct Hub');
@@ -95,6 +95,21 @@ SKIP: {
   note "Checking display and configuration options";
   is(scalar keys $doc->{configuration}, 1, "One root object");
   is(scalar keys $doc->{configuration}{bp}{members}, 2, "Two views under container object");
+  my $view = $doc->{configuration}{bp}{members}{region};
+  ok($view, "View exists");
+  is($view->{shortLabel}, 'Blueprint Region', "Correct view label");
+  my $member = $view->{members}{'bpDNAMethC003K951BS-Seqhypo_methylationCNAG'};
+  ok($member, "View member exists");
+  is($member->{type}, "bigbed", "View member type");
+  is($member->{color}, "252,180,100", "View member color");
+  is($member->{subGroups}{analysys_group}, "CNAG", "View member subgroup");
+  $view = $doc->{configuration}{bp}{members}{signal};
+  is($view->{visibility}, 'pack', "Correct view visibility");
+  my $member = $view->{members}{'bpDNAMethC002CTA1bsBS-SeqCPG_methylation_sdCNAG'};
+  ok($member, "View member exists");
+  is($member->{type}, "bigwig", "View member type");
+  is($member->{bigDataUrl}, 'http://ftp.ebi.ac.uk/pub/databases/blueprint/data/homo_sapiens/Venous_blood/C002CT/cytotoxic_CD56-dim_natural_killer_cell/Bisulfite-Seq/CNAG/C002CTA1bs.CPG_methylation_sd.bs_call.20140106.bw', "View member bigDataUrl");
+  is($member->{shortLabel}, 'C002CT.BS-Seq.StDev.NK', "View member short label");
   
   #
   # Test other public Track Data Hubs

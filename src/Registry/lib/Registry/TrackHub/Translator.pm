@@ -8,6 +8,7 @@ use strict;
 use warnings;
 
 use JSON;
+use Registry::GenomeAssembly::Schema;
 use Registry::TrackHub;
 use Registry::TrackHub::Tree;
 use Registry::TrackHub::Parser;
@@ -30,9 +31,18 @@ sub new {
   my ($class, %args) = @_;
   
   defined $args{version} or die "Undefined version";
-  defined $args{gc_assembly_set} or die "Undefined Genome Collection Assembly ResultSet";
 
   my $self = \%args;
+
+  # TODO
+  # Load the GCAssemblySet from the catalyst model which reads
+  # the connection parameters from the configuration file
+  my $gcschema = 
+    Registry::GenomeAssembly::Schema->connect("DBI:Oracle:host=ora-vm5-003.ebi.ac.uk;sid=ETAPRO;port=1571", 
+					      'gc_reader', 
+					      'reader', 
+					      { 'RaiseError' => 1, 'PrintError' => 0 });
+  $self->{gc_assembly_set} = $gcschema->resultset('GCAssemblySet');
   bless $self, $class;
 
   return $self;

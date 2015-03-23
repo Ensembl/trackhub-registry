@@ -20,26 +20,15 @@ use_ok 'Registry::TrackHub::Translator';
 
 my $version = '1.0';
 
-throws_ok { Registry::TrackHub::Translator->new() } qr/Undefined/, "Throws if required args are both undefined";
-throws_ok { Registry::TrackHub::Translator->new(version => $version) } qr/Undefined/, "Throws if one required args is undefined";
+throws_ok { Registry::TrackHub::Translator->new() } qr/Undefined/, "Throws if required args are undefined";
 
-my $gcschema = 
-  Registry::GenomeAssembly::Schema->connect("DBI:Oracle:host=ora-vm5-003.ebi.ac.uk;sid=ETAPRO;port=1571", 
-					    'gc_reader', 
-					    'reader', 
-					    { 'RaiseError' => 1, 'PrintError' => 0 });
-my $gc_assembly_set = $gcschema->resultset('GCAssemblySet');
-
-my $translator = Registry::TrackHub::Translator->new(version => $version, 
-						     gc_assembly_set => $gc_assembly_set);
+my $translator = Registry::TrackHub::Translator->new(version => $version);
 isa_ok($translator, 'Registry::TrackHub::Translator');
 is($translator->version, $version, 'JSON version');
 
 throws_ok { $translator->translate } qr/Undefined/, "Throws if translate have missing arguments";
-throws_ok { Registry::TrackHub::Translator->new(version => '0.1', 
-						gc_assembly_set => $gc_assembly_set)->translate } 
+throws_ok { Registry::TrackHub::Translator->new(version => '0.1')->translate } 
   qr/not supported/, "Throws when translate to unsupported version";
-
 
 SKIP: {
   skip "No Internet connection: cannot test TrackHub translation on public Track Hubs", 9
@@ -61,6 +50,15 @@ SKIP: {
   is(scalar @{$json_docs}, 1, "Correct number of translations");
 
   my $doc = from_json($json_docs->[0]);
+
+  # use Data::Dumper;
+  # open my $FH, ">$Bin/blueprint.dat" or die "Cannot open blueprint.dat: $!\n";
+  # print $FH Dumper $doc;
+  # close $FH;
+  # open $FH, ">$Bin/blueprint.json" or die "Cannot open blueprint.json: $!\n";
+  # print $FH $json_docs->[0];
+  # close $FH;
+
   is($doc->{version}, '1.0', 'Correct JSON version');
   is($doc->{hub}, 'Blueprint Epigenomics Data Hub', 'Correct Hub');
   is_deeply($doc->{species}, { tax_id => 9606, 
@@ -105,8 +103,20 @@ SKIP: {
   $URL = "http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants";
   $json_docs = $translator->translate($URL);
   is(scalar @{$json_docs}, 3, "Number of translated track dbs");
+
+  my $i = 1;
   for my $doc (@{$json_docs}) {
+    # open $FH, ">$Bin/plant$i.json" or die "Cannot open plant$i.json: $!\n";
+    # print $FH $doc;
+    # close $FH;
+
     $doc = from_json($doc);
+
+    # open my $FH, ">$Bin/plant$i.dat" or die "Cannot open plant$i.dat: $!\n";
+    # print $FH Dumper $doc;
+    # close $FH;
+    # $i++;
+
     is($doc->{version}, '1.0', 'Correct JSON version');
     is($doc->{hub}, 'CSHL Biology of Genomes meeting 2013 demonstration assembly hub', 'Correct Hub');
     ok($doc->{species}{tax_id} == 3702 || $doc->{species}{tax_id} == 3988 || $doc->{species}{tax_id} == 3711, 
@@ -226,6 +236,13 @@ SKIP: {
   $json_docs = $translator->translate($URL, 'mm10');
   is(scalar @{$json_docs}, 1, "Number of translated track dbs");
   $doc = from_json($json_docs->[0]);
+
+  # open $FH, ">$Bin/meth.dat" or die "Cannot open meth.dat: $!\n";
+  # print $FH Dumper $doc;
+  # close $FH;
+  # open $FH, ">$Bin/meth.json" or die "Cannot open meth.json: $!\n";
+  # print $FH $json_docs->[0];
+  # close $FH;
 
   is_deeply($doc->{species}, { tax_id => 10090, 
 			       scientific_name => 'Mus musculus', 

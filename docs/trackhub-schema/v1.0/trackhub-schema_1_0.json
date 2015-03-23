@@ -90,7 +90,7 @@
 
       "description": "Contains metadata for a collection of tracks defined in the TrackHub. Each track metadata has an id attribute which is used as a property key to fetch the corresponding configuration in the configuration object.",
 
-      "items": { "$ref": "#/definitions/track_data" },
+      "items": { "$ref": "#/definitions/track_metadata" },
 
       "minItems": 1,
 	  
@@ -102,7 +102,7 @@
 
       "title": "Track configuration",
 
-      "description": "Contains display and configuration properties for the tracks specified in the data object.",
+      "description": "Contains display and configuration properties for the tracks in the data hub.",
 
       "patternProperties": {
         "^[a-zA-z][a-zA-Z0-9_]+$": { "$ref": "#/definitions/track_configuration" }
@@ -118,17 +118,13 @@
 
   "definitions": {
 
-    "track_data": {
+    "track_metadata": {
       "type": "object",
 
       "title": "Track metadata definition.",
 
       "patternProperties": {
-        "^[a-zA-z][a-zA-Z0-9_]+$": {
-	  "oneOf": [
-	    { "type": "string" }
-	  ]
-	}
+        "^[a-zA-z][a-zA-Z0-9_]+$": { "type": "string" }
       },
 
       "additionalProperties": false
@@ -141,6 +137,18 @@
       "type": "object",
 
       "description": "Contains display and configuration properties for all track types.",
+
+      "properties": {
+        "members": { 
+	  "type": "object",
+	  
+	  "patternProperties": { 
+	     "^[a-zA-z][a-zA-Z0-9_]*?$": { "$ref": "#/definitions/track_configuration" }
+	   }
+	}
+      },
+
+      "additionalProperties": true,
 
       "patternProperties": {
         "^[a-zA-z][a-zA-Z0-9_]*?$": {
@@ -155,12 +163,7 @@
 		 ]
 	       }
 	     },
-	     { "type": "object" },
-	     { "type": "object",
-	       "patternProperties": { 
-	         "^[a-zA-z][a-zA-Z0-9_]*?$": { "$ref": "#/definitions/track_configuration" }
-	       }
-	     }
+	     { "type": "object" }
 	   ]
 	}
       },

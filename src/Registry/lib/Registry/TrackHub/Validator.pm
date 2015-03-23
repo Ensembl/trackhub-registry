@@ -44,8 +44,6 @@ sub validate {
   # e.g. the schema is badly formatted
   die "Cannot run command $cmd\nReturn code is $rc. Program output is:\n$output" if $rc;
 
-  print $output;
-
   # insert here whatever condition on the output 
   # is interpreted to be a failure
   #
@@ -53,7 +51,15 @@ sub validate {
   # which indeed is interesting only if the doc does not validate
   # the caller decides what to do, stop or continue
   #
-  die "$output" if $output; 
+  # At the moment, the validation script simply prints the errors,
+  # if there's any.
+  if ($output) {
+    # the validation script prepend the JSON instance
+    # to the error output.
+    # remove
+    $output =~ s/^.+?(?=Failed.+?)//s;
+    die $output;
+  }
 
   # success
   return 1;

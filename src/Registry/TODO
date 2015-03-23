@@ -11,10 +11,13 @@
   ----> ERROR: the existing parser cannot parse metadata as key=value
                pairs containing quotes with spaces
   - validation according to given schema version
-  - store original trackDb file as attribute?
+  ? store original trackDb file as attribute 
     should not be necessary if the configurations are represented as as tree, 
-    should be easy to translate back 
-    maybe store the source URL instead?
+    should be easy to translate back. maybe store the source URL instead?
+
+- Use GenomeAssemblyDB model in the trackhub translator
+
+- Replace trackhub parsing et al. code with ensembl-io routines
 
 - Data::SearchEngine::ElasticSearch
   - search method options to comply with ES API

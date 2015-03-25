@@ -354,7 +354,38 @@ SKIP: {
   # translation of an assembly trackdb file of a remote public
   # trackhub
   #
-  my $URL = "http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants";
+  # should fail if not given a url
+  $request = POST('/api/trackhub/create',
+		  'Content-type' => 'application/json');
+  $request->headers->header(user       => 'trackhub1');
+  $request->headers->header(auth_token => $auth_token);
+  ok($response = request($request), 'POST request to /api/trackhub/create');
+  ok(!$response->is_success, 'Doc create POST request unsuccessful with no URL');
+  is($response->code, 400, 'POST request status code');
+  #
+  # should fail if URL is not correct
+  my $URL = "http://";
+  $request = POST('/api/trackhub/create',
+		  'Content-type' => 'application/json',
+		  'Content'      => to_json({ url => $URL }));
+  $request->headers->header(user       => 'trackhub1');
+  $request->headers->header(auth_token => $auth_token);
+  ok($response = request($request), 'POST request to /api/trackhub/create');
+  ok(!$response->is_success, 'Doc create POST request unsuccessful with wrong URL');
+  is($response->code, 400, 'POST request status code');
+  
+  # test with some public hub
+  $URL = "http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants";
+  #
+  # should fail with the wrong assembly
+  $request = POST('/api/trackhub/create',
+		  'Content-type' => 'application/json',
+		  'Content'      => to_json({ url => $URL, assembly => 'dummy' }));
+  $request->headers->header(user       => 'trackhub1');
+  $request->headers->header(auth_token => $auth_token);
+  ok($response = request($request), 'POST request to /api/trackhub/create');
+  ok(!$response->is_success, 'Doc create POST request unsuccessful with not URL');
+  is($response->code, 400, 'POST request status code');  
   #
   # request creation with no assembly argument: should get 3 docs
   $request = POST('/api/trackhub/create',
@@ -376,6 +407,8 @@ SKIP: {
     ok($content->{$id}{configuration}{repeatMasker_}, "Composite configuration exists");
     is($content->{$id}{configuration}{repeatMasker_}{shortLabel}, 'RepeatMasker', 'Composite short label');
   }
+  #
+  # TODO: test with other public hubs
 }
 
 done_testing();

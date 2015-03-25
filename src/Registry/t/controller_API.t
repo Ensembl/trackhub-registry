@@ -368,7 +368,14 @@ SKIP: {
   $content = from_json($response->content);
   ok($content, "Docs created");
   is(scalar keys %{$content}, 3, "Correct number of docs created");
-  
+  # check content of returned docs
+  foreach my $id (keys %{$content}) {
+    like($content->{$id}{hub}, qr/CSHL Biology of Genomes/, "Correct trackdb hub");
+    # first data element is the same for all trackdbs
+    is($content->{$id}{data}[0]{id}, 'repeatMasker_', "Correct trackdb data element");
+    ok($content->{$id}{configuration}{repeatMasker_}, "Composite configuration exists");
+    is($content->{$id}{configuration}{repeatMasker_}{shortLabel}, 'RepeatMasker', 'Composite short label');
+  }
 }
 
 done_testing();

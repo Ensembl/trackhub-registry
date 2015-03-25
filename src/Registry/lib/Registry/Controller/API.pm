@@ -4,6 +4,7 @@ use namespace::autoclean;
 
 use List::Util 'max';
 use String::Random;
+use Registry::TrackHub::Translator;
 
 BEGIN { extends 'Catalyst::Controller::REST'; }
 use Params::Validate qw(SCALAR);
@@ -141,7 +142,7 @@ sub trackhub_list_GET {
 
 Create new trackhub document
 
-Action for /api/trackhub/create (PUT)
+Action for /api/trackhub/create (PUT,POST)
 
 =cut
 
@@ -165,7 +166,7 @@ sub trackhub_create_PUT {
   return $self->status_bad_request($c, message => "You must provide a doc to create!")
     unless defined $new_doc_data;
 
-  my $id = $c->stash()->{'id'};
+  my $id = $c->stash()->{id};
   if ($id) {
     # set the owner of the doc as the current user
     $new_doc_data->{owner} = $c->stash->{user};
@@ -186,6 +187,56 @@ sub trackhub_create_PUT {
   $self->status_created( $c,
 			 location => $c->uri_for( '/api/trackhub/' . $id )->as_string,
 			 entity   => $c->model('Search')->get_trackhub_by_id($id));
+}
+
+sub trackhub_create_POST {
+  my ($self, $c) = @_;
+  my $url = $c->req->data->{url};
+  my $assembly = $c->req->data->{assembly};
+
+  return $self->status_bad_request($c, message => "You must specify the remote trackhub URL")
+    unless defined $url;
+
+  my $id = $c->stash()->{id};
+  my $config = Registry->config()->{'Model::Search'};
+  my ($locations, $entities);
+
+  if ($id) {
+    # TODO: set version from configuration parameter
+    my $translator = Registry::TrackHub::Translator->new(version => '1.0');
+
+    # assembly can be left undefined by the user
+    # in this case, we get a list of translations of all different 
+    # assembly trackdb files in the hub
+    my $trackdbs_docs = $translator->translate($url, $assembly);
+
+    foreach my $doc (@{$trackdbs_docs}) {
+      # set the owner of the doc as the current user
+      $doc->{owner} = $c->stash->{user};
+      
+      # TODO: validate the doc, and flag it accordingly
+      
+      $c->model('Search')->index(index   => $config->{index},
+				 type    => $config->{type}{trackhub},
+				 id      => $id,
+				 body    => $doc);
+
+      push @{$locations}, $c->uri_for( '/api/trackhub/' . $id )->as_string;
+      push @{$entities}, $c->model('Search')->get_trackhub_by_id($id);
+      $id++;
+    }
+
+    # refresh the index
+    $c->model('Search')->indices->refresh(index => $config->{index});
+
+  } else {
+    $c->detach('/api/error', [ "Couldn't determine doc ID" ]);
+  }
+
+  
+  $self->status_created( $c,
+			 location => scalar @{$locations}>1?$locations:$locations->[0],
+			 entity   => scalar @{$entities}>1?$entities:$entities->[0]);
 }
 
 =head2 trackhub 

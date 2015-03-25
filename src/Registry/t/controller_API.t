@@ -349,7 +349,26 @@ SKIP: {
   $content = from_json($response->content);
   is($content->{owner}, 'trackhub1', 'Correct trackhub owner');
 
-
+  #
+  # /api/trackhub/create (POST): create new document as a direct
+  # translation of an assembly trackdb file of a remote public
+  # trackhub
+  #
+  my $URL = "http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants";
+  #
+  # request creation with no assembly argument: should get 3 docs
+  $request = POST('/api/trackhub/create',
+		  'Content-type' => 'application/json',
+		  'Content'      => to_json({ url => $URL }));
+  $request->headers->header(user       => 'trackhub1');
+  $request->headers->header(auth_token => $auth_token);
+  ok($response = request($request), 'POST request to /api/trackhub/create');
+  ok($response->is_success, 'Request successful 2xx');
+  is($response->content_type, 'application/json', 'JSON content type');
+  $content = from_json($response->content);
+  ok($content, "Docs created");
+  is(scalar keys %{$content}, 3, "Correct number of docs created");
+  
 }
 
 done_testing();

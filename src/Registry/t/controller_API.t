@@ -307,7 +307,9 @@ SKIP: {
   is($response->content_type, 'application/json', 'JSON content type');
   like($response->header('location'), qr/\/api\/trackhub\/2/, 'Correct URI for created doc');
   #
-  # POST request should fail
+  # POST request should fail: the endpoint is meant to translate
+  # the assembly trackdb files of a remote public trackhub.
+  # Must specify URL/assembly
   $request = POST('/api/trackhub/create',
   		  'Content-type' => 'application/json',
   		  'Content'      => &Registry::Utils::slurp_file($docs->[2]{file}));
@@ -315,7 +317,7 @@ SKIP: {
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'POST request to /api/trackhub/create');
   ok(!$response->is_success, 'Doc create POST request unsuccessful');
-  is($response->code, 405, 'Method not allowed');
+  is($response->code, 400, 'POST request status code');
   #
   # should now have two documents which we can access via the /api/trackhub endpoint
   $request = GET('/api/trackhub');

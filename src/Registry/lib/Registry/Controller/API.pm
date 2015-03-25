@@ -2,6 +2,7 @@ package Registry::Controller::API;
 use Moose;
 use namespace::autoclean;
 
+use JSON;
 use List::Util 'max';
 use String::Random;
 use Registry::TrackHub::Translator;
@@ -99,6 +100,7 @@ sub list_endpoints :Path('/api') Args(0) {
     (
      ['/api/trackhub', 'GET', 'Return the list of available docs (id => URI)'],
      ['/api/trackhub/create', 'PUT', 'Create new trackhub document'],
+     ['/api/trackhub/create', 'POST', 'Create new trackhub document by converting assembly trackdbs from a remote public hub'],
      ['/api/trackhub/:id', 'GET', 'Return content for a document with the specified ID'],
      ['/api/trackhub/:id', 'POST', 'Update content for a document with the specified ID'],
      ['/api/trackhub/:id', 'DELETE', 'Delete document with the specified ID']
@@ -199,44 +201,48 @@ sub trackhub_create_POST {
 
   my $id = $c->stash()->{id};
   my $config = Registry->config()->{'Model::Search'};
-  my ($locations, $entities);
+  my ($location, $entity);
 
   if ($id) {
+    try {
     # TODO: set version from configuration parameter
-    my $translator = Registry::TrackHub::Translator->new(version => '1.0');
+      my $translator = Registry::TrackHub::Translator->new(version => '1.0');
 
-    # assembly can be left undefined by the user
-    # in this case, we get a list of translations of all different 
-    # assembly trackdb files in the hub
-    my $trackdbs_docs = $translator->translate($url, $assembly);
+      # assembly can be left undefined by the user
+      # in this case, we get a list of translations of all different 
+      # assembly trackdb files in the hub
+      my $trackdbs_docs = $translator->translate($url, $assembly);
 
-    foreach my $doc (@{$trackdbs_docs}) {
-      # set the owner of the doc as the current user
-      $doc->{owner} = $c->stash->{user};
+      foreach my $json_doc (@{$trackdbs_docs}) {
+	my $doc = from_json($json_doc);
+
+	# set the owner of the doc as the current user
+	$doc->{owner} = $c->stash->{user};
       
-      # TODO: validate the doc, and flag it accordingly
+	# TODO: validate the doc, and flag it accordingly
       
-      $c->model('Search')->index(index   => $config->{index},
-				 type    => $config->{type}{trackhub},
-				 id      => $id,
-				 body    => $doc);
+	$c->model('Search')->index(index   => $config->{index},
+				   type    => $config->{type}{trackhub},
+				   id      => $id,
+				   body    => $doc);
+	# refresh the index
+	$c->model('Search')->indices->refresh(index => $config->{index});
 
-      push @{$locations}, $c->uri_for( '/api/trackhub/' . $id )->as_string;
-      push @{$entities}, $c->model('Search')->get_trackhub_by_id($id);
-      $id++;
+	$location .= $c->uri_for( '/api/trackhub/' . $id )->as_string . ',';
+	$entity->{$id} = $c->model('Search')->get_trackhub_by_id($id);
+	$id++;
+      }
+    } catch {
+      return $self->status_bad_request($c, message => $_);
     }
-
-    # refresh the index
-    $c->model('Search')->indices->refresh(index => $config->{index});
-
   } else {
     $c->detach('/api/error', [ "Couldn't determine doc ID" ]);
   }
 
-  
+  $location =~ s/,$//;
   $self->status_created( $c,
-			 location => scalar @{$locations}>1?$locations:$locations->[0],
-			 entity   => scalar @{$entities}>1?$entities:$entities->[0]);
+			 location => $location,
+			 entity   => $entity);
 }
 
 =head2 trackhub 

@@ -155,7 +155,7 @@ sub trackhub_create :Path('/api/trackhub/create') Args(0) ActionClass('REST') {
   # get the version, if specified
   # otherwise set to default (from config parameter)
   my $version = $c->request->param('version') || Registry->config()->{TrackHub}{schema}{default};
-  return $self->status_bad_request($c, message => "Invalid version specified, pattern is /^v\d+\.\d\$");
+  $c->go('ReturnError', 'custom', ["Invalid version specified, pattern is /^v\\d+\.\\d\$"])
     unless $version =~ /^v\d+\.\d$/;
 
   # get the list of existing document IDs
@@ -179,6 +179,8 @@ sub trackhub_create_PUT {
   if ($id) {
     # set the owner of the doc as the current user
     $new_doc_data->{owner} = $c->stash->{user};
+
+    # TODO: validate the doc, and flag it accordingly
 
     my $config = Registry->config()->{'Model::Search'};
     $c->model('Search')->index(index   => $config->{index},
@@ -243,8 +245,7 @@ sub trackhub_create_POST {
 	$id++;
       }
     } catch {
-      # TODO: roll back and delete any doc which has been indexed
-      #       previous to the error
+      # TODO: roll back and delete any doc which has been indexed previous to the error
       $c->go('ReturnError', 'custom', [qq{$_}]);
     }
   } else {

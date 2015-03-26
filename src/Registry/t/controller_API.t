@@ -390,13 +390,24 @@ SKIP: {
   # test with some public hubs
   $URL = "http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants";
   #
-  # should fail if unsupported schema version is specified
+  # should fail if wrong schema version is specified
   $request = POST('/api/trackhub/create?version=dummy',
 		  'Content-type' => 'application/json',
 		  'Content'      => to_json({ url => $URL }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'POST request to /api/trackhub/create (wrong version)');
+  ok($response = request($request), 'POST request to /api/trackhub/create?version=dummy (wrong version)');
+  is($response->code, 400, 'Request unsuccessful');  
+  $content = from_json($response->content);
+  like($content->{error}, qr/invalid version/i, 'Correct error response');
+  #
+  # should fail if unsupported schema version is specified
+  $request = POST('/api/trackhub/create?version=v5.0',
+		  'Content-type' => 'application/json',
+		  'Content'      => to_json({ url => $URL }));
+  $request->headers->header(user       => 'trackhub1');
+  $request->headers->header(auth_token => $auth_token);
+  ok($response = request($request), 'POST request to /api/trackhub/create?version=v5.0 (unsupported version)');
   is($response->code, 400, 'Request unsuccessful');  
   $content = from_json($response->content);
   like($content->{error}, qr/not supported/i, 'Correct error response');
@@ -412,6 +423,22 @@ SKIP: {
   $content = from_json($response->content);
   like($content->{error}, qr/no genome data/i, 'Correct error response');
   #
+  # request creation with assembly argument and schema version parameter: should get 1 docs
+  $request = POST('/api/trackhub/create?version=v1.0',
+		  'Content-type' => 'application/json',
+		  'Content'      => to_json({ url => $URL, assembly => 'ricCom1' }));
+  $request->headers->header(user       => 'trackhub1');
+  $request->headers->header(auth_token => $auth_token);
+  ok($response = request($request), "POST request to /api/trackhub/create?version=v1.0 (assembly 'ricCom1')");
+  ok($response->is_success, 'Request successful 2xx');
+  is($response->content_type, 'application/json', 'JSON content type');
+  $content = from_json($response->content);
+  is(scalar keys %{$content}, 1, "One trackdb doc created");
+  my $id = (keys %{$content})[0];
+  is($content->{$id}{version}, 'v1.0', 'Correct version');
+  is($content->{$id}{species}{tax_id}, 3988, 'Correct species');
+  is($content->{$id}{assembly}{synonyms}, 'ricCom1', 'Correct assembly synonym');
+  #
   # request creation with no assembly argument: should get 3 docs
   $request = POST('/api/trackhub/create',
 		  'Content-type' => 'application/json',
@@ -423,7 +450,7 @@ SKIP: {
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
   ok($content, "Docs created");
-  is(scalar keys %{$content}, 3, "Correct number of docs created");
+  is(scalar keys %{$content}, 3, "Correct number of trackdb docs created");
   # check content of returned docs
   foreach my $id (keys %{$content}) {
     like($content->{$id}{hub}, qr/CSHL Biology of Genomes/, "Correct trackdb hub");

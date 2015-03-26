@@ -5,6 +5,7 @@ use namespace::autoclean;
 use JSON;
 use List::Util 'max';
 use String::Random;
+use Try::Tiny;
 use Registry::TrackHub::Translator;
 
 BEGIN { extends 'Catalyst::Controller::REST'; }
@@ -193,6 +194,10 @@ sub trackhub_create_PUT {
 
 sub trackhub_create_POST {
   my ($self, $c) = @_;
+  # if the client didn't supply any data, it didn't send a properly formed request
+  return $self->status_bad_request($c, message => "You must provide data with the POST request")
+    unless defined $c->req->data;
+
   my $url = $c->req->data->{url};
   my $assembly = $c->req->data->{assembly};
 
@@ -205,7 +210,7 @@ sub trackhub_create_POST {
 
   if ($id) {
     try {
-    # TODO: set version from configuration parameter
+      # TODO: set version from configuration parameter
       my $translator = Registry::TrackHub::Translator->new(version => '1.0');
 
       # assembly can be left undefined by the user
@@ -233,10 +238,12 @@ sub trackhub_create_POST {
 	$id++;
       }
     } catch {
-      return $self->status_bad_request($c, message => $_);
+      # TODO: roll back and delete any doc which has been indexed
+      #       previous to the error
+      $c->go('ReturnError', 'custom', [qq{$_}]);
     }
   } else {
-    $c->detach('/api/error', [ "Couldn't determine doc ID" ]);
+    $c->go('ReturnError', 'custom', ["Couldn't determine doc ID(s)"]);
   }
 
   $location =~ s/,$//;

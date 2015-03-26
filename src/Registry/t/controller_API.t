@@ -387,8 +387,19 @@ SKIP: {
   $content = from_json($response->content);
   like($content->{error}, qr/check the source/i, 'Correct error response');
   
-  # test with some public hub
+  # test with some public hubs
   $URL = "http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants";
+  #
+  # should fail if unsupported schema version is specified
+  $request = POST('/api/trackhub/create?version=dummy',
+		  'Content-type' => 'application/json',
+		  'Content'      => to_json({ url => $URL }));
+  $request->headers->header(user       => 'trackhub1');
+  $request->headers->header(auth_token => $auth_token);
+  ok($response = request($request), 'POST request to /api/trackhub/create (wrong version)');
+  is($response->code, 400, 'Request unsuccessful');  
+  $content = from_json($response->content);
+  like($content->{error}, qr/not supported/i, 'Correct error response');
   #
   # should fail with the wrong assembly
   $request = POST('/api/trackhub/create',
@@ -421,8 +432,8 @@ SKIP: {
     ok($content->{$id}{configuration}{repeatMasker_}, "Composite configuration exists");
     is($content->{$id}{configuration}{repeatMasker_}{shortLabel}, 'RepeatMasker', 'Composite short label');
   }
-  #
-  # TODO: test with other public hubs
+
+  # TODO: test with other public hubs?
 }
 
 done_testing();

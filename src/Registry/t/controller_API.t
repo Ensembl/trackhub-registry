@@ -354,14 +354,26 @@ SKIP: {
   # translation of an assembly trackdb file of a remote public
   # trackhub
   #
-  # should fail if not given a url
+  # should fail if no data is provided
   $request = POST('/api/trackhub/create',
 		  'Content-type' => 'application/json');
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'POST request to /api/trackhub/create');
-  ok(!$response->is_success, 'Doc create POST request unsuccessful with no URL');
-  is($response->code, 400, 'POST request status code');
+  ok($response = request($request), 'POST request to /api/trackhub/create (no data)');
+  is($response->code, 400, 'Request unsuccessful 400');
+  $content = from_json($response->content);
+  like($content->{error}, qr/You must provide data/, 'Correct error response');
+  #
+  # should fail if no URL is given
+  $request = POST('/api/trackhub/create',
+		  'Content-type' => 'application/json',
+		  'Content'      => to_json({ 'dummy' => 1 }));
+  $request->headers->header(user       => 'trackhub1');
+  $request->headers->header(auth_token => $auth_token);
+  ok($response = request($request), 'POST request to /api/trackhub/create (no URL)');
+  is($response->code, 400, 'Request unsuccessful 400');
+  $content = from_json($response->content);
+  like($content->{error}, qr/You must specify.*?URL/i, 'Correct error response');
   #
   # should fail if URL is not correct
   my $URL = "http://";
@@ -370,9 +382,10 @@ SKIP: {
 		  'Content'      => to_json({ url => $URL }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'POST request to /api/trackhub/create');
-  ok(!$response->is_success, 'Doc create POST request unsuccessful with wrong URL');
-  is($response->code, 400, 'POST request status code');
+  ok($response = request($request), 'POST request to /api/trackhub/create (incorrect URL)');
+  is($response->code, 400, 'Request unsuccessful 400');
+  $content = from_json($response->content);
+  like($content->{error}, qr/check the source/i, 'Correct error response');
   
   # test with some public hub
   $URL = "http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants";
@@ -383,9 +396,10 @@ SKIP: {
 		  'Content'      => to_json({ url => $URL, assembly => 'dummy' }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'POST request to /api/trackhub/create');
-  ok(!$response->is_success, 'Doc create POST request unsuccessful with not URL');
-  is($response->code, 400, 'POST request status code');  
+  ok($response = request($request), 'POST request to /api/trackhub/create (wrong assembly)');
+  is($response->code, 400, 'Request unsuccessful');  
+  $content = from_json($response->content);
+  like($content->{error}, qr/no genome data/i, 'Correct error response');
   #
   # request creation with no assembly argument: should get 3 docs
   $request = POST('/api/trackhub/create',

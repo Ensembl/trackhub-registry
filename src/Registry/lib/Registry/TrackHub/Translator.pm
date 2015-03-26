@@ -34,9 +34,8 @@ sub new {
 
   my $self = \%args;
 
-  # TODO
-  # Load the GCAssemblySet from the catalyst model which reads
-  # the connection parameters from the configuration file
+  # TODO: Load the GCAssemblySet from the catalyst model which reads
+  #       the connection parameters from the configuration file
   my $gcschema = 
     Registry::GenomeAssembly::Schema->connect("DBI:Oracle:host=ora-vm5-003.ebi.ac.uk;sid=ETAPRO;port=1571", 
 					      'gc_reader', 
@@ -48,10 +47,6 @@ sub new {
   return $self;
 }
 
-#
-# TODO
-# validate JSON docs, use Registry->config()->{TrackHub}{json}{schema};
-#
 sub translate {
   my ($self, $url, $assembly) = @_;
 
@@ -60,7 +55,7 @@ sub translate {
      '1.0' => sub { $self->to_json_1_0(@_) }
     }->{$self->version};
 
-  die sprintf "Version %d not supported", $self->version
+  die sprintf "Version %s not supported", $self->version
     unless $dispatch;
 
   my $trackhub = Registry::TrackHub->new(url => $url);

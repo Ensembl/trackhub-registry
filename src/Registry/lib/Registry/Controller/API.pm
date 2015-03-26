@@ -152,12 +152,18 @@ Action for /api/trackhub/create (PUT,POST)
 sub trackhub_create :Path('/api/trackhub/create') Args(0) ActionClass('REST') {
   my ($self, $c) = @_;
 
+  # get the version, if specified
+  # otherwise set to default (from config parameter)
+  my $version = $c->request->param('version') || Registry->config()->{TrackHub}{schema}{default};
+  return $self->status_bad_request($c, message => "Invalid version specified, pattern is /^v\d+\.\d\$");
+    unless $version =~ /^v\d+\.\d$/;
+
   # get the list of existing document IDs
   my $docs = $c->model('Search')->search_trackhubs();
 
   # determine the ID of the doc to create
   my $current_max_id = max( map { $_->{_id} } @{$docs->{hits}{hits}} );
-  $c->stash( id =>  $current_max_id?$current_max_id + 1:1 ); 
+  $c->stash( id =>  $current_max_id?$current_max_id + 1:1, version => $version ); 
 }
 
 sub trackhub_create_PUT {
@@ -204,14 +210,13 @@ sub trackhub_create_POST {
   return $self->status_bad_request($c, message => "You must specify the remote trackhub URL")
     unless defined $url;
 
-  my $id = $c->stash()->{id};
+  my ($id, $version) = ($c->stash->{id}, $c->stash->{version});
   my $config = Registry->config()->{'Model::Search'};
   my ($location, $entity);
 
   if ($id) {
     try {
-      # TODO: set version from configuration parameter
-      my $translator = Registry::TrackHub::Translator->new(version => '1.0');
+      my $translator = Registry::TrackHub::Translator->new(version => $version);
 
       # assembly can be left undefined by the user
       # in this case, we get a list of translations of all different 
@@ -225,7 +230,7 @@ sub trackhub_create_POST {
 	$doc->{owner} = $c->stash->{user};
       
 	# TODO: validate the doc, and flag it accordingly
-      
+	
 	$c->model('Search')->index(index   => $config->{index},
 				   type    => $config->{type}{trackhub},
 				   id      => $id,

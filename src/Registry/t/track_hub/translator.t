@@ -18,7 +18,7 @@ use Registry::Utils;
 
 use_ok 'Registry::TrackHub::Translator';
 
-my $version = '1.0';
+my $version = 'v1.0';
 
 throws_ok { Registry::TrackHub::Translator->new() } qr/Undefined/, "Throws if required args are undefined";
 
@@ -49,17 +49,12 @@ SKIP: {
   $json_docs = $translator->translate($URL, 'hg19');
   is(scalar @{$json_docs}, 1, "Correct number of translations");
 
-  my $doc = from_json($json_docs->[0]);
-
-  use Data::Dumper;
-  open my $FH, ">$Bin/blueprint.dat" or die "Cannot open blueprint.dat: $!\n";
-  print $FH Dumper $doc;
-  close $FH;
-  open $FH, ">$Bin/blueprint.json" or die "Cannot open blueprint.json: $!\n";
+  open my $FH, ">$Bin/blueprint.json" or die "Cannot open blueprint.json: $!\n";
   print $FH $json_docs->[0];
   close $FH;
 
-  is($doc->{version}, '1.0', 'Correct JSON version');
+  my $doc = from_json($json_docs->[0]);
+  is($doc->{version}, 'v1.0', 'Correct JSON version');
   is($doc->{hub}, 'Blueprint Epigenomics Data Hub', 'Correct Hub');
   is_deeply($doc->{species}, { tax_id => 9606, 
   			       scientific_name => 'Homo sapiens', 
@@ -102,10 +97,10 @@ SKIP: {
   ok($member, "View member exists");
   is($member->{type}, "bigbed", "View member type");
   is($member->{color}, "252,180,100", "View member color");
-  is($member->{subGroups}{analysys_group}, "CNAG", "View member subgroup");
+  is($member->{subGroups}{analysis_group}, "CNAG", "View member subgroup");
   $view = $doc->{configuration}{bp}{members}{signal};
   is($view->{visibility}, 'pack', "Correct view visibility");
-  my $member = $view->{members}{'bpDNAMethC002CTA1bsBS-SeqCPG_methylation_sdCNAG'};
+  $member = $view->{members}{'bpDNAMethC002CTA1bsBS-SeqCPG_methylation_sdCNAG'};
   ok($member, "View member exists");
   is($member->{type}, "bigwig", "View member type");
   is($member->{bigDataUrl}, 'http://ftp.ebi.ac.uk/pub/databases/blueprint/data/homo_sapiens/Venous_blood/C002CT/cytotoxic_CD56-dim_natural_killer_cell/Bisulfite-Seq/CNAG/C002CTA1bs.CPG_methylation_sd.bs_call.20140106.bw', "View member bigDataUrl");
@@ -121,18 +116,12 @@ SKIP: {
 
   my $i = 1;
   for my $doc (@{$json_docs}) {
-    # open $FH, ">$Bin/plant$i.json" or die "Cannot open plant$i.json: $!\n";
-    # print $FH $doc;
-    # close $FH;
+    open $FH, ">$Bin/plant$i.json" or die "Cannot open plant$i.json: $!\n";
+    print $FH $doc;
+    close $FH;
 
     $doc = from_json($doc);
-
-    # open my $FH, ">$Bin/plant$i.dat" or die "Cannot open plant$i.dat: $!\n";
-    # print $FH Dumper $doc;
-    # close $FH;
-    # $i++;
-
-    is($doc->{version}, '1.0', 'Correct JSON version');
+    is($doc->{version}, 'v1.0', 'Correct JSON version');
     is($doc->{hub}, 'CSHL Biology of Genomes meeting 2013 demonstration assembly hub', 'Correct Hub');
     ok($doc->{species}{tax_id} == 3702 || $doc->{species}{tax_id} == 3988 || $doc->{species}{tax_id} == 3711, 
        "Expected species");
@@ -252,12 +241,9 @@ SKIP: {
   is(scalar @{$json_docs}, 1, "Number of translated track dbs");
   $doc = from_json($json_docs->[0]);
 
-  # open $FH, ">$Bin/meth.dat" or die "Cannot open meth.dat: $!\n";
-  # print $FH Dumper $doc;
-  # close $FH;
-  # open $FH, ">$Bin/meth.json" or die "Cannot open meth.json: $!\n";
-  # print $FH $json_docs->[0];
-  # close $FH;
+  open $FH, ">$Bin/meth.json" or die "Cannot open meth.json: $!\n";
+  print $FH $json_docs->[0];
+  close $FH;
 
   is_deeply($doc->{species}, { tax_id => 10090, 
 			       scientific_name => 'Mus musculus', 
@@ -277,7 +263,7 @@ SKIP: {
   my $conf = $doc->{configuration}{Liu_Mouse_2014};
   ok($conf, "Track configuration exists");
   is(scalar keys %{$conf->{members}}, 6, "Number of composite members");
-  my $member = $conf->{members}{AMRLiu_Mouse_2014};
+  $member = $conf->{members}{AMRLiu_Mouse_2014};
   ok($member, "Child configuration exists");
   is($member->{shortLabel}, 'AMR', "Member shortLabel");
   is(scalar keys %{$member->{members}}, 2, "Number of view members");

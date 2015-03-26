@@ -52,7 +52,7 @@ sub translate {
 
   my $dispatch = 
     {
-     '1.0' => sub { $self->to_json_1_0(@_) }
+     'v1.0' => sub { $self->to_json_1_0(@_) }
     }->{$self->version};
 
   die sprintf "Version %s not supported", $self->version
@@ -81,7 +81,7 @@ sub translate {
 
 ##################################################################################
 #             
-# Version 1.0 
+# Version v1.0 
 #             
 sub to_json_1_0 {
   my ($self, %args) = @_;
@@ -93,7 +93,7 @@ sub to_json_1_0 {
 
   my $doc = 
     {
-     version => '1.0',
+     version => 'v1.0',
      hub     => $trackhub->longLabel,
      # add the original trackDb file(s) content
      # trackdb => $genome->get_trackdb_content

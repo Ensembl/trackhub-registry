@@ -317,7 +317,7 @@ with the specified ID
 sub trackhub_GET {
   my ($self, $c, $doc_id) = @_;
 
-  my $trackhub = $c->stash()->{'trackhub'};
+  my $trackhub = $c->stash()->{trackhub};
   if ($trackhub) {
     if ($trackhub->{owner} eq $c->stash->{user}) {
       $self->status_ok($c, entity => $trackhub) if $trackhub;
@@ -343,10 +343,17 @@ sub trackhub_POST {
   # - the doc with that ID doesn't exist
   # - it doesn't belong to the user
   return $self->status_bad_request($c, message => "Cannot update: document (ID: $doc_id) does not exist")
-    unless $c->stash()->{'trackhub'};
+    unless $c->stash()->{trackhub};
 
   return $self->status_bad_request($c, message => sprintf "Cannot update: document (ID: %d) does not belong to user %s", $doc_id, $c->stash->{user})
-    unless $c->stash->{'trackhub'}{owner} eq $c->stash->{user};
+    unless $c->stash->{trackhub}{owner} eq $c->stash->{user};
+
+  # need the version from the original doc
+  # in order to validate the updated version
+  my $version = $c->stash->{trackhub}{version};
+  $c->go('ReturnError', 'custom', ["Couldn't get version from original trackdb document"])
+    unless $version;
+  $c->stash(version => 'v' . $version); # expected pattern is /^v\d+\.\d$/
 
   my $new_doc_data = $c->req->data;
 
@@ -358,22 +365,31 @@ sub trackhub_POST {
   # set the owner as the current user
   $new_doc_data->{owner} = $c->stash->{user};
 
-  #
-  # Updates in Elasticsearch
-  # http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/partial-updates.html
-  #
-  # Partial updates can be done through the update API, which accepts a partial document.
-  # However, this just gets merged with the existing document, so the only way to actually
-  # update a document is to retrieve it, change it, then reindex the whole document.
-  #
-  my $config = Registry->config()->{'Model::Search'};
-  $c->model('Search')->index(index   => $config->{index},
-			     type    => $config->{type}{trackhub},
-			     id      => $doc_id,
-			     body    => $new_doc_data);
+  # validate the updated version
+  try {
+    # validate the updated doc
+    # NOTE: the doc is not indexed if it does not validate (i.e. raises an exception)
+    $c->forward('_validate', to_json($new_doc_data));
+    
+    #
+    # Updates in Elasticsearch
+    # http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/partial-updates.html
+    #
+    # Partial updates can be done through the update API, which accepts a partial document.
+    # However, this just gets merged with the existing document, so the only way to actually
+    # update a document is to retrieve it, change it, then reindex the whole document.
+    #
+    my $config = Registry->config()->{'Model::Search'};
+    $c->model('Search')->index(index   => $config->{index},
+			       type    => $config->{type}{trackhub},
+			       id      => $doc_id,
+			       body    => $new_doc_data);
 
-  # refresh the index
-  $c->model('Search')->indices->refresh(index => $config->{index});
+    # refresh the index
+    $c->model('Search')->indices->refresh(index => $config->{index});
+  } catch {
+    $c->go('ReturnError', 'custom', [qq{$_}]);
+  }
 
   $self->status_ok( $c, entity => $c->model('Search')->get_trackhub_by_id($doc_id));
   

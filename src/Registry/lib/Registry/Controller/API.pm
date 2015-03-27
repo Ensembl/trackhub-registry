@@ -180,19 +180,24 @@ sub trackhub_create_PUT {
     # set the owner of the doc as the current user
     $new_doc_data->{owner} = $c->stash->{user};
 
-    # TODO: validate the doc, and flag it accordingly
+    try {
+      # validate the doc
+      # NOTE: the doc is not indexed if it does not validate (i.e. raises an exception)
+      $c->forward('_validate', $new_doc_data);
     
-    my $config = Registry->config()->{'Model::Search'};
-    $c->model('Search')->index(index   => $config->{index},
-			       type    => $config->{type}{trackhub},
-			       id      => $id,
-			       body    => $new_doc_data);
+      my $config = Registry->config()->{'Model::Search'};
+      $c->model('Search')->index(index   => $config->{index},
+				 type    => $config->{type}{trackhub},
+				 id      => $id,
+				 body    => $new_doc_data);
 
-    # refresh the index
-    $c->model('Search')->indices->refresh(index => $config->{index});
-
+      # refresh the index
+      $c->model('Search')->indices->refresh(index => $config->{index});
+    } catch {
+      $c->go('ReturnError', 'custom', [qq{$_}]);
+    }
   } else {
-    $c->detach('/api/error', [ "Couldn't determine doc ID" ]);
+    $c->go('ReturnError', 'custom', ["Couldn't determine doc ID(s)"]);
   }
 
   $self->status_created( $c,

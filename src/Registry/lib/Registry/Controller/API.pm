@@ -181,7 +181,7 @@ sub trackhub_create_PUT {
     $new_doc_data->{owner} = $c->stash->{user};
 
     # TODO: validate the doc, and flag it accordingly
-
+    
     my $config = Registry->config()->{'Model::Search'};
     $c->model('Search')->index(index   => $config->{index},
 			       type    => $config->{type}{trackhub},
@@ -216,6 +216,7 @@ sub trackhub_create_POST {
   my $config = Registry->config()->{'Model::Search'};
   my ($location, $entity);
 
+  my @indexed;
   if ($id) {
     try {
       my $translator = Registry::TrackHub::Translator->new(version => $version);
@@ -227,11 +228,13 @@ sub trackhub_create_POST {
 
       foreach my $json_doc (@{$trackdbs_docs}) {
 	my $doc = from_json($json_doc);
+      
+	# validate the doc
+	# NOTE: the doc is not indexed if it does not validate (i.e. raises an exception)
+	$c->forward('_validate', $json_doc);
 
 	# set the owner of the doc as the current user
 	$doc->{owner} = $c->stash->{user};
-      
-	# TODO: validate the doc, and flag it accordingly
 	
 	$c->model('Search')->index(index   => $config->{index},
 				   type    => $config->{type}{trackhub},
@@ -239,13 +242,20 @@ sub trackhub_create_POST {
 				   body    => $doc);
 	# refresh the index
 	$c->model('Search')->indices->refresh(index => $config->{index});
+	# record id of indexed doc so we can roll back in case of any failure
+	push @indexed, $id;
 
 	$location .= $c->uri_for( '/api/trackhub/' . $id )->as_string . ',';
 	$entity->{$id} = $c->model('Search')->get_trackhub_by_id($id);
+
 	$id++;
       }
     } catch {
       # TODO: roll back and delete any doc which has been indexed previous to the error
+      # NOTE: not sure this is the correct way, since /api/trackhub/:id (GET|POST|DELETE)
+      #       all expect the trackhub doc to be loaded in the stash
+      # map { $c->forward("trackhub_DELETE", $id) } @indexed;
+
       $c->go('ReturnError', 'custom', [qq{$_}]);
     }
   } else {
@@ -256,6 +266,25 @@ sub trackhub_create_POST {
   $self->status_created( $c,
 			 location => $location,
 			 entity   => $entity);
+}
+
+sub _validate {
+  my ($self, $c, $doc) = @_;
+  
+  my $version = $c->stash->{version};
+  
+  my $validator = 
+    Registry::TrackHub::Validator->new(schema => Registry->config()->{TrackHub}{schema}{$version});
+  my ($fh, $filename) = tempfile( DIR => '.', SUFFIX => '.json', UNLINK => 1);
+  print $fh $doc;
+  close $fh;
+
+  # exceptions might be raised when:
+  # - cannot run validation script 
+  # - JSON is not valid under specified schema
+  $validator->validate($filename);
+    
+  return;
 }
 
 =head2 trackhub 

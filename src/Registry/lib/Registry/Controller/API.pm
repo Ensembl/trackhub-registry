@@ -7,6 +7,7 @@ use List::Util 'max';
 use String::Random;
 use Try::Tiny;
 use Registry::TrackHub::Translator;
+use Registry::TrackHub::Validator;
 
 BEGIN { extends 'Catalyst::Controller::REST'; }
 use Params::Validate qw(SCALAR);
@@ -179,6 +180,7 @@ sub trackhub_create_PUT {
   if ($id) {
     # set the owner of the doc as the current user
     $new_doc_data->{owner} = $c->stash->{user};
+    $new_doc_data->{version} = $c->stash->{version};
 
     try {
       # validate the doc
@@ -262,7 +264,7 @@ sub trackhub_create_POST {
       # map { $c->forward("trackhub_DELETE", $id) } @indexed;
 
       $c->go('ReturnError', 'custom', [qq{$_}]);
-    }
+    };
   } else {
     $c->go('ReturnError', 'custom', ["Couldn't determine doc ID(s)"]);
   }
@@ -353,7 +355,9 @@ sub trackhub_POST {
   my $version = $c->stash->{trackhub}{version};
   $c->go('ReturnError', 'custom', ["Couldn't get version from original trackdb document"])
     unless $version;
-  $c->stash(version => 'v' . $version); # expected pattern is /^v\d+\.\d$/
+  $c->go('ReturnError', 'custom', ["Invalid version from original trackdb document"])
+    unless $version =~ /^v\d+\.\d$/;
+  $c->stash(version => $version);
 
   my $new_doc_data = $c->req->data;
 

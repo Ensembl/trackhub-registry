@@ -142,7 +142,7 @@ SKIP: {
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
   is(scalar @{$content->{data}}, 1, 'One trackhub');
-  is($content->{data}[0]{name}, 'bpDnaseRegionsC0010K46DNaseEBI', 'Trackhub name');
+  is($content->{data}[0]{id}, 'bpDnaseRegionsC0010K46DNaseEBI', 'Trackhub name');
   is($content->{configuration}{bpDnaseRegionsC0010K46DNaseEBI}{bigDataUrl}, 'http://ftp.ebi.ac.uk/pub/databases/blueprint/data/homo_sapiens/Peripheral_blood/C0010K/Monocytes/DNase-Hypersensitivity//C0010K46.DNase.hotspot_v3_20130415.bb', 'Trackhub url');
   #
   # request incorrect document (belongs to another provider)
@@ -198,17 +198,30 @@ SKIP: {
   $content = from_json($response->content);
   like($content->{error}, qr/You must provide a doc/, 'Correct error response');
 
-  # update doc1
+  # request to update doc with invalid update (non v1.0 compliant)
   $request = POST('/api/trackhub/1',
   		  'Content-type' => 'application/json',
   		  'Content'      => to_json({ test => 'test' }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'POST request to /api/trackhub/1');
+  is($response->code, 400, 'Request unsuccessful 400');
+  
+  # update doc1
+  $request = POST('/api/trackhub/1',
+  		  'Content-type' => 'application/json',
+  		  'Content'      => to_json({ version => 'v1.0',
+					      species => { tax_id => 9606, scientific_name => 'Homo sapiens' },
+					      assembly => { accession => 'GCA_000001405.15' },
+					      data => [ { id => 'test', molecule => 'genomic_DNA' } ],
+					      configuration => { test => { shortLabel => 'test' } } }));
+  $request->headers->header(user       => 'trackhub1');
+  $request->headers->header(auth_token => $auth_token);
+  ok($response = request($request), 'POST request to /api/trackhub/1');
   ok($response->is_success, 'Doc update request successful');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
-  is($content->{test}, 'test', 'Correct updated content');
+  is($content->{data}[0]{id}, 'test', 'Correct updated content');
   is($content->{owner}, 'trackhub1', 'Correct owner');
 
   #
@@ -227,7 +240,7 @@ SKIP: {
   $request = DELETE('/api/trackhub/5');
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'DELETE request to /api/trackhub/3');
+  ok($response = request($request), 'DELETE request to /api/trackhub/5');
   is($response->code, 404, 'Request unsuccessful 404');
   $content = from_json($response->content);
   like($content->{error}, qr/Could not find/, 'Correct error response');
@@ -239,7 +252,7 @@ SKIP: {
   ok($response = request($request), 'DELETE request to /api/trackhub/1');
   ok($response->is_success, 'Request successful 2xx');
   $content = from_json($response->content);
-  is($content->{test}, 'test', 'Content of deleted resource');
+  is($content->{species}{tax_id}, 9606, 'Content of deleted resource');
 
   # request for deleted doc should fail
   $request = GET('/api/trackhub/1');
@@ -250,6 +263,7 @@ SKIP: {
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
   like($content->{error}, qr/Could not find/, 'Correct error response');
+
 
   note "Re-creating index test";
   $indexer->create_index(); # do not index the documents this time through the indexer, the API will do that
@@ -282,8 +296,6 @@ SKIP: {
   my $docs = $indexer->docs;
 
   #
-  # TODO: should test content of created docs
-  #
   # create first doc
   $request = PUT('/api/trackhub/create',
   		 'Content-type' => 'application/json',
@@ -295,6 +307,8 @@ SKIP: {
   is($response->code, 201, 'Request successful 201');
   is($response->content_type, 'application/json', 'JSON content type');
   like($response->header('location'), qr/\/api\/trackhub\/1/, 'Correct URI for created doc');
+  $content = from_json($response->content);
+  is($content->{data}[0]{id}, 'bpDnaseRegionsC0010K46DNaseEBI', 'Correct content');
   #
   # create second doc
   $request = PUT('/api/trackhub/create',
@@ -307,6 +321,8 @@ SKIP: {
   is($response->code, 201, 'Request successful 201');
   is($response->content_type, 'application/json', 'JSON content type');
   like($response->header('location'), qr/\/api\/trackhub\/2/, 'Correct URI for created doc');
+  $content = from_json($response->content);
+  is(scalar $content->{configuration}{bp}{members}{region}{members}{'bpDnaseRegionsBP_BP_DG-75_d01DNaseHOTSPOT_peakEMBL-EBI'}{shortLabel}, 'DG-75.DNase.DG-75', 'Correct content');
   #
   # POST request should fail: the endpoint is meant to translate
   # the assembly trackdb files of a remote public trackhub.
@@ -356,7 +372,7 @@ SKIP: {
   #
   # should fail if no data is provided
   $request = POST('/api/trackhub/create',
-		  'Content-type' => 'application/json');
+  		  'Content-type' => 'application/json');
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'POST request to /api/trackhub/create (no data)');
@@ -366,8 +382,8 @@ SKIP: {
   #
   # should fail if no URL is given
   $request = POST('/api/trackhub/create',
-		  'Content-type' => 'application/json',
-		  'Content'      => to_json({ 'dummy' => 1 }));
+  		  'Content-type' => 'application/json',
+  		  'Content'      => to_json({ 'dummy' => 1 }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'POST request to /api/trackhub/create (no URL)');
@@ -378,8 +394,8 @@ SKIP: {
   # should fail if URL is not correct
   my $URL = "http://";
   $request = POST('/api/trackhub/create',
-		  'Content-type' => 'application/json',
-		  'Content'      => to_json({ url => $URL }));
+  		  'Content-type' => 'application/json',
+  		  'Content'      => to_json({ url => $URL }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'POST request to /api/trackhub/create (incorrect URL)');
@@ -392,8 +408,8 @@ SKIP: {
   #
   # should fail if wrong schema version is specified
   $request = POST('/api/trackhub/create?version=dummy',
-		  'Content-type' => 'application/json',
-		  'Content'      => to_json({ url => $URL }));
+  		  'Content-type' => 'application/json',
+  		  'Content'      => to_json({ url => $URL }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'POST request to /api/trackhub/create?version=dummy (wrong version)');
@@ -403,8 +419,8 @@ SKIP: {
   #
   # should fail if unsupported schema version is specified
   $request = POST('/api/trackhub/create?version=v5.0',
-		  'Content-type' => 'application/json',
-		  'Content'      => to_json({ url => $URL }));
+  		  'Content-type' => 'application/json',
+  		  'Content'      => to_json({ url => $URL }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'POST request to /api/trackhub/create?version=v5.0 (unsupported version)');
@@ -414,8 +430,8 @@ SKIP: {
   #
   # should fail with the wrong assembly
   $request = POST('/api/trackhub/create',
-		  'Content-type' => 'application/json',
-		  'Content'      => to_json({ url => $URL, assembly => 'dummy' }));
+  		  'Content-type' => 'application/json',
+  		  'Content'      => to_json({ url => $URL, assembly => 'dummy' }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'POST request to /api/trackhub/create (wrong assembly)');
@@ -425,8 +441,8 @@ SKIP: {
   #
   # request creation with assembly argument and schema version parameter: should get 1 docs
   $request = POST('/api/trackhub/create?version=v1.0',
-		  'Content-type' => 'application/json',
-		  'Content'      => to_json({ url => $URL, assembly => 'ricCom1' }));
+  		  'Content-type' => 'application/json',
+  		  'Content'      => to_json({ url => $URL, assembly => 'ricCom1' }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), "POST request to /api/trackhub/create?version=v1.0 (assembly 'ricCom1')");
@@ -441,8 +457,8 @@ SKIP: {
   #
   # request creation with no assembly argument: should get 3 docs
   $request = POST('/api/trackhub/create',
-		  'Content-type' => 'application/json',
-		  'Content'      => to_json({ url => $URL }));
+  		  'Content-type' => 'application/json',
+  		  'Content'      => to_json({ url => $URL }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'POST request to /api/trackhub/create');

@@ -290,7 +290,18 @@ sub _validate: Private {
   # exceptions might be raised when:
   # - cannot run validation script 
   # - JSON is not valid under specified schema
-  $validator->validate($filename);
+  # 
+  # WARNING
+  # It's necessary to put the validation exception handling
+  # code here, even if the call to this method is already
+  # enclosed in a try/catch block, because it's usually
+  # called with forward which automatically eval (i.e. handle
+  # any exception) the call
+  try {
+    $validator->validate($filename);
+  } catch {
+    $c->go('ReturnError', 'custom', [qq{$_}]);
+  };
     
   return;
 }

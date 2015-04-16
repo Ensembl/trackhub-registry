@@ -273,7 +273,7 @@ sub trackhub_create_POST {
 			 entity   => $entity);
 }
 
-sub _validate {
+sub _validate: Private {
   my ($self, $c, $doc) = @_;
   
   my $version = $c->stash->{version};

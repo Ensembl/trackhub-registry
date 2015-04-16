@@ -183,7 +183,7 @@ sub trackhub_create_PUT {
     try {
       # validate the doc
       # NOTE: the doc is not indexed if it does not validate (i.e. raises an exception)
-      $c->forward('_validate', $new_doc_data);
+      $c->forward('_validate',[ to_json($new_doc_data) ]);
     
       my $config = Registry->config()->{'Model::Search'};
       $c->model('Search')->index(index   => $config->{index},
@@ -236,7 +236,7 @@ sub trackhub_create_POST {
       
 	# validate the doc
 	# NOTE: the doc is not indexed if it does not validate (i.e. raises an exception)
-	$c->forward('_validate', $json_doc);
+	$c->forward('_validate', [ $json_doc ]);
 
 	# set the owner of the doc as the current user
 	$doc->{owner} = $c->stash->{user};
@@ -369,7 +369,7 @@ sub trackhub_POST {
   try {
     # validate the updated doc
     # NOTE: the doc is not indexed if it does not validate (i.e. raises an exception)
-    $c->forward('_validate', to_json($new_doc_data));
+    $c->forward('_validate', [ to_json($new_doc_data) ]);
     
     #
     # Updates in Elasticsearch

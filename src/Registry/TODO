@@ -6,16 +6,30 @@
 - Registry::TrackHub::Translator
   X finish mapping of UCSC synonyms to assembly accession IDs
   X translate the hierarchy as well
-  X test with various public track hubs and assemblies
+  - test with various public track hubs and assemblies
   |
   ----> ERROR: the existing parser cannot parse metadata as key=value
                pairs containing quotes with spaces
-  - validation according to given schema version
+  - use GenomeAssemblyDB model instead of schema class directly
   ? store original trackDb file as attribute 
     should not be necessary if the configurations are represented as as tree, 
     should be easy to translate back. maybe store the source URL instead?
 
-- Use GenomeAssemblyDB model in the trackhub translator
+X Validation class, use python validator script
+
+- REST
+  - UCSC trackdb translation/creation endpoint (POST)
+    |
+    --> POST /api/trackhub/translate { url => '', assembly => '' }
+    X validation according to given schema version
+    - complete tests with more public hubs
+  X Trackhub JSON creation endpoint (PUT)
+    - validation according to given schema version
+  - rewrite trackhub examples using schema version 1.0 (done blueprint1.json)
+  - /api/trackhub/:id (POST)
+    X validation according to given schema version (which one? the one of the original stored doc)
+    - test again
+  - API to get/search trackhubs with no authentication (e.g. for genome browsers)
 
 - Replace trackhub parsing et al. code with ensembl-io routines
 
@@ -24,18 +38,13 @@
 
 - Reimplement Catalyst::Model::ElasticSearch/Registry::Model::Search
   in terms of Data::SearchEngine::ElasticSearch?
-
-- Validation class
-  use python validator underneath
+  This is lower priority
 
 - Move synonyms to assembly ID mapping to a configuration file 
   - use JSON? load into ElasticSearch? (Pb. comments are lost)
   - update translator accordingly
 
 - Look at what has changed in the webteam URL et al. modules
-
-- REST API
-  - UCSC track hub style submission endpoint
 
 - Website
  - single query search highlighted on the front page
@@ -55,3 +64,4 @@
 
 - Prototype
  - install oracle development tools 11.1.0.6.0
+ - install validation script, must be in the PATH

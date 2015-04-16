@@ -6,6 +6,7 @@ use JSON;
 use List::Util 'max';
 use String::Random;
 use Try::Tiny;
+use File::Temp qw/ tempfile /;
 use Registry::TrackHub::Translator;
 use Registry::TrackHub::Validator;
 

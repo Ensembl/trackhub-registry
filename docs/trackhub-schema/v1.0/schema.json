@@ -21,7 +21,7 @@
       
       "description": "The version of the JSON track database document.",
 
-      "enum": [ "1.0" ]
+      "enum": [ "v1.0" ]
     },
 
     "trackdb": {
@@ -112,7 +112,7 @@
     }
   },
 
-  "additionalProperties": false,
+  "additionalProperties": true,
 
   "required": [ "version", "species", "assembly", "data", "configuration" ],
 

@@ -195,7 +195,7 @@ sub trackhub_create_PUT {
       $c->model('Search')->indices->refresh(index => $config->{index});
     } catch {
       $c->go('ReturnError', 'custom', [qq{$_}]);
-    }
+    };
   } else {
     $c->go('ReturnError', 'custom', ["Couldn't determine doc ID(s)"]);
   }
@@ -254,7 +254,7 @@ sub trackhub_create_POST {
 	$entity->{$id} = $c->model('Search')->get_trackhub_by_id($id);
 
 	$id++;
-      }
+      };
     } catch {
       # TODO: roll back and delete any doc which has been indexed previous to the error
       # NOTE: not sure this is the correct way, since /api/trackhub/:id (GET|POST|DELETE)
@@ -389,7 +389,7 @@ sub trackhub_POST {
     $c->model('Search')->indices->refresh(index => $config->{index});
   } catch {
     $c->go('ReturnError', 'custom', [qq{$_}]);
-  }
+  };
 
   $self->status_ok( $c, entity => $c->model('Search')->get_trackhub_by_id($doc_id));
   

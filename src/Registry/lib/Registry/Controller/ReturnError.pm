@@ -44,6 +44,7 @@ sub custom : Path : Args(0) : ActionClass('REST') {
 
 sub custom_GET { }
 sub custom_POST { }
+sub custom_PUT { }
 
 sub no_content: Path : Args(0) : ActionClass('REST') {
   my ( $self, $c, $error_msg ) = @_;

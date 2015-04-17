@@ -186,7 +186,7 @@ sub trackhub_create_PUT {
     try {
       # validate the doc
       # NOTE: the doc is not indexed if it does not validate (i.e. raises an exception)
-      $c->forward('_validate',[ to_json($new_doc_data) ]);
+      $c->forward('_validate', [ to_json($new_doc_data) ]);
     
       my $config = Registry->config()->{'Model::Search'};
       $c->model('Search')->index(index   => $config->{index},

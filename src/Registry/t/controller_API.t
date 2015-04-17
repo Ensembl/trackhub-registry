@@ -198,7 +198,7 @@ SKIP: {
   $content = from_json($response->content);
   like($content->{error}, qr/You must provide a doc/, 'Correct error response');
 
-  # request to update doc with invalid update (non v1.0 compliant)
+  # request to update doc with invalid content (non v1.0 compliant)
   $request = POST('/api/trackhub/1',
   		  'Content-type' => 'application/json',
   		  'Content'      => to_json({ test => 'test' }));
@@ -294,6 +294,18 @@ SKIP: {
   is($response->code, 400, 'Request unsuccessful 400');
   $content = from_json($response->content);
   like($content->{error}, qr/You must provide a doc/, 'Correct error response');
+  #
+  # request to create a doc with invalid data (non v1.0 compliant)
+  $request = PUT('/api/trackhub/create',
+  		 'Content-type' => 'application/json',
+		 'Content'      => to_json({ test => 'test' }));
+  $request->headers->header(user       => 'trackhub1');
+  $request->headers->header(auth_token => $auth_token);
+  ok($response = request($request), 'PUT request to /api/trackhub/create');
+  is($response->code, 400, 'Request unsuccessful 400');
+  $content = from_json($response->content);
+  # validator raises an exception with error message
+  like($content->{error}, qr/Failed/, 'Correct error response');
   
   # now the index's empty, create the sample docs through the API
   my $docs = $indexer->docs;

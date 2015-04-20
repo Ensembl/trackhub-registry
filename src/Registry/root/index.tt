@@ -19,11 +19,29 @@
 </div>
 </section>
 -->
-<div class="jumbotron">
-  <h2>TrackHub Registry</h2>
-  <h3>The home for trackhubs</h3>
-  <p>Welcome to the TrackHub Registry, a centralised, global collection of publicly accessible TrackHubs, for third parties to advertise TrackHubs, and to make it easier for researchers around the world to discover and use TrackHubs containing different types of genomic research data.</p>
-  <p><a class="btn btn-primary btn-lg" href="/more" role="button">Learn more</a></p>
+<div class="jumbotron background-color-primary-accent">
+  <div class="container">
+    <div>
+      <h1>TrackHub Registry</h1>
+      <h3>The global centralised collection of publicly accessible TrackHubs</h3>
+
+      <!-- search box goes here -->
+      <form role="search" method="post" action="[% c.uri_for('/search') %]">
+        <div class="input-group">
+          <input type="text" name="q" class="form-control" placeholder="Enter the search terms..." id="search-box" />
+          <span class="input-group-btn">
+            <button class="btn btn-default" type="submit" id="search-button">
+              <span class="glyphicon glyphicon-search"></span>
+            </button>
+          </span>
+        </div>
+      </form>
+      <!--
+      <p>Welcome to the TrackHub Registry, a centralised, global collection of publicly accessible TrackHubs, for third parties to advertise TrackHubs, and to make it easier for researchers around the world to discover and use TrackHubs containing different types of genomic research data.</p>
+      <p><a class="btn btn-primary btn-lg" href="/more" role="button">Learn more</a></p>
+      -->
+    </div>
+  </div>
 </div>
 
 <section id="">

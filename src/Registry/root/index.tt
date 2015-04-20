@@ -20,8 +20,9 @@
 </section>
 -->
 <div class="jumbotron">
-  <h2>Home of TrackHubs</h2>
-  <p>Welcome to the TrackHub Registry, a centralised, global collection of publicly accessible TrackHubs, similar in goals to the <a href="http://www.dasregistry.org" target="_blank">DAS registry</a>, for third parties to advertise TrackHubs, and to make it easier for researchers around the world to discover and use TrackHubs containing different types of genomic research data.</p>
+  <h2>TrackHub Registry</h2>
+  <h3>The home for trackhubs</h3>
+  <p>Welcome to the TrackHub Registry, a centralised, global collection of publicly accessible TrackHubs, for third parties to advertise TrackHubs, and to make it easier for researchers around the world to discover and use TrackHubs containing different types of genomic research data.</p>
   <p><a class="btn btn-primary btn-lg" href="/more" role="button">Learn more</a></p>
 </div>
 

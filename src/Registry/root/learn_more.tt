@@ -7,6 +7,6 @@
 
 <p>Both UCSC and Ensembl have developed initial support for this technology, but there are still limitations for many users, and Ensembl's support remains incomplete. At present integration of TrackHubs into the Ensembl and UCSC genome browsers involves the copy-paste of a known URL. Discovery is based on word of mouth or the provision of <a href="http://genome.ucsc.edu/cgi-bin/hgHubConnect" target="_blank">manually curated portal pages</a> hosted by the genome browsers or projects.</p>
 
-<p>The aim here is to develop a registry system, similar in goals to the <a href="http://www.dasregistry.org" target="_blank">DAS registry</a>, for third parties to advertise TrackHubs, and to make it easier for researchers around the world to discover and use TrackHubs containing different types of genomic research data.</p>
+<p>The aim here is to develop a registry system for third parties to advertise TrackHubs, and to make it easier for researchers around the world to discover and use TrackHubs containing different types of genomic research data.</p>
   </div>
 </div>

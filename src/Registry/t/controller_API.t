@@ -19,7 +19,7 @@ use Registry::Indexer; # index a couple of sample documents
 
 SKIP: {
   skip "Launch an elasticsearch instance for the tests to run fully",
-    104 unless &Registry::Utils::es_running();
+    165 unless &Registry::Utils::es_running();
 
   # index test data
   note 'Preparing data for test (indexing sample documents)';
@@ -498,18 +498,18 @@ SKIP: {
   		  'Content'      => to_json({ url => $URL, assembly => 'canFam3' }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), "POST request to /api/trackhub/create?version=v1.0 (assembly 'ricCom1')");
+  ok($response = request($request), "POST request to /api/trackhub/create?version=v1.0 (assembly 'canFam3')");
   ok($response->is_success, 'Request successful 2xx');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
   is(scalar keys %{$content}, 1, "One trackdb doc created");
   $id = (keys %{$content})[0];
   is($content->{$id}{version}, 'v1.0', 'Correct version');
-  is($content->{$id}{species}{tax_id}, 3988, 'Correct species');
+  is($content->{$id}{species}{tax_id}, 9615, 'Correct species');
   is($content->{$id}{assembly}{synonyms}, 'canFam3', 'Correct assembly synonym');
-  is($content->{$id}{configuration}{Carmona_Dog_2014}{longLabel}, '', 'Correct composite long label');
+  is($content->{$id}{configuration}{Carmona_Dog_2014}{longLabel}, 'A Comprehensive DNA Methylation Profile of Epithelial-to-Mesenchymal Transition', 'Correct composite long label');
   is(scalar keys %{$content->{$id}{configuration}{Carmona_Dog_2014}{members}}, 7, 'Correct number of views');
-  is($content->{$id}{configuration}{Carmona_Dog_2014}{members}{AMRCarmona_Dog_2014}{members}{armonaDog2014_DogMDCKAMR}{bigDataUrl}, 'http://smithlab.usc.edu/methbase/data/Carmona-Dog-2014/Dog_MDCK/tracks_canFam3/Dog_MDCK.amr.bb', 'Correct view member bigDataUrl');
+  is($content->{$id}{configuration}{Carmona_Dog_2014}{members}{AMRCarmona_Dog_2014}{members}{CarmonaDog2014_DogMDCKAMR}{bigDataUrl}, 'http://smithlab.usc.edu/methbase/data/Carmona-Dog-2014/Dog_MDCK/tracks_canFam3/Dog_MDCK.amr.bb', 'Correct view member bigDataUrl');
 }
 
 done_testing();

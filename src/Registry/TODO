@@ -18,17 +18,19 @@
 X Validation class, use python validator script
 
 - REST
-  - UCSC trackdb translation/creation endpoint (POST)
+  X rewrite trackhub examples using schema version 1.0
+  X update controller test with v1.0 examples
+  X UCSC trackdb translation/creation endpoint (POST)
     |
     --> POST /api/trackhub/translate { url => '', assembly => '' }
     X validation according to given schema version
-    - complete tests with more public hubs
+    X complete tests with more public hubs
   X Trackhub JSON creation endpoint (PUT)
-    - validation according to given schema version
-  - rewrite trackhub examples using schema version 1.0 (done blueprint1.json)
-  - /api/trackhub/:id (POST)
+    X validation according to given schema version
+    X test again
+  X /api/trackhub/:id (POST)
     X validation according to given schema version (which one? the one of the original stored doc)
-    - test again
+    X  test again
   - API to get/search trackhubs with no authentication (e.g. for genome browsers)
 
 - Replace trackhub parsing et al. code with ensembl-io routines
@@ -47,20 +49,21 @@ X Validation class, use python validator script
 - Look at what has changed in the webteam URL et al. modules
 
 - Website
- - single query search highlighted on the front page
+ X single query search highlighted on the front page
  - search by provider (hub attribute should do that, test)
  - provide pages (with links from the front page and menu) to
    list content providers and trackhubs which can be listed
    using various dimensions, e.g. species (like the DAS registry)
  - search to provide minimum faceting according to some dimensions,
-   e.g. species, and a subset of those specified in the DCC
-   blueprint-epigenome/#experiments page
- - remove any reference to the DAS registry
+   e.g. species, and a subset of those specified in the
+   http://dcc.blueprint-epigenome.eu/#/experiments page
+ X remove any reference to the DAS registry
  - insert link to the original trackhub specification
  - search result page, properly styled search result entry
    with tabbed links to view the hub and load it into Ensembl
    (see physical notes)
  - new dev GWAS catalog provides a good example of a search interface
+   http://wwwdev.ebi.ac.uk/gwas
 
 - Prototype
  - install oracle development tools 11.1.0.6.0

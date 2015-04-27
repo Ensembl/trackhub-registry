@@ -22,8 +22,8 @@
 <div class="jumbotron background-color-primary-accent">
   <div class="container">
     <div>
-      <h1>TrackHub Registry</h1>
-      <h3>The global centralised collection of publicly accessible TrackHubs</h3>
+      <h1>The TrackHub Registry</h1>
+      <h3>A global centralised collection of publicly accessible TrackHubs</h3>
 
       <!-- search box goes here -->
       <form role="search" method="post" action="[% c.uri_for('/search') %]">
@@ -48,14 +48,14 @@
 <div class="row">
   <div class="col-sm-6">
     <div class="box-progetto">
-      <h3>Submit Data <span class="glyphicon glyphicon-upload"></span></h3>
+      <h2><span class="glyphicon glyphicon-upload"></span> Submit Data</h2>
       <p>External TrackHub providers can register themselves and submit their TrackHubs to the registry. Registration and submission happen programatically via our RESTful API. Once submitted and validated, the TrackHubs become available for search by other users worldwide, allowing for automatic and rapid integration into a genome browser.</p>
       <a href="[% c.uri_for('/submit_trackhubs') %]" class="btn btn-primary">How to Submit</a>
     </div>
   </div><!-- /.col-sm-6 -->
   <div class="col-sm-6">
     <div class="box-progetto">
-      <h3>Access Data <span class="glyphicon glyphicon-search"></span></h3>
+      <h2><span class="glyphicon glyphicon-search"></span> Access Data</h2>
       <p>TrackHubs can be searched based on metadata information. Free text search is provided from the search box in the header of all TrackHub Registry web pages. Advanced search options are available for more specific and customised searches.</p>
       <a href="#" class="btn btn-primary">Advanced Search</a>
     </div>

@@ -1,0 +1,6 @@
+span.facet-count {
+    color: #999999;
+    float: right;
+/*    font-size: 11px; */
+    position: relative;
+}

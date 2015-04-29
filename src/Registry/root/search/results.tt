@@ -35,6 +35,7 @@
               <ul class="nav nav-list">
 	        [% filters.delete('page') %]
 	        [% FOREACH key IN filters.keys.sort %]
+		  [% NEXT UNLESS filters.$key %]
 		  [% p = {} %]
 		  [% p.import(filters) %]
 		  [% p.delete(key) %]
@@ -82,14 +83,8 @@
       </div> <!-- accordion-group -->
     </div> <!-- sidebar -->
   </div>
+
   <div class="col-sm-9">
-<!--
-    <ul class="nav nav-tabs">
-      <li class="active" ><a href="[% c.uri_for('/search', { q => query_string, page => pager.current_page }) %]">Tracks</a></li>
-      <li><a rel="nofollow" href="[% c.uri_for(c.controller.action_for('tracks_by_hub'), { q => query_string, page => pager.first_page }) %]">Tracks by Hub</a></li>
-      <li><a rel="nofollow" href="[% c.uri_for(c.controller.action_for('tracks_by_type'), { q => query_string, page => pager.first_page }) %]">Tracks by Type</a></li>
-    </ul>
--->
     <div role="tabpanel">
       <!-- Nav tabs -->
       <ul class="nav nav-tabs" role="tablist">
@@ -129,8 +124,7 @@
   </div>
 </div>
 
-[% # bootstrap pagination %]
-[% # simple pagination %]
+[% # bootstrap simple pagination %]
 <ul class="pager">
 [% IF pager.current_page != pager.first_page AND pager.first_page != pager.previous_page %]
   [% filters.page = pager.first_page %]

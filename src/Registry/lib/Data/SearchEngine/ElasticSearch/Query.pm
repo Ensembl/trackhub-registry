@@ -17,5 +17,12 @@ has data_type => (
     predicate => 'has_datatype'
 );
 
+has aggregations => (
+    traits => [qw(Digestable)],
+    is => 'rw',
+    isa => 'HashRef',
+    predicate => 'has_aggregations'
+);
+
 no Moose;
 __PACKAGE__->meta->make_immutable;

@@ -29,7 +29,7 @@ sub index :Path :Args(0) {
 
   #
   # TODO: 
-  # - query check
+  # - query check, e.g. if empty, search all docs
   # - handle exceptions and errors from the Elasticsearch API
   #
   my $params = $c->req->params;
@@ -47,9 +47,11 @@ sub index :Path :Args(0) {
   						  data_type => $type,
   						  page      => $page,
 						  count     => $entries_per_page, 
-  						  fields    => $fields,
+  						  # fields    => $fields,
   						  type      => 'match',
-  						  query     => { _all => $params->{q} });
+  						  query     => { _all => $params->{q} },
+						  facets    => { species  => { terms => { field => 'species.tax_id' } },
+								 assembly => { terms => { field => 'assembly.accession' } }});
   my $se = Data::SearchEngine::ElasticSearch->new();
   my $results = $se->search($query);
 
@@ -71,10 +73,11 @@ sub index :Path :Args(0) {
   # 					   query => { match => { _all => $params->{'q'} } } } # match query: full text search
   # 			       );
 
-;
   $c->stash(columns         => $fields,
 	    query_string    => $params->{q},
+	    filters         => $params,
 	    items           => $results->items,
+	    facets          => $results->facets,
 	    pager           => $results->pager,
 	    template        => 'search/results.tt');
 

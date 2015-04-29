@@ -11,39 +11,121 @@
 [% # title, set "$c->stash(title => $something)" in the controller).     -%]
 [% META title = 'Search Results' %]
 
-<!-- 
-Total hits: [% results.hits.total %]<br/>
-<hr>
-[% FOREACH item IN results.hits.hits %]
-<pre>
-  [% Dumper.dump(item) -%]<br/>
-</pre>
-<hr>
-[% END %]
--->
-
-<div class="page-header">
-  <h3>Search Results</h3>
-</div>
+<!--<div class="page-header">-->
 <div class="row">
-  <table id="users" class="table table-bordered table-striped tablesorter" summary="The list of trackhubs">
-    <thead>
-      <tr>
-        [% FOR column IN columns %]
-        <th scope="col">[% column %]</th>
-        [% END %]
-      </tr>
-    </thead>
-    <tbody>
-      [% FOREACH item = items %] 
-      <tr>
-        [% FOR column IN columns %]
-        <td>[% item.get_value(column) | html %]</td>
-        [% END %]
-      </tr>
-      [% END %]
-    </tbody>
-  </table>
+  <div class="col-sm-12">
+    <ul class="breadcrumb">
+      <li><a href="/">Home</a></li>
+      <li class="active">Search</li>
+    </ul>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-3">
+    <div id="search-sidebar-left">
+      <div class="panel-group" id="tag-accordion">
+    
+        <div class="panel panel-default">
+          <div class="panel-heading" style="background-color: whiteSmoke">
+            <a class="panel-title" data-toggle="collapse" data-target="#current-filters" href="#current-filters"><i style="float:right" class="glyphicon glyphicon-chevron-down"></i>Current Filters</a>
+          </div>
+          <div id="current-filters" class="panel-collapse collapse in">
+            <div class="panel-body">
+              <ul class="nav nav-list">
+	        [% FOREACH key IN filters.keys.sort %]
+		  [% p = {} %]
+		  [% p.import(filters) %]
+		  [% p.delete(key) %]
+                <li><a rel="nofollow" href="[% c.uri_for('/search', p ) %]">[% filters.$key %]<span class="close">&times</span></a></li>
+		[% END %]   
+              </ul>
+            </div> <!-- panel-body -->
+          </div> <!-- current-filters -->
+	</div>
+
+	<div class="panel panel-default">
+          <div class="panel-heading" style="background-color: whiteSmoke">
+            <a class="panel-title" data-toggle="collapse" href="#species-facet"><i style="float:right" class="glyphicon glyphicon-chevron-right"></i>Species</a>
+          </div>
+          <div id="species-facet" class="panel-collapse collapse">
+            <div class="panel-body">
+              <ul class="nav nav-list">
+	        [% FOR species IN facets.species %]
+		  [% p = { species = species.value } %]
+		  [% p.import(filters) %]
+                <li><a rel="nofollow" href="[% c.uri_for('/search', p) %]">[% species.value %]<span class="facet-count">[% species.count %]</span></a></li>
+		[% END %]      
+              </ul>
+            </div>
+          </div> <!-- species-facet -->
+        </div>
+
+	<div class="panel panel-default">
+          <div class="panel-heading" style="background-color: whiteSmoke">
+            <a class="panel-title" data-toggle="collapse" href="#assembly-facet"><i style="float:right" class="glyphicon glyphicon-chevron-right"></i>Assembly</a>
+          </div>
+          <div id="assembly-facet" class="panel-collapse collapse">
+            <div class="panel-body">
+              <ul class="nav nav-list">
+	        [% FOR assembly IN facets.assembly %]
+		  [% p = { accession = assembly.value } %]
+		  [% p.import(filters) %]
+                <li><a rel="nofollow" href="[% c.uri_for('/search', p ) %]">[% assembly.value %]<span class="facet-count">[% assembly.count %]</span></a></li>
+		[% END %]      
+              </ul>
+            </div>
+          </div> <!-- assembly-facet -->
+        </div>
+
+      </div> <!-- accordion-group -->
+    </div> <!-- sidebar -->
+  </div>
+  <div class="col-sm-9">
+<!--
+    <ul class="nav nav-tabs">
+      <li class="active" ><a href="[% c.uri_for('/search', { q => query_string, page => pager.current_page }) %]">Tracks</a></li>
+      <li><a rel="nofollow" href="[% c.uri_for(c.controller.action_for('tracks_by_hub'), { q => query_string, page => pager.first_page }) %]">Tracks by Hub</a></li>
+      <li><a rel="nofollow" href="[% c.uri_for(c.controller.action_for('tracks_by_type'), { q => query_string, page => pager.first_page }) %]">Tracks by Type</a></li>
+    </ul>
+-->
+    <div role="tabpanel">
+      <!-- Nav tabs -->
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="#tracks" aria-controls="tracks" role="tab" data-toggle="tab">Tracks</a></li>
+        <li role="presentation"><a href="#tracks_by_hub" aria-controls="tracks_by_hub" role="tab" data-toggle="tab">Tracks by Hub</a></li>
+        <li role="presentation"><a href="#tracks_by_type" aria-controls="tracks_by_type" role="tab" data-toggle="tab">Tracks by type</a></li>
+      </ul>
+
+      <!-- Tab panes -->
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane fade in active" id="tracks">
+          <table id="tracks" class="table table-bordered table-striped tablesorter" summary="Track search results">
+            <thead>
+              <tr>
+                [% FOR column IN columns %]
+                <th scope="col">[% column %]</th>
+                [% END %]
+              </tr>
+            </thead>
+            <tbody>
+              [% FOREACH item = items %] 
+              <tr>
+                [% FOR column IN columns %]
+                <td>[% item.get_value(column) | html %]</td>
+                [% END %]
+              </tr>
+              [% END %]
+            </tbody>
+          </table>
+	</div>
+        <div role="tabpanel" class="tab-pane fade" id="tracks_by_hub">tracks by hub
+	</div>
+        <div role="tabpanel" class="tab-pane fade" id="tracks_by_type">tracks by type
+	</div>
+      </div>
+    </div>
+  </div>
 </div>
 
 [% # bootstrap pagination %]
@@ -66,3 +148,37 @@ Total hits: [% results.hits.total %]<br/>
 [% # Provide a link back to the search page.  'c.uri_for' builds -%]
 [% # a full URI; e.g., 'http://localhost:3000'      -%]
 <!--<p><a href="[% c.uri_for('/') %]">Return to search</a></p>-->
+
+<!-- 
+Total hits: [% results.hits.total %]<br/>
+<hr>
+[% FOREACH item IN results.hits.hits %]
+<pre>
+  [% Dumper.dump(item) -%]<br/>
+</pre>
+<hr>
+[% END %]
+-->
+
+<!--
+<div class="row">
+  <table id="users" class="table table-bordered table-striped tablesorter" summary="The list of trackhubs">
+    <thead>
+      <tr>
+        [% FOR column IN columns %]
+        <th scope="col">[% column %]</th>
+        [% END %]
+      </tr>
+    </thead>
+    <tbody>
+      [% FOREACH item = items %] 
+      <tr>
+        [% FOR column IN columns %]
+        <td>[% item.get_value(column) | html %]</td>
+        [% END %]
+      </tr>
+      [% END %]
+    </tbody>
+  </table>
+</div>
+-->

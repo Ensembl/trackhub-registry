@@ -49,7 +49,7 @@ sub index :Path :Args(0) {
 
   my $config = Registry->config()->{'Model::Search'};
   my ($index, $type) = ($config->{index}, $config->{type}{trackhub});
-
+  my $fields = ['name', 'description', 'version'];
   my $query = 
     Data::SearchEngine::ElasticSearch::Query->new(index     => $index,
   						  data_type => $type,
@@ -58,7 +58,7 @@ sub index :Path :Args(0) {
   						  type      => $query_type,
   						  query     => $query_body,
 						  facets    => { species  => { terms => { field => 'species.tax_id' } },
-								 assembly => { terms => { field => 'assembly.accession' } }});
+								 assembly => { terms => { field => 'assembly.name' } }});
   my $se = Data::SearchEngine::ElasticSearch->new();
   my $results;
 

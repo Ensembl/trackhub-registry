@@ -34,9 +34,16 @@ sub index :Path :Args(0) {
   #
   my $params = $c->req->params;
 
+  # Basic query check: if empty query params, matches all document
+  my ($query_type, $query_body) = ('match_all', {});
+  if ($params->{q}) {
+    $query_type = 'match';
+    $query_body = { _all => $params->{q} };
+  } 
+
   my $page = $params->{page} || 1;
   $page = 1 if $page !~ /^\d+$/;
-  my $entries_per_page = $params->{entries_per_page} || 10;
+  my $entries_per_page = $params->{entries_per_page} || 1;
 
   my $config = Registry->config()->{'Model::Search'};
   my ($index, $type) = ($config->{index}, $config->{type}{trackhub});
@@ -48,8 +55,8 @@ sub index :Path :Args(0) {
   						  page      => $page,
 						  count     => $entries_per_page, 
   						  # fields    => $fields,
-  						  type      => 'match',
-  						  query     => { _all => $params->{q} },
+  						  type      => $query_type,
+  						  query     => $query_body,
 						  facets    => { species  => { terms => { field => 'species.tax_id' } },
 								 assembly => { terms => { field => 'assembly.accession' } }});
   my $se = Data::SearchEngine::ElasticSearch->new();

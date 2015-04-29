@@ -74,7 +74,7 @@
 	        [% FOR assembly IN facets.assembly %]
 		  [% p = { } %]
 		  [% p.import(filters) %]
-		  [% p.accession = assembly.value %]
+		  [% p.assembly_name = assembly.value %]
                 <li><a rel="nofollow" href="[% c.uri_for('/search', p ) %]">[% assembly.value %]<span class="facet-count">[% assembly.count %]</span></a></li>
 		[% END %]      
               </ul>

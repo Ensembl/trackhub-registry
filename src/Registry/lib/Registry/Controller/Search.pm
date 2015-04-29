@@ -2,10 +2,11 @@ package Registry::Controller::Search;
 use Moose;
 use namespace::autoclean;
 
-BEGIN { extends 'Catalyst::Controller'; }
-
+use Try::Tiny;
 use Data::SearchEngine::ElasticSearch::Query;
 use Data::SearchEngine::ElasticSearch;
+
+BEGIN { extends 'Catalyst::Controller'; }
 
 =head1 NAME
 
@@ -24,14 +25,15 @@ Catalyst Controller.
 
 =cut
 
+#
+# TODO: 
+# - Data::SearchEngine::ElasticSearch instance must be initialised
+#   with location of nodes from config file
+# - pass extra parameters as AND filters
+#
 sub index :Path :Args(0) {
   my ( $self, $c ) = @_;
 
-  #
-  # TODO: 
-  # - query check, e.g. if empty, search all docs
-  # - handle exceptions and errors from the Elasticsearch API
-  #
   my $params = $c->req->params;
 
   # Basic query check: if empty query params, matches all document
@@ -47,38 +49,25 @@ sub index :Path :Args(0) {
 
   my $config = Registry->config()->{'Model::Search'};
   my ($index, $type) = ($config->{index}, $config->{type}{trackhub});
-  my $fields = [ 'name', 'description', 'version' ];
 
   my $query = 
     Data::SearchEngine::ElasticSearch::Query->new(index     => $index,
   						  data_type => $type,
   						  page      => $page,
 						  count     => $entries_per_page, 
-  						  # fields    => $fields,
   						  type      => $query_type,
   						  query     => $query_body,
 						  facets    => { species  => { terms => { field => 'species.tax_id' } },
 								 assembly => { terms => { field => 'assembly.accession' } }});
   my $se = Data::SearchEngine::ElasticSearch->new();
-  my $results = $se->search($query);
+  my $results;
 
-  # my $search = $c->model('Search'); 
-  # my $results = $search->search(index => $config->{index},
-  # 				type  => $config->{type}{trackhub},
-  # 				# http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/_finding_exact_values.html
-  # 				# The term filter isn’t very useful on its own though. As discussed in Query DSL, the search API 
-  # 				# expects a query, not a filter. To use our term filter, we need to wrap it with a filtered query:
-  # 				# body  => { 
-  # 				# query => {
-  # 				# 	    "filtered" => { 
-  # 				# 			   query => { "match_all" => {} }, # returns all documents (default, can omit)
-  # 				# 			   filter => { term => { _all => $params->{'q'} } }
-  # 				# 			   }
-  # 				# 	    }
-  # 				# },									       
-  # 				body  => { fields    => [ 'name', 'description', 'version' ],
-  # 					   query => { match => { _all => $params->{'q'} } } } # match query: full text search
-  # 			       );
+  # do the search
+  try {
+    $results = $se->search($query);
+  } catch {
+    $c->go('ReturnError', 'custom', [qq{$_}]);
+  };
 
   $c->stash(columns         => $fields,
 	    query_string    => $params->{q},
@@ -87,7 +76,6 @@ sub index :Path :Args(0) {
 	    facets          => $results->facets,
 	    pager           => $results->pager,
 	    template        => 'search/results.tt');
-
     
 }
 

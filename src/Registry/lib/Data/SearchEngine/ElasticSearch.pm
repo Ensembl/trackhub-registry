@@ -157,6 +157,8 @@ sub search {
  
   # this has to be reviewed, since the search API expects a query
   # not a filter. Filters need to be wrapped in a filtered query
+  # http://distinctplace.com/2014/07/29/build-zappos-like-products-facets-with-elasticsearch/
+  # shows an example where the following applies
   my @facet_cache = ();
   if ($query->has_filters) {
     foreach my $filter ($query->filter_names) {
@@ -169,25 +171,32 @@ sub search {
   # See http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-facets.html
   # "Facets are deprecated and will be removed in a future release. You are encouraged to migrate 
   #  to aggregations instead"
-  if ($query->has_facets) {
-    # Copy filters used in the overall query into each facet, thereby
-    # limiting the facets to only counting against the filtered bits.
-    # This is really to replicate my expecations and the way facets are
-    # usually used.
-    my %facets = %{ $query->facets };
-    $options->{facets} = $query->facets;
+  # if ($query->has_facets) {
+  #   # Copy filters used in the overall query into each facet, thereby
+  #   # limiting the facets to only counting against the filtered bits.
+  #   # This is really to replicate my expecations and the way facets are
+  #   # usually used.
+  #   my %facets = %{ $query->facets };
+  #   $options->{facets} = $query->facets;
  
-    if ($query->has_filters) {
-      foreach my $f (keys %facets) {
-	$facets{$f}->{facet_filter}->{$filter_combine} = \@facet_cache;
-      }
-    }
+  #   if ($query->has_filters) {
+  #     foreach my $f (keys %facets) {
+  # 	$facets{$f}->{facet_filter}->{$filter_combine} = \@facet_cache;
+  #     }
+  #   }
  
-    # Shlep the facets into the final query, even if we didn't do anything
-    # with the filters above.
-    $options->{facets} = \%facets;
-  }
- 
+  #   # Shlep the facets into the final query, even if we didn't do anything
+  #   # with the filters above.
+  #   $options->{facets} = \%facets;
+  # }
+
+  $options->{body}{facets} = $query->facets
+    if $query->has_facets;
+
+  # support for aggregations, to be completed below
+  $options->{body}{aggs} = $query->aggregations
+    if $query->has_aggregations;
+
   if ($query->has_order) {
     $options->{sort} = $query->order;
   }

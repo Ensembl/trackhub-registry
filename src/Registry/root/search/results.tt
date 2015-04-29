@@ -33,6 +33,7 @@
           <div id="current-filters" class="panel-collapse collapse in">
             <div class="panel-body">
               <ul class="nav nav-list">
+	        [% filters.delete('page') %]
 	        [% FOREACH key IN filters.keys.sort %]
 		  [% p = {} %]
 		  [% p.import(filters) %]

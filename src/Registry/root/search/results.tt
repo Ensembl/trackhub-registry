@@ -54,8 +54,9 @@
             <div class="panel-body">
               <ul class="nav nav-list">
 	        [% FOR species IN facets.species %]
-		  [% p = { species = species.value } %]
+		  [% p = { } %]
 		  [% p.import(filters) %]
+		  [% p.species = species.value %]
                 <li><a rel="nofollow" href="[% c.uri_for('/search', p) %]">[% species.value %]<span class="facet-count">[% species.count %]</span></a></li>
 		[% END %]      
               </ul>
@@ -71,8 +72,9 @@
             <div class="panel-body">
               <ul class="nav nav-list">
 	        [% FOR assembly IN facets.assembly %]
-		  [% p = { accession = assembly.value } %]
+		  [% p = { } %]
 		  [% p.import(filters) %]
+		  [% p.accession = assembly.value %]
                 <li><a rel="nofollow" href="[% c.uri_for('/search', p ) %]">[% assembly.value %]<span class="facet-count">[% assembly.count %]</span></a></li>
 		[% END %]      
               </ul>

@@ -133,17 +133,14 @@
 [% END %]
 [% IF pager.previous_page %]
   [% filters.page = pager.previous_page %]
-<!--  <li><a href="[% c.uri_for('/search', { q => query_string, page => pager.previous_page })%]">Previous</a></li> -->
   <li><a href="[% c.uri_for('/search', filters)%]">Previous</a></li>
 [% END %]
 [% IF pager.next_page %]
   [% filters.page = pager.next_page %]
-<!--  <li><a href="[% c.uri_for('/search', { q => query_string, page => pager.next_page })%]">Next</a></li> -->
   <li><a href="[% c.uri_for('/search', filters)%]">Next</a></li>
 [% END %]
 [% IF pager.current_page != pager.last_page AND pager.last_page != pager.next_page %]
   [% filters.page = pager.last_page %]
-<!--  <li><a href="[% c.uri_for('/search', { q => query_string, page => pager.last_page }) %]">Last</a></li> -->
   <li><a href="[% c.uri_for('/search', filters) %]">Last</a></li>
 [% END %]
 </ul>

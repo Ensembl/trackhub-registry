@@ -3,6 +3,7 @@ use Moose;
 use namespace::autoclean;
 
 use Try::Tiny;
+use Catalyst::Exception;
 use Data::SearchEngine::ElasticSearch::Query;
 use Data::SearchEngine::ElasticSearch;
 
@@ -29,7 +30,6 @@ Catalyst Controller.
 # TODO: 
 # - Data::SearchEngine::ElasticSearch instance must be initialised
 #   with location of nodes from config file
-# - pass extra parameters as AND filters
 #
 sub index :Path :Args(0) {
   my ( $self, $c ) = @_;
@@ -45,20 +45,35 @@ sub index :Path :Args(0) {
 
   my $page = $params->{page} || 1;
   $page = 1 if $page !~ /^\d+$/;
-  my $entries_per_page = $params->{entries_per_page} || 1;
+  my $entries_per_page = $params->{entries_per_page} || 10;
 
   my $config = Registry->config()->{'Model::Search'};
   my ($index, $type) = ($config->{index}, $config->{type}{trackhub});
   my $fields = ['name', 'description', 'version'];
+
+  # pass extra (i.e. besides query) parameters as ANDed filters
+  my $filters;
+  foreach my $param (keys %{$params}) {
+    next if $param eq 'q';
+    my $filter = ($param =~ /species/)?'species.tax_id':'assembly.name';
+    $filters->{$filter} = $params->{$param};
+  }
+
+  my $query_args = 
+    {
+     index     => $index,
+     data_type => $type,
+     page      => $page,
+     count     => $entries_per_page, 
+     type      => $query_type,
+     query     => $query_body,
+     facets    => { species  => { terms => { field => 'species.tax_id' } },
+		    assembly => { terms => { field => 'assembly.name' } } }
+    };
+  $query_args->{filters} = $filters if $filters;
+
   my $query = 
-    Data::SearchEngine::ElasticSearch::Query->new(index     => $index,
-  						  data_type => $type,
-  						  page      => $page,
-						  count     => $entries_per_page, 
-  						  type      => $query_type,
-  						  query     => $query_body,
-						  facets    => { species  => { terms => { field => 'species.tax_id' } },
-								 assembly => { terms => { field => 'assembly.name' } }});
+    Data::SearchEngine::ElasticSearch::Query->new($query_args);
   my $se = Data::SearchEngine::ElasticSearch->new();
   my $results;
 
@@ -66,14 +81,18 @@ sub index :Path :Args(0) {
   try {
     $results = $se->search($query);
   } catch {
-    $c->go('ReturnError', 'custom', [qq{$_}]);
+    Catalyst::Exception->throw( qq/$_/ );
   };
 
-  $c->stash(columns         => $fields,
+  # TODO: process facets in order to show more meaningful values, 
+  # e.g. Species name instead of tax id
+  my $facets = $results->facets;
+
+  $c->stash(# columns         => $fields,
 	    query_string    => $params->{q},
 	    filters         => $params,
 	    items           => $results->items,
-	    facets          => $results->facets,
+	    facets          => $facets,
 	    pager           => $results->pager,
 	    template        => 'search/results.tt');
     

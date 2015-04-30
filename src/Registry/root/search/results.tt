@@ -107,7 +107,19 @@
 	      [% FOREACH item = items %]
 	      <tr>
 	        <td style="word-wrap: break-word;">
-		  <a style="float: right;" class="btn btn-primary btn-xs" href="#" role="button">Load in EnsEMBL</a>
+		  <div class="btn-group" style="float: right;">
+		    [% USE Math; r = GET Math.rand(1) %]
+		    [% IF r < 0.8 %]
+                    <button type="button" class="btn btn-success btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Load in Genome Browser<span class="caret"></span></button>
+		    [% ELSE %]
+                    <button type="button" class="btn btn-warning btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Load in Genome Browser<span class="caret"></span></button>
+		    [% END %]
+                    <ul class="dropdown-menu" role="menu">
+                      <li><a href="#">EnsEMBL</a></li>
+                      <li><a href="#">UCSC</a></li>
+                    </ul>
+                  </div>
+		  <!--<a style="float: right;" class="btn btn-primary btn-xs" href="#" role="button">Load in EnsEMBL</a>-->
 		  <b>[% item.get_value('hub') %]</b>
 		  <p>[% s = item.get_value('species'); s.scientific_name %] - [% a = item.get_value('assembly'); a.name %]</p>
 		</td>

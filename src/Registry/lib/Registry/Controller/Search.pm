@@ -51,14 +51,6 @@ sub index :Path :Args(0) {
   my ($index, $type) = ($config->{index}, $config->{type}{trackhub});
   my $fields = ['name', 'description', 'version'];
 
-  # pass extra (i.e. besides query) parameters as ANDed filters
-  my $filters;
-  foreach my $param (keys %{$params}) {
-    next if $param eq 'q';
-    my $filter = ($param =~ /species/)?'species.tax_id':'assembly.name';
-    $filters->{$filter} = $params->{$param};
-  }
-
   my $query_args = 
     {
      index     => $index,
@@ -70,6 +62,14 @@ sub index :Path :Args(0) {
      facets    => { species  => { terms => { field => 'species.tax_id' } },
 		    assembly => { terms => { field => 'assembly.name' } } }
     };
+
+  # pass extra (i.e. besides query) parameters as ANDed filters
+  my $filters;
+  foreach my $param (keys %{$params}) {
+    next if $param eq 'q' or $param eq 'page';
+    my $filter = ($param =~ /species/)?'species.tax_id':'assembly.name';
+    $filters->{$filter} = $params->{$param};
+  }
   $query_args->{filters} = $filters if $filters;
 
   my $query = 

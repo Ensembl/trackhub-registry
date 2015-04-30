@@ -98,27 +98,25 @@
       <!-- Tab panes -->
       <div class="tab-content">
         <div role="tabpanel" class="tab-pane fade in active" id="tracks">
-          <table id="tracks" class="table table-bordered table-striped tablesorter" summary="Track search results">
-            <thead>
-              <tr>
-                [% FOR column IN columns %]
-                <th scope="col">[% column %]</th>
-                [% END %]
-              </tr>
-            </thead>
+	  <!--<p><small>Tracks [% %] to [% %] of [% pager.total_entries %]</small></p>-->
+	  <table class="table table-striped table-hover tablesorter" style="table-layout: fixed;">
             <tbody>
-              [% FOREACH item = items %] 
-              <tr>
-                [% FOR column IN columns %]
-                <td>[% item.get_value(column) | html %]</td>
-                [% END %]
-              </tr>
-              [% END %]
-            </tbody>
-          </table>
+	      [% FOREACH item = items %]
+	      <tr>
+	        <td style="word-wrap: break-word;">
+		  <a style="float: right;" class="btn btn-primary btn-sm" href="#" role="button">Load in Ensembl</a>
+		  <b>[% item.get_value('hub') %]</b>
+		  <p>[% s = item.get_value('species'); s.scientific_name %] - [% a = item.get_value('assembly'); a.name %]</p>
+		</td>
+	      </tr>
+	      [% END %]
+	    </tbody>
+	  </table>
 	</div>
+
         <div role="tabpanel" class="tab-pane fade" id="tracks_by_hub">tracks by hub
 	</div>
+
         <div role="tabpanel" class="tab-pane fade" id="tracks_by_type">tracks by type
 	</div>
       </div>

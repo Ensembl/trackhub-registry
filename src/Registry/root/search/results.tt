@@ -101,6 +101,7 @@
       <div class="tab-content">
         <div role="tabpanel" class="tab-pane fade in active" id="tracks">
 	  <!--<p><small>Tracks [% %] to [% %] of [% pager.total_entries %]</small></p>-->
+	  
 	  <table class="table table-striped table-hover tablesorter" style="table-layout: fixed;">
             <tbody>
 	      [% FOREACH item = items %]
@@ -114,6 +115,20 @@
 	      [% END %]
 	    </tbody>
 	  </table>
+	  
+	  <!--
+	  <div class="list-group">
+	    [% FOREACH item = items %]
+            <div class="list-group-item">
+              <a style="float: right;" class="btn btn-primary btn-xs" href="#" role="button">Load in EnsEMBL</a>
+              <h4 class="list-group-item-heading">[% item.get_value('hub') %]</h4>
+    	      <p class="list-group-item-text">
+	        [% s = item.get_value('species'); s.scientific_name %] - [% a = item.get_value('assembly'); a.name %]
+	      </p>
+            </div>
+	    [% END %]
+          </div>
+	  -->
 	</div>
 
         <div role="tabpanel" class="tab-pane fade" id="tracks_by_hub">tracks by hub

@@ -52,12 +52,13 @@
           </div>
           <div id="species-facet" class="panel-collapse collapse">
             <div class="panel-body">
-              <ul class="nav nav-list">
+              <ul class="list-group"> <!--class="nav nav-list">-->
 	        [% FOR species IN facets.species %]
 		  [% p = { } %]
 		  [% p.import(filters) %]
 		  [% p.species = species.value %]
-                <li><a rel="nofollow" href="[% c.uri_for('/search', p) %]">[% species.value %]<span class="facet-count">[% species.count %]</span></a></li>
+                <li class="list-group-item"><span class="badge">[% species.count %]</span><a rel="nofollow" href="[% c.uri_for('/search', p) %]">[% species.value %]</a></li>
+		<!--<li><a rel="nofollow" href="[% c.uri_for('/search', p) %]">[% species.value %]<span class="facet-count">[% species.count %]</span></a></li>-->
 		[% END %]      
               </ul>
             </div>
@@ -70,12 +71,13 @@
           </div>
           <div id="assembly-facet" class="panel-collapse collapse">
             <div class="panel-body">
-              <ul class="nav nav-list">
+              <ul class="list-group"> <!--class="nav nav-list">-->
 	        [% FOR assembly IN facets.assembly %]
 		  [% p = { } %]
 		  [% p.import(filters) %]
 		  [% p.assembly_name = assembly.value %]
-                <li><a rel="nofollow" href="[% c.uri_for('/search', p ) %]">[% assembly.value %]<span class="facet-count">[% assembly.count %]</span></a></li>
+		<li class="list-group-item"><span class="badge">[% assembly.count %]</span><a rel="nofollow" href="[% c.uri_for('/search', p ) %]">[% assembly.value %]</a></li>
+                <!--<li><a rel="nofollow" href="[% c.uri_for('/search', p ) %]">[% assembly.value %]<span class="facet-count">[% assembly.count %]</span></a></li>-->
 		[% END %]      
               </ul>
             </div>
@@ -104,7 +106,7 @@
 	      [% FOREACH item = items %]
 	      <tr>
 	        <td style="word-wrap: break-word;">
-		  <a style="float: right;" class="btn btn-primary btn-sm" href="#" role="button">Load in Ensembl</a>
+		  <a style="float: right;" class="btn btn-primary btn-xs" href="#" role="button">Load in EnsEMBL</a>
 		  <b>[% item.get_value('hub') %]</b>
 		  <p>[% s = item.get_value('species'); s.scientific_name %] - [% a = item.get_value('assembly'); a.name %]</p>
 		</td>

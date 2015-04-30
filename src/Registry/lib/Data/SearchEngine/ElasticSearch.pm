@@ -162,9 +162,9 @@ sub search {
   my @facet_cache = ();
   if ($query->has_filters) {
     foreach my $filter ($query->filter_names) {
-      push(@facet_cache, $query->get_filter($filter));
+      push @facet_cache, { term => { $filter => $query->get_filter($filter) } };
     }
-    $options->{filter}->{$filter_combine} = \@facet_cache;
+    $options->{body}{filter}{$filter_combine} = \@facet_cache;
   }
  
   # and this one too

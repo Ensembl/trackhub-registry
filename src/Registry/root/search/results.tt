@@ -39,7 +39,13 @@
 		  [% p = {} %]
 		  [% p.import(filters) %]
 		  [% p.delete(key) %]
+		  [%# HACK %]
+		  [%# show the scientific name instead of the species %]
+		  [% IF key == 'species' %]
+                <li><a rel="nofollow" href="[% c.uri_for('/search', p ) %]">[% taxid2name.item(filters.$key) %]<span class="close">&times</span></a></li>
+		  [% ELSE %]
                 <li><a rel="nofollow" href="[% c.uri_for('/search', p ) %]">[% filters.$key %]<span class="close">&times</span></a></li>
+		  [% END %]
 		[% END %]   
               </ul>
             </div> <!-- panel-body -->
@@ -57,7 +63,9 @@
 		  [% p = { } %]
 		  [% p.import(filters) %]
 		  [% p.species = species.value %]
-                <li class="list-group-item"><span class="badge">[% species.count %]</span><a rel="nofollow" href="[% c.uri_for('/search', p) %]">[% species.value %]</a></li>
+		  [%# HACK %]
+		  [%# show the scientific name  instead of the taxid %]
+                <li class="list-group-item"><span class="badge">[% species.count %]</span><a rel="nofollow" href="[% c.uri_for('/search', p) %]"><em>[% taxid2name.item(species.value) %]</em></a></li>
 		<!--<li><a rel="nofollow" href="[% c.uri_for('/search', p) %]">[% species.value %]<span class="facet-count">[% species.count %]</span></a></li>-->
 		[% END %]      
               </ul>
@@ -175,7 +183,7 @@
                 </div>
 		-->
 	        <p>
-		  <strong>Species</strong>: [% s = item.get_value('species'); s.tax_id %] - [% s.scientific_name %]<br/>
+		  <strong>Species</strong>: [% s = item.get_value('species'); s.tax_id %] - <em>[% s.scientific_name %]</em><br/>
 		  <strong>Assembly</strong>: [% a = item.get_value('assembly'); a.accession %] - [% a.name %]
 		</p>
               </div>
@@ -192,7 +200,7 @@
                   </ul>
                 </div>
 	        <p>
-		  <strong>Species</strong>: [% s = item.get_value('species'); s.tax_id %] - [% s.scientific_name %]<br/>
+		  <strong>Species</strong>: [% s = item.get_value('species'); s.tax_id %] - <em>[% s.scientific_name %]</em><br/>
 		  <strong>Assembly</strong>: [% a = item.get_value('assembly'); a.accession %] - [% a.name %]
 		</p>
               </div>

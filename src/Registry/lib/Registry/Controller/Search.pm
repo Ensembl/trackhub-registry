@@ -48,7 +48,7 @@ sub index :Path :Args(0) {
 
   my $page = $params->{page} || 1;
   $page = 1 if $page !~ /^\d+$/;
-  my $entries_per_page = $params->{entries_per_page} || 10;
+  my $entries_per_page = $params->{entries_per_page} || 50;
 
   my $config = Registry->config()->{'Model::Search'};
   my ($index, $type) = ($config->{index}, $config->{type}{trackhub});
@@ -90,9 +90,10 @@ sub index :Path :Args(0) {
   # TODO: process facets in order to show more meaningful values, 
   # e.g. Species name instead of tax id
   my $facets = $results->facets;
+
   ######################################################################
   #
-  # NOTE
+  # TEMP HACK
   # This is a temporary fix to show the prototype for the code review, 
   # which is based on having just a bunch of indexed documents for a 
   # very limited selection of species.
@@ -104,14 +105,18 @@ sub index :Path :Args(0) {
      7955  => 'Danio rerio',
      9615  => 'Canis lupus familiaris',
      3988  => 'Ricinus communis',
-     3702  => 'Arabidopsis thaliana'
+     3702  => 'Arabidopsis thaliana',
+     3711  => 'Brassica rapa',
+     9598  => 'Pan troglodytes'
     };
   #
   ######################################################################
   
   $c->stash(# columns         => $fields,
+	    ############
 	    # TEMP HACK
 	    taxid2name => $taxid2name,
+	    ############
 	    query_string    => $params->{q},
 	    filters         => $params,
 	    items           => $results->items,

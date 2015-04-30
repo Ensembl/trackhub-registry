@@ -99,9 +99,11 @@
 
       <!-- Tab panes -->
       <div class="tab-content">
-        <div role="tabpanel" class="tab-pane fade in active" id="tracks">
+        <div role="tabpanel" class="tab-pane fade in active" id="tracks" style="margin-top: 20px;">
+	  [% IF items.size > 0 %]
 	  <!--<p><small>Tracks [% %] to [% %] of [% pager.total_entries %]</small></p>-->
-	  
+
+	  <!--
 	  <table class="table table-striped table-hover tablesorter" style="table-layout: fixed;">
             <tbody>
 	      [% FOREACH item = items %]
@@ -119,7 +121,6 @@
                       <li><a href="#">UCSC</a></li>
                     </ul>
                   </div>
-		  <!--<a style="float: right;" class="btn btn-primary btn-xs" href="#" role="button">Load in EnsEMBL</a>-->
 		  <b>[% item.get_value('hub') %]</b>
 		  <p>[% s = item.get_value('species'); s.scientific_name %] - [% a = item.get_value('assembly'); a.name %]</p>
 		</td>
@@ -127,6 +128,77 @@
 	      [% END %]
 	    </tbody>
 	  </table>
+	  -->
+
+	  [% FOREACH item = items %]
+	    [% USE Math; r = GET Math.rand(1) %]
+	    [% IF r < 0.8 %]
+            <div class="panel panel-info">
+	      <div class="panel-heading"><b>[% item.get_value('hub') %]</b></div>
+              <div class="panel-body">
+	        <div class="btn-group" style="float: right;">
+                  <button type="button" class="btn btn-success btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Load in Genome Browser<span class="caret"></span></button>
+                  <ul class="dropdown-menu" role="menu">
+                    <li><a href="#">EnsEMBL</a></li>
+                    <li><a href="#">UCSC</a></li>
+                  </ul>
+                </div>
+		<!--
+		<ul class="list-group">
+		  <li class="list-group-item">
+                    <h4 class="list-group-item-heading">Species</h4>
+                    <p class="list-group-item-text">[% s = item.get_value('species'); s.scientific_name %]</p>
+                    <h4 class="list-group-item-heading">Assembly</h4>
+                    <p class="list-group-item-text">[% a = item.get_value('assembly'); a.name %]</p>		    
+ 		  </li>
+                </ul>
+		-->
+		<!--
+		<table class="table table-condensed">
+		  <tbody>
+		    <tr>
+	              <td style="word-wrap: break-word;">Species</td>
+		      <td style="word-wrap: break-word;">[% s.tax_id %] - <b>[% s = item.get_value('species'); s.scientific_name %]</b></td>
+		    </tr>
+		    <tr>
+	              <td style="word-wrap: break-word;">Assembly</td>
+		      <td style="word-wrap: break-word;">[% a.accession %] - <b>[% a = item.get_value('assembly'); a.name %]</b></td>
+		    </tr>		    
+		  </tbody>
+		</table>
+	        <div class="btn-group" style="float: right;">
+                  <button type="button" class="btn btn-success btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Load in Genome Browser<span class="caret"></span></button>
+                  <ul class="dropdown-menu" role="menu">
+                    <li><a href="#">EnsEMBL</a></li>
+                    <li><a href="#">UCSC</a></li>
+                  </ul>
+                </div>
+		-->
+	        <p>
+		  <strong>Species</strong>: [% s = item.get_value('species'); s.tax_id %] - [% s.scientific_name %]<br/>
+		  <strong>Assembly</strong>: [% a = item.get_value('assembly'); a.accession %] - [% a.name %]
+		</p>
+              </div>
+            </div>
+	    [% ELSE %]
+            <div class="panel panel-warning">
+	      <div class="panel-heading"><b>[% item.get_value('hub') %]</b></div>
+              <div class="panel-body">
+	        <div class="btn-group" style="float: right;">
+                  <button type="button" class="btn btn-warning btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Load in Genome Browser<span class="caret"></span></button>
+                  <ul class="dropdown-menu" role="menu">
+                    <li><a href="#">EnsEMBL</a></li>
+                    <li><a href="#">UCSC</a></li>
+                  </ul>
+                </div>
+	        <p>
+		  <strong>Species</strong>: [% s = item.get_value('species'); s.tax_id %] - [% s.scientific_name %]<br/>
+		  <strong>Assembly</strong>: [% a = item.get_value('assembly'); a.accession %] - [% a.name %]
+		</p>
+              </div>
+            </div>
+	    [% END %]
+	  [% END %]
 	  
 	  <!--
 	  <div class="list-group">
@@ -141,12 +213,20 @@
 	    [% END %]
           </div>
 	  -->
+	  [% ELSE %]
+	  <div class="alert alert-danger" role="alert">
+	    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> No results. 
+	    <p>Try with another query or mixing compatible species and assembly filters.</p>
+          </div>
+	  [% END %]	  
 	</div>
 
-        <div role="tabpanel" class="tab-pane fade" id="tracks_by_hub">tracks by hub
+        <div role="tabpanel" class="tab-pane fade" id="tracks_by_hub" style="margin-top: 20px;">
+	  Tracks by hub
 	</div>
 
-        <div role="tabpanel" class="tab-pane fade" id="tracks_by_type">tracks by type
+        <div role="tabpanel" class="tab-pane fade" id="tracks_by_type" style="margin-top: 20px;">
+	  Tracks by type
 	</div>
       </div>
     </div>

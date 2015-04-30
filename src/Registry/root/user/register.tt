@@ -3,7 +3,11 @@
 <div>
   [% FOR field IN form.error_fields %]
       [% FOR error IN field.errors %]
-          <p><span style="color: red;">[% field.label _ ': ' _ error %]</span></p>
+          <!-- <p><span style="color: red;">[% field.label _ ': ' _ error %]</span></p> -->
+	  <div class="alert alert-danger alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> [% field.label _ ': ' _ error %]
+      	  </div>
       [% END %]
   [% END %]
 </div>

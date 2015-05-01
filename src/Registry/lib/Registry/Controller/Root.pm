@@ -62,7 +62,7 @@ The page linked by the "Learn More" button in the front page
 
 =cut 
 
-sub learn_more :Path('/more') {
+sub learn_more :Path('/about') {
   my ($self, $c) = @_;
 }
 

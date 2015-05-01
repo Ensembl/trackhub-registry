@@ -1,3 +1,12 @@
+<div class="row">
+  <div class="col-sm-12">
+    <ul class="breadcrumb">
+      <li><a href="/">Home</a></li>
+      <li class="active">About</li>
+    </ul>
+  </div>
+</div>
+
 <div class="page-header">
   <h3>The TrackHub Registry</h3>
 </div>

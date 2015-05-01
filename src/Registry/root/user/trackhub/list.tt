@@ -2,9 +2,41 @@
 [% PROCESS user/user_nav.tt %]
 
 <div class="page-header">
-  <h3>TrackHubs</h3>
+  <h3>Your track collections</h3>
 </div>
 <div class="row">
+  <div class="col-sm-12">
+    <table class="table table-condensed">
+      <thead>
+        <tr>
+	  <th>Id</td>
+
+          <th>Hub</th>
+          <th>Assembly</th>
+          <th>JSON Schema</th>
+          <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+      [% FOR trackhub IN trackhubs %]
+      <tr>
+        <td style="word-wrap: break-word;">[% trackhub.id %]</td>
+	<td style="word-wrap: break-word;">[% trackhub.hub %]</td>
+	<td style="word-wrap: break-word;">[% trackhub.assembly.name %]</td>
+	<td style="word-wrap: break-word;">[% trackhub.version %]</td>
+        [% USE Math; r = GET Math.rand(1) %]
+	[% IF r < 0.8 %]
+	<td style="word-wrap: break-word;"><span class="label label-success">All is well</span></td>
+	[% ELSE %]
+	<td style="word-wrap: break-word;"><span class="label label-danger">Remote data unavailable</span></td>
+	[% END %]
+      </tr>
+      [% END %]
+    </tbody>
+  </table>
+  </div>
+
+  <!--
   <table id="trackhubs" class="table table-bordered table-striped tablesorter" summary="The list of all trackhubs">
     <thead>
       <tr>
@@ -23,4 +55,6 @@
       [% END %]
     </tbody>
   </table>
+  -->
+
 </div>

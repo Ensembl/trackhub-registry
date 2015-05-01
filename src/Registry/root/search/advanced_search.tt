@@ -1,0 +1,17 @@
+<div class="row">
+  <div class="col-sm-12">
+    <ul class="breadcrumb">
+      <li><a href="/">Home</a></li>
+      <li class="active">Browse</li>
+    </ul>
+  </div>
+</div>
+
+<div class="page-header">
+  <h3>Advanced Search</h3>
+</div>
+<div class="row">
+  <div class="col-sm-12">
+    <p>TrackHub is a technology that allows efficient integration of large-scale genomic data sets into modern genome browsers. TrackHubs represent a way to collate related data sets through a single attachable URL (Uniform Resource Locator) for presentation as a single entity. These data sets are provided in the binary indexed file formats (e.g. bigBed, bigWig, BAM, VCF) supporting partial downloads and caching, significantly improving performance over DAS. They can be hosted on a simple HTTP or FTP server reducing the cost of setup and maintenance.</p>
+  </div>
+</div>

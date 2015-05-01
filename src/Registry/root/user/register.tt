@@ -14,8 +14,13 @@
 
 <div class="alert alert-info alert-dismissible" role="alert">
   <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-  You need to have an account before submitting data.
-  Sign up and start using the REST API to manage your trackhubs with the registry.
+  <p>
+    You need to have an account before submitting data.
+    Sign up and start using the REST API to manage your trackhubs with the registry.
+  </p>
+  <p>
+    If you do have an account, use the REST API to authenticate and submit/update your track collections.
+  </p>
 </div>
 
 <div class="page-header">

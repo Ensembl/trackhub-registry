@@ -117,17 +117,26 @@ sub delete : Chained('base') Path('delete') Args(1) Does('ACL') RequiresRole('ad
 sub list_trackhubs : Chained('base') :Path('trackhubs') Args(0) {
   my ($self, $c) = @_;
 
-  my $columns = [ 'name', 'description', 'version', 'status' ];
+  my $columns = [ 'Hub', 'description', 'JSON Schema', 'status' ];
   my $trackhubs;
   my $query = { term => { owner => $c->user->username } };
 
   foreach my $doc (@{$c->model('Search')->search_trackhubs(query => $query)->{hits}{hits}}) {
+    $doc->{_source}{id} = $doc->{_id};
     push @{$trackhubs}, $doc->{_source};
   }
+
+  # use Data::Dumper; $c->log->debug(Dumper $c->model('Search')->search_trackhubs(query => $query));
 
   $c->stash(trackhubs => $trackhubs,
 	    columns   => $columns,
 	    template  => "user/trackhub/list.tt");
+}
+
+sub submit_trackhubs : Chained('base') :Path('submit_trackhubs') Args(0) {
+  my ($self, $c) = @_;
+
+  $c->stash(template  => "user/trackhub/submit_update.tt");
 }
 
 #

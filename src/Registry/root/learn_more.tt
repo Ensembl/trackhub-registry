@@ -11,11 +11,33 @@
   <h3>The TrackHub Registry</h3>
 </div>
 <div class="row">
-  <div class="col-sm-12">
+  <div class="col-sm-12" style="text-align: justify; text-justify: inter-word;">
     <p>TrackHub is a technology that allows efficient integration of large-scale genomic data sets into modern genome browsers. TrackHubs represent a way to collate related data sets through a single attachable URL (Uniform Resource Locator) for presentation as a single entity. These data sets are provided in the binary indexed file formats (e.g. bigBed, bigWig, BAM, VCF) supporting partial downloads and caching, significantly improving performance over DAS. They can be hosted on a simple HTTP or FTP server reducing the cost of setup and maintenance.</p>
 
-<p>Both UCSC and Ensembl have developed initial support for this technology, but there are still limitations for many users, and Ensembl's support remains incomplete. At present integration of TrackHubs into the Ensembl and UCSC genome browsers involves the copy-paste of a known URL. Discovery is based on word of mouth or the provision of <a href="http://genome.ucsc.edu/cgi-bin/hgHubConnect" target="_blank">manually curated portal pages</a> hosted by the genome browsers or projects.</p>
+    <p>Both UCSC and Ensembl have developed initial support for this technology, but there are still limitations for many users, and Ensembl's support remains incomplete. At present integration of TrackHubs into the Ensembl and UCSC genome browsers involves the copy-paste of a known URL. Discovery is based on word of mouth or the provision of <a href="http://genome.ucsc.edu/cgi-bin/hgHubConnect" target="_blank">manually curated portal pages</a> hosted by the genome browsers or projects.</p>
 
-<p>The aim here is to develop a registry system for third parties to advertise TrackHubs, and to make it easier for researchers around the world to discover and use TrackHubs containing different types of genomic research data.</p>
+    <p>The aim here is to develop a registry system for third parties to advertise TrackHubs, and to make it easier for researchers around the world to discover and use TrackHubs containing different types of genomic research data.</p>
+
+    <h3>Funding</h3>
+    <p>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. In aliquam augue libero, a malesuada magna bibendum in. Aliquam ante diam, mollis a pellentesque vitae, pretium eu metus. Curabitur auctor venenatis luctus. Etiam lorem nunc, feugiat nec tincidunt at, lacinia vel libero. Nulla tincidunt ex quis nisi imperdiet, a vulputate libero vulputate. Nulla malesuada, ipsum eu molestie viverra, felis eros dapibus elit, in aliquam elit mauris consectetur nulla. In at suscipit lacus. Suspendisse tincidunt ipsum id venenatis sagittis. In at libero vehicula, lacinia velit in, feugiat nulla. Curabitur at dignissim massa, vitae finibus lectus. Fusce vel augue suscipit, fringilla leo eu, molestie mauris. Suspendisse varius vulputate consectetur. Curabitur eget magna felis. Quisque congue odio sem, eu dignissim lectus condimentum quis. Vivamus ac rhoncus ipsum. Pellentesque sit amet odio in sem luctus placerat et eget augue.
+    </p>
+
+    <h3>Publications</h3>
+     <p>
+     Maecenas congue ornare facilisis. Cras sed venenatis sem. Praesent tincidunt lorem urna, at tincidunt lorem suscipit semper. Nulla vel quam ultricies, sodales magna eget, scelerisque sem. Donec finibus arcu ante, in volutpat ipsum vestibulum et. Ut eu condimentum massa. Sed interdum erat justo, ut consequat tortor bibendum sed.
+    </p>
+    
+    <hr>
+    <a id="contacts"></a><h3>Getting help and Contacts</h3>
+    <p>
+    Sed ac nisl eget dolor euismod scelerisque. Morbi malesuada metus ac commodo vestibulum. Sed non nunc aliquet, tempor arcu vel, fringilla augue. Integer ut orci viverra arcu mattis fringilla. Curabitur ut dictum tortor. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque fermentum nisi nec eros tristique gravida. Sed velit neque, fringilla convallis bibendum vitae, molestie non nisl.
+    </p>
+
+    <h3>Credits & acknowledgements</h3>
+    <p>
+    Morbi aliquam nisl id velit fermentum bibendum. Aliquam gravida condimentum nisi. Ut sit amet dui nibh. Donec sit amet enim ex. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Morbi sollicitudin accumsan leo ut varius. Phasellus tempus luctus nisi. Cras hendrerit condimentum semper. Aliquam at lacus malesuada, efficitur purus ac, egestas tellus. Aenean sed lectus placerat, malesuada nibh vel, consequat erat. Pellentesque ac leo et leo mollis bibendum. Ut ut ipsum non nulla euismod fermentum. Proin sagittis nulla vel urna sagittis, quis auctor nulla tincidunt. Vivamus luctus dolor mauris, non pretium eros tempor id.
+    </p>
+
   </div>
 </div>

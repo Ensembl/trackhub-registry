@@ -25,7 +25,9 @@ if (!jQuery.support.placeholder) {
 }
 
 $(document).ready( function() {
-  $('.dropdown-toggle').dropdown();
+    $('.dropdown-toggle').dropdown();
+    $('[data-toggle="tooltip"]').tooltip(); // initialize all tooltips on a page
+    $('[data-toggle="popover"]').tooltip(); // initialize all popovers on a page
 });
 
 // Change the right-chevron to down-chevron when people click to show filters

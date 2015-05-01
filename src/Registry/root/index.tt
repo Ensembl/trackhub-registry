@@ -57,7 +57,7 @@
     <div class="box-progetto">
       <h2><span class="glyphicon glyphicon-search"></span> Access Data</h2>
       <p>TrackHubs can be searched based on metadata information. Free text search is provided from the search box in the header of all TrackHub Registry web pages. Advanced search options are available for more specific and customised searches.</p>
-      <a href="#" class="btn btn-primary">Advanced Search</a>
+      <a href="[% c.uri_for('/browse') %]" class="btn btn-primary">Advanced Search</a>
     </div>
   </div><!-- /.col-sm-6 -->
 </div>

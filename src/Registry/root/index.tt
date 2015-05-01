@@ -45,10 +45,15 @@
 </div>
 
 <section id="">
-<div class="row">
+<div class="row" style="text-align: justify; text-justify: inter-word;">
   <div class="col-sm-6">
     <div class="box-progetto">
       <h2><span class="glyphicon glyphicon-upload"></span> Submit Data</h2>
+
+      <blockquote>
+        <p><em>I want maximum visibility for my track hubs.</em></p>
+      </blockquote>
+
       <p>External TrackHub providers can register themselves and submit their TrackHubs to the registry. Registration and submission happen programatically via our RESTful API. Once submitted and validated, the TrackHubs become available for search by other users worldwide, allowing for automatic and rapid integration into a genome browser.</p>
       <a href="[% c.uri_for('/submit_trackhubs') %]" class="btn btn-primary">How to Submit</a>
     </div>
@@ -56,8 +61,13 @@
   <div class="col-sm-6">
     <div class="box-progetto">
       <h2><span class="glyphicon glyphicon-search"></span> Access Data</h2>
+
+      <blockquote>
+        <p><em>How do I find omics tracks for an assembly of my favourite organism?</em></p>
+      </blockquote>
+
       <p>TrackHubs can be searched based on metadata information. Free text search is provided from the search box in the header of all TrackHub Registry web pages. Advanced search options are available for more specific and customised searches.</p>
-      <a href="[% c.uri_for('/browse') %]" class="btn btn-primary">Advanced Search</a>
+      <a href="[% c.uri_for('/browse') %]" class="btn btn-primary">Browse Tracks</a>
     </div>
   </div><!-- /.col-sm-6 -->
 </div>

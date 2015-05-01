@@ -152,7 +152,8 @@
                       <li><a href="#">UCSC</a></li>
                     </ul>
                   </div>
- 		  <button type="button" class="btn btn-default">View Info</button>
+		  <!--<a tabindex="0" class="btn btn-lg btn-default" role="button" data-toggle="popover" data-trigger="focus" title="Dismissible popover" data-content="">Dismissible popover</a>-->
+		  <button type="button" class="btn btn-lg btn-default" data-toggle="popover" title="[% item.get_value('hub') %]" data-content="And here's some amazing content. It's very engaging. Right?">View Info</button>
 		</div>
 		<!--
 		<ul class="list-group">
@@ -197,7 +198,7 @@
               <div class="panel-body">
 	        <div style="float: right;">
 	          <span class="label label-warning">Remote data not available</span>
-		  <button type="button" class="btn btn-default btn-xs">View Info</button>
+		  <button type="button" class="btn btn-xs btn-default" data-toggle="popover" title="[% item.get_value('hub') %]" data-content="This is the track collection info.">View Info</button>
 		</div>
 	        <p>
 		  <strong>Species</strong>: [% s = item.get_value('species'); s.tax_id %] - <em>[% s.scientific_name %]</em><br/>

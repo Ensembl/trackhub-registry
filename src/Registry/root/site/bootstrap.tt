@@ -35,13 +35,22 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="[% c.uri_for('/') %]">TrackHub Registry</a>
+        <a class="navbar-brand" href="[% c.uri_for('/') %]">The TrackHub Registry</a>
       </div> 
       <div class="collapse navbar-collapse navbar-responsive-collapse">
         <ul class="nav navbar-nav">
+          <li><a href="[% c.uri_for('/browse') %]">Browse</a></li>
+          <li><a href="[% c.uri_for('/user/register') %]">Submit</a></li>
+	  <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Documentation <span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+              <li><a href="#">RESTful API</a></li>
+              <li class="divider"></li>
+              <li><a href="#">Search</a></li>
+            </ul>
+          </li>
           <li><a href="[% c.uri_for('/about') %]">About</a></li>
           <li><a href="#">Help</a></li>
-          <li><a href="#">Contacts</a></li>
         </ul>
 	<ul class="nav navbar-nav navbar-right">
 	[% IF c.user_exists %]

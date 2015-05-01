@@ -39,7 +39,7 @@
       </div> 
       <div class="collapse navbar-collapse navbar-responsive-collapse">
         <ul class="nav navbar-nav">
-          <li><a href="#">About</a></li>
+          <li><a href="[% c.uri_for('/about') %]">About</a></li>
           <li><a href="#">Help</a></li>
           <li><a href="#">Contacts</a></li>
         </ul>
@@ -79,6 +79,12 @@
       [% content %]
     </div>
 
+    <footer class="footer" style="margin-top: 50px;">
+      <div class="container">
+        <p class="text-muted">&copy; 2015 TrackHub Registry. &middot; <a href="#">Privacy</a></p>
+      </div>
+    </footer>
+<!--
     <footer>
       <div class="row">
 	<div class="col-sm-12">
@@ -86,7 +92,7 @@
 	</div>
       </div>
     </footer>
-
+-->
     <!-- JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->

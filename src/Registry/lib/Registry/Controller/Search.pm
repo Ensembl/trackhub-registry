@@ -126,6 +126,10 @@ sub index :Path :Args(0) {
     
 }
 
+sub advanced_search :Path('/browse') Args(0) {
+  my ($self, $c) = @_;
+}
+
 =head2 end
 
 Attempt to render a view, if needed.

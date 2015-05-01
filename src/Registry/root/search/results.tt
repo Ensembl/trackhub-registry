@@ -144,13 +144,16 @@
             <div class="panel panel-info">
 	      <div class="panel-heading"><b>[% item.get_value('hub') %]</b></div>
               <div class="panel-body">
-	        <div class="btn-group" style="float: right;">
-                  <button type="button" class="btn btn-success btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Load in Genome Browser<span class="caret"></span></button>
-                  <ul class="dropdown-menu" role="menu">
-                    <li><a href="#">EnsEMBL</a></li>
-                    <li><a href="#">UCSC</a></li>
-                  </ul>
-                </div>
+	        <div class="btn-group  btn-group-xs" style="float: right;">
+		  <div class="btn-group btn-group-xs">
+                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Load tracks <span class="caret"></span></button>
+                    <ul class="dropdown-menu" role="menu">
+                      <li><a href="#">EnsEMBL</a></li>
+                      <li><a href="#">UCSC</a></li>
+                    </ul>
+                  </div>
+ 		  <button type="button" class="btn btn-default">View Info</button>
+		</div>
 		<!--
 		<ul class="list-group">
 		  <li class="list-group-item">
@@ -192,13 +195,10 @@
             <div class="panel panel-warning">
 	      <div class="panel-heading"><b>[% item.get_value('hub') %]</b></div>
               <div class="panel-body">
-	        <div class="btn-group" style="float: right;">
-                  <button type="button" class="btn btn-warning btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Load in Genome Browser<span class="caret"></span></button>
-                  <ul class="dropdown-menu" role="menu">
-                    <li><a href="#">EnsEMBL</a></li>
-                    <li><a href="#">UCSC</a></li>
-                  </ul>
-                </div>
+	        <div style="float: right;">
+	          <span class="label label-warning">Remote data not available</span>
+		  <button type="button" class="btn btn-default btn-xs">View Info</button>
+		</div>
 	        <p>
 		  <strong>Species</strong>: [% s = item.get_value('species'); s.tax_id %] - <em>[% s.scientific_name %]</em><br/>
 		  <strong>Assembly</strong>: [% a = item.get_value('assembly'); a.accession %] - [% a.name %]

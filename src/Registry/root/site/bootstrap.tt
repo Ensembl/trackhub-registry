@@ -77,11 +77,19 @@
       </div>
       [% END %]
       [% content %]
+      <hr/>
     </div>
 
-    <footer class="footer" style="margin-top: 50px;">
+    <footer class="footer" style="margin-top: 20px;">
       <div class="container">
-        <p class="text-muted">&copy; 2015 TrackHub Registry. &middot; <a href="#">Privacy</a></p>
+        <p class="text-muted">Copyright &copy;
+	  <a class="icon" id="ebi-logo" href="http://www.ebi.ac.uk" target="_blank">
+              <img alt="EBI logo" src="/static/img/EMBL_EBI_Logo_black.png" />
+          </a>
+	  <!--EMBL-EBI 2015 | -->
+          <a href="//www.ebi.ac.uk/about/privacy">Privacy</a> |
+          <a href="//www.ebi.ac.uk/about/cookies">Cookies</a> |
+          <a href="//www.ebi.ac.uk/about/terms-of-use">Terms of use</a></p>
       </div>
     </footer>
 <!--

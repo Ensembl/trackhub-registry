@@ -1,6 +1,121 @@
+.footer {
+    background-color: #fff;
+    background-image: url("/other_files/images/nt-main-footer-strip-purple.gif");
+    background-position: 0 0;
+    background-repeat: repeat-x;
+    float: left; 
+    margin: 50px 0 0;
+    padding: 0;
+    position: relative;
+    width: 100%;
+}
+.footer .layout {
+    background-image: url("/other_files/images/nt-main-footer-silhouette-purple.gif");
+    background-position: 50% 0;
+    background-repeat: no-repeat;
+    padding: 100px 0 0;
+    width: 940px;
+}
+.footer .charity {
+    border-top: 1px dotted #7a507e;
+    float: left;
+    margin: 10px 0;
+    padding: 15px 0;
+    width: 100%;
+}
+.footer li {
+    color: #bda8be;
+    float: left;
+/*    font-size: 1.2em;*/
+    list-style-type: none;
+    margin: 0 15px 0 0;
+}
+.footer .section {
+    float: left;
+    margin: 0 20px 20px 0;
+    width: 150px;
+}
+.footer .first {
+    margin: 0 130px 0 0;
+    width: 320px;
+}
+.footer .last {
+    margin: 0;
+    width: 150px;
+}
+.footer .section li {
+    float: inherit;
+    list-style-type: none;
+    margin: 0 10px 8px 1px;
+}
+.footer .section p {
+    color: #bda8be;
+    margin-left: 1px;
+}
+.footer .section a {
+    color: #bda8be;
+    font-weight: normal;
+    text-decoration: underline;
+}
+.footer .section a:focus {
+    background-color: #bda8be;
+    color: #410546;
+}
+.footer .section a:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+.footer .last .external {
+    background: none repeat scroll 0 0 rgba(0, 0, 0, 0);
+}
+.footer h3 {
+    color: #bda8be;
+/*    font-size: 2.4em;*/
+    font-weight: normal;
+    line-height: 1.2em;
+    margin: 0 0 15px;
+    padding: 0;
+}
+.footer .gosocial li {
+    margin: 0 10px 8px 1px;
+}
+.footer .gosocial li a {
+    background-image: url("/other_files/images/nt-footer-socialmediabuttons.png");
+    background-position: -3px 0;
+    background-repeat: no-repeat;
+    display: block;
+    margin: -4px 0 0;
+    padding: 6px 0 4px 30px;
+}
+.footer .gosocial li a.twitter {
+    background-position: -3px -270px;
+}
+.footer .gosocial li a.facebook {
+    background-position: -3px -90px;
+}
+.footer .gosocial li a.vimeo {
+    background-position: -3px -630px;
+}
+.footer .gosocial li a.youtube {
+    background-position: -3px -810px;
+}
+.footer .gosocial li a.flickr {
+    background-position: -3px -450px;
+}
+.footer .gosocial li a.pinterest {
+    background-position: -3px -990px;
+}
+.footer .gosocial li a.instagram {
+    background-position: -3px -1200px;
+}
+.footer .gosocial li a.google-plus {
+    background-position: -3px -1380px;
+}
+
 span.facet-count {
     color: #999999;
     float: right;
 /*    font-size: 11px; */
     position: relative;
 }
+

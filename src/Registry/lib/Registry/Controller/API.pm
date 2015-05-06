@@ -159,13 +159,43 @@ sub trackhub_create :Path('/api/trackhub/create') Args(0) ActionClass('REST') {
   my $version = $c->request->param('version') || Registry->config()->{TrackHub}{schema}{default};
   $c->go('ReturnError', 'custom', ["Invalid version specified, pattern is /^v\\d+\.\\d\$"])
     unless $version =~ /^v\d+\.\d$/;
+  
+  ##############
+  # DEBUG
+  #
+  # 1. try alternative interface
+  # use Data::SearchEngine::ElasticSearch;
+  # use Data::SearchEngine::ElasticSearch::Query;
+  # my $query = 
+  #   Data::SearchEngine::ElasticSearch::Query->new({
+  # 						   index => 'test',
+  # 						   data_type => 'trackhub',
+  # 						   type => 'match_all',
+  # 						   query => {}
+  # 						  });
+  # my $se = Data::SearchEngine::ElasticSearch->new();
+  # my $results = $se->search($query);
+  # my $current_max_id = max( map { $_->id } @{$results->items} );
+  #
+  # 2. try querying ES directly
+  # use Data::Dumper;
+  # use JSON;
+  # use LWP::Simple;
+  # my $content = get("http://localhost:9200/test/trackhub/_count");
+  # my $current_max_id;
+  # $current_max_id = from_json($content)->{count};
+  #
+  ##############
 
   # get the list of existing document IDs
-  my $docs = $c->model('Search')->search_trackhubs();
+  # my $docs = $c->model('Search')->search_trackhubs();
 
   # determine the ID of the doc to create
-  my $current_max_id = max( map { $_->{_id} } @{$docs->{hits}{hits}} );
-  $c->stash( id =>  $current_max_id?$current_max_id + 1:1, version => $version ); 
+  # my $current_max_id = max( map { $_->{_id} } @{$docs->{hits}{hits}} );
+
+  # get the count of trackhubs
+  my $current_max_id = $c->model('Search')->count_trackhubs()->{count};
+  $c->stash( id =>  $current_max_id?++$current_max_id:1, version => $version ); 
 }
 
 sub trackhub_create_PUT {

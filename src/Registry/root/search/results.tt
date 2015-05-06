@@ -231,11 +231,11 @@
 	</div>
 
         <div role="tabpanel" class="tab-pane fade" id="tracks_by_hub" style="margin-top: 20px;">
-	  Tracks by hub
+	  Here we list the search results matching the filters organised by hub.
 	</div>
 
         <div role="tabpanel" class="tab-pane fade" id="tracks_by_type" style="margin-top: 20px;">
-	  Tracks by type
+	  And here we show the results organised by data type, e.g. genomics, epigenomics, proteomics etc.
 	</div>
       </div>
     </div>

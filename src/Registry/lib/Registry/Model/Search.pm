@@ -43,6 +43,29 @@ sub search_trackhubs {
 }
 
 #
+# Count the documents matching a given query
+#
+sub count_trackhubs {
+  my ($self, %args) = @_;
+
+  # default: return all documents
+  $args{query} = { match_all => {} }
+    unless exists $args{query};
+
+  # add required (by Search::Elasticsearch)
+  # index and type parameter
+  my $config = Registry->config()->{'Model::Search'};
+  $args{index} = $config->{index};
+  $args{type}  = $config->{type}{trackhub};
+
+  # this is what Search::Elasticsearch expect 
+  $args{body} = { query => $args{query} };
+  delete $args{query};
+
+  return $self->_es->count(%args);
+}
+
+#
 # Return a document given its ID
 #
 # Params (required): id

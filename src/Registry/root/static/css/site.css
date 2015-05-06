@@ -1,3 +1,4 @@
+/*
 .footer {
     background-color: #fff;
     background-image: url("/other_files/images/nt-main-footer-strip-purple.gif");
@@ -26,7 +27,6 @@
 .footer li {
     color: #bda8be;
     float: left;
-/*    font-size: 1.2em;*/
     list-style-type: none;
     margin: 0 15px 0 0;
 }
@@ -70,7 +70,6 @@
 }
 .footer h3 {
     color: #bda8be;
-/*    font-size: 2.4em;*/
     font-weight: normal;
     line-height: 1.2em;
     margin: 0 0 15px;
@@ -111,6 +110,7 @@
 .footer .gosocial li a.google-plus {
     background-position: -3px -1380px;
 }
+*/
 
 span.facet-count {
     color: #999999;

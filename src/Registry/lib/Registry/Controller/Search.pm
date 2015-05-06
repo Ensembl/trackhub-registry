@@ -48,7 +48,7 @@ sub index :Path :Args(0) {
 
   my $page = $params->{page} || 1;
   $page = 1 if $page !~ /^\d+$/;
-  my $entries_per_page = $params->{entries_per_page} || 50;
+  my $entries_per_page = $params->{entries_per_page} || 10;
 
   my $config = Registry->config()->{'Model::Search'};
   my ($index, $type) = ($config->{index}, $config->{type}{trackhub});
@@ -62,8 +62,8 @@ sub index :Path :Args(0) {
      count     => $entries_per_page, 
      type      => $query_type,
      query     => $query_body,
-     facets    => { species  => { terms => { field => 'species.tax_id' } },
-		    assembly => { terms => { field => 'assembly.name' } } }
+     facets    => { species  => { terms => { field => 'species.tax_id', size => 30 } },
+		    assembly => { terms => { field => 'assembly.name', size => 30 } } }
     };
 
   # pass extra (i.e. besides query) parameters as ANDed filters
@@ -90,7 +90,6 @@ sub index :Path :Args(0) {
   # TODO: process facets in order to show more meaningful values, 
   # e.g. Species name instead of tax id
   my $facets = $results->facets;
-
   ######################################################################
   #
   # TEMP HACK
@@ -107,7 +106,8 @@ sub index :Path :Args(0) {
      3988  => 'Ricinus communis',
      3702  => 'Arabidopsis thaliana',
      3711  => 'Brassica rapa',
-     9598  => 'Pan troglodytes'
+     9598  => 'Pan troglodytes',
+     7240  => 'Drosophila simulans'
     };
   #
   ######################################################################

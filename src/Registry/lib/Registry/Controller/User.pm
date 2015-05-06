@@ -121,12 +121,10 @@ sub list_trackhubs : Chained('base') :Path('trackhubs') Args(0) {
   my $trackhubs;
   my $query = { term => { owner => $c->user->username } };
 
-  foreach my $doc (@{$c->model('Search')->search_trackhubs(query => $query)->{hits}{hits}}) {
+  foreach my $doc (@{$c->model('Search')->search_trackhubs(size => 1000000, query => $query)->{hits}{hits}}) {
     $doc->{_source}{id} = $doc->{_id};
     push @{$trackhubs}, $doc->{_source};
   }
-
-  # use Data::Dumper; $c->log->debug(Dumper $c->model('Search')->search_trackhubs(query => $query));
 
   $c->stash(trackhubs => $trackhubs,
 	    columns   => $columns,

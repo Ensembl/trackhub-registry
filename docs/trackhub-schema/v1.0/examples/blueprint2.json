@@ -1,5 +1,9 @@
 {
-  "hub": "Blueprint example 2",
+  "hub": {
+    "name": "Blueprint_Hub",
+    "shortLabel": "Blueprint Hub",
+    "longLabel": "Blueprint Epigenomics Data Hub"
+  },
   "description": "An example of trackhub DB from the Blueprint project (4 tracks)",
   "version": "v1.0",
   "species": {

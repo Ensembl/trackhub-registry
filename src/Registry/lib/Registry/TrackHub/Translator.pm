@@ -94,7 +94,11 @@ sub to_json_1_0 {
   my $doc = 
     {
      version => 'v1.0',
-     hub     => $trackhub->longLabel,
+     hub     => {
+		 name => $trackhub->hub,
+		 shortLabel => $trackhub->shortLabel,
+		 longLabel => $trackhub->longLabel,
+		},
      # add the original trackDb file(s) content
      # trackdb => $genome->get_trackdb_content
     };

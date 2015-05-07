@@ -83,6 +83,7 @@ sub _get_hub_info {
   ## Get file name for file with genome info
   foreach (split /\n/, $content) {
     my @line = split /\s/, $_, 2;
+    $line[1] =~ s/^\s+|\s+$//g; # trim left/right spaces
     $hub_details{$line[0]} = $line[1];
   }
   die 'No genomesFile found' unless $hub_details{genomesFile};

@@ -9,9 +9,15 @@
 
   "properties": {
     "hub": { 
-      "type": "string",
+      "type": "object",
 
-      "description": "The track database hub name."
+      "description": "Information about the hub the track database belongs to"
+
+      "properties": {
+        "name": { "type": "string" },
+	"shortLabel": { "type": "string" },
+	"longLabel": { "type": "string" }
+      }
     },
 
     "description": { "type": "string" },

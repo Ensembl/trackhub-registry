@@ -55,7 +55,10 @@ SKIP: {
 
   my $doc = from_json($json_docs->[0]);
   is($doc->{version}, 'v1.0', 'Correct JSON version');
-  is($doc->{hub}, 'Blueprint Epigenomics Data Hub', 'Correct Hub');
+  ok($doc->{hub}, 'Hub property exists');
+  like($doc->{hub}{name}, qr/Blueprint_Hub/, 'Correct Hub name');
+  is($doc->{hub}{shortLabel}, 'Blueprint Hub', 'Correct Hub shortLabel');
+  is($doc->{hub}{longLabel}, 'Blueprint Epigenomics Data Hub', 'Correct Hub longLabel');
   is_deeply($doc->{species}, { tax_id => 9606, 
   			       scientific_name => 'Homo sapiens', 
   			       common_name => 'human' }, 'Correct species');
@@ -119,10 +122,14 @@ SKIP: {
     open $FH, ">$Bin/plant$i.json" or die "Cannot open plant$i.json: $!\n";
     print $FH $doc;
     close $FH;
+    $i++;
 
     $doc = from_json($doc);
     is($doc->{version}, 'v1.0', 'Correct JSON version');
-    is($doc->{hub}, 'CSHL Biology of Genomes meeting 2013 demonstration assembly hub', 'Correct Hub');
+    ok($doc->{hub}, 'Hub property exists');
+    is($doc->{hub}{name}, 'cshl2013', 'Correct Hub name');
+    is($doc->{hub}{shortLabel}, 'Plants', 'Correct Hub shortLabel');
+    is($doc->{hub}{longLabel}, 'CSHL Biology of Genomes meeting 2013 demonstration assembly hub', 'Correct Hub longLabel');
     ok($doc->{species}{tax_id} == 3702 || $doc->{species}{tax_id} == 3988 || $doc->{species}{tax_id} == 3711, 
        "Expected species");
     if ($doc->{species}{tax_id} == 3702) {
@@ -240,6 +247,10 @@ SKIP: {
   $json_docs = $translator->translate($URL, 'mm10');
   is(scalar @{$json_docs}, 1, "Number of translated track dbs");
   $doc = from_json($json_docs->[0]);
+  ok($doc->{hub}, 'Hub property exists');
+  is($doc->{hub}{name}, 'Smith Lab Public Hub', 'Correct Hub name');
+  is($doc->{hub}{shortLabel}, 'DNA Methylation', 'Correct Hub shortLabel');
+  is($doc->{hub}{longLabel}, 'Hundreds of analyzed methylomes from bisulfite sequencing data', 'Correct Hub longLabel');
 
   open $FH, ">$Bin/meth.json" or die "Cannot open meth.json: $!\n";
   print $FH $json_docs->[0];
@@ -295,6 +306,10 @@ SKIP: {
   $json_docs = $translator->translate($URL);
   is(scalar @{$json_docs}, 1, "Number of translated track dbs");
   $doc = from_json($json_docs->[0]);
+  ok($doc->{hub}, 'Hub property exists');
+  is($doc->{hub}{name}, 'VizHub', 'Correct Hub name');
+  is($doc->{hub}{shortLabel}, 'Roadmap Epigenomics Data Complete Collection at Wash U VizHub', 'Correct Hub shortLabel');
+  is($doc->{hub}{longLabel}, 'Roadmap Epigenomics Human Epigenome Atlas Data Complete Collection, VizHub at Washington University in St. Louis', 'Correct Hub longLabel');
 
   is_deeply($doc->{species}, { tax_id => 9606, 
   			       scientific_name => 'Homo sapiens', 

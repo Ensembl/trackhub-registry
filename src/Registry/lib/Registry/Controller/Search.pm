@@ -62,7 +62,8 @@ sub index :Path :Args(0) {
      count     => $entries_per_page, 
      type      => $query_type,
      query     => $query_body,
-     facets    => { species  => { terms => { field => 'species.tax_id', size => 30 } },
+     facets    => { # species  => { terms => { field => 'species.tax_id', size => 30 } },
+		    species  => { terms => { field => 'species.scientific_name', size => 30 } },
 		    assembly => { terms => { field => 'assembly.name', size => 30 } } }
     };
 
@@ -70,7 +71,8 @@ sub index :Path :Args(0) {
   my $filters;
   foreach my $param (keys %{$params}) {
     next if $param eq 'q' or $param eq 'page';
-    my $filter = ($param =~ /species/)?'species.tax_id':'assembly.name';
+    # my $filter = ($param =~ /species/)?'species.tax_id':'assembly.name';
+    my $filter = ($param =~ /species/)?'species.scientific_name':'assembly.name';
     $filters->{$filter} = $params->{$param};
   }
   $query_args->{filters} = $filters if $filters;
@@ -97,25 +99,25 @@ sub index :Path :Args(0) {
   # which is based on having just a bunch of indexed documents for a 
   # very limited selection of species.
   #
-  my $taxid2name = 
-    {
-     9606  => 'Homo sapiens',
-     10090 => 'Mus musculus',
-     7955  => 'Danio rerio',
-     9615  => 'Canis lupus familiaris',
-     3988  => 'Ricinus communis',
-     3702  => 'Arabidopsis thaliana',
-     3711  => 'Brassica rapa',
-     9598  => 'Pan troglodytes',
-     7240  => 'Drosophila simulans'
-    };
+  # my $taxid2name = 
+  #   {
+  #    9606  => 'Homo sapiens',
+  #    10090 => 'Mus musculus',
+  #    7955  => 'Danio rerio',
+  #    9615  => 'Canis lupus familiaris',
+  #    3988  => 'Ricinus communis',
+  #    3702  => 'Arabidopsis thaliana',
+  #    3711  => 'Brassica rapa',
+  #    9598  => 'Pan troglodytes',
+  #    7240  => 'Drosophila simulans'
+  #   };
   #
   ######################################################################
   
   $c->stash(# columns         => $fields,
 	    ############
 	    # TEMP HACK
-	    taxid2name => $taxid2name,
+	    # taxid2name => $taxid2name,
 	    ############
 	    query_string    => $params->{q},
 	    filters         => $params,

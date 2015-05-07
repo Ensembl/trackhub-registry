@@ -1,6 +1,19 @@
 {
   "trackhub": {
     "properties": {
+      "species": {
+        "type": "object",
+	"properties": {
+	  "scientific_name": { "type": "string", "index": "not_analyzed" }
+	}
+      },
+      "assembly": {
+        "type": "object",
+	"properties": {
+	  "accession": { "type": "string", "index": "not_analyzed" },
+	  "name": { "type": "string", "index": "not_analyzed" }
+	}
+      },
       "configuration": {
         "type": "object",
 	"enabled": false

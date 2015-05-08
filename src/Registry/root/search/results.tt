@@ -265,14 +265,57 @@
 	</div>
       </div>
     </div>
+
+    [%# bootstrap simple pagination %]
+    <div align="center">
+      <nav>
+        <ul class="pagination">
+	[% IF pager.previous_page %]
+	  [% filters.page = pager.previous_page %]
+          <li><a href="[% c.uri_for('/search', filters)%]" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+	[% ELSE %]
+	  <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+	[% END %]
+
+        [% IF pager.current_page != pager.first_page %] [%# AND pager.first_page != pager.previous_page %]
+          [% filters.page = pager.first_page %]
+          <li><a href="[% c.uri_for('/search', filters) %]">[% pager.first_page %]</a></li>
+        [% END %]
+
+	[% IF pager.previous_page AND pager.first_page != pager.previous_page %]
+	  [% filters.page = pager.previous_page %]
+	  <li><a href="[% c.uri_for('/search', filters) %]">[% pager.previous_page %]</a></li>
+	[% END %]
+
+	  <li class="active"><a href="#">[% pager.current_page %]<span class="sr-only">(current)</span></a></li>
+
+	[% IF  pager.next_page AND pager.last_page != pager.next_page %]
+	  [% filters.page = pager.next_page %]
+	  <li><a href="[% c.uri_for('/search', filters) %]">[% pager.next_page %]</a></li>
+	[% END %]
+
+        [% IF pager.current_page != pager.last_page %] [%# AND pager.last_page != pager.next_page %]
+          [% filters.page = pager.last_page %]
+          <li><a href="[% c.uri_for('/search', filters) %]">[% pager.last_page %]</a></li>
+        [% END %]
+
+	[% IF pager.next_page %]
+	  [% filters.page = pager.next_page %]
+          <li><a href="[% c.uri_for('/search', filters)%]" aria-label="Previous"><span aria-hidden="true">&raquo;</span></a></li>
+	[% ELSE %]
+	  <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&raquo;</span></a></li>
+	[% END %]
+        </ul>
+      </nav>
+    </div>
   </div>
 </div>
 
-[% # bootstrap simple pagination %]
+<!-- 
+[% # bootstrap simple pagination with pager %]
 <ul class="pager">
 [% IF pager.current_page != pager.first_page AND pager.first_page != pager.previous_page %]
   [% filters.page = pager.first_page %]
-<!--  <li><a href="[% c.uri_for('/search', { q => query_string, page => pager.first_page }) %]">First</a></li> -->
   <li><a href="[% c.uri_for('/search', filters) %]">First</a></li>
 [% END %]
 [% IF pager.previous_page %]
@@ -288,6 +331,7 @@
   <li><a href="[% c.uri_for('/search', filters) %]">Last</a></li>
 [% END %]
 </ul>
+-->
 
 [% # Provide a link back to the search page.  'c.uri_for' builds -%]
 [% # a full URI; e.g., 'http://localhost:3000'      -%]

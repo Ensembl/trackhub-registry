@@ -177,8 +177,7 @@ sub search {
     # This is really to replicate my expecations and the way facets are
     # usually used.
     my %facets = %{ $query->facets };
-    $options->{body}{facets} = $query->facets;
- 
+     
     if ($query->has_filters) {
       foreach my $f (keys %facets) {
   	$facets{$f}->{facet_filter}->{$filter_combine} = \@facet_cache;

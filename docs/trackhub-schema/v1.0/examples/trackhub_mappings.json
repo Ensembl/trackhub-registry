@@ -1,6 +1,12 @@
 {
   "trackhub": {
     "properties": {
+      "hub": {
+        "type": "object",
+	"properties": {
+	  "name": { "type": "string", "index": "not_analyzed" }
+	}
+      },
       "species": {
         "type": "object",
 	"properties": {

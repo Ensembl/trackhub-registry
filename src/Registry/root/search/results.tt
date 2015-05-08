@@ -98,6 +98,24 @@
           </div> <!-- assembly-facet -->
         </div>
 
+	<div class="panel panel-default">
+          <div class="panel-heading" style="background-color: whiteSmoke">
+            <a class="panel-title" data-toggle="collapse" href="#hub-facet"><i style="float:right" class="glyphicon glyphicon-chevron-right"></i>Hub</a>
+          </div>
+          <div id="hub-facet" class="panel-collapse collapse">
+            <div class="panel-body">
+              <ul class="list-group">
+	        [% FOR hub IN facets.hub %]
+		  [% p = { } %]
+		  [% p.import(filters) %]
+		  [% p.hub = hub.value %]
+		<li class="list-group-item"><span class="badge">[% hub.count %]</span><a rel="nofollow" href="[% c.uri_for('/search', p ) %]">[% hub.value %]</a></li>
+		[% END %]      
+              </ul>
+            </div>
+          </div> <!-- hub-facet -->
+        </div>
+
       </div> <!-- accordion-group -->
     </div> <!-- sidebar -->
   </div>

@@ -148,7 +148,7 @@
 	    [% USE Math; r = GET Math.rand(1) %]
 	    [% IF r < 0.8 %]
             <div class="panel panel-info">
-	      <div class="panel-heading"><b>[% item.get_value('hub') %]</b></div>
+	      <div class="panel-heading"><b>[% h = item.get_value('hub'); h.longLabel %]</b></div>
               <div class="panel-body">
 	        <div class="btn-group  btn-group-xs" style="float: right;">
 		  <div class="btn-group btn-group-xs">
@@ -159,7 +159,7 @@
                     </ul>
                   </div>
 		  <!--<a tabindex="0" class="btn btn-lg btn-default" role="button" data-toggle="popover" data-trigger="focus" title="Dismissible popover" data-content="">Dismissible popover</a>-->
-		  <button type="button" class="btn btn-lg btn-default" data-toggle="popover" title="[% item.get_value('hub') %]" data-content="And here's some amazing content. It's very engaging. Right?">View Info</button>
+		  <button type="button" class="btn btn-lg btn-default" data-toggle="popover" title="[% h.name %]" data-content="And here's some amazing content. It's very engaging. Right?">View Info</button>
 		</div>
 		<!--
 		<ul class="list-group">
@@ -193,6 +193,7 @@
                 </div>
 		-->
 	        <p>
+		  <strong>Hub</strong>: [% h.shortLabel %]<br/>
 		  <strong>Species</strong>: [% s = item.get_value('species'); s.tax_id %] - <em>[% s.scientific_name %]</em><br/>
 		  <strong>Assembly</strong>: [% a = item.get_value('assembly'); a.accession %] - [% a.name %]
 		</p>
@@ -200,13 +201,14 @@
             </div>
 	    [% ELSE %]
             <div class="panel panel-warning">
-	      <div class="panel-heading"><b>[% item.get_value('hub') %]</b></div>
+	      <div class="panel-heading"><b>[% h = item.get_value('hub'); h.longLabel %]</b></div>
               <div class="panel-body">
 	        <div style="float: right;">
 	          <span class="label label-warning">Remote data not available</span>
 		  <button type="button" class="btn btn-xs btn-default" data-toggle="popover" title="[% item.get_value('hub') %]" data-content="This is the track collection info.">View Info</button>
 		</div>
 	        <p>
+  		  <strong>Hub</strong>: [% h.shortLabel %]<br/>
 		  <strong>Species</strong>: [% s = item.get_value('species'); s.tax_id %] - <em>[% s.scientific_name %]</em><br/>
 		  <strong>Assembly</strong>: [% a = item.get_value('assembly'); a.accession %] - [% a.name %]
 		</p>

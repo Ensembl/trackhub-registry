@@ -171,27 +171,24 @@ sub search {
   # See http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-facets.html
   # "Facets are deprecated and will be removed in a future release. You are encouraged to migrate 
   #  to aggregations instead"
-  # if ($query->has_facets) {
-  #   # Copy filters used in the overall query into each facet, thereby
-  #   # limiting the facets to only counting against the filtered bits.
-  #   # This is really to replicate my expecations and the way facets are
-  #   # usually used.
-  #   my %facets = %{ $query->facets };
-  #   $options->{facets} = $query->facets;
+  if ($query->has_facets) {
+    # Copy filters used in the overall query into each facet, thereby
+    # limiting the facets to only counting against the filtered bits.
+    # This is really to replicate my expecations and the way facets are
+    # usually used.
+    my %facets = %{ $query->facets };
+    $options->{body}{facets} = $query->facets;
  
-  #   if ($query->has_filters) {
-  #     foreach my $f (keys %facets) {
-  # 	$facets{$f}->{facet_filter}->{$filter_combine} = \@facet_cache;
-  #     }
-  #   }
+    if ($query->has_filters) {
+      foreach my $f (keys %facets) {
+  	$facets{$f}->{facet_filter}->{$filter_combine} = \@facet_cache;
+      }
+    }
  
-  #   # Shlep the facets into the final query, even if we didn't do anything
-  #   # with the filters above.
-  #   $options->{facets} = \%facets;
-  # }
-
-  $options->{body}{facets} = $query->facets
-    if $query->has_facets;
+    # Shlep the facets into the final query, even if we didn't do anything
+    # with the filters above.
+    $options->{body}{facets} = \%facets;
+  }
 
   # support for aggregations, to be completed below
   $options->{body}{aggs} = $query->aggregations

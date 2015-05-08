@@ -63,8 +63,9 @@ sub index :Path :Args(0) {
      type      => $query_type,
      query     => $query_body,
      facets    => { # species  => { terms => { field => 'species.tax_id', size => 30 } },
-		    species  => { terms => { field => 'species.scientific_name', size => 30 } },
-		    assembly => { terms => { field => 'assembly.name', size => 30 } } }
+		   species  => { terms => { field => 'species.scientific_name', size => 30 } },
+		   assembly => { terms => { field => 'assembly.name', size => 30 } },
+		   hub      => { terms => { field => 'hub.name', size => 30 } } }
     };
 
   # pass extra (i.e. besides query) parameters as ANDed filters

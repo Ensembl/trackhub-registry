@@ -284,14 +284,21 @@
 
 	[% IF pager.previous_page AND pager.first_page != pager.previous_page %]
 	  [% filters.page = pager.previous_page %]
+	  [% IF pager.previous_page != 2 %]
+	  <li><a>...</a></li>
+	  [% END %]
 	  <li><a href="[% c.uri_for('/search', filters) %]">[% pager.previous_page %]</a></li>
 	[% END %]
 
-	  <li class="active"><a href="#">[% pager.current_page %]<span class="sr-only">(current)</span></a></li>
+	  <li class="active"><a>[% pager.current_page %]<span class="sr-only">(current)</span></a></li>
 
 	[% IF  pager.next_page AND pager.last_page != pager.next_page %]
 	  [% filters.page = pager.next_page %]
+	  [% x = pager.last_page; x = x - 1 %]
+	  [% IF pager.next_page != x %]
+	  [% END %]
 	  <li><a href="[% c.uri_for('/search', filters) %]">[% pager.next_page %]</a></li>
+	  <li><a>...</a></li>
 	[% END %]
 
         [% IF pager.current_page != pager.last_page %] [%# AND pager.last_page != pager.next_page %]

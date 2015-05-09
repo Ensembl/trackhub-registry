@@ -45,6 +45,24 @@ sub index :Path :Args(0) {
     $query_type = 'match';
     $query_body = { _all => $params->{q} };
   } 
+  my $facets = 
+    { # species  => { terms => { field => 'species.tax_id', size => 30 } },
+     species  => { terms => { field => 'species.scientific_name', size => 30 } },
+     assembly => { terms => { field => 'assembly.name', size => 30 } },
+     hub      => { terms => { field => 'hub.name', size => 30 } } 
+    };
+  my $hub_aggregation = 
+    {
+     hub => 
+     { 
+      terms => { field => 'hub.name', size => 30 },
+      aggs => 
+      {
+       species  => { terms => { field => 'species.scientific_name', size => 30 } },
+       assembly => { terms => { field => 'assembly.name', size => 30 } }
+      }
+     }
+    };
 
   my $page = $params->{page} || 1;
   $page = 1 if $page !~ /^\d+$/;
@@ -62,10 +80,7 @@ sub index :Path :Args(0) {
      count     => $entries_per_page, 
      type      => $query_type,
      query     => $query_body,
-     facets    => { # species  => { terms => { field => 'species.tax_id', size => 30 } },
-		   species  => { terms => { field => 'species.scientific_name', size => 30 } },
-		   assembly => { terms => { field => 'assembly.name', size => 30 } },
-		   hub      => { terms => { field => 'hub.name', size => 30 } } }
+     facets    => $facets
     };
 
   # pass extra (i.e. besides query) parameters as ANDed filters
@@ -73,7 +88,16 @@ sub index :Path :Args(0) {
   foreach my $param (keys %{$params}) {
     next if $param eq 'q' or $param eq 'page';
     # my $filter = ($param =~ /species/)?'species.tax_id':'assembly.name';
-    my $filter = ($param =~ /species/)?'species.scientific_name':'assembly.name';
+    my $filter;
+    if ($param =~ /species/) {
+      $filter = 'species.scientific_name';
+    } elsif ($param =~ /assembly/) {
+      $filter = 'assembly.name';
+    } elsif ($param =~ /hub/) {
+      $filter = 'hub.name';
+    } else {
+      Catalyst::Exception::throw("Unrecognised parameter");
+    }
     $filters->{$filter} = $params->{$param};
   }
   $query_args->{filters} = $filters if $filters;

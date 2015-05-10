@@ -189,9 +189,25 @@ sub search {
     $options->{body}{facets} = \%facets;
   }
 
-  # support for aggregations, to be completed below
+  # support for aggregations
   $options->{body}{aggs} = $query->aggregations
     if $query->has_aggregations;
+
+  if ($query->has_aggregations) {
+    my %aggs = %{ $query->aggregations };
+     
+    if ($query->has_filters) {
+      foreach my $f (keys %aggs) {
+	# does logical AND/OR work with aggregations?
+	# cannot find mentioned in the definitive guide
+  	$aggs{$f}->{filter}->{$filter_combine} = \@facet_cache;
+      }
+    }
+ 
+    # Shlep the facets into the final query, even if we didn't do anything
+    # with the filters above.
+    $options->{body}{aggs} = \%aggs;
+  }
 
   if ($query->has_order) {
     $options->{sort} = $query->order;

@@ -190,9 +190,6 @@ sub search {
   }
 
   # support for aggregations
-  $options->{body}{aggs} = $query->aggregations
-    if $query->has_aggregations;
-
   if ($query->has_aggregations) {
     my %aggs = %{ $query->aggregations };
      
@@ -200,7 +197,9 @@ sub search {
       foreach my $f (keys %aggs) {
 	# does logical AND/OR work with aggregations?
 	# cannot find mentioned in the definitive guide
-  	$aggs{$f}->{filter}->{$filter_combine} = \@facet_cache;
+  	# $aggs{$f}->{filter}->{$filter_combine} = \@facet_cache;
+	# $aggs{$f}->{filter} = { terms => { field => 'species.scientific_name' } };
+	# $aggs{$f}->{filters}{filters} = \@facet_cache;
       }
     }
  
@@ -262,6 +261,15 @@ sub search {
       }
     }
   }
+  if (exists($resp->{aggregations})) {
+    my $buckets = [];
+    $self->_get_buckets($resp->{aggregations}, $buckets);
+    # use Data::Dumper; 
+    # print Dumper $resp->{aggregations};
+    # print Dumper $buckets;
+    $result->{aggregations} = $buckets;
+  }
+
   foreach my $doc (@{ $resp->{hits}->{hits} }) {
     my $values = $doc->{_source};
     $values->{_index} = $doc->{_index};
@@ -271,6 +279,22 @@ sub search {
  
   return $result;
 }
+
+sub _get_buckets {
+  my ($self, $hash, $buckets) = @_;
+  foreach my $key (keys %{$hash}) {
+    next if $key eq 'doc_count';
+    if ($key eq 'buckets') {
+      foreach my $agg (@{$hash->{$key}}) {
+	push @{$buckets}, { count => $agg->{doc_count}, value => $agg->{key} }
+      }
+      return;
+    }
+
+    $self->_get_buckets($hash->{$key}, $buckets) if ref $hash->{$key} eq 'HASH';
+  }
+}
+
 
 sub _doc_to_item {
   my ($self, $doc) = @_;

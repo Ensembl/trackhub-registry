@@ -11,7 +11,7 @@
     "hub": { 
       "type": "object",
 
-      "description": "Information about the hub the track database belongs to"
+      "description": "Information about the hub the track database belongs to",
 
       "properties": {
         "name": { "type": "string" },

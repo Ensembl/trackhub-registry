@@ -46,22 +46,10 @@ sub index :Path :Args(0) {
     $query_body = { _all => $params->{q} };
   } 
   my $facets = 
-    { # species  => { terms => { field => 'species.tax_id', size => 30 } },
+    {
      species  => { terms => { field => 'species.scientific_name', size => 30 } },
      assembly => { terms => { field => 'assembly.name', size => 30 } },
      hub      => { terms => { field => 'hub.name', size => 30 } } 
-    };
-  my $hub_aggregation = 
-    {
-     hub => 
-     { 
-      terms => { field => 'hub.name', size => 30 },
-      aggs => 
-      {
-       species  => { terms => { field => 'species.scientific_name', size => 30 } },
-       assembly => { terms => { field => 'assembly.name', size => 30 } }
-      }
-     }
     };
 
   my $page = $params->{page} || 1;
@@ -105,7 +93,7 @@ sub index :Path :Args(0) {
   my $query = 
     Data::SearchEngine::ElasticSearch::Query->new($query_args);
   my $se = Data::SearchEngine::ElasticSearch->new();
-  my $results;
+  my ($results, $results_by_hub);
 
   # do the search
   try {
@@ -113,41 +101,111 @@ sub index :Path :Args(0) {
   } catch {
     Catalyst::Exception->throw( qq/$_/ );
   };
-
-  # TODO: process facets in order to show more meaningful values, 
-  # e.g. Species name instead of tax id
-  my $facets = $results->facets;
-  ######################################################################
-  #
-  # TEMP HACK
-  # This is a temporary fix to show the prototype for the code review, 
-  # which is based on having just a bunch of indexed documents for a 
-  # very limited selection of species.
-  #
-  # my $taxid2name = 
-  #   {
-  #    9606  => 'Homo sapiens',
-  #    10090 => 'Mus musculus',
-  #    7955  => 'Danio rerio',
-  #    9615  => 'Canis lupus familiaris',
-  #    3988  => 'Ricinus communis',
-  #    3702  => 'Arabidopsis thaliana',
-  #    3711  => 'Brassica rapa',
-  #    9598  => 'Pan troglodytes',
-  #    7240  => 'Drosophila simulans'
-  #   };
-  #
-  ######################################################################
   
-  $c->stash(# columns         => $fields,
-	    ############
-	    # TEMP HACK
-	    # taxid2name => $taxid2name,
-	    ############
-	    query_string    => $params->{q},
+  # now query for the same thing by hub to build the track by hubs view
+  # build aggregation based on hub name taking into account filters
+  my $hub_aggregations;
+  if (exists $filters->{'species.scientific_name'} and 
+      defined $filters->{'species.scientific_name'} and not 
+      exists $filters->{'assembly.name'}) {
+    $hub_aggregations = 
+      {
+       hub_species => { filter => { term => { 'species.scientific_name' => $filters->{'species.scientific_name'} } } }
+      };
+    if (exists $filters->{'hub.name'} and defined $filters->{'hub.name'}) {
+      $hub_aggregations->{hub_species}{aggs} =
+	{
+	 hub_species_hub => 
+	 {
+	  filter => { term => { 'hub.name' => $filters->{'hub.name'} } },
+	  aggs => { hub => { terms => { field => 'hub.name', size => 1000 } } } 
+	 }
+	};
+    } else {
+      $hub_aggregations->{hub_species}{aggs} = { hub => { terms => { field => 'hub.name', size => 1000 } } };
+    }
+  } elsif (exists $filters->{'assembly.name'} and 
+	   defined $filters->{'assembly.name'} and not 
+	   exists $filters->{'species.scientific_name'}) {
+    $hub_aggregations = 
+      { 
+       hub_assembly => { filter => { term => { 'assembly.name' => $filters->{'assembly.name'} } } }
+      };
+    if (exists $filters->{'hub.name'} and defined $filters->{'hub.name'}) {
+      $hub_aggregations->{hub_assembly}{aggs} =
+	{
+	 hub_assembly_hub => 
+	 {
+	  filter => { term => { 'hub.name' => $filters->{'hub.name'} } },
+	  aggs => { hub => { terms => { field => 'hub.name', size => 1000 } } } 
+	 }
+	};
+    } else {
+      $hub_aggregations->{hub_assembly}{aggs} = { hub => { terms => { field => 'hub.name', size => 1000 } } };
+    }    
+  } elsif (exists $filters->{'species.scientific_name'} and 
+	   defined $filters->{'species.scientific_name'} and
+	   exists $filters->{'assembly.name'} and 
+	   defined $filters->{'assembly.name'}) {
+    $hub_aggregations = 
+      {
+       hub_species => 
+       {
+	filter => { term => { 'species.scientific_name' => $filters->{'species.scientific_name'} } },
+	aggs => 
+	{
+	 hub_species_assembly =>
+	 {
+	  filter => { term => { 'assembly.name' => $filters->{'assembly.name'} } }
+	 }
+	}
+       }
+      };
+    
+    if (exists $filters->{'hub.name'} and defined $filters->{'hub.name'}) {
+      $hub_aggregations->{hub_species}{aggs}{hub_species_assembly}{aggs} =
+	{
+	 hub_species_assembly_hub =>
+	 {
+	  filter => { term => { 'hub.name' => $filters->{'hub.name'} } },
+	  aggs => { hub => { terms => { field => 'hub.name', size => 1000 } } } 	  
+	 }
+	};
+    } else {
+      $hub_aggregations->{hub_species}{aggs}{hub_species_assembly}{aggs} =
+	{ hub => { terms => { field => 'hub.name', size => 1000 } } };
+    }
+  } else {
+    if (exists $filters->{'hub.name'} and defined $filters->{'hub.name'}) {
+      $hub_aggregations = 
+	{
+	 hub_hub =>
+	 {
+	  filter => { term => { 'hub.name' => $filters->{'hub.name'} } },
+	  aggs => { hub => { terms => { field => 'hub.name', size => 1000 } } }
+	 }
+	};
+    } else {
+      $hub_aggregations = { hub => { terms => { field => 'hub.name', size => 1000 } } };
+    }
+  }
+
+  $query_args->{aggregations} = $hub_aggregations if $hub_aggregations;
+  $query = 
+    Data::SearchEngine::ElasticSearch::Query->new($query_args);
+  try {
+    $results_by_hub = $se->search($query);
+  } catch {
+    Catalyst::Exception->throw( qq/$_/ );
+  };
+  
+  # use Data::Dumper; $c->log->debug(Dumper $results_by_hub->{aggregations});
+
+  $c->stash(query_string    => $params->{q},
 	    filters         => $params,
 	    items           => $results->items,
-	    facets          => $facets,
+	    items_by_hub    => $results_by_hub->items,
+	    facets          => $results->facets,
 	    pager           => $results->pager,
 	    template        => 'search/results.tt');
     

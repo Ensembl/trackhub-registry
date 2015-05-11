@@ -223,7 +223,7 @@
               <div class="panel-body">
 	        <div style="float: right;">
 	          <span class="label label-warning">Remote data not available</span>
-		  <button type="button" class="btn btn-xs btn-default" data-toggle="popover" title="[% item.get_value('hub') %]" data-content="This is the track collection info.">View Info</button>
+		  <button type="button" class="btn btn-xs btn-default" data-toggle="popover" title="[% h.name %]" data-content="This is the track collection info.">View Info</button>
 		</div>
 	        <p>
   		  <strong>Hub</strong>: [% h.shortLabel %]<br/>

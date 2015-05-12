@@ -13,6 +13,7 @@
           <th>Hub</th>
           <th>Assembly</th>
           <th>JSON Schema</th>
+	  <th></th>
           <th>Status</th>
         </tr>
     </thead>
@@ -23,12 +24,20 @@
 	<td style="word-wrap: break-word;">[% trackhub.hub.name %]</td>
 	<td style="word-wrap: break-word;">[% trackhub.assembly.name %]</td>
 	<td style="word-wrap: break-word;">[% trackhub.version %]</td>
+	<td>
+          <div class="btn-group">
+            <a class="btn btn-default btn-xs" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [user.username, trackhub.id]) %]" rel="tooltip" title="View"><span class="glyphicon glyphicon-search"></a>
+            <a class="btn btn-default btn-xs" href="[% c.uri_for(c.controller.action_for('delete_trackhub'), [user.username, trackhub.id]) %]" rel="tooltip" title="Delete"><span class="glyphicon glyphicon-trash"></a>
+          </div>
+	</td>
         [% USE Math; r = GET Math.rand(1) %]
+	<td style="word-wrap: break-word;">
 	[% IF r < 0.8 %]
-	<td style="word-wrap: break-word;"><span class="label label-success">All is well</span></td>
+	  <span class="label label-success">All is well</span>
 	[% ELSE %]
-	<td style="word-wrap: break-word;"><span class="label label-danger">Remote data unavailable</span></td>
+	  <span class="label label-danger">Remote data unavailable</span>
 	[% END %]
+	</td>
       </tr>
       [% END %]
     </tbody>

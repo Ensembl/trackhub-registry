@@ -139,9 +139,25 @@ sub submit_trackhubs : Chained('base') :Path('submit_trackhubs') Args(0) {
 
 sub view_trackhub : Chained('base') :Path('view') Args(1) {
   my ($self, $c, $id) = @_;
+  my $doc = $c->model('Search')->get_trackhub_by_id($id);
 
-  $c->stash(id       => $id,
-	    template => "user/trackhub/view.tt");
+  if ($doc) {
+    # TODO: this should be redundant, but just to be sure
+    if ($doc->{owner} eq $c->user->username) {
+      $doc->{id} = $id;
+      my $trackdb = Registry::TrackHub::TrackDB->new($doc);
+
+      $c->stash(item => $trackdb);
+    } else {
+      $c->stash(error_msg => "Cannot delete collection [$id], does not belong to you");
+      $c->forward('list_trackhubs', [ $c->user->username ]);
+    }
+  } else {
+    $c->stash(error_msg => "Could not fetch track collection [$id]");
+    $c->forward('list_trackhubs', [ $c->user->username ]);
+  }
+
+  $c->stash(template => "user/trackhub/view.tt");
 }
 
 sub delete_trackhub : Chained('base') :Path('delete') Args(1) {

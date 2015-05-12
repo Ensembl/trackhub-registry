@@ -135,33 +135,6 @@
 	  [% IF items.size > 0 %]
 	  <!--<p><small>Tracks [% %] to [% %] of [% pager.total_entries %]</small></p>-->
 
-	  <!--
-	  <table class="table table-striped table-hover tablesorter" style="table-layout: fixed;">
-            <tbody>
-	      [% FOREACH item = items %]
-	      <tr>
-	        <td style="word-wrap: break-word;">
-		  <div class="btn-group" style="float: right;">
-		    [% USE Math; r = GET Math.rand(1) %]
-		    [% IF r < 0.8 %]
-                    <button type="button" class="btn btn-success btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Load in Genome Browser<span class="caret"></span></button>
-		    [% ELSE %]
-                    <button type="button" class="btn btn-warning btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Load in Genome Browser<span class="caret"></span></button>
-		    [% END %]
-                    <ul class="dropdown-menu" role="menu">
-                      <li><a href="#">EnsEMBL</a></li>
-                      <li><a href="#">UCSC</a></li>
-                    </ul>
-                  </div>
-		  <b>[% item.get_value('hub') %]</b>
-		  <p>[% s = item.get_value('species'); s.scientific_name %] - [% a = item.get_value('assembly'); a.name %]</p>
-		</td>
-	      </tr>
-	      [% END %]
-	    </tbody>
-	  </table>
-	  -->
-
 	  [% FOREACH item = items %]
 	    [% USE Math; r = GET Math.rand(1) %]
 	    [% IF r < 0.8 %]
@@ -179,37 +152,6 @@
 		  <!--<a tabindex="0" class="btn btn-lg btn-default" role="button" data-toggle="popover" data-trigger="focus" title="Dismissible popover" data-content="">Dismissible popover</a>-->
 		  <button type="button" class="btn btn-lg btn-default" data-toggle="popover" title="[% h.name %]" data-content="And here's some amazing content. It's very engaging. Right?">View Info</button>
 		</div>
-		<!--
-		<ul class="list-group">
-		  <li class="list-group-item">
-                    <h4 class="list-group-item-heading">Species</h4>
-                    <p class="list-group-item-text">[% s = item.get_value('species'); s.scientific_name %]</p>
-                    <h4 class="list-group-item-heading">Assembly</h4>
-                    <p class="list-group-item-text">[% a = item.get_value('assembly'); a.name %]</p>		    
- 		  </li>
-                </ul>
-		-->
-		<!--
-		<table class="table table-condensed">
-		  <tbody>
-		    <tr>
-	              <td style="word-wrap: break-word;">Species</td>
-		      <td style="word-wrap: break-word;">[% s.tax_id %] - <b>[% s = item.get_value('species'); s.scientific_name %]</b></td>
-		    </tr>
-		    <tr>
-	              <td style="word-wrap: break-word;">Assembly</td>
-		      <td style="word-wrap: break-word;">[% a.accession %] - <b>[% a = item.get_value('assembly'); a.name %]</b></td>
-		    </tr>		    
-		  </tbody>
-		</table>
-	        <div class="btn-group" style="float: right;">
-                  <button type="button" class="btn btn-success btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Load in Genome Browser<span class="caret"></span></button>
-                  <ul class="dropdown-menu" role="menu">
-                    <li><a href="#">EnsEMBL</a></li>
-                    <li><a href="#">UCSC</a></li>
-                  </ul>
-                </div>
-		-->
 	        <p>
 		  <strong>Hub</strong>: [% h.shortLabel %]<br/>
 		  <strong>Species</strong>: [% s = item.get_value('species'); s.tax_id %] - <em>[% s.scientific_name %]</em><br/>
@@ -234,39 +176,7 @@
             </div>
 	    [% END %]
 	  [% END %]
-	  
-	  <!--
-	  <div class="list-group">
-	    [% FOREACH item = items %]
-            <div class="list-group-item">
-              <a style="float: right;" class="btn btn-primary btn-xs" href="#" role="button">Load in EnsEMBL</a>
-              <h4 class="list-group-item-heading">[% item.get_value('hub') %]</h4>
-    	      <p class="list-group-item-text">
-	        [% s = item.get_value('species'); s.scientific_name %] - [% a = item.get_value('assembly'); a.name %]
-	      </p>
-            </div>
-	    [% END %]
-          </div>
-	  -->
-	  [% ELSE %]
-	  <div class="alert alert-danger" role="alert">
-	    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> No results. 
-	    <p>Try with another query or mixing compatible species and assembly filters.</p>
-          </div>
-	  [% END %]	  
-	</div>
-
-        <div role="tabpanel" class="tab-pane fade" id="tracks_by_hub" style="margin-top: 20px;">
-	  Here we list the search results matching the filters organised by hub.
-	</div>
-
-        <div role="tabpanel" class="tab-pane fade" id="tracks_by_type" style="margin-top: 20px;">
-	  And here we show the results organised by data type, e.g. genomics, epigenomics, proteomics etc.
-	</div>
-      </div>
-    </div>
-
-    [%# bootstrap simple pagination %]
+	      [%# bootstrap simple pagination %]
     <div align="center">
       <nav>
         <ul class="pagination">
@@ -315,65 +225,53 @@
         </ul>
       </nav>
     </div>
+
+	  [% ELSE %]
+	  <div class="alert alert-danger" role="alert">
+	    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> No results. 
+	    <p>Try with another query or mixing compatible species and assembly filters.</p>
+          </div>
+	  [% END %]
+	</div>
+
+        <div role="tabpanel" class="tab-pane fade" id="tracks_by_hub" style="margin-top: 20px;">
+	  <table class="table table-striped table-hover">
+            <tbody>
+	    [% FOREACH hub_agg IN aggregations %]
+	      <tr>
+	        <td>
+		  <div class="hub-summary-compact">
+                    <div class="hub-summary-box hub-summary-score">		
+		      [% hub_agg.count %]
+		      <div class="hub-summary-caption">
+		        [% IF hub_agg.count == 1 %]
+			collection
+			[% ELSE %]
+			collections
+			[% END %]
+		      </div>
+		    </div>
+		    <span class="hub-title">
+		      [% p = { } %]
+		      [% p.import(filters) %]
+		      [% p.delete('page') %]
+		      [% p.hub = hub_agg.value %]
+		      <a href="[% c.uri_for('/search', p ) %]">[% hub_agg.value %]</a>
+		    </span>
+		    <p><div style="clear: both"></div></p>
+                  </div>
+	        </td>
+	      </tr>
+	    [% END %]
+	    </tbody>
+	  </table>
+	</div>
+
+        <div role="tabpanel" class="tab-pane fade" id="tracks_by_type" style="margin-top: 20px;">
+	  And here we show the results organised by data type, e.g. genomics, epigenomics, proteomics etc.
+	</div>
+      </div>
+    </div>
+
   </div>
 </div>
-
-<!-- 
-[% # bootstrap simple pagination with pager %]
-<ul class="pager">
-[% IF pager.current_page != pager.first_page AND pager.first_page != pager.previous_page %]
-  [% filters.page = pager.first_page %]
-  <li><a href="[% c.uri_for('/search', filters) %]">First</a></li>
-[% END %]
-[% IF pager.previous_page %]
-  [% filters.page = pager.previous_page %]
-  <li><a href="[% c.uri_for('/search', filters)%]">Previous</a></li>
-[% END %]
-[% IF pager.next_page %]
-  [% filters.page = pager.next_page %]
-  <li><a href="[% c.uri_for('/search', filters)%]">Next</a></li>
-[% END %]
-[% IF pager.current_page != pager.last_page AND pager.last_page != pager.next_page %]
-  [% filters.page = pager.last_page %]
-  <li><a href="[% c.uri_for('/search', filters) %]">Last</a></li>
-[% END %]
-</ul>
--->
-
-[% # Provide a link back to the search page.  'c.uri_for' builds -%]
-[% # a full URI; e.g., 'http://localhost:3000'      -%]
-<!--<p><a href="[% c.uri_for('/') %]">Return to search</a></p>-->
-
-<!-- 
-Total hits: [% results.hits.total %]<br/>
-<hr>
-[% FOREACH item IN results.hits.hits %]
-<pre>
-  [% Dumper.dump(item) -%]<br/>
-</pre>
-<hr>
-[% END %]
--->
-
-<!--
-<div class="row">
-  <table id="users" class="table table-bordered table-striped tablesorter" summary="The list of trackhubs">
-    <thead>
-      <tr>
-        [% FOR column IN columns %]
-        <th scope="col">[% column %]</th>
-        [% END %]
-      </tr>
-    </thead>
-    <tbody>
-      [% FOREACH item = items %] 
-      <tr>
-        [% FOR column IN columns %]
-        <td>[% item.get_value(column) | html %]</td>
-        [% END %]
-      </tr>
-      [% END %]
-    </tbody>
-  </table>
-</div>
--->

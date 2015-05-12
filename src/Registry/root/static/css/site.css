@@ -119,3 +119,35 @@ span.facet-count {
     position: relative;
 }
 
+div.hub-summary-compact {
+    line-height: 1.2em;
+    padding: 5px 3px;
+}
+span.hub-title {
+    font-weight: bold;
+    line-height: 1.8em;
+}
+div.hub-summary-box, div.hub-summary-caption {
+    line-height: normal;
+    text-align: center;
+    vertical-align: bottom;
+}
+div.hub-summary-box {
+    background-attachment: scroll;
+    background-color: grey;
+    background-image: none;
+    background-position: 0 0;
+    background-repeat: repeat;
+    color: white;
+    float: left;
+    font-size: 1.85em;
+    line-height: 0.8;
+    padding: 7px 1px 3px;
+    width: 5ex;
+}
+div.hub-summary-score {
+    margin: 0 8px 0 3px;
+}
+div.hub-summary-caption {
+    font-size: 0.5em;
+}

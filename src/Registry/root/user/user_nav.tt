@@ -1,3 +1,12 @@
+<div class="row">
+  <div class="col-sm-12">
+    <ul class="breadcrumb">
+      <li><a href="/">Home</a></li>
+      <li class="active">Dashboard</li>
+    </ul>
+  </div>
+</div>
+
 <ul class="nav nav-tabs">
   <li [% ' class="active"' IF (c.req.uri == c.uri_for(c.controller.action_for('profile'), [user.username])) %]><a href="[% c.uri_for(c.controller.action_for('profile'), [user.username]) %]">Profile</a></li>
   [% IF !c.check_user_roles('admin') %]

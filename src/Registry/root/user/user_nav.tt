@@ -10,7 +10,7 @@
 <ul class="nav nav-tabs">
   <li [% ' class="active"' IF (c.req.uri == c.uri_for(c.controller.action_for('profile'), [user.username])) %]><a href="[% c.uri_for(c.controller.action_for('profile'), [user.username]) %]">Profile</a></li>
   [% IF !c.check_user_roles('admin') %]
-  <li [% ' class="active"' IF (c.req.uri == c.uri_for(c.controller.action_for('list_trackhubs'), [user.username])) %]><a href="[% c.uri_for(c.controller.action_for('list_trackhubs'), [user.username]) %]">My track hubs</a></li>
+  <li [% ' class="active"' IF (c.req.uri == c.uri_for(c.controller.action_for('list_trackhubs'), [user.username])) %]><a href="[% c.uri_for(c.controller.action_for('list_trackhubs'), [user.username]) %]">My track collections</a></li>
   <li [% ' class="active"' IF (c.req.uri == c.uri_for(c.controller.action_for('submit_trackhubs'), [user.username])) %]><a href="[% c.uri_for(c.controller.action_for('submit_trackhubs'), [user.username]) %]">Submit/Update</a></li>
   [% ELSE %]
   <li [% ' class="active"' IF (c.req.uri == c.uri_for(c.controller.action_for('list_providers'), [user.username])) %]><a href="[% c.uri_for(c.controller.action_for('list_providers'), [user.username]) %]">TrackHub Providers</a></li>

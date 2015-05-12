@@ -137,6 +137,44 @@ sub submit_trackhubs : Chained('base') :Path('submit_trackhubs') Args(0) {
   $c->stash(template  => "user/trackhub/submit_update.tt");
 }
 
+sub view_trackhub : Chained('base') :Path('view') Args(1) {
+  my ($self, $c, $id) = @_;
+
+  $c->stash(id       => $id,
+	    template => "user/trackhub/view.tt");
+}
+
+sub delete_trackhub : Chained('base') :Path('delete') Args(1) {
+  my ($self, $c, $id) = @_;
+  
+  my $trackhub = $c->model('Search')->get_trackhub_by_id($id);
+  if ($trackhub) {
+    # TODO: this should be redundant, but just to be sure
+    if ($trackhub->{owner} eq $c->user->username) {
+      my $config = Registry->config()->{'Model::Search'};
+      # try { # TODO: this is not working for some reason
+	$c->model('Search')->delete(index   => $config->{index},
+				    type    => $config->{type}{trackhub},
+				    id      => $id);
+	$c->model('Search')->indices->refresh(index => $config->{index});
+      # } catch {
+      # 	Catalyst::Exception->throw($_);
+      # };
+      $c->stash(status_msg => sprintf("Deleted track collection [%d]", $id));
+      $c->forward('list_trackhubs', [ $c->user->username ]);
+    } else {
+      $c->stash(error_msg => "Cannot delete collection [$id], does not belong to you");
+    }
+  } else {
+    $c->stash(error_msg => "Could not fetch track collection [$id]");
+  }
+
+  # TODO: this is not properly working.
+  #       address is still that of delete action,
+  #       and list_trackhubs tab is not active
+  $c->forward('list_trackhubs', [ $c->user->username ]);
+}
+
 #
 # Admin lists all available trackhub providers
 #

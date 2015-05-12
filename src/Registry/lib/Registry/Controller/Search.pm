@@ -47,9 +47,9 @@ sub index :Path :Args(0) {
   } 
   my $facets = 
     {
-     species  => { terms => { field => 'species.scientific_name', size => 30 } },
-     assembly => { terms => { field => 'assembly.name', size => 30 } },
-     hub      => { terms => { field => 'hub.name', size => 30 } } 
+     species  => { terms => { field => 'species.scientific_name', size => 20 } },
+     assembly => { terms => { field => 'assembly.name', size => 20 } },
+     hub      => { terms => { field => 'hub.name', size => 20 } } 
     };
 
   my $page = $params->{page} || 1;
@@ -58,7 +58,6 @@ sub index :Path :Args(0) {
 
   my $config = Registry->config()->{'Model::Search'};
   my ($index, $type) = ($config->{index}, $config->{type}{trackhub});
-  my $fields = ['name', 'description', 'version'];
 
   my $query_args = 
     {
@@ -90,21 +89,10 @@ sub index :Path :Args(0) {
   }
   $query_args->{filters} = $filters if $filters;
 
-  my $query = 
-    Data::SearchEngine::ElasticSearch::Query->new($query_args);
-  my $se = Data::SearchEngine::ElasticSearch->new();
-  my ($results, $results_by_hub);
-
-  # do the search
-  try {
-    $results = $se->search($query);
-  } catch {
-    Catalyst::Exception->throw( qq/$_/ );
-  };
-  
   # now query for the same thing by hub to build the track by hubs view
   # build aggregation based on hub name taking into account filters
-  my $hub_aggregations;
+  my $hub_aggregations; # = $self->_make_aggregations($filters);
+
   if (exists $filters->{'species.scientific_name'} and 
       defined $filters->{'species.scientific_name'} and not 
       exists $filters->{'assembly.name'}) {
@@ -191,21 +179,24 @@ sub index :Path :Args(0) {
   }
 
   $query_args->{aggregations} = $hub_aggregations if $hub_aggregations;
-  $query = 
+
+  my $query = 
     Data::SearchEngine::ElasticSearch::Query->new($query_args);
+  my $se = Data::SearchEngine::ElasticSearch->new();
+  my ($results, $results_by_hub);
+
+  # do the search
   try {
-    $results_by_hub = $se->search($query);
+    $results = $se->search($query);
   } catch {
     Catalyst::Exception->throw( qq/$_/ );
   };
   
-  # use Data::Dumper; $c->log->debug(Dumper $results_by_hub->{aggregations});
-
   $c->stash(query_string    => $params->{q},
 	    filters         => $params,
 	    items           => $results->items,
-	    items_by_hub    => $results_by_hub->items,
 	    facets          => $results->facets,
+	    aggregations    => $results->{aggregations},
 	    pager           => $results->pager,
 	    template        => 'search/results.tt');
     

@@ -10,7 +10,6 @@
       <thead>
         <tr>
 	  <th>Id</td>
-
           <th>Hub</th>
           <th>Assembly</th>
           <th>JSON Schema</th>
@@ -21,7 +20,7 @@
       [% FOR trackhub IN trackhubs %]
       <tr>
         <td style="word-wrap: break-word;">[% trackhub.id %]</td>
-	<td style="word-wrap: break-word;">[% trackhub.hub %]</td>
+	<td style="word-wrap: break-word;">[% trackhub.hub.name %]</td>
 	<td style="word-wrap: break-word;">[% trackhub.assembly.name %]</td>
 	<td style="word-wrap: break-word;">[% trackhub.version %]</td>
         [% USE Math; r = GET Math.rand(1) %]

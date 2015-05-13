@@ -6,7 +6,6 @@ package Registry::TrackHub::TrackDB;
 use strict;
 use warnings;
 
-use JSON;
 use Registry::Utils::URL qw(file_exists read_file);
 
 use vars qw($AUTOLOAD);
@@ -26,30 +25,26 @@ sub AUTOLOAD {
 sub new {
   my ($class, $doc) = @_;
   defined $doc or die "Undefined doc parameter.";
+  # check the document is in the correct format:
+  # ATMO, only v1.0 supported
+  exists $doc->{configuration} and ref $doc->{configuration} eq 'HASH' or
+    die "TrackDB document doesn't seem to be in the correct format";
 
   my $self = { _doc => $doc };
   bless $self, $class;
 
-  $self->_get_track_info();
+  # collect all bigDataURLs and check them
+  $self->_collect_track_info($self->{_doc}{configuration});
 
   return $self;
 }
 
-sub _get_track_info {
-  my $self = shift;
-  my $doc = $self->{_doc};
-  
-  # collect all bigDataURLs and check them
-  $self->{tracks} = {};
-  $self->_collect_track_info($doc->{configuration});
-}
-
 sub _collect_track_info {
-  my ($self, $hash, $tracks) = @_;
+  my ($self, $hash) = @_;
   foreach my $track (keys %{$hash}) { # key is track name
     if (ref $hash->{$track} eq 'HASH') {
       foreach my $attr (keys %{$hash->{$track}}) {
-	next unless $attr =~ /bigdataurl/i or $key eq 'members';
+	next unless $attr =~ /bigdataurl/i or $attr eq 'members';
 	if ($attr eq 'members') {
 	  $self->_collect_track_info($hash->{$track}{$attr}) if ref $hash->{$track}{$attr} eq 'HASH';
 	} else {

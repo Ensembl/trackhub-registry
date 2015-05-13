@@ -39,6 +39,12 @@ sub new {
   return $self;
 }
 
+sub track_info {
+  my $self = shift;
+
+  return $self->{tracks};
+}
+
 sub _collect_track_info {
   my ($self, $hash) = @_;
   foreach my $track (keys %{$hash}) { # key is track name
@@ -51,7 +57,7 @@ sub _collect_track_info {
 	  my $url = $hash->{$track}{$attr};
 	  my $response = file_exists($url, { nice => 1 });
 	  if ($response->{error}) {
-	    push @{$self->{tracks}{$track}}, ($url, 0, $response->{error});
+	    push @{$self->{tracks}{$track}}, ($url, 0, $response->{error}[0]);
 	  } elsif ($response->{success}) {
 	    push @{$self->{tracks}{$track}}, ($url, 1);
 	  } else {

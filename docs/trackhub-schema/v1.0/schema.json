@@ -120,7 +120,7 @@
 
   "additionalProperties": true,
 
-  "required": [ "version", "species", "assembly", "data", "configuration" ],
+  "required": [ "version", "hub", "species", "assembly", "data", "configuration" ],
 
   "definitions": {
 
@@ -133,7 +133,7 @@
         "^[a-zA-z][a-zA-Z0-9_]+$": { "type": "string" }
       },
 
-      "additionalProperties": false
+      "additionalProperties": true
     },
 
     "track_configuration": {

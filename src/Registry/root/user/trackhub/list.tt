@@ -6,15 +6,16 @@
 </div>
 <div class="row">
   <div class="col-sm-12">
-    <table class="table table-condensed">
+    <table class="table table-condensed table-hover table-striped">
       <thead>
         <tr>
 	  <th>Id</td>
           <th>Hub</th>
           <th>Assembly</th>
-          <th>JSON Schema</th>
+	  <th>JSON Schema</th>
+	  <th>Status</th>
+	  <th>Last Update</th>
 	  <th></th>
-          <th>Status</th>
         </tr>
     </thead>
     <tbody>
@@ -24,20 +25,40 @@
 	<td style="word-wrap: break-word;">[% trackhub.hub.name %]</td>
 	<td style="word-wrap: break-word;">[% trackhub.assembly.name %]</td>
 	<td style="word-wrap: break-word;">[% trackhub.version %]</td>
+        [% USE Math; r = GET Math.rand(1) %]
+	[% IF r < 0.7 %]
+	<td style="word-wrap: break-word;">
+	  <span class="label label-info">All is Well</span>
+	</td>
+	<td>
+	  <em>May 13 2015 15:05:50 GMT+0100 (BST)</em>
+	</td>
 	<td>
           <div class="btn-group">
-            <a class="btn btn-default btn-xs" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [user.username, trackhub.id]) %]" rel="tooltip" title="View"><span class="glyphicon glyphicon-search"></a>
-            <a class="btn btn-default btn-xs" href="[% c.uri_for(c.controller.action_for('delete_trackhub'), [user.username, trackhub.id]) %]" rel="tooltip" title="Delete"><span class="glyphicon glyphicon-trash"></a>
+	    <a class="btn btn-default btn-xs" disabled="disabled" href="[% c.uri_for(c.controller.action_for('view_trackhub_status'), [user.username, trackhub.id]) %]" rel="tooltip" title="View Track Collection Status"><span class="glyphicon glyphicon-search"></a>
+            <a class="btn btn-default btn-xs" href="[% c.uri_for(c.controller.action_for('refresh_trackhub_status'), [user.username, trackhub.id]) %]" rel="tooltip" title="Refresh Track Collection Status"><span class="glyphicon glyphicon-refresh"></a>
+            <a class="btn btn-default btn-xs" href="[% c.uri_for(c.controller.action_for('delete_trackhub'), [user.username, trackhub.id]) %]" rel="tooltip" title="Delete Track Collection"><span class="glyphicon glyphicon-trash"></a>
           </div>
 	</td>
-        [% USE Math; r = GET Math.rand(1) %]
-	<td style="word-wrap: break-word;">
-	[% IF r < 0.8 %]
-	  <span class="label label-success">All is well</span>
 	[% ELSE %]
-	  <span class="label label-danger">Remote data unavailable</span>
-	[% END %]
+	<td style="word-wrap: break-word;">
+	  [% IF r >= 0.7 && r < 0.85 %]
+	  <span class="label label-danger">Remote Data Unavailable</span>
+	  [% ELSE %]
+	  <span class="label label-warning">Unknown</span>
+	  [% END %]
 	</td>
+	<td>
+	  <em>May 13 2015 15:05:50 GMT+0100 (BST)</em>
+	</td>
+	<td>
+          <div class="btn-group">
+	    <a class="btn btn-default btn-xs" href="[% c.uri_for(c.controller.action_for('view_trackhub_status'), [user.username, trackhub.id]) %]" rel="tooltip" title="View Track Collection Status"><span class="glyphicon glyphicon-search"></a>
+            <a class="btn btn-default btn-xs" href="[% c.uri_for(c.controller.action_for('refresh_trackhub_status'), [user.username, trackhub.id]) %]" rel="tooltip" title="Refresh Track Collection Status"><span class="glyphicon glyphicon-refresh"></a>
+            <a class="btn btn-default btn-xs" href="[% c.uri_for(c.controller.action_for('delete_trackhub'), [user.username, trackhub.id]) %]" rel="tooltip" title="Delete Track Collection"><span class="glyphicon glyphicon-trash"></a>
+          </div>
+	</td>
+	[% END %]
       </tr>
       [% END %]
     </tbody>

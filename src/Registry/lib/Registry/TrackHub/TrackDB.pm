@@ -51,9 +51,12 @@ sub status {
 }
 
 sub status_last_update {
-  my $self = shift;
+  my ($self, $format) = @_;
 
-  return strftime "%x %X %Z (%z)", localtime($self->{_doc}{status}{last_update});
+  return strftime "%x %X %Z (%z)", localtime($self->{_doc}{status}{last_update})
+    if $format;
+
+  return $self->{_doc}{status}{last_update};
 }
 
 sub update_status {

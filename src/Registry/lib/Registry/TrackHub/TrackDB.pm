@@ -2,6 +2,7 @@
 # A class to represent track db data in JSON format,
 # to provide methods to check and update the status
 # of its tracks.
+# An object of this class is built from an ElasticSearch document
 #
 package Registry::TrackHub::TrackDB;
 
@@ -10,41 +11,31 @@ use warnings;
 
 use Registry;
 use Registry::Model::Search;
-use Registry::Utils::URL qw(file_exists read_file);
-
-use vars qw($AUTOLOAD);
-
-sub AUTOLOAD {
-  my $self = shift;
-  my $attr = $AUTOLOAD;
-  $attr =~ s/.*:://;
-
-  return unless $attr =~ /[^A-Z]/;  # skip DESTROY and all-cap methods
-
-  $self->{$attr} = shift if @_;
-
-  return $self->{$attr};
-}
+use Registry::Utils::URL qw(file_exists);
 
 sub new {
-  my ($class, $doc) = @_;
-  defined $doc or die "Undefined doc parameter.";
-  # check the document is in the correct format: ATMO, only v1.0 supported
-  exists $doc->{data} and ref $doc->{data} eq 'ARRAY' and
-  exists $doc->{configuration} and ref $doc->{configuration} eq 'HASH' or
-    die "TrackDB document doesn't seem to be in the correct format";
+  my ($class, $id) = @_; # arg is the ID of an ES doc
+  defined $id or die "Undefined ID";
 
   my $search_config = Registry->config()->{'Model::Search'};
   my $self = { 
-	      _doc => $doc,
+	      _id  => $id,
 	      _es  => {
 		       client => Registry::Model::Search->new(nodes => $search_config->{nodes}),
 		       index  => $search_config->{index},
 		       type   => $search_config->{type}{trackhub}
 		      }
 	     };
-  bless $self, $class;
+  $self->{_doc} = $self->{_es}{client}->get_trackhub_by_id($id);
+  defined $self->{_doc} or die "Unable to get document [$id] from store";
   
+  # check the document is in the correct format: ATMO, only v1.0 supported
+  my $doc = $self->{_doc};
+  exists $doc->{data} and ref $doc->{data} eq 'ARRAY' and
+  exists $doc->{configuration} and ref $doc->{configuration} eq 'HASH' or
+    die "TrackDB document doesn't seem to be in the correct format";
+
+  bless $self, $class;
   return $self;
 }
 
@@ -68,6 +59,17 @@ sub update_status {
   my $self = shift;
 
   my $doc = $self->{_doc};
+  
+  # check doc status
+  # another process might have started to check it
+  # abandon the task in this case
+  exists $doc->{status} or die "Unable to read status";
+  if ($doc->{status}{message} eq 'Pending') {
+    die sprintf "TrackDB document [%s] is already being checked, please wait...", $self->{_id};
+  }
+
+  # initialise status and set doc status to pending
+  my $last_update = $doc->{status}{last_update};
   $doc->{status} = 
     { 
      tracks  => {
@@ -77,16 +79,31 @@ sub update_status {
 			       total_ko => 0
 			      }
 		},
-     message => 'All is Well' 
+     message => 'Pending',
+     last_update => $last_update || ''
     };
 
+  # reindex doc to flag other processes its pending status
+  # and refresh the index to immediately commit changes
+  $self->{_es}{client}->index(index  => $self->{_es}{index},
+			      type   => $self->{_es}{type},
+			      id     => $self->{_id},
+			      body   => $doc);
+  $self->{_es}{client}->indices->refresh(index => $self->{_es}{index});
+
+  # check remote URL and record status
   $self->_collect_track_info($doc->{configuration});
-  $doc->{status}{message} = 'Remote Data Unavailable' if $doc->{status}{tracks}{with_data}{total_ko};
+  $doc->{status}{message} = 
+    $doc->{status}{tracks}{with_data}{total_ko}?'Remote Data Unavailable':'All is Well';
   $doc->{status}{last_update} = time();
 
-  # TODO: reindex the document
-  
-  return $self->{_doc}{status};
+  # commit status change
+  $self->{_es}{client}->index(index  => $self->{_es}{index},
+			      type   => $self->{_es}{type},
+			      id     => $self->{_id},
+			      body   => $doc);
+  $self->{_es}{client}->indices->refresh(index => $self->{_es}{index});
+
 }
 
 sub track_info {

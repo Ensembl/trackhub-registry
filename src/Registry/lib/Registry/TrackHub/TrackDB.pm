@@ -63,13 +63,15 @@ sub update_status {
   # check doc status
   # another process might have started to check it
   # abandon the task in this case
+  #
+  # TODO? abandon also if doc has been recently checked
+  #
   exists $doc->{status} or die "Unable to read status";
   if ($doc->{status}{message} eq 'Pending') {
     die sprintf "TrackDB document [%s] is already being checked, please wait...", $self->{_id};
   }
 
-  # initialise status and set doc status to pending
-  my $last_update = $doc->{status}{last_update};
+  # initialise status to pending
   $doc->{status} = 
     { 
      tracks  => {
@@ -80,7 +82,7 @@ sub update_status {
 			      }
 		},
      message => 'Pending',
-     last_update => $last_update || ''
+     last_update => $doc->{status}{last_update} || ''
     };
 
   # reindex doc to flag other processes its pending status
@@ -104,13 +106,6 @@ sub update_status {
 			      body   => $doc);
   $self->{_es}{client}->indices->refresh(index => $self->{_es}{index});
 
-}
-
-sub track_info {
-  my $self = shift;
-  defined $self->{tracks} or die "Unknown status";
-
-  return $self->{tracks};
 }
 
 sub _collect_track_info {

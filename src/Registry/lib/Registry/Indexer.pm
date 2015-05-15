@@ -18,6 +18,7 @@ use JSON;
 
 use Registry::Utils;
 use Registry::Model::Search;
+use Registry::TrackHub::TrackDB;
 
 sub new {
   my ($caller, %args) = @_;
@@ -178,9 +179,12 @@ sub index_trackhubs {
     -e $doc->{file} or 
       croak "$doc->{file} does not exist or it's not accessible";
     
-    # load doc from JSON, add owner
+    # load doc from JSON, add owner, set version and status
     my $doc_data = from_json(&Registry::Utils::slurp_file($doc->{file}));
     $doc_data->{owner} = $doc->{owner};
+    $doc_data->{version} = 'v1.0';
+    $doc_data->{created} = time();
+    $doc_data->{status}{message} = 'Unknown';
 
     # index doc
     $self->{es}->index(index   => $self->{index},

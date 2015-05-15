@@ -67,7 +67,7 @@ SKIP: {
 
   # getting existing documents
   my $doc = $es->get_trackhub_by_id(1);
-  is($doc->{data}[0]{name}, "bpDnaseRegionsC0010K46DNaseEBI", "Fetch correct document");
+  is($doc->{data}[0]{id}, "bpDnaseRegionsC0010K46DNaseEBI", "Fetch correct document");
   
   $doc = $es->get_trackhub_by_id(2);
   is(scalar @{$doc->{data}}, 4, "Fetch correct document");

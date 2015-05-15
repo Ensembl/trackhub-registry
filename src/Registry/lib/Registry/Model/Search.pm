@@ -68,10 +68,12 @@ sub count_trackhubs {
 #
 # Return a document given its ID
 #
-# Params (required): id
+# Params: 
+# - id (required) - the ID of the document
+# - orig - get the original document (content+metadata) instead of just its source (content)
 #
 sub get_trackhub_by_id {
-  my ($self, $id) = @_;
+  my ($self, $id, $orig) = @_;
 
   croak "Missing required id parameter"
     unless defined $id;
@@ -79,7 +81,12 @@ sub get_trackhub_by_id {
   my $config = Registry->config()->{'Model::Search'};
   return $self->_es->get_source(index => $config->{index},           # add required (by Search::Elasticsearch)
 				type  => $config->{type}{trackhub},  # index and type parameter 
-				id    => $id);
+				id    => $id) unless $orig;
+
+  return $self->_es->get(index => $config->{index},           
+			 type  => $config->{type}{trackhub},  
+			 id    => $id) unless $orig;
+  
 }
 
 __PACKAGE__->meta->make_immutable;

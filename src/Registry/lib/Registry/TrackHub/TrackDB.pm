@@ -9,6 +9,7 @@ package Registry::TrackHub::TrackDB;
 use strict;
 use warnings;
 
+use POSIX qw(strftime);
 use Registry;
 use Registry::Model::Search;
 use Registry::Utils::URL qw(file_exists);
@@ -52,7 +53,7 @@ sub status {
 sub status_last_update {
   my $self = shift;
 
-  return localtime($self->{_doc}{status}{last_update});
+  return strftime "%x %X %Z (%z)", localtime($self->{_doc}{status}{last_update});
 }
 
 sub update_status {
@@ -97,7 +98,7 @@ sub update_status {
   $self->_collect_track_info($doc->{configuration});
   $doc->{status}{message} = 
     $doc->{status}{tracks}{with_data}{total_ko}?'Remote Data Unavailable':'All is Well';
-  $doc->{status}{last_update} = time();
+  $doc->{status}{last_update} = time;
 
   # commit status change
   $self->{_es}{client}->index(index  => $self->{_es}{index},
@@ -106,6 +107,7 @@ sub update_status {
 			      body   => $doc);
   $self->{_es}{client}->indices->refresh(index => $self->{_es}{index});
 
+  return $doc->{status};
 }
 
 sub _collect_track_info {

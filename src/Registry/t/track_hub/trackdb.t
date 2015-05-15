@@ -40,7 +40,7 @@ my $id = 1;
 my $trackdb = Registry::TrackHub::TrackDB->new($id);
 isa_ok($trackdb, 'Registry::TrackHub::TrackDB');
 $trackdb->update_status();
-my $status = $trackdb->status();  
+my $status = $trackdb->status();
 is($status->{tracks}{total}, 1, 'Number of tracks');
 is($status->{tracks}{with_data}{total}, 1, 'Number of tracks with data');
 is($status->{tracks}{with_data}{total_ko}, 1, 'Number of tracks with remote data unavailable');
@@ -48,7 +48,7 @@ is($status->{tracks}{with_data}{ko}{bpDnaseRegionsC0010K46DNaseEBI}[0], 'http://
 is($status->{tracks}{with_data}{ko}{bpDnaseRegionsC0010K46DNaseEBI}[1], '404: Not Found', 'Error response');
 is($status->{message}, 'Remote Data Unavailable', 'Status message');
 ok($status->{last_update}, 'Last update');
-note sprintf "Doc [%d] updated: %s", $id, $trackdb->status_last_update;
+note sprintf "Doc [%d] updated: %s", $id, $trackdb->status_last_update(1);
 
 $id = 2;
 $trackdb = Registry::TrackHub::TrackDB->new(2);
@@ -64,7 +64,7 @@ foreach my $track (keys %{$status->{tracks}{with_data}{ko}}) {
 }
 is($status->{message}, 'Remote Data Unavailable', 'Status message');
 ok($status->{last_update}, 'Last update');
-note sprintf "Doc [%d] updated: %s", $id, $trackdb->status_last_update;
+note sprintf "Doc [%d] updated: %s", $id, $trackdb->status_last_update(1);
 
 # SKIP: {
 #   skip "No Internet connection: cannot test TrackHub access", 66

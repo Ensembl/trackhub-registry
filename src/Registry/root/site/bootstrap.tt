@@ -58,7 +58,7 @@
         </ul>
 	<ul class="nav navbar-nav navbar-right">
 	[% IF c.user_exists %]
-	  <li><a href="[% c.uri_for(c.controller('user').action_for('list_trackhubs'), [user.username]) %]">Dashboard</a></li>
+	  <li><a href="[% c.uri_for(c.controller('user').action_for('list_trackhubs'), [c.user.username]) %]">Dashboard</a></li>
           <li><a href="[% c.uri_for('/logout') %]">Logout</a></li>
         [% ELSE %]
           <li><a href="[% c.uri_for('/user/register') %]">Sign up</a></li>

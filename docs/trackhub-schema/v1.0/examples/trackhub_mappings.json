@@ -3,6 +3,8 @@
     "properties": {
       "created": { "type": "long", "index": "not_analyzed"  },
 
+      "updated": { "type": "long", "index": "not_analyzed"  },
+
       "status": {
         "type": "object",
 	"enabled": false

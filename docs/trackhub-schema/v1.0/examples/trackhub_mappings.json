@@ -3,18 +3,25 @@
     "properties": {
       "created": { "type": "long", "index": "not_analyzed"  },
 
+      "status": {
+        "type": "object",
+	"enabled": false
+      },
+
       "hub": {
         "type": "object",
 	"properties": {
 	  "name": { "type": "string", "index": "not_analyzed" }
 	}
       },
+
       "species": {
         "type": "object",
 	"properties": {
 	  "scientific_name": { "type": "string", "index": "not_analyzed" }
 	}
       },
+
       "assembly": {
         "type": "object",
 	"properties": {
@@ -22,6 +29,7 @@
 	  "name": { "type": "string", "index": "not_analyzed" }
 	}
       },
+
       "configuration": {
         "type": "object",
 	"enabled": false

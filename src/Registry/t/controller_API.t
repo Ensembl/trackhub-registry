@@ -213,7 +213,8 @@ SKIP: {
   # update doc1
   $request = POST('/api/trackhub/1',
   		  'Content-type' => 'application/json',
-  		  'Content'      => to_json({ version => 'v1.0',
+  		  'Content'      => to_json({ hub     => { name => 'Test', shortLabel => 'Test Hub', longLabel => 'Test Hub' },
+					      version => 'v1.0',
 					      species => { tax_id => 9606, scientific_name => 'Homo sapiens' },
 					      assembly => { accession => 'GCA_000001405.15' },
 					      data => [ { id => 'test', molecule => 'genomic_DNA' } ],
@@ -298,7 +299,7 @@ SKIP: {
   # request to create a doc with invalid data (non v1.0 compliant)
   $request = PUT('/api/trackhub/create',
   		 'Content-type' => 'application/json',
-		 'Content'      => to_json({ test => 'test' }));
+  		 'Content'      => to_json({ test => 'test' }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'PUT request to /api/trackhub/create');
@@ -484,7 +485,8 @@ SKIP: {
   is(scalar keys %{$content}, 3, "Correct number of trackdb docs created");
   # check content of returned docs
   foreach my $id (keys %{$content}) {
-    like($content->{$id}{hub}, qr/CSHL Biology of Genomes/, "Correct trackdb hub");
+    is($content->{$id}{hub}{name}, 'cshl2013', 'Correct trackdb hub name');
+    like($content->{$id}{hub}{longLabel}, qr/CSHL Biology of Genomes/, "Correct trackdb hub longLabel");
     # first data element is the same for all trackdbs
     is($content->{$id}{data}[0]{id}, 'repeatMasker_', "Correct trackdb data element");
     ok($content->{$id}{configuration}{repeatMasker_}, "Composite configuration exists");

@@ -1,6 +1,8 @@
 {
   "trackhub": {
     "properties": {
+      "created": { "type": "long", "index": "not_analyzed"  },
+
       "hub": {
         "type": "object",
 	"properties": {

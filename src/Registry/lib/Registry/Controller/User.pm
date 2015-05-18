@@ -136,6 +136,19 @@ sub submit_trackhubs : Chained('base') :Path('submit_trackhubs') Args(0) {
   $c->stash(template  => "user/trackhub/submit_update.tt");
 }
 
+sub view_trackhub_status : Chained('base') :Path('view_trackhub_status') Args(1) {
+  my ($self, $c, $id) = @_;
+
+  my $trackdb;
+  try {
+    $trackdb = Registry::TrackHub::TrackDB->new($id);
+  } catch {
+    $c->stash(error_msg => $_);
+  };
+
+  $c->stash(trackdb => $trackdb, template  => "user/trackhub/view.tt");
+}
+
 sub refresh_trackhub_status : Chained('base') :Path('refresh_trackhub_status') Args(1) {
   my ($self, $c, $id) = @_;
 

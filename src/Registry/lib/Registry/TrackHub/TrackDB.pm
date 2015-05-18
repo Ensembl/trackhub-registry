@@ -44,14 +44,49 @@ sub doc {
   return shift->{_doc};
 }
 
+sub id {
+  return shift->{_id};
+}
+
+sub created {
+  my ($self, $format) = @_;
+
+  return unless $self->{_doc}{created};
+
+  return strftime "%x %X %Z (%z)", localtime($self->{_doc}{created})
+    if $format;
+
+  return $self->{_doc}{created};
+}
+
+sub updated {
+  my ($self, $format) = @_;
+
+  return unless $self->{_doc}{updated};
+
+  return strftime "%x %X %Z (%z)", localtime($self->{_doc}{updated})
+    if $format;
+
+  return $self->{_doc}{updated};
+}
+
+
 sub status {
   my $self = shift;
   
   return $self->{_doc}{status};
 }
 
+sub status_message {
+  my $self = shift;
+
+  return $self->{_doc}{status}{message};
+}
+
 sub status_last_update {
   my ($self, $format) = @_;
+
+  return unless $self->{_doc}{status}{last_update};
 
   return strftime "%x %X %Z (%z)", localtime($self->{_doc}{status}{last_update})
     if $format;

@@ -179,6 +179,9 @@ sub trackhub_create_PUT {
     # set the owner of the doc as the current user
     $new_doc_data->{owner} = $c->stash->{user};
     $new_doc_data->{version} = $c->stash->{version};
+    # set creation date/status 
+    $new_doc_data->{created} = time();
+    $new_doc_data->{status}{message} = 'Unknown';
 
     try {
       # validate the doc
@@ -240,6 +243,9 @@ sub trackhub_create_POST {
 
 	# set the owner of the doc as the current user
 	$doc->{owner} = $c->stash->{user};
+	# set creation date/status 
+	$doc->{created} = time();
+	$doc->{status}{message} = 'Unknown';
 	
 	$c->model('Search')->index(index   => $config->{index},
 				   type    => $config->{type}{trackhub},
@@ -384,6 +390,9 @@ sub trackhub_POST {
     # NOTE: the doc is not indexed if it does not validate (i.e. raises an exception)
     $c->forward('_validate', [ to_json($new_doc_data) ]);
     
+    # set update time
+    $new_doc_data->{updated} = time();
+
     #
     # Updates in Elasticsearch
     # http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/partial-updates.html

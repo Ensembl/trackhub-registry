@@ -7,6 +7,7 @@ BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 
 use Data::Dumper;
 use List::Util 'max';
+use Try::Tiny;
 use Registry::Form::User::Registration;
 use Registry::Form::User::Profile;
 use Registry::TrackHub::TrackDB;

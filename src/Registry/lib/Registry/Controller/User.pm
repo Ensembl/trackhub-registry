@@ -9,6 +9,7 @@ use Data::Dumper;
 use List::Util 'max';
 use Registry::Form::User::Registration;
 use Registry::Form::User::Profile;
+use Registry::TrackHub::TrackDB;
 
 =head1 NAME
 
@@ -117,17 +118,14 @@ sub delete : Chained('base') Path('delete') Args(1) Does('ACL') RequiresRole('ad
 sub list_trackhubs : Chained('base') :Path('trackhubs') Args(0) {
   my ($self, $c) = @_;
 
-  my $columns = [ 'Hub', 'description', 'JSON Schema', 'status' ];
-  my $trackhubs;
+  my $trackdbs;
   my $query = { term => { owner => $c->user->username } };
 
   foreach my $doc (@{$c->model('Search')->search_trackhubs(size => 1000000, query => $query)->{hits}{hits}}) {
-    $doc->{_source}{id} = $doc->{_id};
-    push @{$trackhubs}, $doc->{_source};
+    push @{$trackdbs}, Registry::TrackHub::TrackDB->new($doc->{_id});
   }
 
-  $c->stash(trackhubs => $trackhubs,
-	    columns   => $columns,
+  $c->stash(trackdbs => $trackdbs,
 	    template  => "user/trackhub/list.tt");
 }
 
@@ -137,36 +135,26 @@ sub submit_trackhubs : Chained('base') :Path('submit_trackhubs') Args(0) {
   $c->stash(template  => "user/trackhub/submit_update.tt");
 }
 
-sub view_trackhub : Chained('base') :Path('view') Args(1) {
+sub refresh_trackhub_status : Chained('base') :Path('refresh_trackhub_status') Args(1) {
   my ($self, $c, $id) = @_;
-  my $doc = $c->model('Search')->get_trackhub_by_id($id);
 
-  if ($doc) {
-    # TODO: this should be redundant, but just to be sure
-    if ($doc->{owner} eq $c->user->username) {
-      $doc->{id} = $id;
-      my $trackdb = Registry::TrackHub::TrackDB->new($doc);
+  try {
+    my $trackdb = Registry::TrackHub::TrackDB->new($id);
+    $trackdb->update_status();
+  } catch {
+    $c->stash(error_msg => $_);
+  };
 
-      $c->stash(item => $trackdb);
-    } else {
-      $c->stash(error_msg => "Cannot delete collection [$id], does not belong to you");
-      $c->forward('list_trackhubs', [ $c->user->username ]);
-    }
-  } else {
-    $c->stash(error_msg => "Could not fetch track collection [$id]");
-    $c->forward('list_trackhubs', [ $c->user->username ]);
-  }
-
-  $c->stash(template => "user/trackhub/view.tt");
+  $c->forward('list_trackhubs', [ $c->user->username ]);
 }
 
 sub delete_trackhub : Chained('base') :Path('delete') Args(1) {
   my ($self, $c, $id) = @_;
   
-  my $trackhub = $c->model('Search')->get_trackhub_by_id($id);
-  if ($trackhub) {
+  my $doc = $c->model('Search')->get_trackhub_by_id($id);
+  if ($doc) {
     # TODO: this should be redundant, but just to be sure
-    if ($trackhub->{owner} eq $c->user->username) {
+    if ($doc->{owner} eq $c->user->username) {
       my $config = Registry->config()->{'Model::Search'};
       # try { # TODO: this is not working for some reason
 	$c->model('Search')->delete(index   => $config->{index},

@@ -243,7 +243,7 @@ sub register :Path('register') Args(0) {
     
     # get the max user ID to assign the ID to the new user
     my $config = Registry->config()->{'Model::Search'};
-    my $users = $c->model('Search')->search(index => $config->{index}, type => $config->{type}{user});
+    my $users = $c->model('Search')->search(index => $config->{index}, type => $config->{type}{user}, size => 100000);
     my $current_max_id = max( map { $_->{_id} } @{$users->{hits}{hits}} );
 
     # add default user role to user 

@@ -13,7 +13,7 @@
       <!-- Default panel contents -->
       <div class="panel-heading">Track Collection Report</div>
       [% tracks = trackdb.status.tracks %]
-      <div class="panel-body">
+      <div class="panel-body col-sm-3">
         <ul class="list-group">
           <li class="list-group-item">Total number of tracks: [% tracks.total %]</li>
           <li class="list-group-item">Tracks linked to remote data: [% tracks.with_data.total %]</li>
@@ -24,13 +24,13 @@
         <thead>
 	  <tr>
 	    <th>#</td>
-            <th>Name</th>
+            <th>Track Name</th>
             <th>Remote Data URL</th>
 	    <th>Error</th>
 	  </tr>
         </thead>
 	<tbody>
-	[% i = 0 %]
+	[% i = 1 %]
         [% FOREACH t IN tracks.with_data.ko.keys.sort %]
 	  <tr>
 	    <td>[% i %]</td>

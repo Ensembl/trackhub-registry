@@ -131,6 +131,8 @@ sub trackhub_list_GET {
 
   # get all docs for the given user
   my $query = { term => { owner => $c->stash->{user} } };
+  # TODO: use scan and scroll to retrieve large number of results efficiently
+  # See: https://www.elastic.co/guide/en/elasticsearch/guide/current/scan-scroll.html#scan-scroll
   my $docs = $c->model('Search')->search_trackhubs(query => $query);
 
   my %trackhubs;
@@ -432,6 +434,35 @@ sub trackhub_POST {
     # validate the updated doc
     # NOTE: the doc is not indexed if it does not validate (i.e. raises an exception)
     $c->forward('_validate', [ to_json($new_doc_data) ]);
+    
+    # prevent submission of duplicate content, i.e. trackdb
+    # with the same hub/assembly
+    my $hub = $new_doc_data->{hub}{name};
+    my $assembly_acc = $new_doc_data->{assembly}{accession};
+    defined $hub and defined $assembly_acc or
+      $c->go('ReturnError', 'custom', ["Unable to find hub/assembly information"]);
+    my $query = {
+		 filtered => {
+			      filter => {
+					 bool => {
+						  must => [
+							   {
+							    term => { 'hub.name' => $hub } },
+							   {
+							    term => { 'assembly.accession' => $assembly_acc } }
+							  ]
+						 }
+					}
+			     }
+		};
+    # TODO: use scan and scroll to retrieve large number of results efficiently
+    my $duplicate_docs = $c->model('Search')->search_trackhubs(size => 100000, query => $query)->{hits};
+    if ($duplicate_docs->{total}) {
+      foreach my $doc (@{$duplicate_docs->{hits}}) {
+	$c->go('ReturnError', 'custom', ["Cannot submit: a document with the same hub/assembly exists"])
+	  if $doc->{_id} != $doc_id;
+      }
+    }
     
     # set update time
     $new_doc_data->{updated} = time();

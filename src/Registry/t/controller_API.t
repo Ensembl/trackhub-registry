@@ -444,35 +444,8 @@ SKIP: {
   $content = from_json($response->content);
   like($content->{error}, qr/not supported/i, 'Correct error response');
   #
-  # should fail with the wrong assembly
-  $request = POST('/api/trackhub/create',
-  		  'Content-type' => 'application/json',
-  		  'Content'      => to_json({ url => $URL, assembly => 'dummy' }));
-  $request->headers->header(user       => 'trackhub1');
-  $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'POST request to /api/trackhub/create (wrong assembly)');
-  is($response->code, 400, 'Request unsuccessful');  
-  $content = from_json($response->content);
-  like($content->{error}, qr/no genome data/i, 'Correct error response');
-  #
-  # request creation with assembly argument and schema version parameter: should get 1 docs
+  # request creation with schema version parameter: should get 3 docs
   $request = POST('/api/trackhub/create?version=v1.0',
-  		  'Content-type' => 'application/json',
-  		  'Content'      => to_json({ url => $URL, assembly => 'ricCom1' }));
-  $request->headers->header(user       => 'trackhub1');
-  $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), "POST request to /api/trackhub/create?version=v1.0 (assembly 'ricCom1')");
-  ok($response->is_success, 'Request successful 2xx');
-  is($response->content_type, 'application/json', 'JSON content type');
-  $content = from_json($response->content);
-  is(scalar keys %{$content}, 1, "One trackdb doc created");
-  my $id = (keys %{$content})[0];
-  is($content->{$id}{version}, 'v1.0', 'Correct version');
-  is($content->{$id}{species}{tax_id}, 3988, 'Correct species');
-  is($content->{$id}{assembly}{synonyms}, 'ricCom1', 'Correct assembly synonym');
-  #
-  # request creation with no assembly argument: should get 3 docs
-  $request = POST('/api/trackhub/create',
   		  'Content-type' => 'application/json',
   		  'Content'      => to_json({ url => $URL }));
   $request->headers->header(user       => 'trackhub1');
@@ -497,21 +470,28 @@ SKIP: {
   $URL = 'http://smithlab.usc.edu/trackdata/methylation';
   $request = POST('/api/trackhub/create',
   		  'Content-type' => 'application/json',
-  		  'Content'      => to_json({ url => $URL, assembly => 'canFam3' }));
+  		  'Content'      => to_json({ url => $URL }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), "POST request to /api/trackhub/create?version=v1.0 (assembly 'canFam3')");
+  ok($response = request($request), "POST request to /api/trackhub/create?version=v1.0");
   ok($response->is_success, 'Request successful 2xx');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
-  is(scalar keys %{$content}, 1, "One trackdb doc created");
-  $id = (keys %{$content})[0];
-  is($content->{$id}{version}, 'v1.0', 'Correct version');
-  is($content->{$id}{species}{tax_id}, 9615, 'Correct species');
-  is($content->{$id}{assembly}{synonyms}, 'canFam3', 'Correct assembly synonym');
-  is($content->{$id}{configuration}{Carmona_Dog_2014}{longLabel}, 'A Comprehensive DNA Methylation Profile of Epithelial-to-Mesenchymal Transition', 'Correct composite long label');
-  is(scalar keys %{$content->{$id}{configuration}{Carmona_Dog_2014}{members}}, 7, 'Correct number of views');
-  is($content->{$id}{configuration}{Carmona_Dog_2014}{members}{AMRCarmona_Dog_2014}{members}{CarmonaDog2014_DogMDCKAMR}{bigDataUrl}, 'http://smithlab.usc.edu/methbase/data/Carmona-Dog-2014/Dog_MDCK/tracks_canFam3/Dog_MDCK.amr.bb', 'Correct view member bigDataUrl');
+  ok($content, "Docs created");
+  is(scalar keys %{$content}, 8, "Eight trackdb docs created");
+  my $id = (keys %{$content})[0];
+  foreach my $id (keys %{$content}) {
+    is($content->{$id}{hub}{name}, 'Smith Lab Public Hub', 'Correct trackdb hub name');
+    is($content->{$id}{hub}{shortLabel}, 'DNA Methylation', 'Correct trackdb hub shortLabel');
+    is($content->{$id}{hub}{longLabel}, 'Hundreds of analyzed methylomes from bisulfite sequencing data', 'Correct trackdb hub longLabel');
+    is($content->{$id}{version}, 'v1.0', 'Correct version');
+    if ($content->{$id}{species}{tax_id} == 9615) {
+      is($content->{$id}{assembly}{synonyms}, 'canFam3', 'Correct assembly synonym');
+      is($content->{$id}{configuration}{Carmona_Dog_2014}{longLabel}, 'A Comprehensive DNA Methylation Profile of Epithelial-to-Mesenchymal Transition', 'Correct composite long label');
+      is(scalar keys %{$content->{$id}{configuration}{Carmona_Dog_2014}{members}}, 7, 'Correct number of views');
+      is($content->{$id}{configuration}{Carmona_Dog_2014}{members}{AMRCarmona_Dog_2014}{members}{CarmonaDog2014_DogMDCKAMR}{bigDataUrl}, 'http://smithlab.usc.edu/methbase/data/Carmona-Dog-2014/Dog_MDCK/tracks_canFam3/Dog_MDCK.amr.bb', 'Correct view member bigDataUrl');
+    }
+  }
 }
 
 done_testing();

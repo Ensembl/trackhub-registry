@@ -136,8 +136,8 @@
 	  <!--<p><small>Tracks [% %] to [% %] of [% pager.total_entries %]</small></p>-->
 
 	  [% FOREACH item = items %]
-	    [% USE Math; r = GET Math.rand(1) %]
-	    [% IF r < 0.8 %]
+	    [% status = item.get_value('status').message %]
+	    [% IF status == 'All is Well' %]
             <div class="panel panel-info">
 	      <div class="panel-heading"><b>[% h = item.get_value('hub'); h.longLabel %]</b></div>
               <div class="panel-body">
@@ -159,12 +159,12 @@
 		</p>
               </div>
             </div>
-	    [% ELSE %]
-            <div class="panel panel-warning">
+	    [% ELSIF status.match('Unavailable') %]
+            <div class="panel panel-danger">
 	      <div class="panel-heading"><b>[% h = item.get_value('hub'); h.longLabel %]</b></div>
               <div class="panel-body">
 	        <div style="float: right;">
-	          <span class="label label-warning">Remote data not available</span>
+	          <span class="label label-danger">[% status %]</span>
 		  <button type="button" class="btn btn-xs btn-default" data-toggle="popover" title="[% h.name %]" data-content="This is the track collection info.">View Info</button>
 		</div>
 	        <p>
@@ -174,6 +174,21 @@
 		</p>
               </div>
             </div>
+	    [% ELSE %]
+	      [% status = 'Unknown status' %]
+            <div class="panel panel-warning">
+	      <div class="panel-heading"><b>[% h = item.get_value('hub'); h.longLabel %]</b></div>
+              <div class="panel-body">
+	        <div style="float: right;">
+	          <span class="label label-warning">[% status %]</span>
+		</div>
+	        <p>
+  		  <strong>Hub</strong>: [% h.shortLabel %]<br/>
+		  <strong>Species</strong>: [% s = item.get_value('species'); s.tax_id %] - <em>[% s.scientific_name %]</em><br/>
+		  <strong>Assembly</strong>: [% a = item.get_value('assembly'); a.accession %] - [% a.name %]
+		</p>
+              </div>
+            </div>	    
 	    [% END %]
 	  [% END %]
 	      [%# bootstrap simple pagination %]

@@ -9,24 +9,115 @@
 </div>
 
 <div class="page-header">
-  <!--<h3>Track Collection: [% trackdb.id %]</h3>-->
+  <h3>[% tracks.with_data.total_ko %]</h3>
   <span class="label label-primary">[% trackdb.doc.hub.shortLabel %]</span>
   <span class="label label-success">[% trackdb.doc.species.scientific_name %]</span>
   <span class="label label-info">[% trackdb.doc.assembly.name %]</span>
 </div>
 <div class="row">
+  <div class="col-sm-6">
+    <div class="panel panel-default">
+      <!-- Default panel contents -->
+      <div class="panel-heading">General Info</div>
+      [% tracks = trackdb.status.tracks %]
+      <div class="panel-body">
+        <div style="float: right;">
+	[% status = trackdb.status_message; %]
+	[% status_last_update = trackdb.status_last_update(1); %]
+	[% label_class = 'label-success' %]
+	[% IF status == 'Unknown' %]
+	[%   label_class = 'label-warning' %]
+	[% ELSIF status.match('Unavailable') %]
+	[%   label_class = 'label-danger' %]
+	[% END %]
+	  <span class="label [% label_class %]">[% status %]</span>
+	[% IF status != 'Unknown' %]
+	  <br/><small>[% status_last_update %]</small><br/><br/>
+	[% END %]
+	[% IF status == 'All is Well' %]
+	<div class="btn-group btn-group-xs">
+          <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Load tracks <span class="caret"></span></button>
+          <ul class="dropdown-menu" role="menu">
+            <li><a href="#">EnsEMBL</a></li>
+            <li><a href="#">UCSC</a></li>
+          </ul>
+        </div>
+	[% END %]
+	</div>
+        <ul class="list-group col-sm-6">
+          <li class="list-group-item">Total number of tracks <span class="badge">[% tracks.total %]</span></li>
+          <li class="list-group-item">Tracks linked to remote data <span class="badge">[% tracks.with_data.total %]</span></li>
+	  <li class="list-group-item">File type(s): </li>
+	</ul>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6">
+    <div class="panel panel-default">
+      <!-- Default panel contents -->
+      <div class="panel-heading">Hub</div>
+      <div class="panel-body">	
+        <p>
+	  <strong>Name</strong>: [% trackdb.doc.hub.name %]<br/>
+	  <strong>Short Label</strong>: [% trackdb.doc.hub.shortLabel %]<br/>
+	  <strong>Long Label</strong>: [% trackdb.doc.hub.longLabel %]<br/>
+	  [% IF trackdb.doc.hub.public_url %]
+	  <strong>Public URL</strong>: [% trackdb.doc.hub.public_url %]
+	  [% END %]
+	</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6">
+    <div class="panel panel-default">
+      <!-- Default panel contents -->
+      <div class="panel-heading">Species</div>
+      <div class="panel-body">
+        [% species = trackdb.doc.species %]
+        <p>
+	  <a target="_blank" href="http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=[% species.tax_id %]">Taxonomy</a> <span class="badge">[% species.tax_id %]</span><br/>
+	  <strong>Scientific name</strong>: <em>[% species.scientific_name %]</em><br/>
+	  [% IF species.common_name %]
+	  <strong>Common name</strong>: [% species.common_name %]
+	  [% END %]
+	  <hr/>
+        </p>
+	<p><strong>Assembly Information</strong></p>
+      </div>
+      <table class="table table-condensed table-hover table-striped">
+        <thead>
+	  <tr>
+	    <th>Accession</td>
+            <th>Name</th>
+            <th>Long Name</th>
+	    <th>Synonyms</th>
+	  </tr>
+        </thead>
+	<tbody>
+	  [% assembly = trackdb.doc.assembly %]
+	  <tr>
+	    <td><a target="_blank" href="http://www.ncbi.nlm.nih.gov/assembly/?term=[% assembly.accession %]">[% assembly.accession %]</a></td>
+	    <td>[% assembly.name %]</td>
+	    <td>[% assembly.long_name %]</td>
+	    <td>[% assembly.synonyms %]</td>
+	  </tr>
+	</tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+[% IF tracks.with_data.total_ko > 0 %]
+<div class="row">
   <div class="col-sm-12">
     <div class="panel panel-default">
       <!-- Default panel contents -->
-      <div class="panel-heading">Track Collection Report</div>
-      [% tracks = trackdb.status.tracks %]
+      <div class="panel-heading">Error Log</div>
       <div class="panel-body">
-        <ul class="list-group">
-          <li class="list-group-item">Total number of tracks: [% tracks.total %]</li>
-          <li class="list-group-item">Tracks linked to remote data: [% tracks.with_data.total %]</li>
-	</ul>
+        <p class="lead">
+	  <mark>[% tracks.with_data.total_ko %] / [% tracks.with_data.total %] tracks with data seem to have problems</mark>
+	</p>
       </div>
-      [% IF tracks.with_data.total_ko %]
       <!-- Table -->
       <table class="table table-condensed table-hover table-striped">
         <thead>
@@ -50,7 +141,7 @@
 	[% END %]
 	</tbody>
       </table>
-      [% END %]
     </div>
   </div>
 </div>
+[% END %]

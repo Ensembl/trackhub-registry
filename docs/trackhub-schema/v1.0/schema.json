@@ -21,7 +21,7 @@
 
       "additionalProperties": false,
 
-      "required": [ "name" ]
+      "required": [ "name", "shortLabel", "longLabel" ]
     },
 
     "description": { "type": "string" },

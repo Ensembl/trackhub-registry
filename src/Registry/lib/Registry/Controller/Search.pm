@@ -4,8 +4,11 @@ use namespace::autoclean;
 
 use Try::Tiny;
 use Catalyst::Exception;
+
 use Data::SearchEngine::ElasticSearch::Query;
 use Data::SearchEngine::ElasticSearch;
+
+use Registry::TrackHub::TrackDB;
 
 BEGIN { extends 'Catalyst::Controller'; }
 
@@ -202,8 +205,17 @@ sub index :Path :Args(0) {
     
 }
 
-sub advanced_search :Path('/browse') Args(0) {
-  my ($self, $c) = @_;
+sub view_trackhub :Path('view_trackhub') Args(1) {
+  my ($self, $c, $id) = @_;
+
+  my $trackdb;
+  try {
+    $trackdb = Registry::TrackHub::TrackDB->new($id);
+  } catch {
+    $c->stash(error_msg => $_);
+  };
+
+  $c->stash(trackdb => $trackdb, template  => "search/view.tt");
 }
 
 =head2 end

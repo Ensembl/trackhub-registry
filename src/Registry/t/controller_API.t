@@ -326,6 +326,18 @@ SKIP: {
   $content = from_json($response->content);
   is($content->{data}[0]{id}, 'bpDnaseRegionsC0010K46DNaseEBI', 'Correct content');
   #
+  # attempt to submit trackdb with the same hub/assembly should fail
+  $request = PUT('/api/trackhub/create',
+  		 'Content-type' => 'application/json',
+  		 'Content'      => &Registry::Utils::slurp_file($docs->[2]{file}));
+  $request->headers->header(user       => 'trackhub1');
+  $request->headers->header(auth_token => $auth_token);
+  ok($response = request($request), 'PUT request to /api/trackhub/create');
+  is($response->code, 400, 'Request unsuccessful 400');
+  $content = from_json($response->content);
+  # validator raises an exception with error message
+  like($content->{error}, qr/same hub\/assembly/, 'Correct error response');
+  #
   # create second doc
   $request = PUT('/api/trackhub/create',
   		 'Content-type' => 'application/json',
@@ -465,6 +477,18 @@ SKIP: {
     ok($content->{$id}{configuration}{repeatMasker_}, "Composite configuration exists");
     is($content->{$id}{configuration}{repeatMasker_}{shortLabel}, 'RepeatMasker', 'Composite short label');
   }
+  #
+  # attempt to submit track collections with the same hub/assembly as
+  # that of another stored collection should fail
+  $request = POST('/api/trackhub/create',
+  		  'Content-type' => 'application/json',
+  		  'Content'      => to_json({ url => $URL }));
+  $request->headers->header(user       => 'trackhub1');
+  $request->headers->header(auth_token => $auth_token);
+  ok($response = request($request), 'POST request to /api/trackhub/create');
+  is($response->code, 400, 'Request unsuccessful');  
+  $content = from_json($response->content);
+  like($content->{error}, qr/same hub\/assembly/i, 'Correct error response');
   #
   # test with other public hubs
   $URL = 'http://smithlab.usc.edu/trackdata/methylation';

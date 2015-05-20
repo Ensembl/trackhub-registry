@@ -261,6 +261,29 @@ sub trackhub_create_POST {
 	# NOTE: the doc is not indexed if it does not validate (i.e. raises an exception)
 	$c->forward('_validate', [ $json_doc ]);
 
+	# prevent submission of duplicate content, i.e. trackdb
+	# with the same hub/assembly
+	my $hub = $doc->{hub}{name};
+	my $assembly_acc = $doc->{assembly}{accession};
+	defined $hub and defined $assembly_acc or
+	  $c->go('ReturnError', 'custom', ["Unable to find hub/assembly information"]);
+	my $query = {
+		     filtered => {
+				  filter => {
+					     bool => {
+						      must => [
+							       {
+								term => { 'hub.name' => $hub } },
+							       {
+								term => { 'assembly.accession' => $assembly_acc } }
+							      ]
+						     }
+					    }
+				 }
+		    };
+	$c->go('ReturnError', 'custom', ["Cannot submit: a document with the same hub/assembly exists"])
+	  if $c->model('Search')->count_trackhubs(query => $query)->{count};
+
 	# set the owner of the doc as the current user
 	$doc->{owner} = $c->stash->{user};
 	# set creation date/status 

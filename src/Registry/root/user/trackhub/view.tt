@@ -3,8 +3,8 @@
 
 <div class="page-header">
   <h3>Track Collection: [% trackdb.id %]</h3>
-  <span class="label label-info">[% trackdb.doc.hub.shortLabel %]</span>
-  <span class="label label-info">[% trackdb.doc.species.scientific_name %]</span>
+  <span class="label label-primary">[% trackdb.doc.hub.shortLabel %]</span>
+  <span class="label label-success">[% trackdb.doc.species.scientific_name %]</span>
   <span class="label label-info">[% trackdb.doc.assembly.name %]</span>
 </div>
 <div class="row">

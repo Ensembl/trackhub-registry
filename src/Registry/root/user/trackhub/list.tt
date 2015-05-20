@@ -61,7 +61,7 @@
 	<td style="word-wrap: break-word;">
 	[% status = trackdb.status_message; %]
 	[% status_last_update = trackdb.status_last_update(1); %]
-	[% label_class = 'label-info' %]
+	[% label_class = 'label-success' %]
 	[% IF status == 'Unknown' %]
 	[%   label_class = 'label-warning' %]
 	[% ELSIF status.match('Unavailable') %]

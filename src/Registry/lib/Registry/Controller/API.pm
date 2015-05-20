@@ -215,7 +215,6 @@ sub trackhub_create_POST {
     unless defined $c->req->data;
 
   my $url = $c->req->data->{url};
-  my $assembly = $c->req->data->{assembly};
 
   return $self->status_bad_request($c, message => "You must specify the remote trackhub URL")
     unless defined $url;
@@ -232,7 +231,7 @@ sub trackhub_create_POST {
       # assembly can be left undefined by the user
       # in this case, we get a list of translations of all different 
       # assembly trackdb files in the hub
-      my $trackdbs_docs = $translator->translate($url, $assembly);
+      my $trackdbs_docs = $translator->translate($url);
 
       foreach my $json_doc (@{$trackdbs_docs}) {
 	my $doc = from_json($json_doc);

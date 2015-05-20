@@ -173,7 +173,7 @@ sub trackhub_create_PUT {
   # they didn't send a properly formed request
   return $self->status_bad_request($c, message => "You must provide a doc to create!")
     unless defined $new_doc_data;
-
+  
   my $id = $c->stash()->{id};
   if ($id) {
     # set the owner of the doc as the current user
@@ -187,7 +187,28 @@ sub trackhub_create_PUT {
       # validate the doc
       # NOTE: the doc is not indexed if it does not validate (i.e. raises an exception)
       $c->forward('_validate', [ to_json($new_doc_data) ]);
-    
+
+      # prevent submission of duplicate content, i.e. trackdb
+      # with the same hub/assembly
+      my $hub = $new_doc_data->{hub}{name};
+      my $assembly_acc = $new_doc_data->{assembly}{accession};
+      defined $hub and defined $assembly_acc or
+	$c->go('ReturnError', 'custom', ["Unable to find hub/assembly information"]);
+      my $query = {
+		   filtered => {
+				filter => {
+					   bool => {
+						    must => [
+							     { term => { 'hub.name' => $hub } },
+							     { term => { 'assembly.accession' => $assembly_acc } }
+							    ]
+						   }
+					  }
+			       }
+		  };
+      $c->go('ReturnError', 'custom', ["Cannot submit: a document with the same hub/assembly exists"])
+	if $c->model('Search')->count_trackhubs(query => $query)->{count};
+	
       my $config = Registry->config()->{'Model::Search'};
       $c->model('Search')->index(index   => $config->{index},
 				 type    => $config->{type}{trackhub},

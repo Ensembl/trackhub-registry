@@ -17,7 +17,11 @@
         "name": { "type": "string" },
 	"shortLabel": { "type": "string" },
 	"longLabel": { "type": "string" }
-      }
+      },
+
+      "additionalProperties": false,
+
+      "required": [ "name" ]
     },
 
     "description": { "type": "string" },

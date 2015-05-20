@@ -1,0 +1,56 @@
+<div class="row">
+  <div class="col-sm-12">
+    <ul class="breadcrumb">
+      <li><a href="/">Home</a></li>
+      <li>Search</li>
+      <li class="active">[% trackdb.doc.hub.name %] - [% trackdb.doc.assembly.accession %]</li>
+    </ul>
+  </div>
+</div>
+
+<div class="page-header">
+  <!--<h3>Track Collection: [% trackdb.id %]</h3>-->
+  <span class="label label-primary">[% trackdb.doc.hub.shortLabel %]</span>
+  <span class="label label-success">[% trackdb.doc.species.scientific_name %]</span>
+  <span class="label label-info">[% trackdb.doc.assembly.name %]</span>
+</div>
+<div class="row">
+  <div class="col-sm-12">
+    <div class="panel panel-default">
+      <!-- Default panel contents -->
+      <div class="panel-heading">Track Collection Report</div>
+      [% tracks = trackdb.status.tracks %]
+      <div class="panel-body">
+        <ul class="list-group">
+          <li class="list-group-item">Total number of tracks: [% tracks.total %]</li>
+          <li class="list-group-item">Tracks linked to remote data: [% tracks.with_data.total %]</li>
+	</ul>
+      </div>
+      [% IF tracks.with_data.total_ko %]
+      <!-- Table -->
+      <table class="table table-condensed table-hover table-striped">
+        <thead>
+	  <tr>
+	    <th>#</td>
+            <th>Track Name</th>
+            <th>Remote Data URL</th>
+	    <th>Error</th>
+	  </tr>
+        </thead>
+	<tbody>
+	[% i = 1 %]
+        [% FOREACH t IN tracks.with_data.ko.keys.sort %]
+	  <tr>
+	    <td>[% i %]</td>
+	    <td>[% t %]</td>
+	    <td>[% tracks.with_data.ko.$t.0 %]</td>
+	    <td>[% tracks.with_data.ko.$t.1 %]</td>
+	  </tr>
+	  [% i = i + 1 %]
+	[% END %]
+	</tbody>
+      </table>
+      [% END %]
+    </div>
+  </div>
+</div>

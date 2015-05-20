@@ -201,6 +201,7 @@ sub trackhub_create_PUT {
 				filter => {
 					   bool => {
 						    must => [
+							     { term => { owner => $c->stash->{user} } },
 							     { term => { 'hub.name' => $hub } },
 							     { term => { 'assembly.accession' => $assembly_acc } }
 							    ]
@@ -274,10 +275,9 @@ sub trackhub_create_POST {
 				  filter => {
 					     bool => {
 						      must => [
-							       {
-								term => { 'hub.name' => $hub } },
-							       {
-								term => { 'assembly.accession' => $assembly_acc } }
+							       { term => { owner => $c->stash->{user} } },
+							       { term => { 'hub.name' => $hub } },
+							       { term => { 'assembly.accession' => $assembly_acc } }
 							      ]
 						     }
 					    }
@@ -446,10 +446,9 @@ sub trackhub_POST {
 			      filter => {
 					 bool => {
 						  must => [
-							   {
-							    term => { 'hub.name' => $hub } },
-							   {
-							    term => { 'assembly.accession' => $assembly_acc } }
+							   { term => { owner => $c->stash->{user} } },
+							   { term => { 'hub.name' => $hub } },
+							   { term => { 'assembly.accession' => $assembly_acc } }
 							  ]
 						 }
 					}

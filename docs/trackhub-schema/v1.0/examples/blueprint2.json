@@ -12,8 +12,8 @@
   },
   "assembly": {
     "accession": "GCA_000001405.15",
-    "name": "GRCh37",
-    "synonyms": "hg19"
+    "name": "GRCh38",
+    "synonyms": "hg38"
   },  
   "data": [
     {

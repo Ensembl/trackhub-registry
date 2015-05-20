@@ -11,7 +11,7 @@
     "scientific_name": "Homo sapiens"
   },
   "assembly": {
-    "accession": "GCA_000001405.15",
+    "accession": "GCA_000001405.1",
     "name": "GRCh37",
     "synonyms": "hg19"
   },

@@ -35,20 +35,23 @@
 	  <br/><small>[% status_last_update %]</small><br/><br/>
 	[% END %]
 	[% IF status == 'All is Well' %]
-	<div class="btn-group btn-group-xs">
-          <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Load tracks <span class="caret"></span></button>
-          <ul class="dropdown-menu" role="menu">
-            <li><a href="#">EnsEMBL</a></li>
-            <li><a href="#">UCSC</a></li>
-          </ul>
-        </div>
+	  <div class="btn-group btn-group-xs">
+            <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Load tracks <span class="caret"></span></button>
+            <ul class="dropdown-menu" role="menu">
+              <li><a href="#">EnsEMBL</a></li>
+              <li><a href="#">UCSC</a></li>
+            </ul>
+          </div>
 	[% END %]
 	</div>
         <ul class="list-group col-sm-6">
           <li class="list-group-item">Total number of tracks <span class="badge">[% tracks.total %]</span></li>
           <li class="list-group-item">Tracks linked to remote data <span class="badge">[% tracks.with_data.total %]</span></li>
 	  <li class="list-group-item">File type(s): </li>
-	</ul>
+        [% IF trackdb.doc.source %]
+          <li class="list-group-item">Source URL: <a target="_blank" role=button" class="btn btn-xs btn-default" data-toggle="popover" title="View source URL" data-content="" href="[% trackdb.doc.source %]">View</a></li>
+	[% END %]
+	</ul>	
       </div>
     </div>
   </div>
@@ -62,7 +65,7 @@
 	  <strong>Short Label</strong>: [% trackdb.doc.hub.shortLabel %]<br/>
 	  <strong>Long Label</strong>: [% trackdb.doc.hub.longLabel %]<br/>
 	  [% IF trackdb.doc.hub.url %]
-	  <strong>Public URL</strong>: [% trackdb.doc.hub.url %]
+	  <strong>Public URL</strong>: <a target="_blank" role=button" class="btn btn-xs btn-default" data-toggle="popover" title="View source URL" data-content="" href="[% trackdb.doc.hub.url %]">View</a></li>
 	  [% END %]
 	</p>
       </div>

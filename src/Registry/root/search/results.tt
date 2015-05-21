@@ -135,7 +135,12 @@
       <div class="tab-content">
         <div role="tabpanel" class="tab-pane fade in active" id="tracks" style="margin-top: 20px;">
 	  [% IF items.size > 0 %]
-	  <!--<p><small>Tracks [% %] to [% %] of [% pager.total_entries %]</small></p>-->
+	    [% from = (pager.current_page - 1) * pager.entries_per_page + 1 %]
+	    [% to = pager.current_page * pager.entries_per_page %]
+	    [% IF (pager.current_page == pager.last_page) %]
+	      [% to = pager.total_entries %]
+	    [% END %]
+	  <p>Track Collections [% from %] to [% to %] of [% pager.total_entries %]</p>
 
 	  [% FOREACH item = items %]
 	    [% status = item.get_value('status').message %]

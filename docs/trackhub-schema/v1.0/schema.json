@@ -35,7 +35,7 @@
       "enum": [ "v1.0" ]
     },
 
-    "trackdb": {
+    "source": {
       "type": "string",
       
       "description": "The URL of the original trackDb file, in case the JSON has been created from it.",

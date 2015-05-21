@@ -16,7 +16,8 @@
       "properties": {
         "name": { "type": "string" },
 	"shortLabel": { "type": "string" },
-	"longLabel": { "type": "string" }
+	"longLabel": { "type": "string" },
+	"url": { "type": "string", "format": "uri" }
       },
 
       "additionalProperties": false,

@@ -56,7 +56,7 @@ sub id {
 }
 
 sub file_type {
-  return [ sort keys %{shift->{file_type}} ];
+  return [ sort keys %{shift->{_doc}{file_type}} ];
 }
 
 sub created {
@@ -182,7 +182,7 @@ sub _collect_track_info {
 
 	  # determine type
 	  my @path = split(/\./, $url);
-	  $self->{file_type}{$format_lookup{$path[-1]}}++;
+	  $self->{_doc}{file_type}{$format_lookup{$path[-1]}}++;
 	}
 
       }

@@ -57,8 +57,10 @@ sub _parse_file_content {
  
   ## Some hubs don't set the track type, so...
   my %format_lookup = (
-                      'bb' => 'bigBed',
-                      'bw' => 'bigWig',
+		       'bb'     => 'bigbed',
+		       'bw'     => 'bigwig',
+		       'bam'    => 'bam',
+		       'gz'     => 'vcftabix' # should be 'vcf.gz', but the parser will have taken the token after last '.'
                       );
  
   foreach (@contents) {
@@ -93,7 +95,7 @@ sub _parse_file_content {
       if ($key eq 'type') {
         my @values = split /\s+/, $value;
         my $type   = lc shift @values;
-	$type   = 'vcf' if $type eq 'vcftabix';
+	# $type   = 'vcf' if $type eq 'vcftabix';
         
         $tracks->{$id}{$key} = $type;
         

@@ -35,6 +35,7 @@ my $indexer = Registry::Indexer->new(dir   => "$Bin/../trackhub-examples/",
 						       }
 				    );
 $indexer->index_trackhubs();
+$indexer->index_users();
 
 my $id = 1;
 my $trackdb = Registry::TrackHub::TrackDB->new($id);
@@ -48,6 +49,7 @@ is($status->{tracks}{with_data}{ko}{bpDnaseRegionsC0010K46DNaseEBI}[0], 'http://
 is($status->{tracks}{with_data}{ko}{bpDnaseRegionsC0010K46DNaseEBI}[1], '404: Not Found', 'Error response');
 is($status->{message}, 'Remote Data Unavailable', 'Status message');
 ok($status->{last_update}, 'Last update');
+is_deeply($trackdb->file_type, [ 'bigBed' ], 'File type(s)');
 note sprintf "Doc [%d] updated: %s", $id, $trackdb->status_last_update(1);
 
 $id = 2;
@@ -64,13 +66,17 @@ foreach my $track (keys %{$status->{tracks}{with_data}{ko}}) {
 }
 is($status->{message}, 'Remote Data Unavailable', 'Status message');
 ok($status->{last_update}, 'Last update');
+is_deeply($trackdb->file_type, [ 'bigBed', 'bigWig' ], 'File type(s)');
 note sprintf "Doc [%d] updated: %s", $id, $trackdb->status_last_update(1);
 
+#
+# TODO: test some public hubs, use REST endpoint to submit doc
+#
 # SKIP: {
 #   skip "No Internet connection: cannot test TrackHub access", 66
 #     unless Registry::Utils::internet_connection_ok();
 
-#   # test some public hubs
+#   
 #   my $translator = Registry::TrackHub::Translator->new(version => 'v1.0');
 #   note "Checking Plants trackhub";
 #   my $URL = "http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants";

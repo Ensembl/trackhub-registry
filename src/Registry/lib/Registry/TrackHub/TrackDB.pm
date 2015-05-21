@@ -14,6 +14,13 @@ use Registry;
 use Registry::Model::Search;
 use Registry::Utils::URL qw(file_exists);
 
+my %format_lookup = (
+		     'bb'     => 'bigBed',
+		     'bw'     => 'bigWig',
+		     'bam'    => 'bam',
+		     'gz'     => 'vcfTabix' # should be 'vcf.gz', but the parser will have taken the token after last '.'
+		    );
+
 sub new {
   my ($class, $id) = @_; # arg is the ID of an ES doc
   defined $id or die "Undefined ID";
@@ -46,6 +53,10 @@ sub doc {
 
 sub id {
   return shift->{_id};
+}
+
+sub file_type {
+  return [ sort keys %{shift->{file_type}} ];
 }
 
 sub created {
@@ -168,6 +179,10 @@ sub _collect_track_info {
 	    $self->{_doc}{status}{tracks}{with_data}{ko}{$track} = 
 	      [ $url, $response->{error}[0] ];
 	  }
+
+	  # determine type
+	  my @path = split(/\./, $url);
+	  $self->{file_type}{$format_lookup{$path[-1]}}++;
 	}
 
       }

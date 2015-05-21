@@ -95,12 +95,13 @@ sub to_json_1_0 {
     {
      version => 'v1.0',
      hub     => {
-		 name => $trackhub->hub,
+		 name       => $trackhub->hub,
 		 shortLabel => $trackhub->shortLabel,
-		 longLabel => $trackhub->longLabel,
+		 longLabel  => $trackhub->longLabel,
+		 url        => $trackhub->url
 		},
-     # add the original trackDb file(s) content
-     # trackdb => $genome->get_trackdb_content
+     # add the original trackDb file as the source
+     source => $genome->trackDb->[0]
     };
 
   # add species/assembly information

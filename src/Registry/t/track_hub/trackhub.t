@@ -35,6 +35,7 @@ SKIP: {
   like($th->hub, qr/Blueprint_Hub/, 'Hub name');
   is($th->shortLabel, 'Blueprint Hub', 'Hub short label');
   is($th->longLabel, 'Blueprint Epigenomics Data Hub', 'Hub long label');
+  is($th->url, $URL, 'Hub URL');
   is($th->genomesFile, 'genomes.txt', 'Hub genomes file');
   is($th->email, "blueprint-info\@ebi.ac.uk", 'Hub contact email');
   like($th->descriptionUrl, qr/http:\/\/www.blueprint-epigenome.eu\/index.cfm/, 'Hub description URL');

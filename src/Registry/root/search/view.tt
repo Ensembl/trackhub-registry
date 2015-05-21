@@ -61,8 +61,8 @@
 	  <strong>Name</strong>: [% trackdb.doc.hub.name %]<br/>
 	  <strong>Short Label</strong>: [% trackdb.doc.hub.shortLabel %]<br/>
 	  <strong>Long Label</strong>: [% trackdb.doc.hub.longLabel %]<br/>
-	  [% IF trackdb.doc.hub.public_url %]
-	  <strong>Public URL</strong>: [% trackdb.doc.hub.public_url %]
+	  [% IF trackdb.doc.hub.url %]
+	  <strong>Public URL</strong>: [% trackdb.doc.hub.url %]
 	  [% END %]
 	</p>
       </div>

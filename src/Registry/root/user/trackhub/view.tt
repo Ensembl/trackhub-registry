@@ -15,7 +15,7 @@
       [% tracks = trackdb.status.tracks %]
       <div class="panel-body">
         <ul class="list-group col-sm-3">
-          <li class="list-group-item">Total number of tracks <span class="badge">[% tracks.total %]</badge></li>
+          <li class="list-group-item">Total number of tracks <span class="badge">[% tracks.total %]</small></li>
           <li class="list-group-item">Tracks linked to remote data <span class="badge">[% tracks.with_data.total %]</span></li>
 	</ul>
       </div>

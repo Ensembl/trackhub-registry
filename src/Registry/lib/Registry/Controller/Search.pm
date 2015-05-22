@@ -92,96 +92,96 @@ sub index :Path :Args(0) {
   }
   $query_args->{filters} = $filters if $filters;
 
-  # now query for the same thing by hub to build the track by hubs view
-  # build aggregation based on hub name taking into account filters
-  my $hub_aggregations; # = $self->_make_aggregations($filters);
+  # # now query for the same thing by hub to build the track by hubs view
+  # # build aggregation based on hub name taking into account filters
+  # my $hub_aggregations; 
 
-  if (exists $filters->{'species.scientific_name'} and 
-      defined $filters->{'species.scientific_name'} and not 
-      exists $filters->{'assembly.name'}) {
-    $hub_aggregations = 
-      {
-       hub_species => { filter => { term => { 'species.scientific_name' => $filters->{'species.scientific_name'} } } }
-      };
-    if (exists $filters->{'hub.name'} and defined $filters->{'hub.name'}) {
-      $hub_aggregations->{hub_species}{aggs} =
-	{
-	 hub_species_hub => 
-	 {
-	  filter => { term => { 'hub.name' => $filters->{'hub.name'} } },
-	  aggs => { hub => { terms => { field => 'hub.name', size => 1000 } } } 
-	 }
-	};
-    } else {
-      $hub_aggregations->{hub_species}{aggs} = { hub => { terms => { field => 'hub.name', size => 1000 } } };
-    }
-  } elsif (exists $filters->{'assembly.name'} and 
-	   defined $filters->{'assembly.name'} and not 
-	   exists $filters->{'species.scientific_name'}) {
-    $hub_aggregations = 
-      { 
-       hub_assembly => { filter => { term => { 'assembly.name' => $filters->{'assembly.name'} } } }
-      };
-    if (exists $filters->{'hub.name'} and defined $filters->{'hub.name'}) {
-      $hub_aggregations->{hub_assembly}{aggs} =
-	{
-	 hub_assembly_hub => 
-	 {
-	  filter => { term => { 'hub.name' => $filters->{'hub.name'} } },
-	  aggs => { hub => { terms => { field => 'hub.name', size => 1000 } } } 
-	 }
-	};
-    } else {
-      $hub_aggregations->{hub_assembly}{aggs} = { hub => { terms => { field => 'hub.name', size => 1000 } } };
-    }    
-  } elsif (exists $filters->{'species.scientific_name'} and 
-	   defined $filters->{'species.scientific_name'} and
-	   exists $filters->{'assembly.name'} and 
-	   defined $filters->{'assembly.name'}) {
-    $hub_aggregations = 
-      {
-       hub_species => 
-       {
-	filter => { term => { 'species.scientific_name' => $filters->{'species.scientific_name'} } },
-	aggs => 
-	{
-	 hub_species_assembly =>
-	 {
-	  filter => { term => { 'assembly.name' => $filters->{'assembly.name'} } }
-	 }
-	}
-       }
-      };
+  # if (exists $filters->{'species.scientific_name'} and 
+  #     defined $filters->{'species.scientific_name'} and not 
+  #     exists $filters->{'assembly.name'}) {
+  #   $hub_aggregations = 
+  #     {
+  #      hub_species => { filter => { term => { 'species.scientific_name' => $filters->{'species.scientific_name'} } } }
+  #     };
+  #   if (exists $filters->{'hub.name'} and defined $filters->{'hub.name'}) {
+  #     $hub_aggregations->{hub_species}{aggs} =
+  # 	{
+  # 	 hub_species_hub => 
+  # 	 {
+  # 	  filter => { term => { 'hub.name' => $filters->{'hub.name'} } },
+  # 	  aggs => { hub => { terms => { field => 'hub.name', size => 1000 } } } 
+  # 	 }
+  # 	};
+  #   } else {
+  #     $hub_aggregations->{hub_species}{aggs} = { hub => { terms => { field => 'hub.name', size => 1000 } } };
+  #   }
+  # } elsif (exists $filters->{'assembly.name'} and 
+  # 	   defined $filters->{'assembly.name'} and not 
+  # 	   exists $filters->{'species.scientific_name'}) {
+  #   $hub_aggregations = 
+  #     { 
+  #      hub_assembly => { filter => { term => { 'assembly.name' => $filters->{'assembly.name'} } } }
+  #     };
+  #   if (exists $filters->{'hub.name'} and defined $filters->{'hub.name'}) {
+  #     $hub_aggregations->{hub_assembly}{aggs} =
+  # 	{
+  # 	 hub_assembly_hub => 
+  # 	 {
+  # 	  filter => { term => { 'hub.name' => $filters->{'hub.name'} } },
+  # 	  aggs => { hub => { terms => { field => 'hub.name', size => 1000 } } } 
+  # 	 }
+  # 	};
+  #   } else {
+  #     $hub_aggregations->{hub_assembly}{aggs} = { hub => { terms => { field => 'hub.name', size => 1000 } } };
+  #   }    
+  # } elsif (exists $filters->{'species.scientific_name'} and 
+  # 	   defined $filters->{'species.scientific_name'} and
+  # 	   exists $filters->{'assembly.name'} and 
+  # 	   defined $filters->{'assembly.name'}) {
+  #   $hub_aggregations = 
+  #     {
+  #      hub_species => 
+  #      {
+  # 	filter => { term => { 'species.scientific_name' => $filters->{'species.scientific_name'} } },
+  # 	aggs => 
+  # 	{
+  # 	 hub_species_assembly =>
+  # 	 {
+  # 	  filter => { term => { 'assembly.name' => $filters->{'assembly.name'} } }
+  # 	 }
+  # 	}
+  #      }
+  #     };
     
-    if (exists $filters->{'hub.name'} and defined $filters->{'hub.name'}) {
-      $hub_aggregations->{hub_species}{aggs}{hub_species_assembly}{aggs} =
-	{
-	 hub_species_assembly_hub =>
-	 {
-	  filter => { term => { 'hub.name' => $filters->{'hub.name'} } },
-	  aggs => { hub => { terms => { field => 'hub.name', size => 1000 } } } 	  
-	 }
-	};
-    } else {
-      $hub_aggregations->{hub_species}{aggs}{hub_species_assembly}{aggs} =
-	{ hub => { terms => { field => 'hub.name', size => 1000 } } };
-    }
-  } else {
-    if (exists $filters->{'hub.name'} and defined $filters->{'hub.name'}) {
-      $hub_aggregations = 
-	{
-	 hub_hub =>
-	 {
-	  filter => { term => { 'hub.name' => $filters->{'hub.name'} } },
-	  aggs => { hub => { terms => { field => 'hub.name', size => 1000 } } }
-	 }
-	};
-    } else {
-      $hub_aggregations = { hub => { terms => { field => 'hub.name', size => 1000 } } };
-    }
-  }
+  #   if (exists $filters->{'hub.name'} and defined $filters->{'hub.name'}) {
+  #     $hub_aggregations->{hub_species}{aggs}{hub_species_assembly}{aggs} =
+  # 	{
+  # 	 hub_species_assembly_hub =>
+  # 	 {
+  # 	  filter => { term => { 'hub.name' => $filters->{'hub.name'} } },
+  # 	  aggs => { hub => { terms => { field => 'hub.name', size => 1000 } } } 	  
+  # 	 }
+  # 	};
+  #   } else {
+  #     $hub_aggregations->{hub_species}{aggs}{hub_species_assembly}{aggs} =
+  # 	{ hub => { terms => { field => 'hub.name', size => 1000 } } };
+  #   }
+  # } else {
+  #   if (exists $filters->{'hub.name'} and defined $filters->{'hub.name'}) {
+  #     $hub_aggregations = 
+  # 	{
+  # 	 hub_hub =>
+  # 	 {
+  # 	  filter => { term => { 'hub.name' => $filters->{'hub.name'} } },
+  # 	  aggs => { hub => { terms => { field => 'hub.name', size => 1000 } } }
+  # 	 }
+  # 	};
+  #   } else {
+  #     $hub_aggregations = { hub => { terms => { field => 'hub.name', size => 1000 } } };
+  #   }
+  # }
 
-  $query_args->{aggregations} = $hub_aggregations if $hub_aggregations;
+  # $query_args->{aggregations} = $hub_aggregations if $hub_aggregations;
 
   my $query = 
     Data::SearchEngine::ElasticSearch::Query->new($query_args);
@@ -199,7 +199,7 @@ sub index :Path :Args(0) {
 	    filters         => $params,
 	    items           => $results->items,
 	    facets          => $results->facets,
-	    aggregations    => $results->{aggregations},
+	    # aggregations    => $results->{aggregations},
 	    pager           => $results->pager,
 	    template        => 'search/results.tt');
     

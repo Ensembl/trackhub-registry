@@ -101,7 +101,10 @@ sub to_json_1_0 {
 		 url        => $trackhub->url
 		},
      # add the original trackDb file as the source
-     source => $genome->trackDb->[0]
+     source => { 
+		url => $genome->trackDb->[0],
+		# checksum => 
+	       }
     };
 
   # add species/assembly information

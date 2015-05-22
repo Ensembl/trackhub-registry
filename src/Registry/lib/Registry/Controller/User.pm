@@ -206,7 +206,8 @@ sub list_providers : Chained('base') Path('providers') Args(0) Does('ACL') Requi
 
   my $config = Registry->config()->{'Model::Search'};
   foreach my $user_data (@{$c->model('Search')->search(index => $config->{index}, 
-						       type  => $config->{type}{user})->{hits}{hits}}) {
+						       type  => $config->{type}{user},
+						       size => 100000)->{hits}{hits}}) {
     my $user = $user_data->{_source};
     # don't want to show admin user to himself
     next if $user->{username} eq 'admin';

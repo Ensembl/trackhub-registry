@@ -61,7 +61,7 @@ SKIP: {
   is($doc->{hub}{shortLabel}, 'Blueprint Hub', 'Correct Hub shortLabel');
   is($doc->{hub}{longLabel}, 'Blueprint Epigenomics Data Hub', 'Correct Hub longLabel');
   is($doc->{hub}{url}, $URL, 'Hub URL');
-  is($doc->{source}, Registry::TrackHub->new(url => $URL)->get_genome('hg19')->trackDb->[0], "TrackDB source URL");
+  is($doc->{source}{url}, Registry::TrackHub->new(url => $URL)->get_genome('hg19')->trackDb->[0], "TrackDB source URL");
   
   is_deeply($doc->{species}, { tax_id => 9606, 
   			       scientific_name => 'Homo sapiens', 
@@ -138,7 +138,7 @@ SKIP: {
     ok($doc->{species}{tax_id} == 3702 || $doc->{species}{tax_id} == 3988 || $doc->{species}{tax_id} == 3711, 
        "Expected species");
     if ($doc->{species}{tax_id} == 3702) {
-      is($doc->{source}, Registry::TrackHub->new(url => $URL)->get_genome('araTha1')->trackDb->[0], "TrackDB source URL");
+      is($doc->{source}{url}, Registry::TrackHub->new(url => $URL)->get_genome('araTha1')->trackDb->[0], "TrackDB source URL");
       is_deeply($doc->{species}, { tax_id => 3702, 
 				   scientific_name => 'Arabidopsis thaliana', 
 				   common_name => 'thale cress' }, 'Correct species');
@@ -175,7 +175,7 @@ SKIP: {
       is($member->{bigDataUrl}, 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/araTha1/bbi/araTha1.rmsk.Simple.bb', 'Member bigDataUrl');
 
     } elsif ($doc->{species}{tax_id} == 3988) {
-      is($doc->{source}, Registry::TrackHub->new(url => $URL)->get_genome('ricCom1')->trackDb->[0], "TrackDB source URL");
+      is($doc->{source}{url}, Registry::TrackHub->new(url => $URL)->get_genome('ricCom1')->trackDb->[0], "TrackDB source URL");
       is_deeply($doc->{species}, { tax_id => 3988, 
 				   scientific_name => 'Ricinus communis', 
 				   common_name => 'castor bean' }, 'Correct species');
@@ -212,7 +212,7 @@ SKIP: {
       is($member->{bigDataUrl}, 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/ricCom1/bbi/ricCom1.rmsk.RNA.bb', 'Member bigDataUrl');
 
     } else {
-      is($doc->{source}, Registry::TrackHub->new(url => $URL)->get_genome('braRap1')->trackDb->[0], "TrackDB source URL");
+      is($doc->{source}{url}, Registry::TrackHub->new(url => $URL)->get_genome('braRap1')->trackDb->[0], "TrackDB source URL");
       is_deeply($doc->{species}, { tax_id => 3711, 
 				   scientific_name => 'Brassica rapa', 
 				   common_name => 'field mustard' }, 'Correct species');
@@ -260,7 +260,7 @@ SKIP: {
   is($doc->{hub}{shortLabel}, 'DNA Methylation', 'Correct Hub shortLabel');
   is($doc->{hub}{longLabel}, 'Hundreds of analyzed methylomes from bisulfite sequencing data', 'Correct Hub longLabel');
   is($doc->{hub}{url}, $URL, 'Hub URL');
-  is($doc->{source}, Registry::TrackHub->new(url => $URL)->get_genome('mm10')->trackDb->[0], "TrackDB source URL");
+  is($doc->{source}{url}, Registry::TrackHub->new(url => $URL)->get_genome('mm10')->trackDb->[0], "TrackDB source URL");
 
   open $FH, ">$Bin/meth.json" or die "Cannot open meth.json: $!\n";
   print $FH $json_docs->[0];
@@ -321,7 +321,7 @@ SKIP: {
   is($doc->{hub}{shortLabel}, 'Roadmap Epigenomics Data Complete Collection at Wash U VizHub', 'Correct Hub shortLabel');
   is($doc->{hub}{longLabel}, 'Roadmap Epigenomics Human Epigenome Atlas Data Complete Collection, VizHub at Washington University in St. Louis', 'Correct Hub longLabel');
   is($doc->{hub}{url}, $URL, 'Hub URL');
-  is($doc->{source}, Registry::TrackHub->new(url => $URL)->get_genome('hg19')->trackDb->[0], "TrackDB source URL");
+  is($doc->{source}{url}, Registry::TrackHub->new(url => $URL)->get_genome('hg19')->trackDb->[0], "TrackDB source URL");
 
   is_deeply($doc->{species}, { tax_id => 9606, 
   			       scientific_name => 'Homo sapiens', 

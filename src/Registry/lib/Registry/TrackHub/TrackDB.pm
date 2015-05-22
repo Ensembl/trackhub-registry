@@ -15,10 +15,11 @@ use Registry::Model::Search;
 use Registry::Utils::URL qw(file_exists);
 
 my %format_lookup = (
+		     'bed'    => 'BED',
 		     'bb'     => 'bigBed',
 		     'bw'     => 'bigWig',
 		     'bam'    => 'bam',
-		     'gz'     => 'vcfTabix' # should be 'vcf.gz', but the parser will have taken the token after last '.'
+		     'vcf'    => 'vcfTabix'
 		    );
 
 sub new {
@@ -182,7 +183,10 @@ sub _collect_track_info {
 
 	  # determine type
 	  my @path = split(/\./, $url);
-	  $self->{_doc}{file_type}{$format_lookup{$path[-1]}}++;
+	  my $index = -1;
+	  # handle compressed formats
+	  $index = -2 if $path[-1] eq 'gz';
+	  $self->{_doc}{file_type}{$format_lookup{$path[$index]}}++;
 	}
 
       }

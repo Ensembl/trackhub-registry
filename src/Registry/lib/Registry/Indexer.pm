@@ -207,8 +207,8 @@ sub index_users {
   my $self = shift;
 
   foreach my $user (@{$self->{users}}) {
-    carp "Indexing user $user->{fullname} document";
-    my $id = delete $user->{id};
+    my $id = $user->{id};
+    carp "Indexing user $id ($user->{fullname}) document";
     $self->{es}->index(index   => $self->{index},
 		       type    => $self->{auth}{type},
 		       id      => $id,

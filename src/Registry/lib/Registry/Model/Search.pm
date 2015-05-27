@@ -89,5 +89,25 @@ sub get_trackhub_by_id {
   
 }
 
+# TODO
+sub get_all_users {
+  my $self = shift;
+
+  my $config = Registry->config()->{'Model::Search'};
+  
+  # use scan & scroll API
+  # see https://metacpan.org/pod/Search::Elasticsearch::Scroll
+  my $scroll = $self->_es->scroll_helper(index => $config->{index},
+					 type  => $config->{type}{user});
+					 # body  => { query => {... some query ... }});
+  my @users;
+  while (my $user = $scroll->next) {
+    push @users, $user->{_source};
+  }
+  return \@users;
+}
+
+
+
 __PACKAGE__->meta->make_immutable;
 1;

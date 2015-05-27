@@ -107,7 +107,31 @@ sub get_all_users {
   return \@users;
 }
 
+sub get_latest_report {
+  my $self = shift;
 
+  my $config = Registry->config()->{'Model::Search'};
+  my %args;
+  $args{index} = $config->{index};
+  $args{type}  = $config->{type}{report};
+  $args{size} = 1;
+  $args{body} = 
+    {
+     sort => [ 
+	      { 
+	       created => {
+			   order => 'desc',
+			   # would otherwise throw exception if there
+			   # are documents missing the field,
+			   # see http://stackoverflow.com/questions/17051709/no-mapping-found-for-field-in-order-to-sort-on-in-elasticsearch
+			   ignore_unmapped => 'true' 
+			  }
+	      }
+	     ]
+    };
+  
+  return $self->search(%args)->{hits}{hits}[0]{_source};
+}
 
 __PACKAGE__->meta->make_immutable;
 1;

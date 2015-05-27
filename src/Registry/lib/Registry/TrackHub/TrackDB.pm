@@ -123,6 +123,7 @@ sub update_status {
   }
 
   # initialise status to pending
+  my $last_update = $doc->{status}{last_update};
   $doc->{status} = 
     { 
      tracks  => {
@@ -133,7 +134,7 @@ sub update_status {
 			      }
 		},
      message => 'Pending',
-     last_update => $doc->{status}{last_update} || ''
+     last_update => $last_update || ''
     };
 
   # reindex doc to flag other processes its pending status

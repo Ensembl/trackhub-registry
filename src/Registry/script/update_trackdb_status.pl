@@ -3,10 +3,20 @@
 use strict;
 use warnings;
 
+BEGIN {
+  use FindBin qw/$Bin/;
+  use lib "$Bin/../lib";
+}
+
+
 use Try::Tiny;
 use Getopt::Long;
 use Pod::Usage;
-use Config::Std;
+# use Config::Std;
+
+use Data::Dumper;
+
+use Registry::Model::Search;
 
 # TODO: set up logging
 # use Log::Log4perl qw(get_logger :levels);
@@ -24,55 +34,94 @@ my $options_ok =
 	     "help|h"     => \$help) or pod2usage(2);
 pod2usage() if $help;
 
-# parse configuration file
-my %config;
-try {
-  read_config $conf_file => %config
-} catch {
-  FATAL "Error reading configuration file $conf_file";
-  FATAL "$@" if $@;
-};
+# # parse configuration file
+# my %config;
+# try {
+#   read_config $conf_file => %config
+# } catch {
+#   FATAL "Error reading configuration file $conf_file";
+#   FATAL "$@" if $@;
+# };
 
-# TODO: set up logging
-# my $logconf = $config{update}{log};
-# Log::Log4perl->init($log_conf);
-# my $logger = get_logger();
+# # TODO: set up logging
+# # my $logconf = $config{update}{log};
+# # Log::Log4perl->init($log_conf);
+# # my $logger = get_logger();
 
 #
-# TODO: handle monitoring options
-#
-# fetch from ES stats about last run
+# fetch from ES stats about last run report
 # --> store different type: check,
 #     get latest in time
 #
-# spawn a separate process for each user or 
-# batch of users if their number becomes huge
+# {
+#   start_time: ...,
+#   end_time: ...,
+#   user1: ...,
+#   ...
+#   usern: ...
+# }
+
+my $es = Registry::Model::Search->new();
+my $config = Registry->config()->{'Model::Search'};
+my $last_report = $es->get_latest_report;
+# NOTE: if we've got no report it's the first run
+
 #
-# foreach user (excluded admin)
+# create new run global report
+my $report = {};
+#
+# TODO: spawn a separate process for each user or 
+#       batch of users if their number becomes huge
+#
+# foreach user
+#   next if user is admin
+#			
 #   get monitoring configuration
 #
-#   fetch from ES stats about last check for user:
+#   get last report for user:
 #   {
-#     time: ...,
-#     alerts: [ trackdb_id1, ..., trackdb_idn ],
-#     sent: true/false
+#     start_time: ...,
+#     end_time: ...,
+#     trackdb_id1: {
+#                   status: ...,
+#                   alert_sent: true/false
+#                  },
+#     ...,
+#     trackdb_idn: { ... }
 #   }
 #
-#   skip if check_option is weekly|monthly
-#   and (current_time-last_check_time) < week|month
+#   if check_option is weekly|monthly and 
+#      (current_time-last_check_time) < week|month
+#     copy last user report to new global report
+#     next
 #
 #   get the list of trackdbs of the user
 #
-#   create alert report --> check type
+#   create user specific report
 #
 #   foreach trackdb
+#     if trackdb has source
+#       compute new checksum from url
+#       compare checksum with stored one
+#       if checksums are different
+#         update trackdb document
+#
 #     try { update trackdb status }
 #     catch {
-#       log exception (either pending update or another)
-#       next
+#       log exception (either pending update or another, e.g. timeout)
 #     }
-#     add problem to alert report if problem
+#     if problem
+#       add trackdb to user report
+#       if trackdb was not in last report or
+#          trackdb status is different from that of last report
+#         send alert and register transmission
+#
+#   add user report to global report
 #   
+# store global report
+#
+# send alert to admin
+#  
 #
 __END__
 

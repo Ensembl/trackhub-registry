@@ -36,11 +36,15 @@
     },
 
     "source": {
-      "type": "string",
+      "type": "object",
       
-      "description": "The URL of the original trackDb file, in case the JSON has been created from it.",
+      "description": "Describes the original trackDb file, in case the JSON has been created from it.",
 
-      "format": "uri"
+      "properties": {
+        "url": { "type": "string", "format": "uri" },
+	"checksum": { "type": "string" }
+      }
+
     },
 
     "species": {

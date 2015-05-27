@@ -59,6 +59,8 @@ requires 'DBIx::Class';
 requires 'Catalyst::Model::DBIC::Schema';
 requires 'DBIx::Class::Cursor::Cached';
 
+recommends 'Log::Log4perl';
+
 test_requires 'Test::More' => '0.88';
 catalyst;
 

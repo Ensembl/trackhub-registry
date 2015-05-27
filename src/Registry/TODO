@@ -13,15 +13,28 @@ Overview
 - Update trackdb doc upon change on remote hub
   - use checksum
 
-- hub type, e.g. genomics, proteomics etc.
+- hub type, e.g. genomics, proteomics etc. (parameter of endpoint?)
 
-- track file type, e.g. bigbed, bigwig etc.
+- trackdb:
+  - source checksum
+    source: { url: '', checksum: '' }
+  - timeout when updating status (parameter?)
+
+X trackdb/hub URL if public, display
+
+X track file type, e.g. bigbed, bigwig etc. (determine with TrackDB scan)
+  - handle vcf and bed cases, which (could) end with .gz
+
+- limit size of error log
+
+- if th provider updates status on a trackdb and this is very big, the
+  whole site halts. 
+  prevent this operation? have to test with multiple spawned workers
+  at least, warn the user and/or prevent action if number of tracks is 
+  above a certain range
 
 Web Frontend
 ============
-
-Note: new dev GWAS catalog provides a good example of a search interface
-      http://wwwdev.ebi.ac.uk/gwas
 
 X Registration
   - Add more options controlling periodic checks and notifications
@@ -39,11 +52,11 @@ X Registration
   - more actions/different template according to new settings
 
 - Search results
-  - Show status
-  - View info
-  - Remove hub/type tabbed panels
+  X Show status
+  X View info
+  X Remove hub/type tabbed panels
   - Facets to provide link to show more elements
-  - Number of search results per page
+  X Number of search results per page
   - Correct pagination, use simple approach like DCC?!
 
 - Non authenticated pages
@@ -64,8 +77,8 @@ X prevent submission of duplicate content (trackdb with same hub/species?/assemb
 Registry::Controller::User
 ==========================
 
-X list hub action and template to use TrackDB
-X update status action to use TrackDB
+X 'list hub' action and template to use TrackDB
+X 'update status' action to use TrackDB
 
 JSON spec 1.0
 =============
@@ -77,7 +90,7 @@ X status object, disabled
 ? store original trackDb file as attribute 
   should not be necessary if the configurations are represented as as tree, 
   should be easy to translate back. 
-  perhaps store the source URL instead?
+X store the source URL
 
 Registry::TrackHub::Translator
 ==============================

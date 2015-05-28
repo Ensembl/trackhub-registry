@@ -13,12 +13,14 @@ use JSON;
 use Getopt::Long;
 use Pod::Usage;
 # use Config::Std;
+use File::Temp qw/ tempfile /;
 
 use Data::Dumper;
 
 use Registry::Model::Search;
 use Registry::TrackHub::TrackDB;
 use Registry::TrackHub::Translator;
+use Registry::TrackHub::Validator;
 
 # TODO: set up logging
 # use Log::Log4perl qw(get_logger :levels);
@@ -113,7 +115,7 @@ foreach my $user (@{$es->get_all_users}) {
     my $time_interval = $check_interval==1?604800:2592000;
 
     if ($current_time - $last_check_time < $time_interval) {
-      $report->{$username} = $last_user_report;
+      $current_report->{$username} = $last_user_report;
       next;
     }
   }
@@ -133,35 +135,28 @@ foreach my $user (@{$es->get_all_users}) {
   #   update doc if the source has changed
   #   check status
   foreach my $trackdb (@trackdbs) {
-    # if trackdb has source
-    #   compute new checksum from url
-    #   compare checksum with stored one
-    #   if checksums are different
-    #     update trackdb document
     my $source = $trackdb->source;
     if ($source) {
-      # probably redundant, since url/checksum have been enforced in schema
-      defined $source->{url} and defined $source->{checksum}
-	or die sprintf "Doc %d source doesn't have url/checksum attributes", $trackdb->id;
+      # trackdb doc has been created from remote public UCSC Hub:
+      # check if it's been updated (use checksum), and if it has,
+      # update the corresponding document
+      try {
+	# checksum is not enforced in schema, but it must exist once
+	# the remote hub JSON has been submitted
+	defined $source->{url} and defined $source->{checksum}
+	  or die sprintf "Doc %d source doesn't have url/checksum attributes", $trackdb->id;
 
-      my $checksum = $trackdb->compute_checksum; # TODO
-      if ($checksum ne $source->{checksum}) {
-	my $version = $trackdb->version;
-	defined $version or die sprintf "Undefined version for trackdb %d", $trackdb->id;
-
-	my $assembly = $trackdb->assembly->{synonyms};
-	defined $assembly or die sprintf "Undefined assembly synonym for trackdb %d", $trackdb->id;
-
-	# get the corresponding TrackHUB URL
-	my $trackhub_url = $trackdb->hub->{url};
-	defined $trackhub_url or die sprintf "Undefined hub URL for trackdb %d", $trackdb->id;
-
-	try {
-	  my $translator = Registry::TrackHub::Translator->new(version => $version);
-	  my $updated_json_doc = $translator->translate($trackhub_url, $assembly)->[0];
+	my $checksum = $trackdb->compute_checksum;
+       
+	if ($checksum and $checksum ne $source->{checksum}) {
+	  my $translator = Registry::TrackHub::Translator->new(version => $trackdb->version);
+	  my $updated_json_doc = $translator->translate($trackdb->hub->{url}, $trackdb->assembly->{synonyms} || 'unknown')->[0];
 
 	  # validate according to version of original doc
-	  &validate($updated_json_doc, $version); # TODO
+	  my $validator = 
+	    Registry::TrackHub::Validator->new(schema => Registry->config()->{TrackHub}{schema}{$trackdb->version});
+	  my ($fh, $filename) = tempfile( DIR => '.', SUFFIX => '.json', UNLINK => 1); print $fh $updated_json_doc; close $fh;
+	  $validator->validate($filename);
 
 	  my $updated_doc = from_json($updated_json_doc);
 
@@ -185,23 +180,28 @@ foreach my $user (@{$es->get_all_users}) {
 
 	  # re-instantiate the trackdb since the document has changed
 	  $trackdb = Registry::TrackHub::TrackDB->new($trackdb->id)
-	} catch {
-	  # TODO: log exception and continue
-	  die "Die at the moment, log then ...";
 	}
-      }
+      } catch {
+	die "Couldn't update doc [%d] for remote trackDb %s\n$@", $trackdb->id, $source->{url};
+	
+	# we simply skip update and the status check
+	next;
+      };
     }
-
-    #
-    #     try { update trackdb status }
-    #     catch {
-    #       log exception (either pending update or another, e.g. timeout)
-    #     }
-    #     if problem
-    #       add trackdb to user report
-    #       if trackdb was not in last report or
-    #          trackdb status is different from that of last report
-    #         send alert and register transmission
+    
+    # HERE
+    # check trackdb status
+    try {
+      $trackdb->update_status();
+    } catch {
+      # TODO: log exception (either pending update or another, e.g. timeout)
+      die sprintf "Die checking trackdb %s,should log then\n$@", $trackdb->id;
+    };
+    # if problem
+    #   add trackdb to user report
+    #   if trackdb was not in last report or
+    #      trackdb status is different from that of last report
+    #     send alert and register transmission
     #
     
   }

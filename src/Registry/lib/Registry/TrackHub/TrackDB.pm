@@ -12,6 +12,7 @@ use warnings;
 use POSIX qw(strftime);
 use Registry;
 use Registry::Model::Search;
+use Registry::Utils;
 use Registry::Utils::URL qw(file_exists);
 
 my %format_lookup = (
@@ -56,6 +57,16 @@ sub id {
   return shift->{_id};
 }
 
+# TEST
+sub hub {
+  return shift->{_doc}{hub};
+}
+
+# TEST
+sub version {
+  return shift->{_doc}{version};
+}
+
 sub file_type {
   return [ sort keys %{shift->{_doc}{file_type}} ];
 }
@@ -82,6 +93,27 @@ sub updated {
   return $self->{_doc}{updated};
 }
 
+# TEST
+sub source {
+  return shift->{_doc}{source};
+}
+
+# TODO
+sub compute_checksum {
+  my $self = shift;
+  
+  my $source_url = $self->{_doc}{source}{url};
+  defined $source_url or die sprintf "Cannot get source URL for trackDb %s", $self->id;
+
+  return Registry::Utils::checksum_compute($source_url);
+}
+
+# TEST
+sub assembly {
+  my $self = shift;
+
+  return shift->{_doc}{assembly};
+}
 
 sub status {
   my $self = shift;

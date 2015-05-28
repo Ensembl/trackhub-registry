@@ -13,6 +13,10 @@ local $SIG{__WARN__} = sub {};
 
 use POSIX qw(strftime);
 use JSON;
+use HTTP::Headers;
+use HTTP::Request::Common qw/GET POST/;
+use Catalyst::Test 'Registry';
+
 use Registry::Utils;
 use Registry::Indexer;
 use Registry::TrackHub::Translator;
@@ -53,7 +57,7 @@ is_deeply($trackdb->file_type, [ 'bigBed' ], 'File type(s)');
 note sprintf "Doc [%d] updated: %s", $id, $trackdb->status_last_update(1);
 
 $id = 2;
-$trackdb = Registry::TrackHub::TrackDB->new(2);
+$trackdb = Registry::TrackHub::TrackDB->new($id);
 isa_ok($trackdb, 'Registry::TrackHub::TrackDB');
 $trackdb->update_status();
 $status = $trackdb->status();
@@ -69,40 +73,55 @@ ok($status->{last_update}, 'Last update');
 is_deeply($trackdb->file_type, [ 'bigBed', 'bigWig' ], 'File type(s)');
 note sprintf "Doc [%d] updated: %s", $id, $trackdb->status_last_update(1);
 
-#
-# TODO: test some public hubs, use REST endpoint to submit doc
-#
-# SKIP: {
-#   skip "No Internet connection: cannot test TrackHub access", 66
-#     unless Registry::Utils::internet_connection_ok();
+SKIP: {
+  skip "No Internet connection or ES running cannot test TrackHub access", 25
+    unless Registry::Utils::internet_connection_ok() and Registry::Utils::es_running();
 
-#   
-#   my $translator = Registry::TrackHub::Translator->new(version => 'v1.0');
-#   note "Checking Plants trackhub";
-#   my $URL = "http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants";
-#   my $json_docs = $translator->translate($URL);
-#   is(scalar @{$json_docs}, 3, "Number of translated track dbs");
-#   for my $doc (@{$json_docs}) {
-#     $doc = from_json($doc);
-#     $trackdb = Registry::TrackHub::TrackDB->new({ _id => $id++, _source => $doc });
-#     isa_ok($trackdb, 'Registry::TrackHub::TrackDB');
-#     $status = $trackdb->update_status();
-#     if ($doc->{species}{tax_id} == 3702) { # Arabidopsis thaliana
-#       is($status->{tracks}{total}, 21, 'Number of tracks');
-#       is($status->{tracks}{with_data}{total}, 20, 'Number of tracks with data');
-#       is($status->{tracks}{with_data}{total_ko}, 0, 'Number of tracks with remote data unavailable');
-#     } elsif ($doc->{species}{tax_id} == 3988) { # Ricinus communis
-#       is($status->{tracks}{total}, 13, 'Number of tracks');
-#       is($status->{tracks}{with_data}{total}, 12, 'Number of tracks with data');
-#       is($status->{tracks}{with_data}{total_ko}, 0, 'Number of tracks with remote data unavailable');
-#     } else { # Brassica rapa
-#       is($status->{tracks}{total}, 13, 'Number of tracks');
-#       is($status->{tracks}{with_data}{total}, 12, 'Number of tracks with data');
-#       is($status->{tracks}{with_data}{total_ko}, 0, 'Number of tracks with remote data unavailable');      
-#     }
-#     is($status->{message}, 'All is Well', 'Status message');
-#   }
+  my $request = GET('/api/login');
+  $request->headers->authorization_basic('trackhub1', 'trackhub1');
+  ok(my $response = request($request), 'Request to log in');
+  my $content = from_json($response->content);
+  ok(exists $content->{auth_token}, 'Logged in');
+  my $auth_token = $content->{auth_token};
+
+  note "Checking Plants trackhub";
+  my $URL = "http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants";  
+  $request = POST('/api/trackhub/create?version=v1.0',
+  		  'Content-type' => 'application/json',
+  		  'Content'      => to_json({ url => $URL }));
+  $request->headers->header(user       => 'trackhub1');
+  $request->headers->header(auth_token => $auth_token);
+  ok($response = request($request), 'POST request to /api/trackhub/create');
+  ok($response->is_success, 'Request successful 2xx');
+  is($response->content_type, 'application/json', 'JSON content type');
+  $content = from_json($response->content);
+  ok($content, "Docs created");
+  is(scalar keys %{$content}, 3, "Correct number of trackdb docs created");
+
+  for my $id (keys %{$content}) {
+    my $doc = $content->{$id};
+    $trackdb = Registry::TrackHub::TrackDB->new($id);
+    isa_ok($trackdb, 'Registry::TrackHub::TrackDB');
+    $status = $trackdb->update_status();
+    if ($doc->{species}{tax_id} == 3702) { # Arabidopsis thaliana
+      is($status->{tracks}{total}, 21, 'Number of tracks');
+      is($status->{tracks}{with_data}{total}, 20, 'Number of tracks with data');
+      is($status->{tracks}{with_data}{total_ko}, 0, 'Number of tracks with remote data unavailable');
+      is($trackdb->compute_checksum, 'c70af2c480087b45848d60c9ae76f1ad', 'araTha1 checksum');
+    } elsif ($doc->{species}{tax_id} == 3988) { # Ricinus communis
+      is($status->{tracks}{total}, 13, 'Number of tracks');
+      is($status->{tracks}{with_data}{total}, 12, 'Number of tracks with data');
+      is($status->{tracks}{with_data}{total_ko}, 0, 'Number of tracks with remote data unavailable');
+      is($trackdb->compute_checksum, 'f9561ae6f7883add3698fad7abab7e13', 'ricCom1 checksum');
+    } else { # Brassica rapa
+      is($status->{tracks}{total}, 13, 'Number of tracks');
+      is($status->{tracks}{with_data}{total}, 12, 'Number of tracks with data');
+      is($status->{tracks}{with_data}{total_ko}, 0, 'Number of tracks with remote data unavailable');
+      is($trackdb->compute_checksum, '792d88bccacc240959e357409ccc2069', 'braRap1 checksum');
+    }
+    is($status->{message}, 'All is Well', 'Status message');
+  }
   
-# }
+}
 
 done_testing();

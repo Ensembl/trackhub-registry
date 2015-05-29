@@ -24,21 +24,53 @@ use Registry::TrackHub::Translator;
 use Registry::TrackHub::Validator;
 use Registry::Utils::Arrays qw( remove_duplicates union_intersection_difference );
 
-# TODO: set up logging
-# use Log::Log4perl qw(get_logger :levels);
-use Log::Log4perl qw(:easy);
-Log::Log4perl->easy_init($FATAL);
+my $logger = get_logger();
 
 # default option values
 my $help = 0;
-my $log_conf = '.logrc';
+# my $log_conf = '.logrc';
+my $log_dir = 'trackdb_check_notify';
 my $conf_file = '.configrc'; # expect file in current directory
 
 # parse command-line arguments
 my $options_ok =
-  GetOptions("config|c=s" => \$conf_file,
+  GetOptions(# "config|c=s" => \$conf_file,
+	     "logdir|l=s" => \$log_dir,
 	     "help|h"     => \$help) or pod2usage(2);
 pod2usage() if $help;
+
+# set up logging
+unless(-d $log_dir) {
+  $logger->info("Creating log directory $log_dir");
+  mkdir $log_dir or
+    $logger->logdie("cannot create directory: $!");
+}
+
+# use Log::Log4perl qw(:easy);
+# Log::Log4perl->easy_init($FATAL);
+#
+use Log::Log4perl qw(get_logger :levels);
+# my $log_conf = $config{update}{log};
+# Log::Log4perl->init($log_conf);
+#
+# use inline configuration
+my $log_file = sprintf "$log_dir/%s.log", `date '+%F'`;
+
+my $log_conf = <<"LOGCONF";
+log4perl.logger=DEBUG, Screen, File
+
+log4perl.appender.Screen=Log::Dispatch::Screen
+log4perl.appender.Screen.layout=Log::Log4perl::Layout::PatternLayout
+log4perl.appender.Screen.layout.ConversionPattern=%d %p> %F{1}:%L - %m%n
+
+log4perl.appender.File=Log::Dispatch::File
+log4perl.appender.File.filename=$log_file.log
+log4perl.appender.File.mode=append
+log4perl.appender.File.layout=Log::Log4perl::Layout::PatternLayout
+log4perl.appender.File.layout.ConversionPattern=%d %p> %F{1}:%L - %m%n
+LOGCONF
+
+Log::Log4perl->init(\$log_conf);
 
 # # parse configuration file
 # my %config;
@@ -49,13 +81,9 @@ pod2usage() if $help;
 #   FATAL "$@" if $@;
 # };
 
-# # TODO: set up logging
-# # my $logconf = $config{update}{log};
-# # Log::Log4perl->init($log_conf);
-# # my $logger = get_logger();
-
+$logger->info("Instantiating document store client");
 my $es = Registry::Model::Search->new();
-my $config = Registry->config()->{'Model::Search'};
+my$config = Registry->config()->{'Model::Search'};
 #
 # fetch from ES stats about last run report
 # --> store different type: check,
@@ -69,10 +97,22 @@ my $config = Registry->config()->{'Model::Search'};
 #
 # NOTE: if we've got no report this is the first run
 #
-my $last_report = $es->get_latest_report;
-my $last_report_id = $last_report->{_id};
-$last_report = $last_report->{_source};
+my $last_report;
+my $last_report_id;
+my $users;
 
+$logger->info("Getting latest report and user lists");
+try {
+  $last_report = $es->get_latest_report;
+  $last_report_id = $last_report->{_id};
+  $last_report = $last_report->{_source};
+
+  $users = $es->get_all_users;
+} catch {
+  $logger->logdie($_);
+};
+
+my $admin;
 # create new run global report
 my $current_report = {};
 
@@ -82,13 +122,16 @@ my $current_report = {};
 #   batch of users if their number becomes huge
 # - log all steps
 #
-# foreach user
-#   next if user is admin
-my $admin;
-foreach my $user (@{$es->get_all_users}) {
+# for each user
+#   update/check its trackdbs
+#   notify
+foreach my $user (@{$users}) {
   my $username = $user->{username};
+  $logger->info("Working on user $username");
+
   if ($username =~ /admin/) {
     $admin = $user;
+    $logger->info("SKIP");
     next;
   }
 
@@ -113,26 +156,32 @@ foreach my $user (@{$es->get_all_users}) {
   #   copy last user report to new global report
   #   skip check
   if (defined $last_user_report and $check_interval) { # check_interval == 0 -> Automatic so do the check
+    $logger->info("Checking report time interval");
     my $current_time = time;
     my $last_check_time = $last_user_report->{end_time};
     defined $last_check_time or 
-      die "Undefined last_check_time for user $username";
+      $logger->logdie("Undefined last_check_time for user $username");
     # check_interval == 1 -> week, 2 -> month
-    my $time_interval = $check_interval==1?604800:2592000;
+    my $time_interval =  $check_interval==1?604800:2592000;
 
     if ($current_time - $last_check_time < $time_interval) {
       $current_report->{$username} = $last_user_report;
+
+      $logger->info(sprintf "Less than a %s has passed. SKIP", $check_interval==1?'week':'month');
       next;
     }
   }
 
-  # get the list of trackdbs of the user
+  $logger->info("Getting the set of trackDbs for $username");
   my @trackdbs;
-  map { push @trackdbs, Registry::TrackHub::TrackDB->new($_->{_id}) }
-    @{$es->search_trackhubs(size => 1000000, query => { term => { owner => $username } })->{hits}{hits}};
+  try {
+    map { push @trackdbs, Registry::TrackHub::TrackDB->new($_->{_id}) }
+      @{$es->search_trackhubs(size => 1000000, query => { term => { owner => $username } })->{hits}{hits}};
+  } catch {
+    $logger->logdie($_);
+  };
   
-  # skip if the user doesn't have any trackdb yet
-  next unless scalar @trackdbs;
+  $logger->info("User has no trackdbs. SKIP") and next unless scalar @trackdbs;
 
   # create user specific report
   my $current_user_report = { start_time => time };
@@ -145,27 +194,32 @@ foreach my $user (@{$es->get_all_users}) {
   my $trackdb_update = 0;
 
   foreach my $trackdb (@trackdbs) {
+    $logger->info(sprintf "Checking trackDb [%d]", $trackdb->id);
     my $source = $trackdb->source;
     if ($source) {
-      # trackdb doc has been created from remote public UCSC Hub:
-      # check if it's been updated (use checksum), and if it has,
-      # update the corresponding document
+      $logger->info(sprintf "trackDb is sourced from UCSC hub.");
+      $logger->info("checking remote updates at %s", );
+      
+      defined $source->{url} and defined $source->{checksum}
+	or $logger->logdie("Document source doesn't have url/checksum attributes");
+
       try {
 	# checksum is not enforced in schema, but it must exist once
 	# the remote hub JSON has been submitted
-	defined $source->{url} and defined $source->{checksum}
-	  or die sprintf "Doc %d source doesn't have url/checksum attributes", $trackdb->id;
 
 	my $checksum = $trackdb->compute_checksum;
        
 	if ($checksum and $checksum ne $source->{checksum}) {
+	  $logger->info("Remote source has changed, updating.");
+
 	  $trackdb_update = 1;
 	  $message_body_update .= sprintf "Detected trackDB [%s] source URL update: ";
 
+	  $logger->info(sprintf "Translating trackDb source to JSON version %s.", $trackdb->version);
 	  my $translator = Registry::TrackHub::Translator->new(version => $trackdb->version);
 	  my $updated_json_doc = $translator->translate($trackdb->hub->{url}, $trackdb->assembly->{synonyms} || 'unknown')->[0];
 
-	  # validate according to version of original doc
+	  $logger->info("Validating translated document.");
 	  my $validator = 
 	    Registry::TrackHub::Validator->new(schema => Registry->config()->{TrackHub}{schema}{$trackdb->version});
 	  my ($fh, $filename) = tempfile( DIR => '.', SUFFIX => '.json', UNLINK => 1); print $fh $updated_json_doc; close $fh;
@@ -184,7 +238,7 @@ foreach my $user (@{$es->get_all_users}) {
 	  $updated_doc->{status}{message} = 'Unknown';
 	  $updated_doc->{source}{checksum} = $checksum;
 
-	  # reindex and refresh
+	  $logger->info("Writing document store with updates.");
 	  $es->index(index   => $config->{index},
 		     type    => $config->{type}{trackhub},
 		     id      => $trackdb->id,
@@ -197,8 +251,7 @@ foreach my $user (@{$es->get_all_users}) {
 	  $message_body_update .= "SUCCESS.\n\n";
 	}
       } catch {
-	die "Couldn't update doc [%d] for remote trackDb %s\n$@", $trackdb->id, $source->{url};
-
+	$logger->warn($_);
 	$message_body_update .= "ERROR.\n$@\n";
 
 	# we simply skip update and the status check
@@ -206,13 +259,12 @@ foreach my $user (@{$es->get_all_users}) {
       };
     }
     
-    # check trackdb status
+    $logger->info("Checking trackDb track status.");
     my $status;
     try {
       $status = $trackdb->update_status();
     } catch {
-      # TODO: log exception (either pending update or another, e.g. timeout)
-      die sprintf "Die checking trackdb %s, should log then\n$@", $trackdb->id;
+      $logger->warn($_);
 
       $message_body_problem .= "Problem updating status for trackDB [%s]\n$@\n\n", $trackdb->id;
       next;
@@ -220,6 +272,7 @@ foreach my $user (@{$es->get_all_users}) {
    
     # if problem add trackdb to user report
     if ($status->{tracks}{with_data}{total_ko}) {
+      $logger->info("There are faulty tracks, updating report.");
       $current_user_report->{ko}{$trackdb->id} =
 	$status->{tracks}{with_data}{ko};
 
@@ -232,8 +285,9 @@ foreach my $user (@{$es->get_all_users}) {
       push @{$current_user_report->{ok}}, $trackdb->id;
     }
   }
-
   $current_user_report->{end_time} = time;
+  $logger->info("Finished with $username trackDbs.");
+  $logger->info("Checking alert report status.");
   
   if ($trackdb_update or scalar keys %{$current_user_report->{ko}}) { # user trackdbs have problems
     # format complete message body
@@ -261,49 +315,58 @@ foreach my $user (@{$es->get_all_users}) {
     if ($last_user_report) {
       if ($continuous_alert) {
 	# user wants to be continuously alerted: send message anyway 
+	$logger->info("$username opts for continuous alerts. Sending.");
 	sendmail($message);
       } else {
 	# user doesn't want to be bothered more than once with the same problems
 	# send alert only if current report != last report
+	$logger->info("$username does not opt for continuous alerts. Checking differences with last report.");
 	if ($last_user_report->{ko}) {
 	  my @last_report_ko_trackdbs = keys %{$last_user_report->{ko}};
 	  my @current_report_ko_trackdbs = keys %{$current_user_report->{ko}};
 	  my ($union, $isect, $diff) = 
 	    union_intersection_difference(@current_report_ko_trackdbs, @last_report_ko_trackdbs);
 	  
+	  $logger->info("Detected difference. Sending alert report anyway.");
 	  sendmail($message) if scalar @{$diff};
 	}
       }
     } else {
       # send alert since this is the first check for this user
+      $logger->info("First $username user check. Sending alert report anyway.");
       sendmail($message);
     }
 
   }
 
-  # add user report to global report
+  $logger->info("Adding user report to global report.");
   $current_report->{$username} = $current_user_report;
 }
    
-# store global report
-defined $admin or die "Unable to find admin user";
+$logger->info("Done with users. Storing global report");
 
 my $message_body;
 if ($current_report) {
+  $current_report->{created} = time;
   my $current_report_id = $last_report_id?++$last_report_id:1;
-  $es->index(index   => $config->{index},
-	     type    => $config->{type}{report},
-	     id      => $current_report_id,
-	     body    => $current_report);
-  $es->indices->refresh(index => $config->{index});
+
+  try {
+    $es->index(index   => $config->{index},
+	       type    => $config->{type}{report},
+	       id      => $current_report_id,
+	       body    => $current_report);
+    $es->indices->refresh(index => $config->{index});
+  } catch {
+    $logger->logdie($_);
+  };
   $message_body .= sprintf "Report [%d] has been generated.\n\n", $current_report_id;
   
 } else {
   $message_body .= "Report has not been generated.\nReason: no users.\n";
 }
 
-#
-# send alert to admin
+$logger->info("Sending alert report to admin.");
+defined $admin or $logger->logdie("Unable to find admin user");
 my $message = 
   Email::MIME->create(
 		      header_str => 
@@ -319,8 +382,9 @@ my $message =
 		      },
 		      body_str => $message_body,
 		     );
-
 sendmail($message);
+
+$logger->info("DONE.");
 
 __END__
 
@@ -332,7 +396,7 @@ update_trackdb_status.pl - Check trackdb tracks and notify its owners
 
 update_trackdb_status.pl [options]
 
-   -c --config          configuration file [default: .configrc]
+   -l --logdir          log directory [default: ./trackdb_check_notify]
    -h --help            display this help and exits
 
 =cut

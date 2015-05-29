@@ -14,13 +14,15 @@ use Getopt::Long;
 use Pod::Usage;
 # use Config::Std;
 use File::Temp qw/ tempfile /;
-
+use Email::MIME;
+use Email::Sender::Simple qw(sendmail);
 use Data::Dumper;
 
 use Registry::Model::Search;
 use Registry::TrackHub::TrackDB;
 use Registry::TrackHub::Translator;
 use Registry::TrackHub::Validator;
+use Registry::Utils::Arrays qw( remove_duplicates union_intersection_difference );
 
 # TODO: set up logging
 # use Log::Log4perl qw(get_logger :levels);
@@ -60,8 +62,6 @@ my $config = Registry->config()->{'Model::Search'};
 #     get latest in time
 #
 # {
-#   start_time: ...,
-#   end_time: ...,
 #   user1: ...,
 #   ...
 #   usern: ...
@@ -70,6 +70,8 @@ my $config = Registry->config()->{'Model::Search'};
 # NOTE: if we've got no report this is the first run
 #
 my $last_report = $es->get_latest_report;
+my $last_report_id = $last_report->{_id};
+$last_report = $last_report->{_source};
 
 # create new run global report
 my $current_report = {};
@@ -82,9 +84,13 @@ my $current_report = {};
 #
 # foreach user
 #   next if user is admin
+my $admin;
 foreach my $user (@{$es->get_all_users}) {
   my $username = $user->{username};
-  next if $username =~ /admin/;
+  if ($username =~ /admin/) {
+    $admin = $user;
+    next;
+  }
 
   # get monitoring configuration
   my $check_interval = $user->{check_interval};
@@ -134,6 +140,10 @@ foreach my $user (@{$es->get_all_users}) {
   # loop over trackdbs
   #   update doc if the source has changed
   #   check status
+  #   format message along the way
+  my ($message_body_update, $message_body_problem);
+  my $trackdb_update = 0;
+
   foreach my $trackdb (@trackdbs) {
     my $source = $trackdb->source;
     if ($source) {
@@ -149,6 +159,9 @@ foreach my $user (@{$es->get_all_users}) {
 	my $checksum = $trackdb->compute_checksum;
        
 	if ($checksum and $checksum ne $source->{checksum}) {
+	  $trackdb_update = 1;
+	  $message_body_update .= sprintf "Detected trackDB [%s] source URL update: ";
+
 	  my $translator = Registry::TrackHub::Translator->new(version => $trackdb->version);
 	  my $updated_json_doc = $translator->translate($trackdb->hub->{url}, $trackdb->assembly->{synonyms} || 'unknown')->[0];
 
@@ -179,50 +192,141 @@ foreach my $user (@{$es->get_all_users}) {
 	  $es->indices->refresh(index => $config->{index});
 
 	  # re-instantiate the trackdb since the document has changed
-	  $trackdb = Registry::TrackHub::TrackDB->new($trackdb->id)
+	  $trackdb = Registry::TrackHub::TrackDB->new($trackdb->id);
+
+	  $message_body_update .= "SUCCESS.\n\n";
 	}
       } catch {
 	die "Couldn't update doc [%d] for remote trackDb %s\n$@", $trackdb->id, $source->{url};
-	
+
+	$message_body_update .= "ERROR.\n$@\n";
+
 	# we simply skip update and the status check
 	next;
       };
     }
     
-    # HERE
     # check trackdb status
+    my $status;
     try {
-      $trackdb->update_status();
+      $status = $trackdb->update_status();
     } catch {
       # TODO: log exception (either pending update or another, e.g. timeout)
-      die sprintf "Die checking trackdb %s,should log then\n$@", $trackdb->id;
+      die sprintf "Die checking trackdb %s, should log then\n$@", $trackdb->id;
+
+      $message_body_problem .= "Problem updating status for trackDB [%s]\n$@\n\n", $trackdb->id;
+      next;
     };
-    # if problem
-    #   add trackdb to user report
-    #   if trackdb was not in last report or
-    #      trackdb status is different from that of last report
-    #     send alert and register transmission
-    #
-    
+   
+    # if problem add trackdb to user report
+    if ($status->{tracks}{with_data}{total_ko}) {
+      $current_user_report->{ko}{$trackdb->id} =
+	$status->{tracks}{with_data}{ko};
+
+      $message_body_problem .= sprintf "trackDB [%d] (%s, %s)\n", $trackdb->id, $trackdb->hub->{name}, $trackdb->assembly->{accession};
+      foreach my $track (keys %{$current_user_report->{ko}{$trackdb->id}}) {
+	$message_body_problem .= sprintf "\t%s\t%s\t%s\n", $track, $current_user_report->{ko}{$trackdb->id}{$track}[0], $current_user_report->{ko}{$trackdb->id}{$track}[1];
+      }
+      $message_body_problem .= "\n\n";
+    } else {
+      push @{$current_user_report->{ok}}, $trackdb->id;
+    }
   }
 
   $current_user_report->{end_time} = time;
   
+  if ($trackdb_update or scalar keys %{$current_user_report->{ko}}) { # user trackdbs have problems
+    # format complete message body
+    my $message_body = "This alert report has been automatically generated durint the last update of the TrackHub Registry.\n\n";
+    $message_body .= $message_body_update . "\n\n" . $message_body_problem;
+    
+    my $message = 
+      Email::MIME->create(
+			  header_str => 
+			  [
+			   From    => 'admin@trackhubregistry.org',
+			   To      => $user->{email},
+			   Subject => 'Alert report from TrackHub Registry',
+			  ],
+			  attributes => 
+			  {
+			   encoding => 'quoted-printable',
+			   charset  => 'ISO-8859-1',
+			  },
+			  body_str => $message_body,
+			 );
+
+    # check whether we have to send an alert 
+    # to the user and send it, eventually
+    if ($last_user_report) {
+      if ($continuous_alert) {
+	# user wants to be continuously alerted: send message anyway 
+	sendmail($message);
+      } else {
+	# user doesn't want to be bothered more than once with the same problems
+	# send alert only if current report != last report
+	if ($last_user_report->{ko}) {
+	  my @last_report_ko_trackdbs = keys %{$last_user_report->{ko}};
+	  my @current_report_ko_trackdbs = keys %{$current_user_report->{ko}};
+	  my ($union, $isect, $diff) = 
+	    union_intersection_difference(@current_report_ko_trackdbs, @last_report_ko_trackdbs);
+	  
+	  sendmail($message) if scalar @{$diff};
+	}
+      }
+    } else {
+      # send alert since this is the first check for this user
+      sendmail($message);
+    }
+
+  }
+
   # add user report to global report
   $current_report->{$username} = $current_user_report;
 }
-
-#   
+   
 # store global report
+defined $admin or die "Unable to find admin user";
+
+my $message_body;
+if ($current_report) {
+  my $current_report_id = $last_report_id?++$last_report_id:1;
+  $es->index(index   => $config->{index},
+	     type    => $config->{type}{report},
+	     id      => $current_report_id,
+	     body    => $current_report);
+  $es->indices->refresh(index => $config->{index});
+  $message_body .= sprintf "Report [%d] has been generated.\n\n", $current_report_id;
+  
+} else {
+  $message_body .= "Report has not been generated.\nReason: no users.\n";
+}
+
 #
 # send alert to admin
-#  
-#
+my $message = 
+  Email::MIME->create(
+		      header_str => 
+		      [
+		       From    => 'admin@trackhubregistry.org',
+		       To      => $admin->{email},
+		       Subject => sprintf "Alert report from TrackHub Registry: %s", localtime,
+		      ],
+		      attributes => 
+		      {
+		       encoding => 'quoted-printable',
+		       charset  => 'ISO-8859-1',
+		      },
+		      body_str => $message_body,
+		     );
+
+sendmail($message);
+
 __END__
 
 =head1 NAME
 
-update_trackdb_status.pl - Check trackdb tracks and notify its owner
+update_trackdb_status.pl - Check trackdb tracks and notify its owners
 
 =head1 SYNOPSIS
 

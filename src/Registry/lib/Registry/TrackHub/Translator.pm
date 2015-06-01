@@ -153,7 +153,7 @@ sub _make_configuration_object_1_0 {
   
   # add the configuration attributes as they are specified
   my $node_conf = {};
-  map { $node_conf->{$_} = $node->data->{$_} } keys %{$node->data};
+  map { $node->data->{$_} and $node_conf->{$_} = $node->data->{$_} } keys %{$node->data};
   # delete $node_conf->{track};
 
   # now add the configuration of the children, if any

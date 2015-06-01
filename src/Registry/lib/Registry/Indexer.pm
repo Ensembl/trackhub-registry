@@ -69,6 +69,7 @@ sub new {
 		    {		# the administrator
 		     id       => 1,
 		     fullname => "Administrator",
+		     email    => "avullo\@ebi.ac.uk",
 		     password => "admin",
 		     roles    => ["admin", "user"],
 		     username => "admin",

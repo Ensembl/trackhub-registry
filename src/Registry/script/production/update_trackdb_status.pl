@@ -108,12 +108,13 @@ try {
   $last_report = $last_report->{_source};
 
   $users = $es->get_all_users;
-  $admin = grep { $_->{username} =~ /admin/ } @{$users};
+  map { $_->{username} =~ /admin/ and $admin = $_ } @{$users};
 } catch {
   $logger->logdie($_);
 };
 
 $admin or $logger->logdie("Unable to find admin user.");
+
 # create new run global report
 my $current_report = {};
 
@@ -128,13 +129,12 @@ my $current_report = {};
 #   notify
 foreach my $user (@{$users}) {
   my $username = $user->{username};
-  $logger->info("Working on user $username");
-
   if ($username =~ /admin/) {
-    # $admin = $user;
-    $logger->info("SKIP");
+    $logger->info("User admin. SKIP.");
     next;
   }
+
+  $logger->info("Working on user $username");
 
   # get monitoring configuration
   my $check_interval = $user->{check_interval};
@@ -157,7 +157,7 @@ foreach my $user (@{$users}) {
   #   copy last user report to new global report
   #   skip check
   if (defined $last_user_report and $check_interval) { # check_interval == 0 -> Automatic so do the check
-    $logger->info("Checking report time interval");
+    $logger->info(sprintf "%s opts for %s checks. Checking report time interval", $username, $check_interval==1?'weekly':'monthly');
     my $current_time = time;
     my $last_check_time = $last_user_report->{end_time};
     defined $last_check_time or 
@@ -292,8 +292,9 @@ foreach my $user (@{$users}) {
   
   if ($trackdb_update or scalar keys %{$current_user_report->{ko}}) { # user trackdbs have problems
     # format complete message body
-    my $message_body = "This alert report has been automatically generated durint the last update of the TrackHub Registry.\n\n";
-    $message_body .= $message_body_update . "\n\n" . $message_body_problem;
+    my $message_body = "This alert report has been automatically generated during the last update of the TrackHub Registry.\n\n";
+    $message_body .= $message_body_update . "\n\n" if $message_body_update;
+    $message_body .= $message_body_problem;
     
     my $message = 
       Email::MIME->create(
@@ -313,31 +314,38 @@ foreach my $user (@{$users}) {
 
     # check whether we have to send an alert 
     # to the user and send it, eventually
-    if ($last_user_report) {
-      if ($continuous_alert) {
-	# user wants to be continuously alerted: send message anyway 
-	$logger->info("$username opts for continuous alerts. Sending.");
-	sendmail($message);
-      } else {
-	# user doesn't want to be bothered more than once with the same problems
-	# send alert only if current report != last report
-	$logger->info("$username does not opt for continuous alerts. Checking differences with last report.");
-	if ($last_user_report->{ko}) {
-	  my @last_report_ko_trackdbs = keys %{$last_user_report->{ko}};
-	  my @current_report_ko_trackdbs = keys %{$current_user_report->{ko}};
-	  my ($union, $isect, $diff) = 
-	    union_intersection_difference(@current_report_ko_trackdbs, @last_report_ko_trackdbs);
+    try {
+      if ($last_user_report) {
+	if ($continuous_alert) {
+	  # user wants to be continuously alerted: send message anyway 
+	  $logger->info("$username opts for continuous alerts. Sending.");
+	  sendmail($message);
+	} else {
+	  # user doesn't want to be bothered more than once with the same problems
+	  # send alert only if current report != last report
+	  $logger->info("$username does not opt for continuous alerts. Checking differences with last report.");
+	  if ($last_user_report->{ko}) {
+	    my @last_report_ko_trackdbs = keys %{$last_user_report->{ko}};
+	    my @current_report_ko_trackdbs = keys %{$current_user_report->{ko}};
+	    my ($union, $isect, $diff) = 
+	      union_intersection_difference(\@current_report_ko_trackdbs, \@last_report_ko_trackdbs);
 	  
-	  $logger->info("Detected difference. Sending alert report anyway.");
-	  sendmail($message) if scalar @{$diff};
+	    if (scalar @{$diff}) {
+	      $logger->info("Detected difference. Sending alert report anyway.");
+	      sendmail($message);
+	    } else {
+	      $logger->info("No difference. Not sending the alert report.");
+	    }
+	  }
 	}
+      } else {
+	# send alert since this is the first check for this user
+	$logger->info("First $username user check. Sending alert report anyway.");
+	sendmail($message);
       }
-    } else {
-      # send alert since this is the first check for this user
-      $logger->info("First $username user check. Sending alert report anyway.");
-      sendmail($message);
-    }
-
+    } catch {
+      $logger->logdie($_);
+    };
   }
 
   $logger->info("Adding user report to global report.");
@@ -367,14 +375,14 @@ if ($current_report) {
 }
 
 $logger->info("Sending alert report to admin.");
-# defined $admin or $logger->logdie("Unable to find admin user");
+
 my $message = 
   Email::MIME->create(
 		      header_str => 
 		      [
 		       From    => 'admin@trackhubregistry.org',
 		       To      => $admin->{email},
-		       Subject => sprintf "Alert report from TrackHub Registry: %s", localtime,
+		       Subject => sprintf("Alert report from TrackHub Registry: %s", localtime),
 		      ],
 		      attributes => 
 		      {
@@ -383,7 +391,12 @@ my $message =
 		      },
 		      body_str => $message_body,
 		     );
-sendmail($message);
+
+try {
+  sendmail($message);
+} catch {
+  $logger->logdie($_);
+};
 
 $logger->info("DONE.");
 

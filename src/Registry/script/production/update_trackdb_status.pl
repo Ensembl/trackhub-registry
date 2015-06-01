@@ -5,7 +5,7 @@ use warnings;
 
 BEGIN {
   use FindBin qw/$Bin/;
-  use lib "$Bin/../lib";
+  use lib "$Bin/../../lib";
 }
 
 use Try::Tiny;
@@ -64,7 +64,7 @@ log4perl.appender.Screen.layout=Log::Log4perl::Layout::PatternLayout
 log4perl.appender.Screen.layout.ConversionPattern=%d %p> %F{1}:%L - %m%n
 
 log4perl.appender.File=Log::Dispatch::File
-log4perl.appender.File.filename=$log_file.log
+log4perl.appender.File.filename=$log_file
 log4perl.appender.File.mode=append
 log4perl.appender.File.layout=Log::Log4perl::Layout::PatternLayout
 log4perl.appender.File.layout.ConversionPattern=%d %p> %F{1}:%L - %m%n
@@ -99,7 +99,7 @@ my$config = Registry->config()->{'Model::Search'};
 #
 my $last_report;
 my $last_report_id;
-my $users;
+my ($users, $admin);
 
 $logger->info("Getting latest report and user lists");
 try {
@@ -108,11 +108,12 @@ try {
   $last_report = $last_report->{_source};
 
   $users = $es->get_all_users;
+  $admin = grep { $_->{username} =~ /admin/ } @{$users};
 } catch {
   $logger->logdie($_);
 };
 
-my $admin;
+$admin or $logger->logdie("Unable to find admin user.");
 # create new run global report
 my $current_report = {};
 
@@ -130,7 +131,7 @@ foreach my $user (@{$users}) {
   $logger->info("Working on user $username");
 
   if ($username =~ /admin/) {
-    $admin = $user;
+    # $admin = $user;
     $logger->info("SKIP");
     next;
   }
@@ -366,7 +367,7 @@ if ($current_report) {
 }
 
 $logger->info("Sending alert report to admin.");
-defined $admin or $logger->logdie("Unable to find admin user");
+# defined $admin or $logger->logdie("Unable to find admin user");
 my $message = 
   Email::MIME->create(
 		      header_str => 

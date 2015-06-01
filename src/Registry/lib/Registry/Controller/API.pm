@@ -427,7 +427,9 @@ sub trackhub_POST {
     unless defined $new_doc_data;
 
   # set the owner as the current user
+  # and reset the created date/time
   $new_doc_data->{owner} = $c->stash->{user};
+  $new_doc_data->{created} = $c->stash->{trackhub}{created};
 
   # validate the updated version
   try {
@@ -463,8 +465,9 @@ sub trackhub_POST {
       }
     }
     
-    # set update time
+    # set update time and reset status
     $new_doc_data->{updated} = time();
+    $new_doc_data->{status}{message} = 'Unknown';
 
     #
     # Updates in Elasticsearch

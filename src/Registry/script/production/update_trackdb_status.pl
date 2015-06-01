@@ -29,7 +29,7 @@ my $logger = get_logger();
 # default option values
 my $help = 0;
 # my $log_conf = '.logrc';
-my $log_dir = 'trackdb_check_notify';
+my $log_dir = 'trackdb_check';
 my $conf_file = '.configrc'; # expect file in current directory
 
 # parse command-line arguments

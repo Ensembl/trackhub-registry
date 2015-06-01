@@ -89,7 +89,6 @@ sub get_trackhub_by_id {
   
 }
 
-# TODO
 sub get_all_users {
   my $self = shift;
 
@@ -130,7 +129,7 @@ sub get_latest_report {
 	     ]
     };
   
-  return $self->search(%args)->{hits}{hits}[0]{_source};
+  return $self->search(%args)->{hits}{hits}[0];
 }
 
 __PACKAGE__->meta->make_immutable;

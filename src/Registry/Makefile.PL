@@ -59,7 +59,12 @@ requires 'DBIx::Class';
 requires 'Catalyst::Model::DBIC::Schema';
 requires 'DBIx::Class::Cursor::Cached';
 
+# for production
 recommends 'Log::Log4perl';
+recommends 'Log::Dispatch::Screen';
+recommends 'Getopt::Long';
+recommends 'Email::MIME';
+recommends 'Email::Sender::Simple';
 
 test_requires 'Test::More' => '0.88';
 catalyst;

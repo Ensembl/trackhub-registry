@@ -54,7 +54,8 @@ use Log::Log4perl qw(get_logger :levels);
 # Log::Log4perl->init($log_conf);
 #
 # use inline configuration
-my $log_file = sprintf "$log_dir/%s.log", `date '+%F'`;
+my $date = `date '+%F'`; chomp($date);
+my $log_file = sprintf "$log_dir/%s.log", $date;
 
 my $log_conf = <<"LOGCONF";
 log4perl.logger=DEBUG, Screen, File

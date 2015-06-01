@@ -38,7 +38,7 @@ sub new {
 	     };
   $self->{_doc} = $self->{_es}{client}->get_trackhub_by_id($id);
   defined $self->{_doc} or die "Unable to get document [$id] from store";
-  
+
   # check the document is in the correct format: ATMO, only v1.0 supported
   my $doc = $self->{_doc};
   exists $doc->{data} and ref $doc->{data} eq 'ARRAY' and
@@ -57,12 +57,10 @@ sub id {
   return shift->{_id};
 }
 
-# TEST
 sub hub {
   return shift->{_doc}{hub};
 }
 
-# TEST
 sub version {
   return shift->{_doc}{version};
 }
@@ -93,12 +91,10 @@ sub updated {
   return $self->{_doc}{updated};
 }
 
-# TEST
 sub source {
   return shift->{_doc}{source};
 }
 
-# TODO
 sub compute_checksum {
   my $self = shift;
   
@@ -108,10 +104,7 @@ sub compute_checksum {
   return Registry::Utils::checksum_compute($source_url);
 }
 
-# TEST
 sub assembly {
-  my $self = shift;
-
   return shift->{_doc}{assembly};
 }
 
@@ -151,7 +144,7 @@ sub update_status {
   #
   exists $doc->{status} or die "Unable to read status";
   if ($doc->{status}{message} eq 'Pending') {
-    die sprintf "TrackDB document [%s] is already being checked, please wait...", $self->{_id};
+    die sprintf "TrackDB document [%s] is already being checked by another process.", $self->{_id};
   }
 
   # initialise status to pending

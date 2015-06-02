@@ -57,6 +57,10 @@ sub id {
   return shift->{_id};
 }
 
+sub type {
+  return shift->{_doc}{type};
+}
+
 sub hub {
   return shift->{_doc}{hub};
 }

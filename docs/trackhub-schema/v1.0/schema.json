@@ -122,10 +122,10 @@
       "description": "Contains display and configuration properties for the tracks in the data hub.",
 
       "patternProperties": {
-        "^[a-zA-z][a-zA-Z0-9_]+$": { "$ref": "#/definitions/track_configuration" }
+        "^[a-zA-z][a-zA-Z0-9_-]+$": { "$ref": "#/definitions/track_configuration" }
       },
 
-      "additionalProperties": false
+      "additionalProperties": true
     }
   },
 
@@ -141,7 +141,7 @@
       "title": "Track metadata definition.",
 
       "patternProperties": {
-        "^[a-zA-z][a-zA-Z0-9_]+$": { "type": "string" }
+        "^[a-zA-z][a-zA-Z0-9_-]+$": { "type": "string" }
       },
 
       "additionalProperties": true
@@ -160,7 +160,7 @@
 	  "type": "object",
 	  
 	  "patternProperties": { 
-	     "^[a-zA-z][a-zA-Z0-9_]*?$": { "$ref": "#/definitions/track_configuration" }
+	     "^[a-zA-z][a-zA-Z0-9_-]*?$": { "$ref": "#/definitions/track_configuration" }
 	   }
 	}
       },
@@ -168,7 +168,7 @@
       "additionalProperties": true,
 
       "patternProperties": {
-        "^[a-zA-z][a-zA-Z0-9_]*?$": {
+        "^[a-zA-z][a-zA-Z0-9_-]*?$": {
 	  "oneOf": [
 	     { "type": "string" },
 	     { "type": "number" },

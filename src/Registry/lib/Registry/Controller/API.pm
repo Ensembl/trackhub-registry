@@ -238,7 +238,10 @@ sub trackhub_create_POST {
   return $self->status_bad_request($c, message => "You must provide data with the POST request")
     unless defined $c->req->data;
 
+  # read parameters, remote hub URL/type
   my $url = $c->req->data->{url};
+  my $trackdb_type = $c->req->data->{type} || 'genomics'; # default to genomics type
+  $c->log->debug($trackdb_type);
 
   return $self->status_bad_request($c, message => "You must specify the remote trackhub URL")
     unless defined $url;
@@ -260,6 +263,9 @@ sub trackhub_create_POST {
       foreach my $json_doc (@{$trackdbs_docs}) {
 	my $doc = from_json($json_doc);
       
+	# add type
+	$doc->{type} = $trackdb_type;
+
 	# validate the doc
 	# NOTE: the doc is not indexed if it does not validate (i.e. raises an exception)
 	$c->forward('_validate', [ $json_doc ]);

@@ -67,7 +67,7 @@
 	[% ELSIF status.match('Unavailable') %]
 	[%   label_class = 'label-danger' %]
 	[% END %]
-	  <span class="label [% label_class %]">[% status %]</span>
+	  <span class="label [% label_class %]" style="padding-bottom: 1px;">[% status %]</span>
 	[% IF status != 'Unknown' %]
 	  <br/><small>[% status_last_update %]</small>
 	[% END %]

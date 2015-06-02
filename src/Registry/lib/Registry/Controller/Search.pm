@@ -52,7 +52,8 @@ sub index :Path :Args(0) {
     {
      species  => { terms => { field => 'species.scientific_name', size => 20 } },
      assembly => { terms => { field => 'assembly.name', size => 20 } },
-     hub      => { terms => { field => 'hub.name', size => 20 } } 
+     hub      => { terms => { field => 'hub.name', size => 20 } },
+     type     => { terms => { field => 'type', size => 20 } },
     };
 
   my $page = $params->{page} || 1;
@@ -85,6 +86,8 @@ sub index :Path :Args(0) {
       $filter = 'assembly.name';
     } elsif ($param =~ /hub/) {
       $filter = 'hub.name';
+    } elsif ($param =~ /type/) {
+      $filter = 'type';
     } else {
       Catalyst::Exception::throw("Unrecognised parameter");
     }

@@ -1,24 +1,31 @@
 Overview
 ========
 
-- Periodic checks and updates
-  - Registry::TrackHub::TrackDB
-  - Registry::Controller::[API,User]
-  - Production script to run as a cron job
+- Discuss with Web Search API
 
-- Trackhub provider notification
-  - user object to store more options
-  - Catalyst::Authentication::Store::ElasticSearch::User
+- Mail Anne Lyle (core), 29/05/2015, 09:46
+  sharing code
 
-- Update trackdb doc upon change on remote hub
-  - use checksum
+X Periodic checks and updates (TEST)
+  X production script (to run as a cron job)
+    - update trackdb doc upon change on remote hub, use checksum
+    - Trackhub provider notification
+      - user object to store more options
 
-- hub type, e.g. genomics, proteomics etc. (parameter of endpoint?)
+X util method to compute checksum from a file
 
 - trackdb:
-  - source checksum
+  X source checksum, add to schema
     source: { url: '', checksum: '' }
+  - add to API actions, move instead to Translator as other attribute setting, e.g. created?
   - timeout when updating status (parameter?)
+  - validate method
+
+
+- hub type, e.g. genomics, proteomics etc. (parameter of endpoint?)
+  - type not enforced in schema, since it's added after validation
+    adding it during translation would require to change the Translator
+    method prototype
 
 X trackdb/hub URL if public, display
 
@@ -145,3 +152,4 @@ X Data::SearchEngine::ElasticSearch
  - Openstack VM
  - install oracle development tools 11.1.0.6.0
  - install validation script, must be in the PATH
+ - install postfix

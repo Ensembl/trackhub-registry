@@ -213,12 +213,14 @@ SKIP: {
   # update doc1
   $request = POST('/api/trackhub/1',
   		  'Content-type' => 'application/json',
-  		  'Content'      => to_json({ hub     => { name => 'Test', shortLabel => 'Test Hub', longLabel => 'Test Hub' },
-					      version => 'v1.0',
-					      species => { tax_id => 9606, scientific_name => 'Homo sapiens' },
-					      assembly => { accession => 'GCA_000001405.15' },
-					      data => [ { id => 'test', molecule => 'genomic_DNA' } ],
-					      configuration => { test => { shortLabel => 'test' } } }));
+  		  'Content'      => to_json({
+					     type    => 'epigenomics',
+					     hub     => { name => 'Test', shortLabel => 'Test Hub', longLabel => 'Test Hub' },
+					     version => 'v1.0',
+					     species => { tax_id => 9606, scientific_name => 'Homo sapiens' },
+					     assembly => { accession => 'GCA_000001405.15' },
+					     data => [ { id => 'test', molecule => 'genomic_DNA' } ],
+					     configuration => { test => { shortLabel => 'test' } } }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'POST request to /api/trackhub/1');
@@ -354,7 +356,7 @@ SKIP: {
   #
   # POST request should fail: the endpoint is meant to translate
   # the assembly trackdb files of a remote public trackhub.
-  # Must specify URL/assembly
+  # Must specify URL/type
   $request = POST('/api/trackhub/create',
   		  'Content-type' => 'application/json',
   		  'Content'      => &Registry::Utils::slurp_file($docs->[2]{file}));
@@ -470,6 +472,7 @@ SKIP: {
   is(scalar keys %{$content}, 3, "Correct number of trackdb docs created");
   # check content of returned docs
   foreach my $id (keys %{$content}) {
+    is($content->{$id}{type}, 'genomics', 'Default hub data type');
     is($content->{$id}{hub}{name}, 'cshl2013', 'Correct trackdb hub name');
     like($content->{$id}{hub}{longLabel}, qr/CSHL Biology of Genomes/, "Correct trackdb hub longLabel");
     # first data element is the same for all trackdbs
@@ -494,7 +497,7 @@ SKIP: {
   $URL = 'http://smithlab.usc.edu/trackdata/methylation';
   $request = POST('/api/trackhub/create',
   		  'Content-type' => 'application/json',
-  		  'Content'      => to_json({ url => $URL }));
+  		  'Content'      => to_json({ url => $URL, type => 'epigenomics' }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), "POST request to /api/trackhub/create?version=v1.0");
@@ -505,6 +508,7 @@ SKIP: {
   is(scalar keys %{$content}, 8, "Eight trackdb docs created");
   my $id = (keys %{$content})[0];
   foreach my $id (keys %{$content}) {
+    is($content->{$id}{type}, 'epigenomics', 'Correct hub type');
     is($content->{$id}{hub}{name}, 'Smith Lab Public Hub', 'Correct trackdb hub name');
     is($content->{$id}{hub}{shortLabel}, 'DNA Methylation', 'Correct trackdb hub shortLabel');
     is($content->{$id}{hub}{longLabel}, 'Hundreds of analyzed methylomes from bisulfite sequencing data', 'Correct trackdb hub longLabel');

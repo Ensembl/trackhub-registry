@@ -50,38 +50,47 @@ SKIP: {
   my $auth_token = $content->{auth_token};
 
   # submit public hubs (from UCSC list)
-  # 12 out of 27 hubs cannot be submitted
-  # - 7 do not validate
-  # - 5 bad requests
+  # 10 out of 27 hubs cannot be submitted
+  # - 1, unknown (memory/CPU issue)
+  # - 3, tracks do not refer to parent
+  # - 6, empty type attribute
+  # - 1, unknown assembly synonyms
+  
+  # sdsu: empty type - does not validate if empty fields are not allowed. There's one track which does not define type, the parser attempts to define type based on bigDataUrl, which is not defined as well. Can be solved by removing empty attributes in Translator
+  # zhub: empty type
+  # washu: empty type
+  # cptac: empty type
+  # facebase: empty type, but also track names contain '.'. cannot enforce it in the schema, solved by allowing additional properties for the configuration object
+  # libd: track names contain '-' which is not in the schema (solved)
+  # cemt: goes into timeout -> increase (solved)
   my %public_hubs = (
-		     # vizhub  => 'http://vizhub.wustl.edu/VizHub/RoadmapReleaseAll.txt', # memory consumption, does not validate
-		     # zhub    => 'http://zlab.umassmed.edu/zlab/publications/UMassMedZHub/hub.txt', # Status Bad Request: 599: Internal Exception at /home/avullo/work/ensembl/trackhub-registry/src/Registry/t/../lib/Registry/TrackHub.pm line 92, <$fh> line 1.
-
+		     vizhub  => 'http://vizhub.wustl.edu/VizHub/RoadmapReleaseAll.txt', # memory/CPU consumption, empty type (memory/CPU issue solved by printing just the error in the validation script)
+		     zhub    => 'http://zlab.umassmed.edu/zlab/publications/UMassMedZHub/hub.txt', # empty type
 		     polyA   => 'http://johnlab.org/xpad/Hub/UCSC.txt',
 		     encode  => 'http://ftp.ebi.ac.uk/pub/databases/ensembl/encode/integration_data_jan2011/hub.txt',
 		     mRNA    => 'http://www.mircode.org/ucscHub/hub.txt',
 		     dnameth => 'http://smithlab.usc.edu/trackdata/methylation/hub.txt',
 		     tis     => 'http://gengastro.1med.uni-kiel.de/suppl/footprint/Hub/tisHub.txt',
-		     # sdsu    => 'http://bioinformatics.sdstate.edu/datasets/2012-NAT/hub.txt', # does not validate
+		     sdsu    => 'http://bioinformatics.sdstate.edu/datasets/2012-NAT/hub.txt', # empty type
 		     blueprint => 'ftp://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub',
-		     # cemt      => 'http://www.bcgsc.ca/downloads/edcc/data/CEMT/hub/bcgsc_datahub.txt', # does not validate
+		     cemt      => 'http://www.bcgsc.ca/downloads/edcc/data/CEMT/hub/bcgsc_datahub.txt',
 		     plants    => 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt',
-		     # broad     => 'https://www.broadinstitute.org/ftp/pub/vgb/dog/trackHub/hub.txt', # does not validate
+		     # broad     => 'https://www.broadinstitute.org/ftp/pub/vgb/dog/trackHub/hub.txt', # parent track is missing
 		     ensembl   => 'http://ngs.sanger.ac.uk/production/ensembl/regulation/hub.txt',
 		     mcgill    => 'http://epigenomesportal.ca/hub/hub.txt',
 		     ultracons => 'http://genome-test.cse.ucsc.edu/~hiram/hubs/GillBejerano/hub.txt',
-		     # fantom5   => 'http://fantom.gsc.riken.jp/5/datahub/hub.txt', # Status Bad Request: File http://fantom.gsc.riken.jp/5/datahub/hg19/trackDb.txt: parent track TSS_peaks_and_counts full is missing at /home/avullo/work/ensembl/trackhub-registry/src/Registry/t/../lib/Registry/TrackHub/Parser.pm line 201, <$fh> line 1.
-		     # washu     => 'http://vizhub.wustl.edu/VizHub/RoadmapIntegrative.txt', # does not validate
+		     # fantom5   => 'http://fantom.gsc.riken.jp/5/datahub/hub.txt', # parent track missing
+		     washu     => 'http://vizhub.wustl.edu/VizHub/RoadmapIntegrative.txt', # empty type
 		     rnaseq    => 'http://web.stanford.edu/~htilgner/2012_454paper/data/hub.txt',
 		     zebrafish => 'http://research.nhgri.nih.gov/manuscripts/Burgess/zebrafish/downloads/NHGRI-1/hub.txt',
-		     # facebase  => 'http://trackhub.facebase.org/hub.txt', # does not validate
+		     facebase  => 'http://trackhub.facebase.org/hub.txt', # empty type, track name with '.'
 		     phylocsf  => 'http://www.broadinstitute.org/compbio1/PhyloCSFtracks/trackHub/hub.txt',
-		     # fantom5c  => 'http://fantom.gsc.riken.jp/5/suppl/Ohmiya_et_al_2014/data/hub.txt', # Status Bad Request: File http://fantom.gsc.riken.jp/5/suppl/Ohmiya_et_al_2014/data/reclu/trackDb.txt: parent track RECLU_clusters full is missing at /home/avullo/work/ensembl/trackhub-registry/src/Registry/t/../lib/Registry/TrackHub/Parser.pm line 201, <$fh> line 1
+		     # fantom5c  => 'http://fantom.gsc.riken.jp/5/suppl/Ohmiya_et_al_2014/data/hub.txt', # parent track missing
 		     sanger    => 'http://ngs.sanger.ac.uk/production/grit/track_hub/hub.txt',
-		     # crocbird  => 'http://hgwdev.cse.ucsc.edu/~jcarmstr/crocBrowserRC2/hub.txt', # Status Bad Request: Unable to find an NCBI assembly id from Anc08 at /home/avullo/work/ensembl/trackhub-registry/src/Registry/t/../lib/Registry/TrackHub/Translator.pm line 680, <$fh> line 1.
+		     # crocbird  => 'http://hgwdev.cse.ucsc.edu/~jcarmstr/crocBrowserRC2/hub.txt', # unknown assembly Anc00 -- Anc21
 		     thornton  => 'http://devlaeminck.bio.uci.edu/RogersUCSC/hub.txt',
-		     # cptac     => 'http://openslice.fenyolab.org/tracks/CPTAC/cptac/v1/hub.txt', # does not validate
-		     # libd      => 'https://s3.amazonaws.com/DLPFC_n36/humanDLPFC/hub.txt', # Status Bad Request: 400: Bad Request at /home/avullo/work/ensembl/trackhub-registry/src/Registry/t/../lib/Registry/TrackHub.pm line 92.
+		     cptac     => 'http://openslice.fenyolab.org/tracks/CPTAC/cptac/v1/hub.txt', # empty type
+		     libd      => 'https://s3.amazonaws.com/DLPFC_n36/humanDLPFC/hub.txt',
 		    );
 
   foreach my $hub (keys %public_hubs) {

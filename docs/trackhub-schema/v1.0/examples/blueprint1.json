@@ -1,4 +1,5 @@
 {
+  "type": "epigenomics",
   "hub": {
     "name": "Blueprint_Hub",
     "shortLabel": "Blueprint Hub",

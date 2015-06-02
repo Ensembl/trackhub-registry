@@ -30,7 +30,7 @@
 	[% ELSIF status.match('Unavailable') %]
 	[%   label_class = 'label-danger' %]
 	[% END %]
-	  <span class="label [% label_class %]">[% status %]</span>
+	  <span class="label [% label_class %]" style="padding-bottom: 1px;">[% status %]</span>
 	[% IF status != 'Unknown' %]
 	  <br/><small>[% status_last_update %]</small><br/><br/>
 	[% END %]
@@ -47,6 +47,7 @@
         <ul class="list-group col-sm-6">
           <li class="list-group-item">Total number of tracks <span class="badge">[% tracks.total %]</span></li>
           <li class="list-group-item">Tracks linked to remote data <span class="badge">[% tracks.with_data.total %]</span></li>
+	  <li class="list-group-item">Data type: [% trackdb.type %]</li>
 	  <li class="list-group-item">File type(s): [% trackdb.file_type.join(', ') %]</li>
         [% IF trackdb.doc.source %]
           <li class="list-group-item">Source URL: <a target="_blank" role=button" class="btn btn-xs btn-default" data-toggle="popover" title="View source URL" data-content="" href="[% trackdb.doc.source.url %]">View</a></li>

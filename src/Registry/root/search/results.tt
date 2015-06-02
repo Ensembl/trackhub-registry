@@ -116,6 +116,24 @@
           </div> <!-- hub-facet -->
         </div>
 
+	<div class="panel panel-default">
+          <div class="panel-heading" style="background-color: whiteSmoke">
+            <a class="panel-title" data-toggle="collapse" href="#type-facet"><i style="float:right" class="glyphicon glyphicon-chevron-right"></i>Data Type</a>
+          </div>
+          <div id="type-facet" class="panel-collapse collapse">
+            <div class="panel-body">
+              <ul class="list-group">
+	        [% FOR type IN facets.type %]
+		  [% p = { } %]
+		  [% p.import(filters) %]
+		  [% p.type = type.value %]
+		<li class="list-group-item"><span class="badge">[% type.count %]</span><a rel="nofollow" href="[% c.uri_for('/search', p ) %]">[% type.value %]</a></li>
+		[% END %]      
+              </ul>
+            </div>
+          </div> <!-- type-facet -->
+        </div>
+
       </div> <!-- accordion-group -->
     </div> <!-- sidebar -->
   </div>

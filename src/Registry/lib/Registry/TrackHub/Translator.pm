@@ -153,6 +153,7 @@ sub _make_configuration_object_1_0 {
   
   # add the configuration attributes as they are specified
   my $node_conf = {};
+  # map { $node_conf->{$_} = $node->data->{$_} } keys %{$node->data};
   map { $node->data->{$_} and $node_conf->{$_} = $node->data->{$_} } keys %{$node->data};
   # delete $node_conf->{track};
 
@@ -405,8 +406,9 @@ $synonym2assembly =
    # taeGut2 => '', # not found
    taeGut1 => 'GCA_000151805.2', # 'Taeniopygia_guttata-3.2.4',
    # zebrafish
-   danRer7 => 'GCA_000002035.2', # 'Zv9',
-   danRer6 => 'GCA_000002035.1', # 'Zv8', # no syn on on NCBI
+   danRer10 => 'GCA_000002035.3', # 'GRCz10', no syn on on NCBI
+   danRer7 => 'GCA_000002035.2', # 'Zv9'
+   danRer6 => 'GCA_000002035.1', # 'Zv8', no syn on on NCBI
    danRer5 => 'GCF_000002035.1', # 'Zv7',
    # danRer4 => 'Zv6', # not found on NCBI
    # danRer3 => 'Zv5', # not found on NCBI

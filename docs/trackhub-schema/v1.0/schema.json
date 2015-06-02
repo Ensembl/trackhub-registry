@@ -8,6 +8,15 @@
   "type": "object",
 
   "properties": {
+
+    "type": { 
+      "type": "string",
+      
+      "description": "The trackdb generic main data type.",
+
+      "enum": [ "genomics", "epigenomics", "transcriptomics", "proteomics" ]
+    },
+
     "hub": { 
       "type": "object",
 

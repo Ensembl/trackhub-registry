@@ -315,6 +315,11 @@ SKIP: {
   $URL = "http://vizhub.wustl.edu/VizHub/RoadmapReleaseAll.txt";
   $json_docs = $translator->translate($URL);
   is(scalar @{$json_docs}, 1, "Number of translated track dbs");
+
+  open $FH, ">$Bin/vizhub.json" or die "Cannot open vizhub.json: $!\n";
+  print $FH $json_docs->[0];
+  close $FH;
+
   $doc = from_json($json_docs->[0]);
   ok($doc->{hub}, 'Hub property exists');
   is($doc->{hub}{name}, 'VizHub', 'Correct Hub name');
@@ -331,7 +336,7 @@ SKIP: {
   				accession => 'GCA_000001405.1', 
   				synonyms => 'hg19' }, 'Correct assembly');
 
-  $metadata = first { $_->{id} eq 'BFLL_mRNA_14_58' } @{$doc->{data}};
+  $metadata = first { $_->{id} eq 'BBF_mRNA_71_72' } @{$doc->{data}};
   ok($metadata, "Track metadata exists");
 
   #
@@ -342,6 +347,25 @@ SKIP: {
   # Need to inform web about this and wait for a suitable parser, or rewrite that 
   # part on my own.
   #
+  is($metadata->{name}, "UCSF-UBC-USC Breast Fibroblast Primary Cells mRNA-Seq Donor RM071 Library A18472 EA Release 9", 
+     "Corrent name");
+  is($metadata->{sample_alias}, "Breast Fibroblast RM071, batch 1", 'Correct sample alias');
+  is($metadata->{sample_common_name}, "Breast, Fibroblast Primary Cells", 'Correct sample common name');
+  is($metadata->{experiment_type}, 'mRNA-Seq', 'Correct experiment type');
+  is($metadata->{extraction_protocol}, "BCCAGSC mRNA Standard Operating Procedure", 'Correct extraction protocol metadata');
+  is($metadata->{library_generation_pcr_number_cycles}, 10, 'Correct library generation PCR num cycles');
+
+  $metadata = first { $_->{id} eq 'XBMC_H3K9me3_TC010A' } @{$doc->{data}};
+  ok($metadata, "Track metadata exists");
+  is($metadata->{name}, "Peripheral_Blood_Mononuclear_Primary_Cells H3K9me3 Histone Modification by Chip-seq Signal from REMC/UCSF (Hotspot_Score=0.1958 Pcnt=66 DonorID:TC010)", 
+     "Corrent name");
+  is($metadata->{biomaterial_provider}, "Weiss Lab UCSF", 'Correct biomaterial provider metadata');
+  is($metadata->{chip_protocol}, "Farnham Lab Protocol", 'Correct chip protocol metadata');
+  is($metadata->{chip_antibody}, 'H3K9me3', 'Correct chip antibody metadata');
+
+  $metadata = first { $_->{id} eq 'BFLL_mRNA_14_58' } @{$doc->{data}};
+  ok($metadata, "Track metadata exists");
+
   is($metadata->{name}, "UW Fetal Lung Left mRNA-Seq Donor H-23914 Library lib-RNA.RS18158 EA Release 9", 
      "Corrent name");
   is($metadata->{sample_common_name}, "Fetal Lung, Left", 'Correct sample common name metadata');
@@ -354,7 +378,7 @@ SKIP: {
   is($metadata->{biomaterial_provider}, "Weiss Lab UCSF", 'Correct biomaterial provider metadata');
   is($metadata->{chip_protocol}, "Farnham Lab Protocol", 'Correct chip protocol metadata');
   is($metadata->{chip_antibody}, 'H3K9me3', 'Correct chip antibody metadata');
-
+  
 }
 
 done_testing();

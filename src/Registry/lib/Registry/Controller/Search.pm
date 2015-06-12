@@ -221,6 +221,30 @@ sub view_trackhub :Path('view_trackhub') Args(1) {
   $c->stash(trackdb => $trackdb, template  => "search/view.tt");
 }
 
+sub advanced_search :Path('advanced') Args(0) {
+  my ($self, $c) = @_;
+
+  # get the list of unique species/assemblies/hubs
+  my $config = Registry->config()->{'Model::Search'};
+  my $results = $c->model('Search')->search(index => $config->{index},
+					    type  => $config->{type}{trackhub},
+					    body => 
+					    {
+					     aggs => {
+						      species   => { terms => { field => 'species.scientific_name', size  => 0 } },
+						      assembly  => { terms => { field => 'assembly.name', size  => 0 } },
+						      hub       => { terms => { field => 'hub.name', size  => 0 } }
+						     }
+					    });
+  my $values;
+  foreach my $agg (keys %{$results->{aggregations}}) {
+    map { push @{$values->{$agg}}, $_->{key} } @{$results->{aggregations}{$agg}{buckets}}
+  }
+  
+  $c->stash(values => $values, template => "search/advanced.tt");
+}
+
+
 =head2 end
 
 Attempt to render a view, if needed.

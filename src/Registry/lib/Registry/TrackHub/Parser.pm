@@ -139,33 +139,61 @@ sub _parse_file_content {
         # These are in the form key1=value1 key2=value2, but values can be quotes strings with spaces in them.
         # Short and long labels may contain =, but in these cases the value is just a single string
         if ($value =~ /=/ && $key !~ /^(short|long)Label$/) {
-          my ($k, $v);
-          my @pairs = split /\s([^=]+)=/, " $value";
-          shift @pairs;
+
+	  #
+	  # NOTE
+	  # the following commented fragments do not correctly parse
+	  # metadata when key/value pairs contain text enclosed in double
+	  # quotes separated by spaces.
+	  #
+          # my ($k, $v);
+          # my @pairs = split /\s([^=]+)=/, " $value";
+          # shift @pairs;
           
-          for (my $i = 0; $i < $#pairs; $i += 2) {
-            $k = $pairs[$i];
-            $v = $pairs[$i + 1];
+          # for (my $i = 0; $i < $#pairs; $i += 2) {
+          #   $k = $pairs[$i];
+          #   $v = $pairs[$i + 1];
             
-            # If the value starts with a quote, but doesn't end with it, this value contains the pattern \s(\w+)=, so has been split multiple times.
-            # In that case, append all subsequent elements in the array onto the value string, until one is found which closes with a matching quote.
-            if ($v =~ /^("|')/ && $v !~ /$1$/) {
-              my $quote = $1;
+          #   # If the value starts with a quote, but doesn't end with it, this value contains the pattern \s(\w+)=, so has been split multiple times.
+          #   # In that case, append all subsequent elements in the array onto the value string, until one is found which closes with a matching quote.
+          #   if ($v =~ /^("|')/ && $v !~ /$1$/) {
+          #     my $quote = $1;
               
-              for (my $j = $i + 2; $j < $#pairs; $j++) {
-                $v .= "=$pairs[$j]";
+          #     for (my $j = $i + 2; $j < $#pairs; $j++) {
+          #       $v .= "=$pairs[$j]";
                 
-                if ($pairs[$j] =~ /$quote$/) {
-                  $i += $j - $i - 1;
-                  last;
-                }
-              }
-            }
+          #       if ($pairs[$j] =~ /$quote$/) {
+          #         $i += $j - $i - 1;
+          #         last;
+          #       }
+          #     }
+          #   }
             
-            $v =~ s/(^["']|['"]$)//g; # strip the quotes from the start and end of the value string
+          #   $v =~ s/(^["']|['"]$)//g; # strip the quotes from the start and end of the value string
             
-            $tracks->{$id}{$key}{$k} = $v;
-          }
+          #   $tracks->{$id}{$key}{$k} = $v;
+          # }
+
+	  # PB with URLs containing =, remove key/value pairs containing them
+	  $value =~ s/\w+?=".+?=.+?"\s//;
+
+	  my @tokens1 = split /=/, $value; 
+	  my @tokens2;
+
+	  for (my $i = 0; $i <= $#tokens1; $i++) {
+	    if ($tokens1[$i] =~ /^\w+$/) {
+	      push @tokens2, $tokens1[$i];
+	    } elsif ($tokens1[$i] =~ /"|'/) {
+	      push @tokens2, grep { defined $_ } $tokens1[$i] =~ /"(.*)"|'(.*)'|(\w+)/g;;
+	    } else {
+	      push @tokens2, split(/\s+/, $tokens1[$i]);
+	    }
+	  }
+
+	  for (my $i = 0; $i < $#tokens2; $i += 2) {
+	    $tracks->{$id}{$key}{$tokens2[$i]} = $tokens2[$i+1];
+	  }
+
         } else {
           $tracks->{$id}{$key} = $value;
         }

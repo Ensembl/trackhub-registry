@@ -338,15 +338,6 @@ SKIP: {
 
   $metadata = first { $_->{id} eq 'BBF_mRNA_71_72' } @{$doc->{data}};
   ok($metadata, "Track metadata exists");
-
-  #
-  # WARNING
-  #
-  # the following tests on the content of metadata fail since the existing parser
-  # is not capable of extracting key=value pairs containing double quotes (with spaces).
-  # Need to inform web about this and wait for a suitable parser, or rewrite that 
-  # part on my own.
-  #
   is($metadata->{name}, "UCSF-UBC-USC Breast Fibroblast Primary Cells mRNA-Seq Donor RM071 Library A18472 EA Release 9", 
      "Corrent name");
   is($metadata->{sample_alias}, "Breast Fibroblast RM071, batch 1", 'Correct sample alias');
@@ -365,7 +356,6 @@ SKIP: {
 
   $metadata = first { $_->{id} eq 'BFLL_mRNA_14_58' } @{$doc->{data}};
   ok($metadata, "Track metadata exists");
-
   is($metadata->{name}, "UW Fetal Lung Left mRNA-Seq Donor H-23914 Library lib-RNA.RS18158 EA Release 9", 
      "Corrent name");
   is($metadata->{sample_common_name}, "Fetal Lung, Left", 'Correct sample common name metadata');

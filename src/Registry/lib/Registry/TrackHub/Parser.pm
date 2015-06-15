@@ -175,7 +175,7 @@ sub _parse_file_content {
           # }
 
 	  # PB with URLs containing =, remove key/value pairs containing them
-	  $value =~ s/\w+?=".+?=.+?"\s//;
+	  $value =~ s/\w+?="[^="]+?=[^"]+?"\s//g;
 
 	  my @tokens1 = split /=/, $value; 
 	  my @tokens2;
@@ -184,7 +184,7 @@ sub _parse_file_content {
 	    if ($tokens1[$i] =~ /^\w+$/) {
 	      push @tokens2, $tokens1[$i];
 	    } elsif ($tokens1[$i] =~ /"|'/) {
-	      push @tokens2, grep { defined $_ } $tokens1[$i] =~ /"(.*)"|'(.*)'|(\w+)/g;;
+	      push @tokens2, grep { defined $_ } $tokens1[$i] =~ /"(.*)"|'(.*)'|([\w-]+)/g;;
 	    } else {
 	      push @tokens2, split(/\s+/, $tokens1[$i]);
 	    }

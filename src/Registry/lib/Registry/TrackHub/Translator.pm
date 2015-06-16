@@ -58,7 +58,7 @@ sub translate {
   die sprintf "Version %s not supported", $self->version
     unless $dispatch;
 
-  my $trackhub = Registry::TrackHub->new(url => $url);
+  my $trackhub = Registry::TrackHub->new(url => $url, permissive => $self->permissive);
   
   my $docs;
   unless ($assembly) { 

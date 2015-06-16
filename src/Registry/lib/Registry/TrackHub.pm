@@ -7,6 +7,7 @@ use strict;
 use warnings;
 
 use Registry::TrackHub::Genome;
+use Registry::Utils qw(run_cmd);
 use Registry::Utils::URL qw(read_file);
 
 use vars qw($AUTOLOAD);
@@ -32,6 +33,11 @@ sub new {
   my $self = \%args;
   bless $self, $class;
 
+  # check hub is compliant to UCSC specs
+  # use hubCheck program to check a track data hub for integrity
+  $self->_hub_check() unless $self->{permissive};
+
+  # fetch hub info
   $self->_get_hub_info();
 
   return $self;
@@ -51,6 +57,34 @@ sub get_genome {
     die "No genome data for assembly $assembly";
 
   return $self->genomes->{$assembly};
+}
+
+# TODO: finish check
+sub _hub_check {
+  my $self = shift;
+  my $url = $self->url;
+
+  my @split_url = split '/', $url;
+  my $hub_file;
+  
+  if ($split_url[-1] =~ /[.?]/) {
+    $hub_file = pop @split_url;
+    $url      = join '/', @split_url;
+  } else {
+    $hub_file = 'hub.txt';
+    $url      =~ s|/$||;
+  }
+
+  my $cmd = sprintf("hubCheck -checkSettings -test -noTracks %s/%s", $url, $hub_file);
+  my ($rc, $output) = Registry::Utils::run_cmd($cmd);
+  if ($output =~ /problem/) {
+    my @lines = split /\n/, $output;
+    shift @lines;
+    for my $line (@lines) {
+      next if $line =~ /deprecated/;
+      die "hubCheck report:\n$output\n\nPlease refer to the (versioned) spec document: http://genome-test.cse.ucsc.edu/goldenPath/help/trackDb/trackDbHub.html";
+    }
+  }
 }
 
 sub _get_hub_info {

@@ -19,7 +19,7 @@ use Registry::Indexer; # index a couple of sample documents
 
 SKIP: {
   skip "Launch an elasticsearch instance for the tests to run fully",
-    165 unless &Registry::Utils::es_running();
+    206 unless &Registry::Utils::es_running();
 
   # index test data
   note 'Preparing data for test (indexing sample documents)';

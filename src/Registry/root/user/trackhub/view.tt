@@ -2,7 +2,7 @@
 [% PROCESS user/user_nav.tt %]
 
 <div class="page-header">
-  <h3>Track Collection: [% trackdb.id %]</h3>
+  <h3>TrackDB Collection: [% trackdb.id %]</h3>
   <span class="label label-primary">[% trackdb.doc.hub.shortLabel %]</span>
   <span class="label label-success">[% trackdb.doc.species.scientific_name %]</span>
   <span class="label label-info">[% trackdb.doc.assembly.name %]</span>
@@ -11,7 +11,7 @@
   <div class="col-sm-12">
     <div class="panel panel-default">
       <!-- Default panel contents -->
-      <div class="panel-heading">Track Collection Report</div>
+      <div class="panel-heading">Report Log</div>
       [% tracks = trackdb.status.tracks %]
       <div class="panel-body">
         <ul class="list-group col-sm-3">

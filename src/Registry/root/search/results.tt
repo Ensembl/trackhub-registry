@@ -168,7 +168,7 @@
               <div class="panel-body">
 	        <div class="btn-group  btn-group-xs" style="float: right;">
 		  <div class="btn-group btn-group-xs">
-                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Load tracks <span class="caret"></span></button>
+                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">View in Genome Browser <span class="caret"></span></button>
                     <ul class="dropdown-menu" role="menu">
                       <li><a href="#">EnsEMBL</a></li>
                       <li><a href="#">UCSC</a></li>

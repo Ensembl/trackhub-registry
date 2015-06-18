@@ -140,7 +140,7 @@
 
   "additionalProperties": true,
 
-  "required": [ "version", "hub", "species", "assembly", "data", "configuration" ],
+  "required": [ "version", "hub", "species", "assembly", "configuration" ],
 
   "definitions": {
 

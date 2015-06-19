@@ -33,9 +33,6 @@ Catalyst Controller.
 # TODO: 
 # - Data::SearchEngine::ElasticSearch instance must be initialised
 #   with location of nodes from config file
-# - We want the species scientific name to appear on the corresponding facet, not the tax id
-#   Problem is, field is analysed and Genus/species are split in different terms
-#   so if I specify species.scientific_name as facet only the species appears
 #
 sub index :Path :Args(0) {
   my ( $self, $c ) = @_;
@@ -77,7 +74,7 @@ sub index :Path :Args(0) {
   # pass extra (i.e. besides query) parameters as ANDed filters
   my $filters;
   foreach my $param (keys %{$params}) {
-    next if $param eq 'q' or $param eq 'page';
+    next if $param eq 'q' or $param eq 'page' or $param eq 'entries_per_page';
     # my $filter = ($param =~ /species/)?'species.tax_id':'assembly.name';
     my $filter;
     if ($param =~ /species/) {

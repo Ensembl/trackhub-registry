@@ -38,14 +38,22 @@ SKIP: {
   $indexer->index_trackhubs();
   $indexer->index_users();
 
+  # no data
   my $request = POST('/api/search',
+		     'Content-type' => 'application/json');
+  ok(my $response = request($request), 'POST request to /api/search');
+  is($response->code, 400, 'Request unsuccessful 400');
+  my $content = from_json($response->content);;
+  like($content->{error}, qr/Missing/, 'Correct error response');
+
+  $request = POST('/api/search',
 		     'Content-type' => 'application/json',
 		     'Content'      => to_json({ query => '' }));
-  ok(my $response = request($request), 'POST request to /api/search');
+  ok($response = request($request), 'POST request to /api/search');
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
-  my $content = from_json($response->content);;
-  # print Dumper $content;
+  my $content = from_json($response->content);
+  
 }
 
 done_testing();

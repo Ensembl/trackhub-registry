@@ -18,7 +18,7 @@ use Registry::Indexer; # index a couple of sample documents
 
 SKIP: {
   skip "Cannot run tests: either elasticsearch is not running or there's no internet connection",
-    3 unless &Registry::Utils::es_running() and Registry::Utils::internet_connection_ok();
+    76 unless &Registry::Utils::es_running() and Registry::Utils::internet_connection_ok();
 
   note 'Preparing data for test (indexing users)';
   my $config = Registry->config()->{'Model::Search'};
@@ -128,6 +128,41 @@ SKIP: {
   $request = POST('/api/search?page=2',
 		     'Content-type' => 'application/json',
 		     'Content'      => to_json({ query => 'neutrophil' }));
+  ok($response = request($request), 'POST request to /api/search');
+  ok($response->is_success, 'Request successful');
+  is($response->content_type, 'application/json', 'JSON content type');
+  $content = from_json($response->content);
+  is(scalar @{$content->{items}}, 0, 'Number of search results');
+  
+  # test with some filters
+  $request = POST('/api/search',
+		     'Content-type' => 'application/json',
+		     'Content'      => to_json({ species => 'Danio rerio'}));
+  ok($response = request($request), 'POST request to /api/search');
+  ok($response->is_success, 'Request successful');
+  is($response->content_type, 'application/json', 'JSON content type');
+  $content = from_json($response->content);
+  is(scalar @{$content->{items}}, 3, 'Number of search results');
+  is($content->{items}[0]{values}{species}{tax_id}, '7955', 'Search result species');
+  is($content->{items}[0]{values}{hub}{shortLabel}, 'ZebrafishGenomics', 'Search result hub');
+  is($content->{items}[1]{values}{assembly}{name}, 'GRCz10', 'Search result assembly');
+
+  $request = POST('/api/search',
+		     'Content-type' => 'application/json',
+		     'Content'      => to_json({ species  => 'Danio rerio',
+					         assembly => 'GRCz10' }));
+  ok($response = request($request), 'POST request to /api/search');
+  ok($response->is_success, 'Request successful');
+  is($response->content_type, 'application/json', 'JSON content type');
+  $content = from_json($response->content);
+  is(scalar @{$content->{items}}, 1, 'Number of search results');
+  is($content->{items}[0]{values}{hub}{shortLabel}, 'GRC Genome Issues under Review', 'Search result hub');
+  
+  # incompatible filters should return no results
+  $request = POST('/api/search',
+		     'Content-type' => 'application/json',
+		     'Content'      => to_json({ species  => 'Danio rerio',
+					         assembly => 'GRCh37'}));
   ok($response = request($request), 'POST request to /api/search');
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');

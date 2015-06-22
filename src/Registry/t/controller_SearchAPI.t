@@ -18,7 +18,7 @@ use Registry::Indexer; # index a couple of sample documents
 
 SKIP: {
   skip "Cannot run tests: either elasticsearch is not running or there's no internet connection",
-    76 unless &Registry::Utils::es_running() and Registry::Utils::internet_connection_ok();
+    82 unless &Registry::Utils::es_running() and Registry::Utils::internet_connection_ok();
 
   note 'Preparing data for test (indexing users)';
   my $config = Registry->config()->{'Model::Search'};
@@ -36,16 +36,16 @@ SKIP: {
   $indexer->index_users();
 
   # submit some public hubs
-    my %public_hubs = (
-		     polyA   => 'http://johnlab.org/xpad/Hub/UCSC.txt',
-		     mRNA    => 'http://www.mircode.org/ucscHub/hub.txt',
-		     blueprint => 'ftp://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub',
-		     plants    => 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt',
-		     ensembl   => 'http://ngs.sanger.ac.uk/production/ensembl/regulation/hub.txt',
-		     rnaseq    => 'http://web.stanford.edu/~htilgner/2012_454paper/data/hub.txt',
-		     zebrafish => 'http://research.nhgri.nih.gov/manuscripts/Burgess/zebrafish/downloads/NHGRI-1/hub.txt',
-		     sanger    => 'http://ngs.sanger.ac.uk/production/grit/track_hub/hub.txt',
-		     thornton  => 'http://devlaeminck.bio.uci.edu/RogersUCSC/hub.txt',
+  my @public_hubs = (
+		     { name => 'polyA', url => 'http://johnlab.org/xpad/Hub/UCSC.txt' },
+		     { name => 'mRNA', url => 'http://www.mircode.org/ucscHub/hub.txt' },
+		     { name => 'blueprint', url => 'ftp://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub' },
+		     { name => 'plants', url => 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt' },
+		     { name => 'ensembl', url => 'http://ngs.sanger.ac.uk/production/ensembl/regulation/hub.txt' },
+		     { name => 'rnaseq', url => 'http://web.stanford.edu/~htilgner/2012_454paper/data/hub.txt' },
+		     { name => 'zebrafish', url => 'http://research.nhgri.nih.gov/manuscripts/Burgess/zebrafish/downloads/NHGRI-1/hub.txt' },
+		     { name => 'sanger', url => 'http://ngs.sanger.ac.uk/production/grit/track_hub/hub.txt' },
+		     { name => 'thornton', url => 'http://devlaeminck.bio.uci.edu/RogersUCSC/hub.txt' },
 		    );
 
   my $request = GET('/api/login');
@@ -55,11 +55,11 @@ SKIP: {
   ok(exists $content->{auth_token}, 'Logged in');
   my $auth_token = $content->{auth_token};
 
-  foreach my $hub (keys %public_hubs) {
-    note "Submitting hub $hub";
+  foreach my $hub (@public_hubs) {
+    note sprintf "Submitting hub %s", $hub->{name};
     $request = POST('/api/trackhub/create',
 		    'Content-type' => 'application/json',
-		    'Content'      => to_json({ url => $public_hubs{$hub} }));
+		    'Content'      => to_json({ url => $hub->{url} }));
     $request->headers->header(user       => 'trackhub1');
     $request->headers->header(auth_token => $auth_token);
     ok($response = request($request), 'POST request to /api/trackhub/create');
@@ -67,9 +67,12 @@ SKIP: {
     is($response->content_type, 'application/json', 'JSON content type');
   }
 
+  #
+  # /api/search endpoint
+  #
   # no data
   $request = POST('/api/search',
-		     'Content-type' => 'application/json');
+		  'Content-type' => 'application/json');
   ok($response = request($request), 'POST request to /api/search');
   is($response->code, 400, 'Request unsuccessful 400');
   my $content = from_json($response->content);;
@@ -86,37 +89,37 @@ SKIP: {
   $content = from_json($response->content);
   is($content->{total_entries}, 17, 'Number of search results');
   is(scalar @{$content->{items}}, 5, 'Number of search results per page');
-  is($content->{items}[1]{values}{hub}{longLabel}, 'Burgess Lab Zebrafish Genomic Resources', 'Search result hub');
-  is($content->{items}[3]{values}{assembly}{name}, 'GRCh38', 'Search result assembly');
+  is($content->{items}[1]{values}{hub}{longLabel}, 'Evidence summaries and provisional results for the new Ensembl Regulatory Build', 'Search result hub');
+  is($content->{items}[3]{values}{assembly}{name}, 'MGSCv37', 'Search result assembly');
 
   # test getting the n-th page
   $request = POST('/api/search?page=3',
-		     'Content-type' => 'application/json',
-		     'Content'      => to_json({ query => '' }));
+		  'Content-type' => 'application/json',
+		  'Content'      => to_json({ query => '' }));
   ok($response = request($request), 'POST request to /api/search');
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
-  is($content->{items}[0]{values}{species}{tax_id}, 3702, 'Search result species');
-  is($content->{items}[1]{values}{assembly}{accession}, 'GCA_000754195.2', 'Search result assembly');
+  is($content->{items}[0]{values}{species}{tax_id}, 3988, 'Search result species');
+  is($content->{items}[1]{values}{assembly}{accession}, 'GCA_000001405.1', 'Search result assembly');
 
   # test the entries_per_page parameter
   $request = POST('/api/search?page=3&entries_per_page=2',
-		     'Content-type' => 'application/json',
-		     'Content'      => to_json({ query => '' }));
+		  'Content-type' => 'application/json',
+		  'Content'      => to_json({ query => '' }));
   ok($response = request($request), 'POST request to /api/search');
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
   is(scalar @{$content->{items}}, 2, 'Number of entries per page');
-  is($content->{items}[0]{values}{hub}{shortLabel}, 'Plants', 'Search result hub');
+  is($content->{items}[0]{values}{hub}{shortLabel}, 'miRcode microRNA sites', 'Search result hub');
   is($content->{items}[1]{values}{species}{scientific_name}, 'Homo sapiens', 'Search result species');
   
   # test with qeury string
   # blueprint hub has some metadata to look for
   $request = POST('/api/search',
-		     'Content-type' => 'application/json',
-		     'Content'      => to_json({ query => 'monocyte male' }));
+		  'Content-type' => 'application/json',
+		  'Content'      => to_json({ query => 'monocyte male' }));
   ok($response = request($request), 'POST request to /api/search');
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
@@ -126,8 +129,8 @@ SKIP: {
   is($content->{items}[0]{values}{assembly}{accession}, 'GCA_000001405.1', 'Search result assembly');
 
   $request = POST('/api/search?page=2',
-		     'Content-type' => 'application/json',
-		     'Content'      => to_json({ query => 'neutrophil' }));
+		  'Content-type' => 'application/json',
+		  'Content'      => to_json({ query => 'neutrophil' }));
   ok($response = request($request), 'POST request to /api/search');
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
@@ -136,8 +139,8 @@ SKIP: {
   
   # test with some filters
   $request = POST('/api/search',
-		     'Content-type' => 'application/json',
-		     'Content'      => to_json({ species => 'Danio rerio'}));
+		  'Content-type' => 'application/json',
+		  'Content'      => to_json({ species => 'Danio rerio'}));
   ok($response = request($request), 'POST request to /api/search');
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
@@ -148,9 +151,9 @@ SKIP: {
   is($content->{items}[1]{values}{assembly}{name}, 'GRCz10', 'Search result assembly');
 
   $request = POST('/api/search',
-		     'Content-type' => 'application/json',
-		     'Content'      => to_json({ species  => 'Danio rerio',
-					         assembly => 'GRCz10' }));
+		  'Content-type' => 'application/json',
+		  'Content'      => to_json({ species  => 'Danio rerio',
+					      assembly => 'GRCz10' }));
   ok($response = request($request), 'POST request to /api/search');
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
@@ -160,15 +163,29 @@ SKIP: {
   
   # incompatible filters should return no results
   $request = POST('/api/search',
-		     'Content-type' => 'application/json',
-		     'Content'      => to_json({ species  => 'Danio rerio',
-					         assembly => 'GRCh37'}));
+		  'Content-type' => 'application/json',
+		  'Content'      => to_json({ species  => 'Danio rerio',
+					      assembly => 'GRCh37'}));
   ok($response = request($request), 'POST request to /api/search');
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
   is(scalar @{$content->{items}}, 0, 'Number of search results');
   
+  #
+  # /api/search/trackdb/:id endpoint
+  #
+  # non GET request should fail
+  $request = POST('/api/search/trackdb/1');
+  ok($response = request($request), 'POST request to /api/search/trackdb/:id');
+  is($response->code, 405, 'Request unsuccessful 405');
+
+  $request = GET('/api/search/trackdb/2');
+  ok($response = request($request), 'GET request to /api/search/trackdb/:id');
+  ok($response->is_success, 'Request successful');
+  is($response->content_type, 'application/json', 'JSON content type');
+  $content = from_json($response->content);
+  is($content->{hub}{name}, 'miRcodeHub', 'TrackDB hub name');
 }
 
 done_testing();

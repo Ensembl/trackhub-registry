@@ -53,14 +53,13 @@ sub search_POST {
 
   my $params = $c->req->params;
   my $data = $c->req->data;
-  use Data::Dumper; $c->log->debug(Dumper $data);
 
   my ($query_type, $query_body) = ('match_all', {});
   my $query = $data->{query};
   
   if ($query) {
     $query_type = 'match';
-    $query_body = { _all => $params->{q} };
+    $query_body = { _all => $query };
   }
 
   my $config = Registry->config()->{'Model::Search'};
@@ -86,7 +85,6 @@ sub search_POST {
     if $data->{hub};
   $query_args->{filters} = $filters if $filters;
 
-
   # do the search
   my $results;
   my $se = Data::SearchEngine::ElasticSearch->new();
@@ -100,13 +98,50 @@ sub search_POST {
   # build the JSON response
   my $response = { total_entries => $results->pager->total_entries, items => $results->items };
   
-  # strip away the metadata field from each search result
+  # strip away the metadata/configuration field from each search result
+  # this will save bandwidth
+  # when a trackdb is chosen the client will request all the details by id
   my $items => $results->items;
-  map { delete $_->{values}{data} } @{$response->{items}};
+  map { delete $_->{values}{data}; delete $_->{values}{configuration} } @{$response->{items}};
 
   $self->status_ok($c, entity => $response);
 }
 
+=head2 trackdb
+
+/api/search/trackdb/:id - return a trackDB document by ID
+
+=cut 
+
+sub trackdb :Path('/api/search/trackdb') Args(1) ActionClass('REST') {
+  my ($self, $c, $doc_id) = @_;
+
+  # if the doc with that ID doesn't exist, ES throws exception
+  # intercept but do nothing, as the GET method will handle
+  # the situation in a REST appropriate way.
+  eval { $c->stash(trackdb => $c->model('Search')->get_trackhub_by_id($doc_id)); };
+}
+
+=head2 trackdb_GET
+
+Return trackhub document content for a document
+with the specified ID
+
+=cut
+
+sub trackdb_GET {
+  my ($self, $c, $doc_id) = @_;
+
+  my $trackdb = $c->stash()->{trackdb};
+  if ($trackdb) {
+    # strip away the metadata field
+    delete $trackdb->{data};
+
+    $self->status_ok($c, entity => $trackdb);
+  } else {
+    $self->status_not_found($c, message => "Could not find trackdb doc (ID: $doc_id)");    
+  }
+}
 
 =encoding utf8
 

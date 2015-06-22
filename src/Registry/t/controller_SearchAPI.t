@@ -18,7 +18,7 @@ use Registry::Indexer; # index a couple of sample documents
 
 SKIP: {
   skip "Cannot run tests: either elasticsearch is not running or there's no internet connection",
-    83 unless &Registry::Utils::es_running() and Registry::Utils::internet_connection_ok();
+    84 unless &Registry::Utils::es_running() and Registry::Utils::internet_connection_ok();
 
   note 'Preparing data for test (indexing users)';
   my $config = Registry->config()->{'Model::Search'};
@@ -187,6 +187,9 @@ SKIP: {
   $content = from_json($response->content);
   is($content->{hub}{name}, 'miRcodeHub', 'TrackDB hub name');
   is($content->{configuration}{mir_sites_highcons}{bigDataUrl}, 'http://www.mircode.org/ucscHub/hg19/gencode_mirsites_highconsfamilies.bb', 'TrackDB configuration');
+  # shouldn't have the metadata
+  ok(!$content->{data}, 'No metadata');
+  
 }
 
 done_testing();

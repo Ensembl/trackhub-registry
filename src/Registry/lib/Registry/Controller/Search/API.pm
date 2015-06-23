@@ -1,4 +1,4 @@
-package Registry::Controller::SearchAPI;
+package Registry::Controller::Search::API;
 use Moose;
 use namespace::autoclean;
 

@@ -67,15 +67,30 @@ sub species_GET {
 
 =cut
 
-# sub assemblies :Path('/api/info/assemblies') :Args(0) ActionClass('REST') { }
+sub assemblies :Path('/api/info/assemblies') :Args(0) ActionClass('REST') { }
 
-# sub assemblies_GET {
-#   my ($self, $c) = @_;
+sub assemblies_GET {
+  my ($self, $c) = @_;
 
-#   my $params = $c->req->params;
-#   my $page = $params->{page} || 1;
-#   $page = 1 if $page !~ /^\d+$/;
-#   my $entries_per_page = $params->{entries_per_page} || 5;
+  # get the list of unique assemblies, grouped by species
+  my $config = Registry->config()->{'Model::Search'};
+  my $results = $c->model('Search')->search(index => $config->{index},
+					    type  => $config->{type}{trackhub},
+					    body => 
+					    {
+					     aggs => {
+						      species => { 
+								  terms => { field => 'species.scientific_name', size  => 0 },
+								  aggs  => { assembly => { terms => { field => 'assembly.accession', size => 0 } } }
+								 },
+						     }
+					    });
 
-#   $c->stash( page => $page, entries_per_page => $entries_per_page );
-# }
+  my $assemblies;
+  foreach my $agg (@{$results->{aggregations}{species}{buckets}}) {
+    my $species = $agg->{key};
+    map { push @{$assemblies->{$species}}, $_->{key} } @{$agg->{assembly}{buckets}};
+  }
+
+  $self->status_ok($c, entity => $assemblies);
+}

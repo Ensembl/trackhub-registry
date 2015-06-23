@@ -19,7 +19,7 @@ __PACKAGE__->config(
 
 =head1 NAME
 
-Registry::Controller::SearchAPI - Catalyst Controller
+Registry::Controller::Search::API - Catalyst Controller
 
 =head1 DESCRIPTION
 
@@ -30,7 +30,7 @@ Catalyst Controller.
 =cut
 
 
-=head2 index
+=head2 search
 
 =cut
 

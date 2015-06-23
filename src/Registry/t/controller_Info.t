@@ -20,7 +20,7 @@ use Registry::Indexer; # index a couple of sample documents
 
 SKIP: {
   skip "Cannot run tests: either elasticsearch is not running or there's no internet connection",
-    86 unless &Registry::Utils::es_running() and Registry::Utils::internet_connection_ok();
+    42 unless &Registry::Utils::es_running() and Registry::Utils::internet_connection_ok();
 
   note 'Preparing data for test (indexing users)';
   my $config = Registry->config()->{'Model::Search'};
@@ -72,13 +72,32 @@ SKIP: {
   #
   # /api/info/species endpoint
   #
+  my %species_assemblies = 
+    ( 'Homo sapiens'         => ['GCA_000001405.1', 'GCA_000001405.15'],
+      'Danio rerio'          => ['GCA_000002035.2', 'GCA_000002035.3'],
+      'Mus musculus'         => ['GCA_000001635.1', 'GCA_000001635.2'], 
+      'Arabidopsis thaliana' => ['GCA_000001735.1'],
+      'Brassica rapa'        => ['GCA_000309985.1'],
+      'Drosophila simulans'  => ['GCA_000754195.2'], 
+      'Ricinus communis'     => ['GCA_000151685.2']);
+
   $request = GET('/api/info/species');
   ok($response = request($request), 'GET request to /api/info/species');
   ok($response->is_success, 'Request successful');
   $content = from_json($response->content);
-  is_deeply($content, ['Homo sapiens', 'Danio rerio', 'Mus musculus', 'Arabidopsis thaliana', 'Brassica rapa', 'Drosophila simulans', 'Ricinus communis'], 'List of species');
+  is_deeply([ sort @{$content} ], [ sort keys %species_assemblies ], 'List of species');
 
-  
+  #
+  # /api/info/asseblies endpoint
+  #
+  $request = GET('/api/info/assemblies');
+  ok($response = request($request), 'GET request to /api/info/assemblies');
+  ok($response->is_success, 'Request successful');
+  $content = from_json($response->content);
+  is_deeply([ sort keys %{$content} ], [ sort keys %species_assemblies ], 'List of species');
+  foreach my $species (keys %{$content}) {
+    is_deeply($content->{$species}, $species_assemblies{$species}, "Assemblies for species $species");
+  }
 }
 
 done_testing();

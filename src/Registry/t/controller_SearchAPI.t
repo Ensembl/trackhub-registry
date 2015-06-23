@@ -18,7 +18,7 @@ use Registry::Indexer; # index a couple of sample documents
 
 SKIP: {
   skip "Cannot run tests: either elasticsearch is not running or there's no internet connection",
-    84 unless &Registry::Utils::es_running() and Registry::Utils::internet_connection_ok();
+    86 unless &Registry::Utils::es_running() and Registry::Utils::internet_connection_ok();
 
   note 'Preparing data for test (indexing users)';
   my $config = Registry->config()->{'Model::Search'};
@@ -81,14 +81,17 @@ SKIP: {
   # empty query, get all entries
   # default page and entries_per_page
   $request = POST('/api/search',
-		     'Content-type' => 'application/json',
-		     'Content'      => to_json({ query => '' }));
+		  'Content-type' => 'application/json',
+		  'Content'      => to_json({ query => '' }));
   ok($response = request($request), 'POST request to /api/search');
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
   is($content->{total_entries}, 17, 'Number of search results');
   is(scalar @{$content->{items}}, 5, 'Number of search results per page');
+  # search results shouldn't have neither metadata nor configuration
+  ok(!$content->{items}[0]{values}{data}, 'Search results have no metadata');
+  ok(!$content->{items}[0]{values}{configuration}, 'Search results have no configuration');
   is($content->{items}[1]{values}{hub}{longLabel}, 'Evidence summaries and provisional results for the new Ensembl Regulatory Build', 'Search result hub');
   is($content->{items}[3]{values}{assembly}{name}, 'MGSCv37', 'Search result assembly');
 

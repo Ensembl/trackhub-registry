@@ -425,7 +425,7 @@ SKIP: {
   #
   # should fail if URL is not correct
   my $URL = "http://";
-  $request = POST('/api/trackhub/create',
+  $request = POST('/api/trackhub/create?permissive=1',
   		  'Content-type' => 'application/json',
   		  'Content'      => to_json({ url => $URL }));
   $request->headers->header(user       => 'trackhub1');
@@ -461,7 +461,7 @@ SKIP: {
   like($content->{error}, qr/not supported/i, 'Correct error response');
   #
   # request creation with schema version parameter: should get 3 docs
-  $request = POST('/api/trackhub/create?version=v1.0',
+  $request = POST('/api/trackhub/create?version=v1.0&permissive=1',
   		  'Content-type' => 'application/json',
   		  'Content'      => to_json({ url => $URL }));
   $request->headers->header(user       => 'trackhub1');
@@ -497,7 +497,7 @@ SKIP: {
   #
   # test with other public hubs
   $URL = 'http://smithlab.usc.edu/trackdata/methylation';
-  $request = POST('/api/trackhub/create',
+  $request = POST('/api/trackhub/create?permissive=1',
   		  'Content-type' => 'application/json',
   		  'Content'      => to_json({ url => $URL, type => 'epigenomics' }));
   $request->headers->header(user       => 'trackhub1');

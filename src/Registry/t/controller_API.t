@@ -8,6 +8,8 @@ BEGIN {
   use lib "$Bin/../lib";
 }
 
+local $SIG{__WARN__} = sub {};
+
 use JSON;
 use HTTP::Headers;
 use HTTP::Request::Common qw/GET POST PUT DELETE/;

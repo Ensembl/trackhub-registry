@@ -162,9 +162,13 @@ sub trackhub_create :Path('/api/trackhub/create') Args(0) ActionClass('REST') {
   $c->go('ReturnError', 'custom', ["Invalid version specified, pattern is /^v\\d+\.\\d\$"])
     unless $version =~ /^v\d+\.\d$/;
   
+  # read param which prevent hubCheck running,
+  # this is hidden to the user 
+  my $permissive = $c->request->param('permissive');
+  
   # get the count of trackhubs to determine the ID of the doc to create
   my $current_max_id = $c->model('Search')->count_trackhubs()->{count};
-  $c->stash( id =>  $current_max_id?++$current_max_id:1, version => $version ); 
+  $c->stash( id =>  $current_max_id?++$current_max_id:1, version => $version, permissive => $permissive ); 
 }
 
 sub trackhub_create_PUT {
@@ -241,19 +245,18 @@ sub trackhub_create_POST {
   # read parameters, remote hub URL/type
   my $url = $c->req->data->{url};
   my $trackdb_type = $c->req->data->{type} || 'genomics'; # default to genomics type
-  $c->log->debug($trackdb_type);
 
   return $self->status_bad_request($c, message => "You must specify the remote trackhub URL")
     unless defined $url;
 
-  my ($id, $version) = ($c->stash->{id}, $c->stash->{version});
+  my ($id, $version, $permissive) = ($c->stash->{id}, $c->stash->{version}, $c->stash->{permissive});
   my $config = Registry->config()->{'Model::Search'};
   my ($location, $entity);
 
   my @indexed;
   if ($id) {
     try {
-      my $translator = Registry::TrackHub::Translator->new(version => $version);
+      my $translator = Registry::TrackHub::Translator->new(version => $version, permissive => $permissive);
 
       # assembly can be left undefined by the user
       # in this case, we get a list of translations of all different 

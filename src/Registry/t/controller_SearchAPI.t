@@ -11,8 +11,9 @@ BEGIN {
   use lib "$Bin/../lib";
 }
 
-use Catalyst::Test 'Registry';
+local $SIG{__WARN__} = sub {};
 
+use Catalyst::Test 'Registry';
 use Registry::Utils; # es_running, slurp_file
 use Registry::Indexer; # index a couple of sample documents
 
@@ -57,7 +58,7 @@ SKIP: {
 
   foreach my $hub (@public_hubs) {
     note sprintf "Submitting hub %s", $hub->{name};
-    $request = POST('/api/trackhub/create',
+    $request = POST('/api/trackhub/create?permissive=1',
 		    'Content-type' => 'application/json',
 		    'Content'      => to_json({ url => $hub->{url} }));
     $request->headers->header(user       => 'trackhub1');

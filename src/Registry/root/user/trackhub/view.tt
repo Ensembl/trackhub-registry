@@ -18,6 +18,14 @@
           <li class="list-group-item">Total number of tracks <span class="badge">[% tracks.total %]</small></li>
           <li class="list-group-item">Tracks linked to remote data <span class="badge">[% tracks.with_data.total %]</span></li>
 	</ul>
+	<br/><br/><br/><br/><br/><br/>
+      [% IF tracks.with_data.total_ko > 0 %]
+      <p class="lead">
+        [% tracks.with_data.total_ko %] / [% tracks.with_data.total %] tracks linked to remote data have problems.
+      </p>
+        [% IF tracks.with_data.total_ko > 10 %]
+        <p>Showing the first 10:</p>
+        [% END %]
       </div>
       <!-- Table -->
       <table class="table table-condensed table-hover table-striped">
@@ -32,6 +40,7 @@
 	<tbody>
 	[% i = 1 %]
         [% FOREACH t IN tracks.with_data.ko.keys.sort %]
+	  [% LAST IF i > 10; %]
 	  <tr>
 	    <td>[% i %]</td>
 	    <td>[% t %]</td>
@@ -42,6 +51,7 @@
 	[% END %]
 	</tbody>
       </table>
+      [% END %]
     </div>
   </div>
 </div>

@@ -9,7 +9,6 @@
 </div>
 
 <div class="page-header">
-  <h3>[% tracks.with_data.total_ko %]</h3>
   <span class="label label-primary">[% trackdb.doc.hub.shortLabel %]</span>
   <span class="label label-success">[% trackdb.doc.species.scientific_name %]</span>
   <span class="label label-info">[% trackdb.doc.assembly.name %]</span>
@@ -117,9 +116,12 @@
       <!-- Default panel contents -->
       <div class="panel-heading">Error Log</div>
       <div class="panel-body">
-        <p class="lead">
-	  <mark>[% tracks.with_data.total_ko %] / [% tracks.with_data.total %] tracks with data seem to have problems</mark>
+        <p>
+	  [% tracks.with_data.total_ko %] / [% tracks.with_data.total %] tracks linked to remote data have problems.
 	</p>
+	[% IF tracks.with_data.total_ko > 10 %]
+	<p>Showing the first 10:</p>
+	[% END %]
       </div>
       <!-- Table -->
       <table class="table table-condensed table-hover table-striped">
@@ -134,6 +136,7 @@
 	<tbody>
 	[% i = 1 %]
         [% FOREACH t IN tracks.with_data.ko.keys.sort %]
+	  [% LAST IF i > 10; %]
 	  <tr>
 	    <td>[% i %]</td>
 	    <td>[% t %]</td>

@@ -114,20 +114,20 @@ sub list_endpoints :Path('/api/trackdb/endpoints') Args(0) {
   $c->forward( $c->view('HTML') );
 }
 
-=head2 trackhub_list
+=head2 trackdb_list
 
 Return list of available documents for a given user, as document IDs 
 mapped to the URI of the resource which represents the document
 
-Action for /api/trackhub (GET), no arguments
+Action for /api/trackdb (GET), no arguments
 
 =cut
 
-sub trackhub_list :Path('/api/trackhub') Args(0) ActionClass('REST') { 
+sub trackdb_list :Path('/api/trackdb') Args(0) ActionClass('REST') { 
   my ($self, $c) = @_;  
 }
 
-sub trackhub_list_GET { 
+sub trackdb_list_GET { 
   my ($self, $c) = @_;
 
   # get all docs for the given user
@@ -139,22 +139,22 @@ sub trackhub_list_GET {
   my %trackhubs;
   foreach my $doc (@{$docs->{hits}{hits}}) {
     $trackhubs{$doc->{_id}} = 
-      $c->uri_for('/api/trackhub/' . $doc->{_id})->as_string;
+      $c->uri_for('/api/trackdb/' . $doc->{_id})->as_string;
   }
   $self->status_ok($c, entity => \%trackhubs);
 
   # $self->status_no_content($c);
 }
 
-=head2 trackhub_create
+=head2 trackdb_create
 
-Create new trackhub document
+Create new trackdb document
 
-Action for /api/trackhub/create (PUT,POST)
+Action for /api/trackdb/create (PUT,POST)
 
 =cut
 
-sub trackhub_create :Path('/api/trackhub/create') Args(0) ActionClass('REST') {
+sub trackdb_create :Path('/api/trackdb/create') Args(0) ActionClass('REST') {
   my ($self, $c) = @_;
 
   # get the version, if specified
@@ -172,7 +172,7 @@ sub trackhub_create :Path('/api/trackhub/create') Args(0) ActionClass('REST') {
   $c->stash( id =>  $current_max_id?++$current_max_id:1, version => $version, permissive => $permissive ); 
 }
 
-sub trackhub_create_PUT {
+sub trackdb_create_PUT {
   my ($self, $c) = @_;
   my $new_doc_data = $c->req->data;
 
@@ -233,11 +233,11 @@ sub trackhub_create_PUT {
   }
 
   $self->status_created( $c,
-			 location => $c->uri_for( '/api/trackhub/' . $id )->as_string,
+			 location => $c->uri_for( '/api/trackdb/' . $id )->as_string,
 			 entity   => $c->model('Search')->get_trackhub_by_id($id));
 }
 
-sub trackhub_create_POST {
+sub trackdb_create_POST {
   my ($self, $c) = @_;
   # if the client didn't supply any data, it didn't send a properly formed request
   return $self->status_bad_request($c, message => "You must provide data with the POST request")
@@ -311,7 +311,7 @@ sub trackhub_create_POST {
 	# record id of indexed doc so we can roll back in case of any failure
 	push @indexed, $id;
 
-	$location .= $c->uri_for( '/api/trackhub/' . $id )->as_string . ',';
+	$location .= $c->uri_for( '/api/trackdb/' . $id )->as_string . ',';
 	$entity->{$id} = $c->model('Search')->get_trackhub_by_id($id);
 
 	$id++;
@@ -364,13 +364,13 @@ sub _validate: Private {
   return;
 }
 
-=head2 trackhub 
+=head2 trackdb 
 
-Actions for /api/trackhub/:id (GET|POST|DELETE)
+Actions for /api/trackdb/:id (GET|POST|DELETE)
 
 =cut
 
-sub trackhub :Path('/api/trackhub') Args(1) ActionClass('REST') {
+sub trackdb :Path('/api/trackdb') Args(1) ActionClass('REST') {
   my ($self, $c, $doc_id) = @_;
 
   # if the doc with that ID doesn't exist, ES throws exception
@@ -379,7 +379,7 @@ sub trackhub :Path('/api/trackhub') Args(1) ActionClass('REST') {
   eval { $c->stash(trackhub => $c->model('Search')->get_trackhub_by_id($doc_id)); };
 }
 
-=head2 trackhub_GET
+=head2 trackdb_GET
 
 Return trackhub document content for a document
 with the specified ID
@@ -401,14 +401,14 @@ sub trackhub_GET {
   }
 }
 
-=head2 trackhub_POST
+=head2 trackdb_POST
 
 Update document content for a document
 with the specified ID
 
 =cut
 
-sub trackhub_POST {
+sub trackdb_POST {
   my ($self, $c, $doc_id) = @_;
   
   # cannot update the doc if:
@@ -503,13 +503,13 @@ sub trackhub_POST {
   
 }
 
-=head2 trackhub_DELETE
+=head2 trackdb_DELETE
 
 Delete a document with the specified ID
 
 =cut
 
-sub trackhub_DELETE {
+sub trackdb_DELETE {
   my ($self, $c, $doc_id) = @_;
 
   my $trackhub = $c->stash()->{'trackhub'};

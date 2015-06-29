@@ -96,17 +96,18 @@ List available endpoints
 
 =cut
 
-sub list_endpoints :Path('/api') Args(0) {
+sub list_endpoints :Path('/api/trackdb/endpoints') Args(0) {
   my ($self, $c) = @_;
 
   my @endpoints = 
     (
-     ['/api/trackhub', 'GET', 'Return the list of available docs (id => URI)'],
-     ['/api/trackhub/create', 'PUT', 'Create new trackhub document'],
-     ['/api/trackhub/create', 'POST', 'Create new trackhub document by converting assembly trackdbs from a remote public hub'],
-     ['/api/trackhub/:id', 'GET', 'Return content for a document with the specified ID'],
-     ['/api/trackhub/:id', 'POST', 'Update content for a document with the specified ID'],
-     ['/api/trackhub/:id', 'DELETE', 'Delete document with the specified ID']
+     ['/api/trackdb/endpoints', 'GET', 'Return the list of available trackdb endpoints'],
+     ['/api/trackdb', 'GET', 'Return the list of available trackdb docs (id => URI)'],
+     ['/api/trackdb/create', 'PUT', 'Create new trackdb document'],
+     ['/api/trackdb/create', 'POST', 'Create new trackdb documents by converting assembly trackdbs from a remote public hub'],
+     ['/api/trackdb/:id', 'GET', 'Return content for a trackdb document with the specified ID'],
+     ['/api/trackdb/:id', 'POST', 'Update content for a trackdb document with the specified ID'],
+     ['/api/trackdb/:id', 'DELETE', 'Delete trackdb document with the specified ID']
     );
   $c->stash( template  => 'endpoints.tt',
 	     endpoints => \@endpoints);

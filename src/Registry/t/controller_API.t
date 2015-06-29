@@ -46,12 +46,13 @@ SKIP: {
   #
   my @endpoints = 
     (
-     ['/api/trackhub', 'GET', 'Return the list of available docs'],
-     ['/api/trackhub/create', 'PUT', 'Create new trackhub document'],
-     ['/api/trackhub/create', 'POST', 'Create new trackhub document'],
-     ['/api/trackhub/1', 'GET', 'Return content for a document with the specified ID'],
-     ['/api/trackhub/1', 'POST', 'Update content for a document with the specified ID'],
-     ['/api/trackhub/1', 'DELETE', 'Delete document with the specified ID']
+     ['/api/trackdb/endpoints', 'GET', 'Return the list of available trackdb endpoints'],
+     ['/api/trackdb', 'GET', 'Return the list of available trackdb docs'],
+     ['/api/trackdb/create', 'PUT', 'Create new trackdb document'],
+     ['/api/trackdb/create', 'POST', 'Create new trackdb documents'],
+     ['/api/trackdb/1', 'GET', 'Return content for a trackdb document with the specified ID'],
+     ['/api/trackdb/1', 'POST', 'Update content for a trackdb document with the specified ID'],
+     ['/api/trackdb/1', 'DELETE', 'Delete trackdb document with the specified ID']
     );
 
   #
@@ -67,12 +68,12 @@ SKIP: {
   #
   # Authenticated requests (using API-key)
   #
-  # /api (GET): returns the list of endpoints (name/method/description)
+  # /api/trackdb/endpoints (GET): returns the list of endpoints (name/method/description)
   #
-  $request = GET('/api');
+  $request = GET('/api/trackdb/endpoints');
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'GET request to /api');
+  ok($response = request($request), 'GET request to /api/trackdb/endpoints');
   ok($response->is_success, 'Request successful 2xx');
   is($response->content_type, 'text/html', 'HTML Content-type');
   map { like($response->content, qr/$_->[2]/, sprintf "Contains endpoint %s description", $_->[0]) } @endpoints;

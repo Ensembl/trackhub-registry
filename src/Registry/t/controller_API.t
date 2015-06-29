@@ -21,7 +21,7 @@ use Registry::Indexer; # index a couple of sample documents
 
 SKIP: {
   skip "Launch an elasticsearch instance for the tests to run fully",
-    206 unless &Registry::Utils::es_running();
+    212 unless &Registry::Utils::es_running();
 
   # index test data
   note 'Preparing data for test (indexing sample documents)';
@@ -522,6 +522,24 @@ SKIP: {
       is($content->{$id}{configuration}{Carmona_Dog_2014}{members}{AMRCarmona_Dog_2014}{members}{CarmonaDog2014_DogMDCKAMR}{bigDataUrl}, 'http://smithlab.usc.edu/methbase/data/Carmona-Dog-2014/Dog_MDCK/tracks_canFam3/Dog_MDCK.amr.bb', 'Correct view member bigDataUrl');
     }
   }
+
+  # Logout 
+  $request = GET('/api/logout');
+  $request->headers->header(user       => 'trackhub1');
+  $request->headers->header(auth_token => $auth_token);
+  ok($response = request($request), 'GET request to /api/logout');
+  ok($response->is_success, 'Request successful 2xx');
+  is($response->content_type, 'application/json', 'JSON content type');
+  $content = from_json($response->content);
+  like($content->{message}, qr/logged out/, 'Logged out');
+
+  # any other following request should fail
+  $request = GET('/api/trackhub/1');
+  $request->headers->header(user       => 'trackhub1');
+  $request->headers->header(auth_token => $auth_token);
+  ok($response = request($request), 'GET request to /api/trackhub/:id');
+  is($response->code, 401, 'Request unsuccessful 401');
+
 }
 
 done_testing();

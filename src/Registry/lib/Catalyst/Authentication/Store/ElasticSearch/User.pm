@@ -135,6 +135,23 @@ sub get {
   return;
 }
 
+sub delete {
+  my ($self, $field) = @_;
+
+  return unless defined $self->_user;
+
+  delete $self->_user->{_source}{$field};
+
+  # reindex/refresh user to persist change
+  $self->_es->index(index => $self->_index,
+		    type  => $self->_type,
+		    id    => $self->id,
+		    body  => $self->_user->{_source});
+  $self->_es->indices->refresh(index => $self->_index);
+
+  return;
+}
+
 sub get_object {
   my ($self, $force) = @_;
 

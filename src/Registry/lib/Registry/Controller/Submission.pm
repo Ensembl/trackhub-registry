@@ -1,4 +1,4 @@
-package Registry::Controller::API;
+package Registry::Controller::Submission;
 use Moose;
 use namespace::autoclean;
 

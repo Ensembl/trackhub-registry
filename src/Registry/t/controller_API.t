@@ -79,17 +79,17 @@ SKIP: {
   map { like($response->content, qr/$_->[2]/, sprintf "Contains endpoint %s description", $_->[0]) } @endpoints;
   
   #
-  # /api/trackhub (GET): get list of documents with their URIs
+  # /api/trackdb (GET): get list of documents with their URIs
   #
-  $request = GET('/api/trackhub');
+  $request = GET('/api/trackdb');
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'GET request to /api/trackhub');
+  ok($response = request($request), 'GET request to /api/trackdb');
   ok($response->is_success, 'Request successful 2xx');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
   is(keys %{$content}, 2, "Number of trackhub1 docs");
-  map { like($content->{$_}, qr/api\/trackhub\/$_/, "Contains correct resource (document) URI") } 1 .. 2;
+  map { like($content->{$_}, qr/api\/trackdb\/$_/, "Contains correct resource (document) URI") } 1 .. 2;
   #
   # a different user should get a different set of documents
   $request = GET('/api/login');
@@ -98,15 +98,15 @@ SKIP: {
   $content = from_json($response->content);
   ok(exists $content->{auth_token}, 'Logged in');
   $auth_token = $content->{auth_token};
-  $request = GET('/api/trackhub');
+  $request = GET('/api/trackdb');
   $request->headers->header(user       => 'trackhub2');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'GET request to /api/trackhub');
+  ok($response = request($request), 'GET request to /api/trackdb');
   ok($response->is_success, 'Request successful 2xx');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
   is(keys %{$content}, 1, "Number of trackhub2 docs");
-  like($content->{3}, qr/api\/trackhub\/3/, "Contains correct resource (document) URI");
+  like($content->{3}, qr/api\/trackdb\/3/, "Contains correct resource (document) URI");
   #
   # and another user again
   $request = GET('/api/login');
@@ -115,18 +115,18 @@ SKIP: {
   $content = from_json($response->content);
   ok(exists $content->{auth_token}, 'Logged in');
   $auth_token = $content->{auth_token};
-  $request = GET('/api/trackhub');
+  $request = GET('/api/trackdb');
   $request->headers->header(user       => 'trackhub3');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'GET request to /api/trackhub');
+  ok($response = request($request), 'GET request to /api/trackdb');
   ok($response->is_success, 'Request successful 2xx');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
   is(keys %{$content}, 1, "Number of trackhub3 docs");
-  like($content->{4}, qr/api\/trackhub\/4/, "Contains correct resource (document) URI");
+  like($content->{4}, qr/api\/trackdb\/4/, "Contains correct resource (document) URI");
 
   #
-  # /api/trackhub/:id (GET)
+  # /api/trackdb/:id (GET)
   #
   # go back to user trackhub1 authentication
   $request = GET('/api/login');
@@ -137,84 +137,84 @@ SKIP: {
   $auth_token = $content->{auth_token};
   #
   # request correct document
-  $request = GET('/api/trackhub/1');
+  $request = GET('/api/trackdb/1');
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'GET Request to /api/trackhub/1');
+  ok($response = request($request), 'GET Request to /api/trackdb/1');
   ok($response->is_success, 'Request successful 2xx');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
-  is(scalar @{$content->{data}}, 1, 'One trackhub');
-  is($content->{data}[0]{id}, 'bpDnaseRegionsC0010K46DNaseEBI', 'Trackhub name');
-  is($content->{configuration}{bpDnaseRegionsC0010K46DNaseEBI}{bigDataUrl}, 'http://ftp.ebi.ac.uk/pub/databases/blueprint/data/homo_sapiens/Peripheral_blood/C0010K/Monocytes/DNase-Hypersensitivity//C0010K46.DNase.hotspot_v3_20130415.bb', 'Trackhub url');
+  is(scalar @{$content->{data}}, 1, 'One trackdb');
+  is($content->{data}[0]{id}, 'bpDnaseRegionsC0010K46DNaseEBI', 'Trackdb name');
+  is($content->{configuration}{bpDnaseRegionsC0010K46DNaseEBI}{bigDataUrl}, 'http://ftp.ebi.ac.uk/pub/databases/blueprint/data/homo_sapiens/Peripheral_blood/C0010K/Monocytes/DNase-Hypersensitivity//C0010K46.DNase.hotspot_v3_20130415.bb', 'Trackdb url');
   #
   # request incorrect document (belongs to another provider)
-  $request = GET('/api/trackhub/3');
+  $request = GET('/api/trackdb/3');
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'GET request to /api/trackhub/3');
+  ok($response = request($request), 'GET request to /api/trackdb/3');
   is($response->code, 400, 'Request unsuccessful 400');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
   like($content->{error}, qr/Cannot fetch/, 'Correct error response');
   #
   # request incorrect document (does not exist)
-  $request = GET('/api/trackhub/5');
+  $request = GET('/api/trackdb/5');
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'GET request to /api/trackhub/3');
+  ok($response = request($request), 'GET request to /api/trackdb/3');
   is($response->code, 404, 'Request unsuccessful 404');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
   like($content->{error}, qr/Could not find/, 'Correct error response');
 
   #
-  # /api/trackhub/:id (POST) update document
+  # /api/trackdb/:id (POST) update document
   #
   # request incorrect document (belongs to another provider)
-  $request = POST('/api/trackhub/3',
+  $request = POST('/api/trackdb/3',
   		  'Content-type' => 'application/json');
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'POST request to /api/trackhub/3');
+  ok($response = request($request), 'POST request to /api/trackdb/3');
   is($response->code, 400, 'Request unsuccessful 400');
   $content = from_json($response->content);
   like($content->{error}, qr/does not belong/, 'Correct error response');
   #
   # request incorrect document (does not exist)
-  $request = POST('/api/trackhub/5',
+  $request = POST('/api/trackdb/5',
   		  'Content-type' => 'application/json');
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'POST request to /api/trackhub/3');
+  ok($response = request($request), 'POST request to /api/trackdb/3');
   is($response->code, 400, 'Request unsuccessful 400');
   $content = from_json($response->content);
   like($content->{error}, qr/does not exist/, 'Correct error response');
   
   # request to update a doc but do not supply data
-  $request = POST('/api/trackhub/1',
+  $request = POST('/api/trackdb/1',
   		 'Content-type' => 'application/json');
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'POST request to /api/trackhub/1');
+  ok($response = request($request), 'POST request to /api/trackdb/1');
   is($response->code, 400, 'Request unsuccessful 400');
   $content = from_json($response->content);
   like($content->{error}, qr/You must provide a doc/, 'Correct error response');
 
   # request to update doc with invalid content (non v1.0 compliant)
-  $request = POST('/api/trackhub/1',
+  $request = POST('/api/trackdb/1',
   		  'Content-type' => 'application/json',
   		  'Content'      => to_json({ test => 'test' }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'POST request to /api/trackhub/1');
+  ok($response = request($request), 'POST request to /api/trackdb/1');
   is($response->code, 400, 'Request unsuccessful 400');
   # the validator raises an exception with the error message, check
   $content = from_json($response->content);
   like($content->{error}, qr/Failed/, 'Correct error response');
 
   # update doc1
-  $request = POST('/api/trackhub/1',
+  $request = POST('/api/trackdb/1',
   		  'Content-type' => 'application/json',
   		  'Content'      => to_json({
 					     type    => 'epigenomics',
@@ -226,7 +226,7 @@ SKIP: {
 					     configuration => { test => { shortLabel => 'test' } } }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'POST request to /api/trackhub/1');
+  ok($response = request($request), 'POST request to /api/trackdb/1');
   ok($response->is_success, 'Doc update request successful');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
@@ -234,40 +234,40 @@ SKIP: {
   is($content->{owner}, 'trackhub1', 'Correct owner');
 
   #
-  # /api/trackhub/:id (DELETE) delete document
+  # /api/trackdb/:id (DELETE) delete document
   #
   # request incorrect document (belongs to another provider)
-  $request = DELETE('/api/trackhub/3');
+  $request = DELETE('/api/trackdb/3');
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'DELETE request to /api/trackhub/3');
+  ok($response = request($request), 'DELETE request to /api/trackdb/3');
   is($response->code, 400, 'Request unsuccessful 400');
   $content = from_json($response->content);
   like($content->{error}, qr/does not belong/, 'Correct error response');
   #
   # request incorrect document (does not exist)
-  $request = DELETE('/api/trackhub/5');
+  $request = DELETE('/api/trackdb/5');
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'DELETE request to /api/trackhub/5');
+  ok($response = request($request), 'DELETE request to /api/trackdb/5');
   is($response->code, 404, 'Request unsuccessful 404');
   $content = from_json($response->content);
   like($content->{error}, qr/Could not find/, 'Correct error response');
 
   # delete doc1
-  $request = DELETE('/api/trackhub/1');
+  $request = DELETE('/api/trackdb/1');
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'DELETE request to /api/trackhub/1');
+  ok($response = request($request), 'DELETE request to /api/trackdb/1');
   ok($response->is_success, 'Request successful 2xx');
   $content = from_json($response->content);
   is($content->{species}{tax_id}, 9606, 'Content of deleted resource');
 
   # request for deleted doc should fail
-  $request = GET('/api/trackhub/1');
+  $request = GET('/api/trackdb/1');
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'GET request to /api/trackhub/1');
+  ok($response = request($request), 'GET request to /api/trackdb/1');
   is($response->code, 404, 'Request unsuccessful 404');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
@@ -289,25 +289,25 @@ SKIP: {
   $auth_token = $content->{auth_token};
 
   #
-  # /api/trackhub/create (PUT): create new document
+  # /api/trackdb/create (PUT): create new document
   #
   # request to create a doc but do not supply data
-  $request = PUT('/api/trackhub/create',
+  $request = PUT('/api/trackdb/create',
   		 'Content-type' => 'application/json');
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'PUT request to /api/trackhub/create');
+  ok($response = request($request), 'PUT request to /api/trackdb/create');
   is($response->code, 400, 'Request unsuccessful 400');
   $content = from_json($response->content);
   like($content->{error}, qr/You must provide a doc/, 'Correct error response');
   #
   # request to create a doc with invalid data (non v1.0 compliant)
-  $request = PUT('/api/trackhub/create',
+  $request = PUT('/api/trackdb/create',
   		 'Content-type' => 'application/json',
   		 'Content'      => to_json({ test => 'test' }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'PUT request to /api/trackhub/create');
+  ok($response = request($request), 'PUT request to /api/trackdb/create');
   is($response->code, 400, 'Request unsuccessful 400');
   $content = from_json($response->content);
   # validator raises an exception with error message
@@ -318,120 +318,120 @@ SKIP: {
 
   #
   # create first doc
-  $request = PUT('/api/trackhub/create',
+  $request = PUT('/api/trackdb/create',
   		 'Content-type' => 'application/json',
   		 'Content'      => &Registry::Utils::slurp_file($docs->[2]{file}));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'PUT request to /api/trackhub/create');
+  ok($response = request($request), 'PUT request to /api/trackdb/create');
   ok($response->is_success, 'Doc create request successful');
   is($response->code, 201, 'Request successful 201');
   is($response->content_type, 'application/json', 'JSON content type');
-  like($response->header('location'), qr/\/api\/trackhub\/1/, 'Correct URI for created doc');
+  like($response->header('location'), qr/\/api\/trackdb\/1/, 'Correct URI for created doc');
   $content = from_json($response->content);
   is($content->{data}[0]{id}, 'bpDnaseRegionsC0010K46DNaseEBI', 'Correct content');
   #
   # attempt to submit trackdb with the same hub/assembly should fail
-  $request = PUT('/api/trackhub/create',
+  $request = PUT('/api/trackdb/create',
   		 'Content-type' => 'application/json',
   		 'Content'      => &Registry::Utils::slurp_file($docs->[2]{file}));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'PUT request to /api/trackhub/create');
+  ok($response = request($request), 'PUT request to /api/trackdb/create');
   is($response->code, 400, 'Request unsuccessful 400');
   $content = from_json($response->content);
   # validator raises an exception with error message
   like($content->{error}, qr/same hub\/assembly/, 'Correct error response');
   #
   # create second doc
-  $request = PUT('/api/trackhub/create',
+  $request = PUT('/api/trackdb/create',
   		 'Content-type' => 'application/json',
   		 'Content'      => &Registry::Utils::slurp_file($docs->[3]{file}));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'PUT request to /api/trackhub/create');
+  ok($response = request($request), 'PUT request to /api/trackdb/create');
   ok($response->is_success, 'Doc create request successful');
   is($response->code, 201, 'Request successful 201');
   is($response->content_type, 'application/json', 'JSON content type');
-  like($response->header('location'), qr/\/api\/trackhub\/2/, 'Correct URI for created doc');
+  like($response->header('location'), qr/\/api\/trackdb\/2/, 'Correct URI for created doc');
   $content = from_json($response->content);
   is(scalar $content->{configuration}{bp}{members}{region}{members}{'bpDnaseRegionsBP_BP_DG-75_d01DNaseHOTSPOT_peakEMBL-EBI'}{shortLabel}, 'DG-75.DNase.DG-75', 'Correct content');
   #
   # POST request should fail: the endpoint is meant to translate
   # the assembly trackdb files of a remote public trackhub.
   # Must specify URL/type
-  $request = POST('/api/trackhub/create',
+  $request = POST('/api/trackdb/create',
   		  'Content-type' => 'application/json',
   		  'Content'      => &Registry::Utils::slurp_file($docs->[2]{file}));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'POST request to /api/trackhub/create');
+  ok($response = request($request), 'POST request to /api/trackdb/create');
   ok(!$response->is_success, 'Doc create POST request unsuccessful');
   is($response->code, 400, 'POST request status code');
   #
-  # should now have two documents which we can access via the /api/trackhub endpoint
-  $request = GET('/api/trackhub');
+  # should now have two documents which we can access via the /api/trackdb endpoint
+  $request = GET('/api/trackdb');
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'GET request to /api/trackhub');
+  ok($response = request($request), 'GET request to /api/trackdb');
   ok($response->is_success, 'Request successful 2xx');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
-  map { like($content->{$_}, qr/api\/trackhub\/$_/, "Contains correct resource (document) URI") } 1 .. 2;
+  map { like($content->{$_}, qr/api\/trackdb\/$_/, "Contains correct resource (document) URI") } 1 .. 2;
   #
   # the owner of these two documents should correspond to the creator
-  $request = GET('/api/trackhub/1');
+  $request = GET('/api/trackdb/1');
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'GET Request to /api/trackhub/1');
+  ok($response = request($request), 'GET Request to /api/trackdb/1');
   ok($response->is_success, 'Request successful 2xx');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
-  is($content->{owner}, 'trackhub1', 'Correct trackhub owner');
+  is($content->{owner}, 'trackhub1', 'Correct trackdb owner');
 
-  $request = GET('/api/trackhub/2');
+  $request = GET('/api/trackdb/2');
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'GET Request to /api/trackhub/2');
+  ok($response = request($request), 'GET Request to /api/trackdb/2');
   ok($response->is_success, 'Request successful 2xx');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
-  is($content->{owner}, 'trackhub1', 'Correct trackhub owner');
+  is($content->{owner}, 'trackhub1', 'Correct trackdb owner');
 
   #
-  # /api/trackhub/create (POST): create new document as a direct
+  # /api/trackdb/create (POST): create new document as a direct
   # translation of an assembly trackdb file of a remote public
   # trackhub
   #
   # should fail if no data is provided
-  $request = POST('/api/trackhub/create',
+  $request = POST('/api/trackdb/create',
   		  'Content-type' => 'application/json');
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'POST request to /api/trackhub/create (no data)');
+  ok($response = request($request), 'POST request to /api/trackdb/create (no data)');
   is($response->code, 400, 'Request unsuccessful 400');
   $content = from_json($response->content);
   like($content->{error}, qr/You must provide data/, 'Correct error response');
   #
   # should fail if no URL is given
-  $request = POST('/api/trackhub/create',
+  $request = POST('/api/trackdb/create',
   		  'Content-type' => 'application/json',
   		  'Content'      => to_json({ 'dummy' => 1 }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'POST request to /api/trackhub/create (no URL)');
+  ok($response = request($request), 'POST request to /api/trackdb/create (no URL)');
   is($response->code, 400, 'Request unsuccessful 400');
   $content = from_json($response->content);
   like($content->{error}, qr/You must specify.*?URL/i, 'Correct error response');
   #
   # should fail if URL is not correct
   my $URL = "http://";
-  $request = POST('/api/trackhub/create?permissive=1',
+  $request = POST('/api/trackdb/create?permissive=1',
   		  'Content-type' => 'application/json',
   		  'Content'      => to_json({ url => $URL }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'POST request to /api/trackhub/create (incorrect URL)');
+  ok($response = request($request), 'POST request to /api/trackdb/create (incorrect URL)');
   is($response->code, 400, 'Request unsuccessful 400');
   $content = from_json($response->content);
   like($content->{error}, qr/check the source/i, 'Correct error response');
@@ -440,34 +440,34 @@ SKIP: {
   $URL = "http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants";
   #
   # should fail if wrong schema version is specified
-  $request = POST('/api/trackhub/create?version=dummy',
+  $request = POST('/api/trackdb/create?version=dummy',
   		  'Content-type' => 'application/json',
   		  'Content'      => to_json({ url => $URL }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'POST request to /api/trackhub/create?version=dummy (wrong version)');
+  ok($response = request($request), 'POST request to /api/trackdb/create?version=dummy (wrong version)');
   is($response->code, 400, 'Request unsuccessful');  
   $content = from_json($response->content);
   like($content->{error}, qr/invalid version/i, 'Correct error response');
   #
   # should fail if unsupported schema version is specified
-  $request = POST('/api/trackhub/create?version=v5.0',
+  $request = POST('/api/trackdb/create?version=v5.0',
   		  'Content-type' => 'application/json',
   		  'Content'      => to_json({ url => $URL }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'POST request to /api/trackhub/create?version=v5.0 (unsupported version)');
+  ok($response = request($request), 'POST request to /api/trackdb/create?version=v5.0 (unsupported version)');
   is($response->code, 400, 'Request unsuccessful');  
   $content = from_json($response->content);
   like($content->{error}, qr/not supported/i, 'Correct error response');
   #
   # request creation with schema version parameter: should get 3 docs
-  $request = POST('/api/trackhub/create?version=v1.0&permissive=1',
+  $request = POST('/api/trackdb/create?version=v1.0&permissive=1',
   		  'Content-type' => 'application/json',
   		  'Content'      => to_json({ url => $URL }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'POST request to /api/trackhub/create');
+  ok($response = request($request), 'POST request to /api/trackdb/create');
   ok($response->is_success, 'Request successful 2xx');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
@@ -486,24 +486,24 @@ SKIP: {
   #
   # attempt to submit track collections with the same hub/assembly as
   # that of another stored collection should fail
-  $request = POST('/api/trackhub/create',
+  $request = POST('/api/trackdb/create',
   		  'Content-type' => 'application/json',
   		  'Content'      => to_json({ url => $URL }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'POST request to /api/trackhub/create');
+  ok($response = request($request), 'POST request to /api/trackdb/create');
   is($response->code, 400, 'Request unsuccessful');  
   $content = from_json($response->content);
   like($content->{error}, qr/same hub\/assembly/i, 'Correct error response');
   #
   # test with other public hubs
   $URL = 'http://smithlab.usc.edu/trackdata/methylation';
-  $request = POST('/api/trackhub/create?permissive=1',
+  $request = POST('/api/trackdb/create?permissive=1',
   		  'Content-type' => 'application/json',
   		  'Content'      => to_json({ url => $URL, type => 'epigenomics' }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), "POST request to /api/trackhub/create?version=v1.0");
+  ok($response = request($request), "POST request to /api/trackdb/create?version=v1.0");
   ok($response->is_success, 'Request successful 2xx');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
@@ -535,10 +535,10 @@ SKIP: {
   like($content->{message}, qr/logged out/, 'Logged out');
 
   # any other following request should fail
-  $request = GET('/api/trackhub/1');
+  $request = GET('/api/trackdb/1');
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'GET request to /api/trackhub/:id');
+  ok($response = request($request), 'GET request to /api/trackdb/:id');
   is($response->code, 401, 'Request unsuccessful 401');
 
 }

@@ -386,7 +386,7 @@ with the specified ID
 
 =cut
 
-sub trackhub_GET {
+sub trackdb_GET {
   my ($self, $c, $doc_id) = @_;
 
   my $trackhub = $c->stash()->{trackhub};

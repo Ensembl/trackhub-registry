@@ -587,6 +587,21 @@ sub error_HEAD { }
 sub error_OPTIONS { }
 
 
+=head2 logout
+
+=cut 
+
+sub logout :Path('/api/logout') Args(0) ActionClass('REST') {
+}
+
+sub logout_GET {
+  my ($self, $c) = @_;
+
+  $c->user->delete('auth_key');
+
+  $self->status_ok($c, entity => { message => 'Successfully logged out' });
+}
+
 __PACKAGE__->meta->make_immutable;
 
 1;

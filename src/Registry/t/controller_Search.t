@@ -95,12 +95,12 @@ SKIP: {
 
   foreach my $hub (keys %public_hubs) {
     note "Submitting hub $hub";
-    my $request = POST('/api/trackhub/create',
+    my $request = POST('/api/trackdb/create?permissive=1',
 		       'Content-type' => 'application/json',
 		       'Content'      => to_json({ url => $public_hubs{$hub} }));
     $request->headers->header(user       => 'trackhub1');
     $request->headers->header(auth_token => $auth_token);
-    ok($response = request($request), 'POST request to /api/trackhub/create');
+    ok($response = request($request), 'POST request to /api/trackdb/create');
     ok($response->is_success, 'Request successful 2xx');
     is($response->content_type, 'application/json', 'JSON content type');
   }

@@ -21,7 +21,7 @@ use Registry::Indexer; # index a couple of sample documents
 
 SKIP: {
   skip "Launch an elasticsearch instance for the tests to run fully",
-    212 unless &Registry::Utils::es_running();
+    203 unless &Registry::Utils::es_running();
 
   # index test data
   note 'Preparing data for test (indexing sample documents)';
@@ -41,21 +41,6 @@ SKIP: {
   $indexer->index_users();
 
   #
-  # Requests with no authentication should fail.
-  # Should log in first
-  #
-  my @endpoints = 
-    (
-     ['/api/trackdb/endpoints', 'GET', 'Return the list of available trackdb endpoints'],
-     ['/api/trackdb', 'GET', 'Return the list of available trackdb docs'],
-     ['/api/trackdb/create', 'PUT', 'Create new trackdb document'],
-     ['/api/trackdb/create', 'POST', 'Create new trackdb documents'],
-     ['/api/trackdb/1', 'GET', 'Return content for a trackdb document with the specified ID'],
-     ['/api/trackdb/1', 'POST', 'Update content for a trackdb document with the specified ID'],
-     ['/api/trackdb/1', 'DELETE', 'Delete trackdb document with the specified ID']
-    );
-
-  #
   # Authenticate
   #
   my $request = GET('/api/login');
@@ -64,19 +49,6 @@ SKIP: {
   my $content = from_json($response->content);
   ok(exists $content->{auth_token}, 'Logged in');
   my $auth_token = $content->{auth_token};
-
-  #
-  # Authenticated requests (using API-key)
-  #
-  # /api/trackdb/endpoints (GET): returns the list of endpoints (name/method/description)
-  #
-  $request = GET('/api/trackdb/endpoints');
-  $request->headers->header(user       => 'trackhub1');
-  $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'GET request to /api/trackdb/endpoints');
-  ok($response->is_success, 'Request successful 2xx');
-  is($response->content_type, 'text/html', 'HTML Content-type');
-  map { like($response->content, qr/$_->[2]/, sprintf "Contains endpoint %s description", $_->[0]) } @endpoints;
   
   #
   # /api/trackdb (GET): get list of documents with their URIs

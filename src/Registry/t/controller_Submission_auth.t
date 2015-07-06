@@ -19,7 +19,7 @@ use Registry::Indexer; # index a couple of sample documents
 
 SKIP: {
   skip "Launch an elasticsearch instance for the tests to run fully",
-    97 unless &Registry::Utils::es_running();
+    113 unless &Registry::Utils::es_running();
 
   # index test data
   note 'Preparing data for test (indexing sample documents)';
@@ -151,7 +151,7 @@ SKIP: {
       ok($response->is_success, 'Request successful 2xx');
     } else { # POST/PUT
       is($response->code, 400, 'Request unsuccessful 400');
-      like($content->{error}, qr/You must provide a doc/, 'Correct error response');
+      like($content->{error}, qr/You must provide/, 'Correct error response');
     } 
   }
 

@@ -90,30 +90,6 @@ the begin method.
 #   $c->authenticate();
 # }
 
-=head2 list_endpoints
-
-List available endpoints
-
-=cut
-
-sub list_endpoints :Path('/api/trackdb/endpoints') Args(0) {
-  my ($self, $c) = @_;
-
-  my @endpoints = 
-    (
-     ['/api/trackdb/endpoints', 'GET', 'Return the list of available trackdb endpoints'],
-     ['/api/trackdb', 'GET', 'Return the list of available trackdb docs (id => URI)'],
-     ['/api/trackdb/create', 'PUT', 'Create new trackdb document'],
-     ['/api/trackdb/create', 'POST', 'Create new trackdb documents by converting assembly trackdbs from a remote public hub'],
-     ['/api/trackdb/:id', 'GET', 'Return content for a trackdb document with the specified ID'],
-     ['/api/trackdb/:id', 'POST', 'Update content for a trackdb document with the specified ID'],
-     ['/api/trackdb/:id', 'DELETE', 'Delete trackdb document with the specified ID']
-    );
-  $c->stash( template  => 'endpoints.tt',
-	     endpoints => \@endpoints);
-  $c->forward( $c->view('HTML') );
-}
-
 =head2 trackdb_list
 
 Return list of available documents for a given user, as document IDs 

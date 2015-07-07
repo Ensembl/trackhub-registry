@@ -493,29 +493,30 @@ SKIP: {
   ok($response->is_success, 'Request successful 2xx');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
-  is(scalar keys %{$content}, 3, 'Number of hubs');
-  ok($content->{Blueprint_Hub}, 'Contains Blueprint fake hub');
-  is($content->{Blueprint_Hub}{longLabel}, 'Blueprint Epigenomics Data Hub', 'Hub long label');
-  is(scalar @{$content->{Blueprint_Hub}{trackdbs}}, 2, 'Number of trackDbs');
-  is($content->{Blueprint_Hub}{trackdbs}[0]{species}, 9606, 'trackDb species');
-  like($content->{Blueprint_Hub}{trackdbs}[0]{assembly}, qr/GCA_000001405/, 'trackDb assembly');
-  like($content->{Blueprint_Hub}{trackdbs}[0]{uri}, qr/api\/trackdb/, 'trackDb uri');
-  is($content->{Blueprint_Hub}{trackdbs}[1]{species}, 9606, 'trackDb species');
-  like($content->{Blueprint_Hub}{trackdbs}[1]{assembly}, qr/GCA_000001405/, 'trackDb assembly');
-  like($content->{Blueprint_Hub}{trackdbs}[1]{uri}, qr/api\/trackdb/, 'trackDb uri');
-  
-  ok($content->{cshl2013}, 'Contains Plants hub');
-  is($content->{cshl2013}{shortLabel}, 'Plants', 'Hub short label');
-  is(scalar @{$content->{cshl2013}{trackdbs}}, 3, 'Number of trackDbs');
-  foreach my $trackdb (@{$content->{cshl2013}{trackdbs}}) {
-    ok(($trackdb->{species} == 3702) || ($trackdb->{species} == 3711) || ($trackdb->{species} == 3988), 'trackDb species');
-    ok(($trackdb->{assembly} eq 'GCA_000151685.2') || ($trackdb->{assembly} eq 'GCA_000309985.1') || ($trackdb->{assembly} eq 'GCA_000001735.1'), 'trackDb assembly');
-    like($trackdb->{uri}, qr/api\/trackdb/, 'trackDb uri');
+  is(scalar keys @{$content}, 3, 'Number of hubs');
+  foreach my $hub (@{$content}) {
+    if ($hub->{name} eq 'Blueprint_Hub') {
+      is($hub->{longLabel}, 'Blueprint Epigenomics Data Hub', 'Hub long label');
+      is(scalar @{$hub->{trackdbs}}, 2, 'Number of trackDbs');
+      is($hub->{trackdbs}[0]{species}, 9606, 'trackDb species');
+      like($hub->{trackdbs}[0]{assembly}, qr/GCA_000001405/, 'trackDb assembly');
+      like($hub->{trackdbs}[0]{uri}, qr/api\/trackdb/, 'trackDb uri');
+      is($hub->{trackdbs}[1]{species}, 9606, 'trackDb species');
+      like($hub->{trackdbs}[1]{assembly}, qr/GCA_000001405/, 'trackDb assembly');
+      like($hub->{trackdbs}[1]{uri}, qr/api\/trackdb/, 'trackDb uri');
+    } elsif ($hub->{name} eq 'cshl2013') {
+      is($hub->{shortLabel}, 'Plants', 'Hub short label');
+      is(scalar @{$hub->{trackdbs}}, 3, 'Number of trackDbs');
+      foreach my $trackdb (@{$hub->{trackdbs}}) {
+	ok(($trackdb->{species} == 3702) || ($trackdb->{species} == 3711) || ($trackdb->{species} == 3988), 'trackDb species');
+	ok(($trackdb->{assembly} eq 'GCA_000151685.2') || ($trackdb->{assembly} eq 'GCA_000309985.1') || ($trackdb->{assembly} eq 'GCA_000001735.1'), 'trackDb assembly');
+	like($trackdb->{uri}, qr/api\/trackdb/, 'trackDb uri');
+      }
+    } elsif ($hub->{name} eq 'Smith Lab Public Hub') {
+      is($hub->{shortLabel}, 'DNA Methylation', 'Hub short label');
+      is(scalar @{$hub->{trackdbs}}, 8, 'Number of trackDbs');
+    }
   }
-  
-  ok($content->{'Smith Lab Public Hub'}, 'Contains Methylation hub');
-  is($content->{'Smith Lab Public Hub'}{shortLabel}, 'DNA Methylation', 'Hub short label');
-  is(scalar @{$content->{'Smith Lab Public Hub'}{trackdbs}}, 8, 'Number of trackDbs');
 
   # Logout 
   $request = GET('/api/logout');

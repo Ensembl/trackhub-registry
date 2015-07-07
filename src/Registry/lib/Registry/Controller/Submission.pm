@@ -153,8 +153,9 @@ sub trackhub_list_GET {
        uri      => $c->uri_for('/api/trackdb/' . $trackdb->{_id})->as_string
       };
   }
-  
-  $self->status_ok($c, entity => $trackhubs);
+
+  my @trackhubs = values %{$trackhubs};
+  $self->status_ok($c, entity => \@trackhubs);
 }
 
 

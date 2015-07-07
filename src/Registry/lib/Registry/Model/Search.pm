@@ -85,9 +85,39 @@ sub get_trackhub_by_id {
 
   return $self->_es->get(index => $config->{index},           
 			 type  => $config->{type}{trackhub},  
-			 id    => $id) unless $orig;
+			 id    => $id);
   
 }
+
+sub get_trackdbs {
+  my ($self, %args) = @_;
+
+  # default: return all documents
+  $args{query} = { match_all => {} }
+    unless exists $args{query};
+
+  my $config = Registry->config()->{'Model::Search'};
+  $args{index} = $config->{index};
+  $args{type}  = $config->{type}{trackhub};
+
+  # this is what Search::Elasticsearch expect 
+  $args{body} = { query => $args{query} };
+  delete $args{query};
+
+  # use scan & scroll API
+  # see https://metacpan.org/pod/Search::Elasticsearch::Scroll
+  # use scan search type to disable sorting for efficient scrolling
+  $args{search_type} = 'scan';
+  my $scroll = $self->_es->scroll_helper(%args);
+  
+  my @trackdbs;
+  while (my $trackdb = $scroll->next) {
+    $trackdb->{_source}{_id} = $trackdb->{_id};
+    push @trackdbs, $trackdb->{_source};
+  }
+  return \@trackdbs;
+}
+
 
 sub get_all_users {
   my $self = shift;

@@ -323,8 +323,8 @@ sub trackdb_create_POST {
 	# record id of indexed doc so we can roll back in case of any failure
 	push @indexed, $id;
 
-	$location .= $c->uri_for( '/api/trackdb/' . $id )->as_string . ',';
-	$entity->{$id} = $c->model('Search')->get_trackhub_by_id($id);
+	push @{$location}, $c->uri_for( '/api/trackdb/' . $id )->as_string;
+	push @{$entity}, $c->model('Search')->get_trackhub_by_id($id);
 
 	$id++;
       };
@@ -332,7 +332,7 @@ sub trackdb_create_POST {
       # TODO: roll back and delete any doc which has been indexed previous to the error
       # NOTE: not sure this is the correct way, since /api/trackhub/:id (GET|POST|DELETE)
       #       all expect the trackhub doc to be loaded in the stash
-      # map { $c->forward("trackhub_DELETE", $id) } @indexed;
+      # map { $c->forward("trackdb_DELETE", $id) } @indexed;
 
       $c->go('ReturnError', 'custom', [qq{$_}]);
     };
@@ -340,7 +340,8 @@ sub trackdb_create_POST {
     $c->go('ReturnError', 'custom', ["Couldn't determine doc ID(s)"]);
   }
 
-  $location =~ s/,$//;
+  # location in status_created can be either a scalar or a blessed reference
+  bless($location, 'Location');
   $self->status_created( $c,
 			 location => $location,
 			 entity   => $entity);

@@ -141,10 +141,10 @@ SKIP: {
   like($content->{error}, qr/Could not find/, 'Correct error response');
 
   #
-  # /api/trackdb/:id (POST) update document
+  # /api/trackdb/:id (PUT) update document
   #
   # request incorrect document (belongs to another provider)
-  $request = POST('/api/trackdb/3',
+  $request = PUT('/api/trackdb/3',
   		  'Content-type' => 'application/json');
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
@@ -154,7 +154,7 @@ SKIP: {
   like($content->{error}, qr/does not belong/, 'Correct error response');
   #
   # request incorrect document (does not exist)
-  $request = POST('/api/trackdb/5',
+  $request = PUT('/api/trackdb/5',
   		  'Content-type' => 'application/json');
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
@@ -164,7 +164,7 @@ SKIP: {
   like($content->{error}, qr/does not exist/, 'Correct error response');
   
   # request to update a doc but do not supply data
-  $request = POST('/api/trackdb/1',
+  $request = PUT('/api/trackdb/1',
   		 'Content-type' => 'application/json');
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
@@ -174,7 +174,7 @@ SKIP: {
   like($content->{error}, qr/You must provide a doc/, 'Correct error response');
 
   # request to update doc with invalid content (non v1.0 compliant)
-  $request = POST('/api/trackdb/1',
+  $request = PUT('/api/trackdb/1',
   		  'Content-type' => 'application/json',
   		  'Content'      => to_json({ test => 'test' }));
   $request->headers->header(user       => 'trackhub1');
@@ -186,7 +186,7 @@ SKIP: {
   like($content->{error}, qr/Failed/, 'Correct error response');
 
   # update doc1
-  $request = POST('/api/trackdb/1',
+  $request = PUT('/api/trackdb/1',
   		  'Content-type' => 'application/json',
   		  'Content'      => to_json({
 					     type    => 'epigenomics',

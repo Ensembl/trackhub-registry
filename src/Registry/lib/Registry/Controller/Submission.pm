@@ -401,7 +401,7 @@ sub _validate: Private {
 
 =head2 trackdb 
 
-Actions for /api/trackdb/:id (GET|POST|DELETE)
+Actions for /api/trackdb/:id (GET|PUT|DELETE)
 
 =cut
 
@@ -436,14 +436,14 @@ sub trackdb_GET {
   }
 }
 
-=head2 trackdb_POST
+=head2 trackdb_PUT
 
 Update document content for a document
 with the specified ID
 
 =cut
 
-sub trackdb_POST {
+sub trackdb_PUT {
   my ($self, $c, $doc_id) = @_;
   
   # cannot update the doc if:

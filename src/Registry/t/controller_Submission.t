@@ -21,7 +21,7 @@ use Registry::Indexer; # index a couple of sample documents
 
 SKIP: {
   skip "Launch an elasticsearch instance for the tests to run fully",
-    203 unless &Registry::Utils::es_running();
+    231 unless &Registry::Utils::es_running();
 
   # index test data
   note 'Preparing data for test (indexing sample documents)';
@@ -442,18 +442,19 @@ SKIP: {
   ok($response = request($request), 'POST request to /api/trackdb/create');
   ok($response->is_success, 'Request successful 2xx');
   is($response->content_type, 'application/json', 'JSON content type');
+  # use Data::Dumper; print Dumper $response->header('Location');
   $content = from_json($response->content);
   ok($content, "Docs created");
-  is(scalar keys %{$content}, 3, "Correct number of trackdb docs created");
+  is(scalar @{$content}, 3, "Correct number of trackdb docs created");
   # check content of returned docs
-  foreach my $id (keys %{$content}) {
-    is($content->{$id}{type}, 'genomics', 'Default hub data type');
-    is($content->{$id}{hub}{name}, 'cshl2013', 'Correct trackdb hub name');
-    like($content->{$id}{hub}{longLabel}, qr/CSHL Biology of Genomes/, "Correct trackdb hub longLabel");
+  foreach my $trackdb (@{$content}) {
+    is($trackdb->{type}, 'genomics', 'Default hub data type');
+    is($trackdb->{hub}{name}, 'cshl2013', 'Correct trackdb hub name');
+    like($trackdb->{hub}{longLabel}, qr/CSHL Biology of Genomes/, "Correct trackdb hub longLabel");
     # first data element is the same for all trackdbs
-    is($content->{$id}{data}[0]{id}, 'repeatMasker_', "Correct trackdb data element");
-    ok($content->{$id}{configuration}{repeatMasker_}, "Composite configuration exists");
-    is($content->{$id}{configuration}{repeatMasker_}{shortLabel}, 'RepeatMasker', 'Composite short label');
+    is($trackdb->{data}[0]{id}, 'repeatMasker_', "Correct trackdb data element");
+    ok($trackdb->{configuration}{repeatMasker_}, "Composite configuration exists");
+    is($trackdb->{configuration}{repeatMasker_}{shortLabel}, 'RepeatMasker', 'Composite short label');
   }
   #
   # attempt to submit track collections with the same hub/assembly as
@@ -480,19 +481,18 @@ SKIP: {
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
   ok($content, "Docs created");
-  is(scalar keys %{$content}, 8, "Eight trackdb docs created");
-  my $id = (keys %{$content})[0];
-  foreach my $id (keys %{$content}) {
-    is($content->{$id}{type}, 'epigenomics', 'Correct hub type');
-    is($content->{$id}{hub}{name}, 'Smith Lab Public Hub', 'Correct trackdb hub name');
-    is($content->{$id}{hub}{shortLabel}, 'DNA Methylation', 'Correct trackdb hub shortLabel');
-    is($content->{$id}{hub}{longLabel}, 'Hundreds of analyzed methylomes from bisulfite sequencing data', 'Correct trackdb hub longLabel');
-    is($content->{$id}{version}, 'v1.0', 'Correct version');
-    if ($content->{$id}{species}{tax_id} == 9615) {
-      is($content->{$id}{assembly}{synonyms}, 'canFam3', 'Correct assembly synonym');
-      is($content->{$id}{configuration}{Carmona_Dog_2014}{longLabel}, 'A Comprehensive DNA Methylation Profile of Epithelial-to-Mesenchymal Transition', 'Correct composite long label');
-      is(scalar keys %{$content->{$id}{configuration}{Carmona_Dog_2014}{members}}, 7, 'Correct number of views');
-      is($content->{$id}{configuration}{Carmona_Dog_2014}{members}{AMRCarmona_Dog_2014}{members}{CarmonaDog2014_DogMDCKAMR}{bigDataUrl}, 'http://smithlab.usc.edu/methbase/data/Carmona-Dog-2014/Dog_MDCK/tracks_canFam3/Dog_MDCK.amr.bb', 'Correct view member bigDataUrl');
+  is(scalar @{$content}, 8, "Eight trackdb docs created");
+  foreach my $trackdb (@{$content}) {
+    is($trackdb->{type}, 'epigenomics', 'Correct hub type');
+    is($trackdb->{hub}{name}, 'Smith Lab Public Hub', 'Correct trackdb hub name');
+    is($trackdb->{hub}{shortLabel}, 'DNA Methylation', 'Correct trackdb hub shortLabel');
+    is($trackdb->{hub}{longLabel}, 'Hundreds of analyzed methylomes from bisulfite sequencing data', 'Correct trackdb hub longLabel');
+    is($trackdb->{version}, 'v1.0', 'Correct version');
+    if ($trackdb->{species}{tax_id} == 9615) {
+      is($trackdb->{assembly}{synonyms}, 'canFam3', 'Correct assembly synonym');
+      is($trackdb->{configuration}{Carmona_Dog_2014}{longLabel}, 'A Comprehensive DNA Methylation Profile of Epithelial-to-Mesenchymal Transition', 'Correct composite long label');
+      is(scalar keys %{$trackdb->{configuration}{Carmona_Dog_2014}{members}}, 7, 'Correct number of views');
+      is($trackdb->{configuration}{Carmona_Dog_2014}{members}{AMRCarmona_Dog_2014}{members}{CarmonaDog2014_DogMDCKAMR}{bigDataUrl}, 'http://smithlab.usc.edu/methbase/data/Carmona-Dog-2014/Dog_MDCK/tracks_canFam3/Dog_MDCK.amr.bb', 'Correct view member bigDataUrl');
     }
   }
 

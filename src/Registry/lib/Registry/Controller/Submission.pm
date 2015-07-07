@@ -122,6 +122,42 @@ sub trackdb_list_GET {
   # $self->status_no_content($c);
 }
 
+=head2 trackhub_list
+
+Return the list of available track data hubs for a given user.
+Each trackhub is listed with key/value parameters together with
+a list of URIs of the resources which corresponds to the trackDbs
+beloning to the track hub
+
+=cut 
+
+sub trackhub_list :Path('/api/trackhub') Args(0) ActionClass('REST') {
+  my ($self, $c) = @_;
+}
+
+sub trackhub_list_GET {
+  my ($self, $c) = @_;
+
+  # get all docs for the given user
+  my $trackdbs = $c->model('Search')->get_trackdbs(query => { term => { owner => $c->stash->{user} } });
+
+  my $trackhubs;
+  foreach my $trackdb (@{$trackdbs}) {
+    my $hub = $trackdb->{hub}{name};
+    $trackhubs->{$hub} = $trackdb->{hub} unless exists $trackhubs->{$hub};
+
+    push @{$trackhubs->{$hub}{trackdbs}},
+      {
+       species  => $trackdb->{species}{tax_id},
+       assembly => $trackdb->{assembly}{accession},
+       uri      => $c->uri_for('/api/trackdb/' . $trackdb->{_id})->as_string
+      };
+  }
+  
+  $self->status_ok($c, entity => $trackhubs);
+}
+
+
 =head2 trackdb_create
 
 Create new trackdb document

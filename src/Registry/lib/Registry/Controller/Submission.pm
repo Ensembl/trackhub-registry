@@ -162,7 +162,7 @@ sub trackhub_list_GET {
 
 Create new trackdb document
 
-Action for /api/trackdb/create (PUT,POST)
+Action for /api/trackdb/create (POST)
 
 =cut
 
@@ -174,17 +174,13 @@ sub trackdb_create :Path('/api/trackdb/create') Args(0) ActionClass('REST') {
   my $version = $c->request->param('version') || Registry->config()->{TrackHub}{schema}{default};
   $c->go('ReturnError', 'custom', ["Invalid version specified, pattern is /^v\\d+\.\\d\$"])
     unless $version =~ /^v\d+\.\d$/;
-  
-  # read param which prevent hubCheck running,
-  # this is hidden to the user 
-  my $permissive = $c->request->param('permissive');
-  
-  # get the count of trackhubs to determine the ID of the doc to create
+    
+  # get the count of trackdbs to determine the ID of the doc to create
   my $current_max_id = $c->model('Search')->count_trackhubs()->{count};
-  $c->stash( id =>  $current_max_id?++$current_max_id:1, version => $version, permissive => $permissive ); 
+  $c->stash( id =>  $current_max_id?++$current_max_id:1, version => $version ); 
 }
 
-sub trackdb_create_PUT {
+sub trackdb_create_POST {
   my ($self, $c) = @_;
   my $new_doc_data = $c->req->data;
 
@@ -249,7 +245,33 @@ sub trackdb_create_PUT {
 			 entity   => $c->model('Search')->get_trackhub_by_id($id));
 }
 
-sub trackdb_create_POST {
+=head2 trackhub_create
+
+Create new trackdb documents from a remote public TrackHub (UCSC spec)
+
+Action for /api/trackhub/create (POST)
+
+=cut
+
+sub trackhub_create :Path('/api/trackhub/create') Args(0) ActionClass('REST') {
+  my ($self, $c) = @_;
+
+  # get the version, if specified
+  # otherwise set to default (from config parameter)
+  my $version = $c->request->param('version') || Registry->config()->{TrackHub}{schema}{default};
+  $c->go('ReturnError', 'custom', ["Invalid version specified, pattern is /^v\\d+\.\\d\$"])
+    unless $version =~ /^v\d+\.\d$/;
+  
+  # read param which prevent hubCheck running,
+  # this is hidden to the user 
+  my $permissive = $c->request->param('permissive');
+  
+  # get the count of trackhubs to determine the ID of the doc to create
+  my $current_max_id = $c->model('Search')->count_trackhubs()->{count};
+  $c->stash( id =>  $current_max_id?++$current_max_id:1, version => $version, permissive => $permissive ); 
+}
+
+sub trackhub_create_POST {
   my ($self, $c) = @_;
   # if the client didn't supply any data, it didn't send a properly formed request
   return $self->status_bad_request($c, message => "You must provide data with the POST request")

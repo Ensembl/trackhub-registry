@@ -19,6 +19,12 @@ use Catalyst::Test 'Registry';
 use Registry::Utils; # es_running, slurp_file
 use Registry::Indexer; # index a couple of sample documents
 
+my $request = GET('/api/info/version');
+ok(my $response = request($request), 'GET request to /api/info/version');
+ok($response->is_success, 'Request successful');
+my $content = from_json($response->content);
+is($content->{release}, $Registry::VERSION, "API current version is $Registry::VERSION");
+
 SKIP: {
   skip "Cannot run tests: either elasticsearch is not running or there's no internet connection",
     59 unless &Registry::Utils::es_running() and Registry::Utils::internet_connection_ok();

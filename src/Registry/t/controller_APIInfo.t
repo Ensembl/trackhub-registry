@@ -27,7 +27,14 @@ is($content->{release}, $Registry::VERSION, "API current version is $Registry::V
 
 SKIP: {
   skip "Cannot run tests: either elasticsearch is not running or there's no internet connection",
-    59 unless &Registry::Utils::es_running() and Registry::Utils::internet_connection_ok();
+    62 unless &Registry::Utils::es_running() and Registry::Utils::internet_connection_ok();
+  
+  # /api/info/ping
+  my $request = GET('/api/info/ping');
+  ok(my $response = request($request), 'GET request to /api/info/ping');
+  ok($response->is_success, 'Request successful');
+  my $content = from_json($response->content);
+  ok($content->{ping}, 'Service available');
 
   note 'Preparing data for test (indexing users)';
   my $config = Registry->config()->{'Model::Search'};
@@ -57,10 +64,10 @@ SKIP: {
 		     { name => 'thornton', url => 'http://devlaeminck.bio.uci.edu/RogersUCSC/hub.txt' },
 		    );
 
-  my $request = GET('/api/login');
+  $request = GET('/api/login');
   $request->headers->authorization_basic('trackhub1', 'trackhub1');
-  ok(my $response = request($request), 'Request to log in');
-  my $content = from_json($response->content);
+  ok($response = request($request), 'Request to log in');
+  $content = from_json($response->content);
   ok(exists $content->{auth_token}, 'Logged in');
   my $auth_token = $content->{auth_token};
 
@@ -107,10 +114,10 @@ SKIP: {
   }
 
   #
-  # /api/info/trackhub
+  # /api/info/trackhubs
   #
-  $request = GET('/api/info/trackhub');
-  ok($response = request($request), 'GET request to /api/info/trackhub');
+  $request = GET('/api/info/trackhubs');
+  ok($response = request($request), 'GET request to /api/info/trackhubs');
   ok($response->is_success, 'Request successful');
   $content = from_json($response->content);
   is(scalar @{$content}, 9, 'Number of hubs');

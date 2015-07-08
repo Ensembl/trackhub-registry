@@ -45,11 +45,11 @@ SKIP: {
   my @endpoints = 
     (
      ['/api/trackdb', 'GET', 'Return the list of available docs'],
-     ['/api/trackdb/create', 'PUT', 'Create new trackdb document'],
-     ['/api/trackdb/create', 'POST', 'Create new trackdb documents by converting assembly trackdbs from a remote public hub'],
+     ['/api/trackdb/create', 'POST', 'Create new trackdb documents'],
+     ['/api/trackhub/create', 'POST', 'Create new trackdb documents by converting assembly trackdbs from a remote public hub'],
      # the following docs belong to user trackhub2, as set by the Indexer
      ['/api/trackdb/3', 'GET', 'Return content for a trackdb document with the specified ID'],
-     ['/api/trackdb/3', 'POST', 'Update content for a trackdb document with the specified ID'],
+     ['/api/trackdb/3', 'PUT', 'Update content for a trackdb document with the specified ID'],
      ['/api/trackdb/3', 'DELETE', 'Delete trackdb document with the specified ID']
     );
   foreach my $ep (@endpoints) {

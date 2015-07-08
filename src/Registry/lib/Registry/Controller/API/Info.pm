@@ -29,6 +29,18 @@ Catalyst Controller.
 
 =cut
 
+=head2 version
+
+=cut 
+
+sub version :Local :Args(0) :ActionClass('REST') { }
+
+sub version_GET {
+  my ($self, $c) = @_;
+
+  $self->status_ok($c, entity => { release => $Registry::VERSION });
+}
+
 # TODO
 # could use chained methods, where the start of the chain retrieve all species/assembly/hub aggregations
 
@@ -38,7 +50,7 @@ Catalyst Controller.
 
 =cut 
 
-sub species : Path('/api/info/species') :Args(0) ActionClass('REST') {}
+sub species :Local :Args(0) ActionClass('REST') {}
 
 sub species_GET {
   my ($self, $c) = @_;
@@ -67,7 +79,7 @@ sub species_GET {
 
 =cut
 
-sub assemblies :Path('/api/info/assemblies') :Args(0) ActionClass('REST') { }
+sub assemblies :Local :Args(0) ActionClass('REST') { }
 
 sub assemblies_GET {
   my ($self, $c) = @_;
@@ -104,9 +116,9 @@ beloning to the track hub
 
 =cut
 
-sub trackhubs :Path('/api/info/trackhub') Args(0) ActionClass('REST') { }
+sub trackhub :Local Args(0) ActionClass('REST') { }
 
-sub trackhubs_GET {
+sub trackhub_GET {
   my ($self, $c) = @_;
 
   # get all trackdbs

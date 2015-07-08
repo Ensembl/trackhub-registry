@@ -3,6 +3,7 @@ use warnings;
 use Test::More;
 
 use JSON;
+use List::Util qw( first );
 use HTTP::Request::Common qw/GET POST/;
 use Data::Dumper;
 
@@ -20,7 +21,7 @@ use Registry::Indexer; # index a couple of sample documents
 
 SKIP: {
   skip "Cannot run tests: either elasticsearch is not running or there's no internet connection",
-    42 unless &Registry::Utils::es_running() and Registry::Utils::internet_connection_ok();
+    59 unless &Registry::Utils::es_running() and Registry::Utils::internet_connection_ok();
 
   note 'Preparing data for test (indexing users)';
   my $config = Registry->config()->{'Model::Search'};
@@ -59,7 +60,7 @@ SKIP: {
 
   foreach my $hub (@public_hubs) {
     note sprintf "Submitting hub %s", $hub->{name};
-    $request = POST('/api/trackhub/create',
+    $request = POST('/api/trackhub/create?permissive=1',
 		    'Content-type' => 'application/json',
 		    'Content'      => to_json({ url => $hub->{url} }));
     $request->headers->header(user       => 'trackhub1');
@@ -98,6 +99,35 @@ SKIP: {
   foreach my $species (keys %{$content}) {
     is_deeply($content->{$species}, $species_assemblies{$species}, "Assemblies for species $species");
   }
+
+  #
+  # /api/info/trackhub
+  #
+  $request = GET('/api/info/trackhub');
+  ok($response = request($request), 'GET request to /api/info/trackhub');
+  ok($response->is_success, 'Request successful');
+  $content = from_json($response->content);
+  is(scalar @{$content}, 9, 'Number of hubs');
+
+  # test a couple of hubs
+  my $hub = first { $_->{name} eq 'EnsemblRegulatoryBuild' } @{$content};
+  ok($hub, 'Ensembl regulatory build hub');
+  is($hub->{longLabel}, 'Evidence summaries and provisional results for the new Ensembl Regulatory Build', 'Hub longLabel');
+  is(scalar @{$hub->{trackdbs}}, 2, 'Number of trackDbs');
+  is($hub->{trackdbs}[0]{species} && $hub->{trackdbs}[1]{species}, 9606, 'trackDb species');
+  like($hub->{trackdbs}[0]{assembly}, qr/GCA_000001405/, 'trackDb assembly');
+  like($hub->{trackdbs}[1]{assembly}, qr/GCA_000001405/, 'trackDb assembly');
+  like($hub->{trackdbs}[0]{uri}, qr/api\/trackdb/, 'trackDb uri');
+  like($hub->{trackdbs}[1]{uri}, qr/api\/trackdb/, 'trackDb uri');
+
+  $hub = first { $_->{name} eq 'NHGRI-1' } @{$content};
+  ok($hub, 'Zebrafish hub');
+  is($hub->{shortLabel}, 'ZebrafishGenomics', 'Hub shortLabel');
+  is(scalar @{$hub->{trackdbs}}, 1, 'Number of trackDbs');
+  is($hub->{trackdbs}[0]{species}, 7955, 'trackDb species');
+  is($hub->{trackdbs}[0]{assembly}, 'GCA_000002035.2', 'trackDb assembly');
+  like($hub->{trackdbs}[0]{uri}, qr/api\/trackdb/, 'trackDb uri');
+
 }
 
 done_testing();

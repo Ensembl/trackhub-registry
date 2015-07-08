@@ -58,7 +58,7 @@ SKIP: {
 
   foreach my $hub (@public_hubs) {
     note sprintf "Submitting hub %s", $hub->{name};
-    $request = POST('/api/trackdb/create?permissive=1',
+    $request = POST('/api/trackhub/create?permissive=1',
 		    'Content-type' => 'application/json',
 		    'Content'      => to_json({ url => $hub->{url} }));
     $request->headers->header(user       => 'trackhub1');
@@ -76,7 +76,7 @@ SKIP: {
 		  'Content-type' => 'application/json');
   ok($response = request($request), 'POST request to /api/search');
   is($response->code, 400, 'Request unsuccessful 400');
-  my $content = from_json($response->content);;
+  $content = from_json($response->content);;
   like($content->{error}, qr/Missing/, 'Correct error response');
 
   # empty query, get all entries

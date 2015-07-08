@@ -4,9 +4,7 @@ use namespace::autoclean;
 
 use JSON;
 use Try::Tiny;
-
-use Data::SearchEngine::ElasticSearch::Query;
-use Data::SearchEngine::ElasticSearch;
+use HTTP::Tiny;
 
 BEGIN { extends 'Catalyst::Controller::REST'; }
 
@@ -31,6 +29,8 @@ Catalyst Controller.
 
 =head2 version
 
+Action for /api/info/version, returns the version of the API
+
 =cut 
 
 sub version :Local :Args(0) :ActionClass('REST') { }
@@ -40,6 +40,25 @@ sub version_GET {
 
   $self->status_ok($c, entity => { release => $Registry::VERSION });
 }
+
+=head2 ping
+
+Action for /api/info/ping
+
+=cut
+
+sub ping :Local Args(0) ActionClass('REST') { }
+
+sub ping_GET {
+  my ($self, $c) = @_;
+
+  my $es_url = sprintf "http://%s", Registry->config()->{'Model::Search'}{nodes};
+  my $ping = (HTTP::Tiny->new()->request('GET', $es_url)->{status} eq '200')?1:0;
+
+  $self->status_ok($c, entity => { ping => $ping}) if $ping;
+  $self->status_gone($c, message => 'Storage is unavailable') unless $ping;
+}
+
 
 # TODO
 # could use chained methods, where the start of the chain retrieve all species/assembly/hub aggregations
@@ -116,9 +135,9 @@ beloning to the track hub
 
 =cut
 
-sub trackhub :Local Args(0) ActionClass('REST') { }
+sub trackhubs :Local Args(0) ActionClass('REST') { }
 
-sub trackhub_GET {
+sub trackhubs_GET {
   my ($self, $c) = @_;
 
   # get all trackdbs
@@ -140,4 +159,3 @@ sub trackhub_GET {
   my @trackhubs = values %{$trackhubs};
   $self->status_ok($c, entity => \@trackhubs);
 }
-

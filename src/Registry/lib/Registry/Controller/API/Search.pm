@@ -34,7 +34,7 @@ Catalyst Controller.
 
 =cut
 
-sub search :Path('/api/search') :Args(0) ActionClass('REST') {
+sub search :Path('/api/search') Args(0) ActionClass('REST') {
   my ( $self, $c ) = @_;
 
   my $params = $c->req->params;
@@ -113,7 +113,7 @@ sub search_POST {
 
 =cut 
 
-sub trackdb :Path('/api/search/trackdb') Args(1) ActionClass('REST') {
+sub trackdb :Local Args(1) ActionClass('REST') {
   my ($self, $c, $doc_id) = @_;
 
   # if the doc with that ID doesn't exist, ES throws exception

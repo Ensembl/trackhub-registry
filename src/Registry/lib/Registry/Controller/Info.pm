@@ -94,3 +94,38 @@ sub assemblies_GET {
 
   $self->status_ok($c, entity => $assemblies);
 }
+
+=head2 trackhubs
+
+Return the list of available track data hubs.
+Each trackhub is listed with key/value parameters together with
+a list of URIs of the resources which corresponds to the trackDbs
+beloning to the track hub
+
+=cut
+
+sub trackhubs :Path('/api/info/trackhub') Args(0) ActionClass('REST') { }
+
+sub trackhubs_GET {
+  my ($self, $c) = @_;
+
+  # get all trackdbs
+  my $trackdbs = $c->model('Search')->get_trackdbs();
+
+  my $trackhubs;
+  foreach my $trackdb (@{$trackdbs}) {
+    my $hub = $trackdb->{hub}{name};
+    $trackhubs->{$hub} = $trackdb->{hub} unless exists $trackhubs->{$hub};
+
+    push @{$trackhubs->{$hub}{trackdbs}},
+      {
+       species  => $trackdb->{species}{tax_id},
+       assembly => $trackdb->{assembly}{accession},
+       uri      => $c->uri_for('/api/trackdb/' . $trackdb->{_id})->as_string
+      };
+  }
+  
+  my @trackhubs = values %{$trackhubs};
+  $self->status_ok($c, entity => \@trackhubs);
+}
+

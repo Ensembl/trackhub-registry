@@ -493,7 +493,7 @@ SKIP: {
   ok($response->is_success, 'Request successful 2xx');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
-  is(scalar keys @{$content}, 3, 'Number of hubs');
+  is(scalar @{$content}, 3, 'Number of hubs');
   foreach my $hub (@{$content}) {
     if ($hub->{name} eq 'Blueprint_Hub') {
       is($hub->{longLabel}, 'Blueprint Epigenomics Data Hub', 'Hub long label');

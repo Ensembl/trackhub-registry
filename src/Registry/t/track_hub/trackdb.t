@@ -96,10 +96,12 @@ SKIP: {
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
   ok($content, "Docs created");
-  is(scalar keys %{$content}, 3, "Correct number of trackdb docs created");
+  is(scalar @{$content}, 3, "Correct number of trackdb docs created");
+  my $location_header = $response->headers->{location};
 
-  for my $id (keys %{$content}) {
-    my $doc = $content->{$id};
+  for my $doc (@{$content}) {
+    my $location = shift @{$location_header};
+    my ($id) = $location =~ /(\d+)$/;
     $trackdb = Registry::TrackHub::TrackDB->new($id);
     isa_ok($trackdb, 'Registry::TrackHub::TrackDB');
     $status = $trackdb->update_status();

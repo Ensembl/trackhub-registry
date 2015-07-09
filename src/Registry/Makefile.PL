@@ -45,7 +45,7 @@ requires 'List::Util';
 requires 'String::Random';
 requires 'Search::Elasticsearch';
 requires 'Data::SearchEngine';
-requires 'Data::SearchEngine::ElasticSearch::Results';
+# requires 'Data::SearchEngine::ElasticSearch::Results';
 
 # for file utils
 requires 'Compress::Zlib';

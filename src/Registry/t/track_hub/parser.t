@@ -26,7 +26,7 @@ SKIP: {
   throws_ok { $parser->parse } qr/xxx/, 'Throws if cannot read trackdb files';
 
   my $URL = "ftp://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub";
-  my $th = Registry::TrackHub->new(url => $URL);
+  my $th = Registry::TrackHub->new(url => $URL, permissive => 1);
   $parser = Registry::TrackHub::Parser->new(files => $th->get_genome('hg19')->trackDb);
   isa_ok($parser, 'Registry::TrackHub::Parser');
 

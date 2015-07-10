@@ -42,6 +42,7 @@
 	  <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Tools <span class="caret"></span></a>
             <ul class="dropdown-menu" role="menu">
+	      <li><a href="#">Validate TrackHub</a></li>
               <li><a href="[% c.uri_for('/search/advanced') %]">Advanced Search</a></li>
             </ul>
           </li>
@@ -49,11 +50,33 @@
 	  <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Documentation <span class="caret"></span></a>
             <ul class="dropdown-menu" role="menu">
-              <li><a href="#">RESTful API</a></li>
+              <li><a href="#">Submission</a></li>
               <li class="divider"></li>
               <li><a href="#">Search</a></li>
             </ul>
           </li>
+	  <!--
+	  <li class="menu-item dropdown">
+	    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Documentation <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li class="menu-item dropdown dropdown-submenu">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Submission</a>
+                <ul class="dropdown-menu">
+                  <li class="menu-item "><a href="#">Introduction</a></li>
+                  <li class="menu-item "><a href="#">REST API</a></li>
+                </ul>
+              </li>
+	      <li class="menu-item "><a href="#">TrackDB JSON specification</a></li>
+	      <li class="divider"></li>
+              <li class="menu-item dropdown dropdown-submenu">
+                <a href="#aaa" class="dropdown-toggle" data-toggle="dropdown">Search</a>
+                <ul class="dropdown-menu">
+                  <li class="menu-item "><a href="#">REST API</a></li>
+                </ul>
+              </li>	      
+            </ul>
+          </li>
+	  -->
           <li><a href="[% c.uri_for('/about') %]">About</a></li>
           <li><a href="[% c.uri_for('/about#contacts') %]">Help</a></li>
         </ul>

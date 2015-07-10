@@ -9,6 +9,7 @@ use warnings;
 
 use JSON;
 use Registry::GenomeAssembly::Schema;
+use Registry::Utils;
 use Registry::TrackHub;
 use Registry::TrackHub::Tree;
 use Registry::TrackHub::Parser;
@@ -103,7 +104,7 @@ sub to_json_1_0 {
      # add the original trackDb file as the source
      source => { 
 		url => $genome->trackDb->[0],
-		# checksum => 
+		checksum => Registry::Utils::checksum_compute($genome->trackDb->[0])
 	       }
     };
 

@@ -5,7 +5,8 @@ package Registry::TrackHub::Validator;
 use strict;
 use warnings;
 
-use Registry::Utils;
+use Capture::Tiny qw( capture );
+# use Registry::Utils;
 
 use vars qw($AUTOLOAD);
 
@@ -38,7 +39,10 @@ sub validate {
   my ($self, $file) = @_;
 
   my $cmd = sprintf("validate.py -s %s -f %s", $self->{schema}, $file);
-  my ($rc, $output) = Registry::Utils::run_cmd($cmd);
+  # my ($rc, $output) = Registry::Utils::run_cmd($cmd);
+  my ($output, $err, $rc) = capture {
+    system( $cmd );
+  };
   
   # Handle here the unexpected, the python validation script cannot run,
   # e.g. the schema is badly formatted

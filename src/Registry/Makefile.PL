@@ -40,6 +40,7 @@ requires 'Config::General'; # This should reflect the config file format you've 
 requires 'HTML::FormHandler::Moose';
 
 requires 'Try::Tiny';
+requires 'Capture::Tiny';
 requires 'File::Temp';
 requires 'List::Util';
 requires 'String::Random';

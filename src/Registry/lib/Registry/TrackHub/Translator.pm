@@ -8,7 +8,8 @@ use strict;
 use warnings;
 
 use JSON;
-use Registry::GenomeAssembly::Schema;
+# use Registry::GenomeAssembly::Schema;
+use Registry;
 use Registry::Utils;
 use Registry::TrackHub;
 use Registry::TrackHub::Tree;
@@ -35,14 +36,15 @@ sub new {
 
   my $self = \%args;
 
-  # TODO: Load the GCAssemblySet from the catalyst model which reads
-  #       the connection parameters from the configuration file
-  my $gcschema = 
-    Registry::GenomeAssembly::Schema->connect("DBI:Oracle:host=ora-vm5-003.ebi.ac.uk;sid=ETAPRO;port=1571", 
-					      'gc_reader', 
-					      'reader', 
-					      { 'RaiseError' => 1, 'PrintError' => 0 });
-  $self->{gc_assembly_set} = $gcschema->resultset('GCAssemblySet');
+  # # TODO: Load the GCAssemblySet from the catalyst model which reads
+  # #       the connection parameters from the configuration file
+  # my $gcschema = 
+  #   Registry::GenomeAssembly::Schema->connect("DBI:Oracle:host=ora-vm5-003.ebi.ac.uk;sid=ETAPRO;port=1571", 
+  # 					      'gc_reader', 
+  # 					      'reader', 
+  # 					      { 'RaiseError' => 1, 'PrintError' => 0 });
+  # $self->{gc_assembly_set} = $gcschema->resultset('GCAssemblySet');
+
   bless $self, $class;
 
   return $self;
@@ -695,13 +697,32 @@ sub _add_genome_info {
   # Get species (tax id, scientific name, common name)
   # and assembly info from the assembly set table in the GC database
   #
-  my $gc_assembly_set = $self->gc_assembly_set;
-  my $as = $gc_assembly_set->find($assembly_id);
+  # my $gc_assembly_set = $self->gc_assembly_set;
+  # my $as = $gc_assembly_set->find($assembly_id);
+  # die "Unable to find GC assembly set entry for $assembly_id"
+  #   unless $as;
+  
+  # my ($tax_id, $scientific_name, $common_name) = 
+  #   ($as->tax_id, $as->scientific_name, $as->common_name);
+  # # TODO: taxid and scientific name are mandatory
+
+  # $doc->{species}{tax_id} = $tax_id if $tax_id;
+  # $doc->{species}{scientific_name} = $scientific_name if $scientific_name;
+  # $doc->{species}{common_name} = $common_name if $common_name;
+
+  # $doc->{assembly}{accession} = $assembly_id;
+  # $doc->{assembly}{name} = $as->name;
+  # $doc->{assembly}{long_name} = $as->long_name if $as->long_name; # sometimes not defined
+  # $doc->{assembly}{synonyms} = $assembly_syn;
+
+  my $gc_assembly_set = 
+    from_json(Registry::Utils::slurp_file(Registry->config()->{GenomeCollection}{assembly_set_file}));
+  my $as = $gc_assembly_set->{$assembly_id};
   die "Unable to find GC assembly set entry for $assembly_id"
     unless $as;
   
   my ($tax_id, $scientific_name, $common_name) = 
-    ($as->tax_id, $as->scientific_name, $as->common_name);
+    ($as->{tax_id}, $as->{scientific_name}, $as->{common_name});
   # TODO: taxid and scientific name are mandatory
 
   $doc->{species}{tax_id} = $tax_id if $tax_id;
@@ -709,8 +730,8 @@ sub _add_genome_info {
   $doc->{species}{common_name} = $common_name if $common_name;
 
   $doc->{assembly}{accession} = $assembly_id;
-  $doc->{assembly}{name} = $as->name;
-  $doc->{assembly}{long_name} = $as->long_name if $as->long_name; # sometimes not defined
+  $doc->{assembly}{name} = $as->{name};
+  $doc->{assembly}{long_name} = $as->{long_name} if $as->{long_name}; # sometimes not defined
   $doc->{assembly}{synonyms} = $assembly_syn;
 
   return;

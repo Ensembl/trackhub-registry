@@ -24,7 +24,7 @@ use namespace::autoclean;
 extends 'Catalyst::Authentication::User';
 
 has '_user'  => (is => 'rw', isa => 'HashRef', );
-has '_es'    => (is => 'ro', isa => 'Search::Elasticsearch::Client::Direct', );
+has '_es'    => (is => 'ro'); # , isa => 'Search::Elasticsearch::Client::Direct', );
 has '_index' => (is => 'ro', isa => 'Str', required => 1, );
 has '_type'  => (is => 'ro', isa => 'Str', required => 1, );
 

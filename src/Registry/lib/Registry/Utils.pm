@@ -6,6 +6,7 @@ use warnings;
 use LWP;
 use HTTP::Tiny;
 use File::Temp qw/ tempfile /;
+use Digest::MD5 qw(md5_hex);
 use Registry::Utils::URL qw(read_file);
 
 sub slurp_file {
@@ -36,20 +37,18 @@ sub checksum_compute {
   }
   $content = $response->{'content'};
 
-  my ($fh, $filename) = tempfile( DIR => '.', UNLINK => 1);
-  print $fh $content;
-  close $fh;
+  # my ($fh, $filename) = tempfile( DIR => '.', UNLINK => 1);
+  # print $fh $content;
+  # close $fh;
 
-  my $cmd = sprintf("md5sum %s | cut -d ' ' -f 1", $filename);
-  my ($rc, $output) = run_cmd($cmd);
+  # my $cmd = sprintf("md5sum %s | cut -d ' ' -f 1", $filename);
+  # my ($rc, $output) = run_cmd($cmd);
 
-  $output =~ s/^\s+|\s+$|\n//g; # trim left/right spaces and newlines
+  # $output =~ s/^\s+|\s+$|\n//g; # trim left/right spaces and newlines
+
+  $output = md5_hex($content);
 
   return $output;
-}
-
-# TODO
-sub checksum_validate {
 }
 
 # Runs the given command and returns a list of exit code and output

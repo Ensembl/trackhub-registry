@@ -96,13 +96,32 @@ sub search_POST {
   };
 
   # build the JSON response
-  my $response = { total_entries => $results->pager->total_entries, items => $results->items };
-  
+  my $response = { total_entries => $results->pager->total_entries };
+
+  # On recent installations, we cannot simply assign the response items to the array 
+  # of Data::SearchEngine::Item search results.
+  # Catalyst::Action::Serialize::JSON complains it cannot deal with blessed references.
+  # Build the response items as an array of simple hash references.
+  foreach my $item (@{$results->items}) {
+    my $response_item = $item->{values};
+
+    # strip away the metadata/configuration field from each search result
+    # this will save bandwidth
+    # when a trackdb is chosen the client will request all the details by id
+    delete $response_item->{data};
+    delete $response_item->{configuration};
+
+    $response_item->{id} = $item->{id};
+    $response_item->{score} = $item->{score};
+
+    push @{$response->{items}}, $response_item;
+  }
+  $response->{items} = [] unless scalar @{$results->items};
+
   # strip away the metadata/configuration field from each search result
   # this will save bandwidth
   # when a trackdb is chosen the client will request all the details by id
-  my $items => $results->items;
-  map { delete $_->{values}{data}; delete $_->{values}{configuration} } @{$response->{items}};
+  # map { delete $_->{values}{data}; delete $_->{values}{configuration} } @{$response->{items}};
 
   $self->status_ok($c, entity => $response);
 }

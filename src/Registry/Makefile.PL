@@ -41,12 +41,12 @@ requires 'HTML::FormHandler::Moose';
 
 requires 'Try::Tiny';
 requires 'Capture::Tiny';
+requires 'Digest::MD5';
 requires 'File::Temp';
 requires 'List::Util';
 requires 'String::Random';
 requires 'Search::Elasticsearch';
 requires 'Data::SearchEngine';
-# requires 'Data::SearchEngine::ElasticSearch::Results';
 
 # for file utils
 requires 'Compress::Zlib';

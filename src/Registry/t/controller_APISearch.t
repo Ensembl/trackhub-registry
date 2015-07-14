@@ -91,10 +91,10 @@ SKIP: {
   is($content->{total_entries}, 17, 'Number of search results');
   is(scalar @{$content->{items}}, 5, 'Number of search results per page');
   # search results shouldn't have neither metadata nor configuration
-  ok(!$content->{items}[0]{values}{data}, 'Search results have no metadata');
-  ok(!$content->{items}[0]{values}{configuration}, 'Search results have no configuration');
-  is($content->{items}[1]{values}{hub}{longLabel}, 'Evidence summaries and provisional results for the new Ensembl Regulatory Build', 'Search result hub');
-  is($content->{items}[3]{values}{assembly}{name}, 'MGSCv37', 'Search result assembly');
+  ok(!$content->{items}[0]{data}, 'Search results have no metadata');
+  ok(!$content->{items}[0]{configuration}, 'Search results have no configuration');
+  is($content->{items}[1]{hub}{longLabel}, 'Evidence summaries and provisional results for the new Ensembl Regulatory Build', 'Search result hub');
+  is($content->{items}[3]{assembly}{name}, 'MGSCv37', 'Search result assembly');
 
   # test getting the n-th page
   $request = POST('/api/search?page=3',
@@ -104,8 +104,8 @@ SKIP: {
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
-  is($content->{items}[0]{values}{species}{tax_id}, 3988, 'Search result species');
-  is($content->{items}[1]{values}{assembly}{accession}, 'GCA_000001405.1', 'Search result assembly');
+  is($content->{items}[0]{species}{tax_id}, 3988, 'Search result species');
+  is($content->{items}[1]{assembly}{accession}, 'GCA_000001405.1', 'Search result assembly');
 
   # test the entries_per_page parameter
   $request = POST('/api/search?page=3&entries_per_page=2',
@@ -116,8 +116,8 @@ SKIP: {
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
   is(scalar @{$content->{items}}, 2, 'Number of entries per page');
-  is($content->{items}[0]{values}{hub}{shortLabel}, 'miRcode microRNA sites', 'Search result hub');
-  is($content->{items}[1]{values}{species}{scientific_name}, 'Homo sapiens', 'Search result species');
+  is($content->{items}[0]{hub}{shortLabel}, 'miRcode microRNA sites', 'Search result hub');
+  is($content->{items}[1]{species}{scientific_name}, 'Homo sapiens', 'Search result species');
   
   # test with qeury string
   # blueprint hub has some metadata to look for
@@ -129,8 +129,8 @@ SKIP: {
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
   is(scalar @{$content->{items}}, 1, 'Number of search results');
-  is($content->{items}[0]{values}{hub}{shortLabel}, 'Blueprint Hub', 'Search result hub');
-  is($content->{items}[0]{values}{assembly}{accession}, 'GCA_000001405.1', 'Search result assembly');
+  is($content->{items}[0]{hub}{shortLabel}, 'Blueprint Hub', 'Search result hub');
+  is($content->{items}[0]{assembly}{accession}, 'GCA_000001405.1', 'Search result assembly');
 
   $request = POST('/api/search?page=2',
 		  'Content-type' => 'application/json',
@@ -150,9 +150,9 @@ SKIP: {
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
   is(scalar @{$content->{items}}, 3, 'Number of search results');
-  is($content->{items}[0]{values}{species}{tax_id}, '7955', 'Search result species');
-  is($content->{items}[0]{values}{hub}{shortLabel}, 'ZebrafishGenomics', 'Search result hub');
-  is($content->{items}[1]{values}{assembly}{name}, 'GRCz10', 'Search result assembly');
+  is($content->{items}[0]{species}{tax_id}, '7955', 'Search result species');
+  is($content->{items}[0]{hub}{shortLabel}, 'ZebrafishGenomics', 'Search result hub');
+  is($content->{items}[1]{assembly}{name}, 'GRCz10', 'Search result assembly');
 
   $request = POST('/api/search',
 		  'Content-type' => 'application/json',
@@ -163,7 +163,7 @@ SKIP: {
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
   is(scalar @{$content->{items}}, 1, 'Number of search results');
-  is($content->{items}[0]{values}{hub}{shortLabel}, 'GRC Genome Issues under Review', 'Search result hub');
+  is($content->{items}[0]{hub}{shortLabel}, 'GRC Genome Issues under Review', 'Search result hub');
   
   # incompatible filters should return no results
   $request = POST('/api/search',

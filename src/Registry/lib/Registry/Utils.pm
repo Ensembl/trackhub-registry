@@ -45,10 +45,9 @@ sub checksum_compute {
   # my ($rc, $output) = run_cmd($cmd);
 
   # $output =~ s/^\s+|\s+$|\n//g; # trim left/right spaces and newlines
+  # return $output;
 
-  $output = md5_hex($content);
-
-  return $output;
+  return md5_hex($content);
 }
 
 # Runs the given command and returns a list of exit code and output

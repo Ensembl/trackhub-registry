@@ -27,7 +27,7 @@ use Data::SearchEngine::ElasticSearch::Results;
 
 has '_es' => (
     is => 'ro',
-    isa => 'Search::Elasticsearch::Client::Direct',
+    # isa => 'Search::Elasticsearch::Client::Direct',
     lazy => 1,
     default => sub {
         my $self = shift;

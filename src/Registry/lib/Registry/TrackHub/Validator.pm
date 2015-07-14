@@ -46,7 +46,7 @@ sub validate {
   
   # Handle here the unexpected, the python validation script cannot run,
   # e.g. the schema is badly formatted
-  die "Cannot run command $cmd\nReturn code is $rc. Program output is:\n$output" if $rc;
+  die "Cannot run command $cmd\nReturn code is $rc. Program output is:\n$output" if $rc > 0;
 
   # insert here whatever condition on the output 
   # is interpreted to be a failure

@@ -93,7 +93,9 @@ SKIP: {
   # search results shouldn't have neither metadata nor configuration
   ok(!$content->{items}[0]{data}, 'Search results have no metadata');
   ok(!$content->{items}[0]{configuration}, 'Search results have no configuration');
+  ok($content->{items}[0]{id}, 'Search result item has ID');
   is($content->{items}[1]{hub}{longLabel}, 'Evidence summaries and provisional results for the new Ensembl Regulatory Build', 'Search result hub');
+  ok($content->{items}[1]{score}, 'Search result item has score');
   is($content->{items}[3]{assembly}{name}, 'MGSCv37', 'Search result assembly');
 
   # test getting the n-th page

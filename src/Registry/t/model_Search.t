@@ -40,7 +40,6 @@ SKIP: {
 					       );
   $indexer->index_users();
   $indexer->index_trackhubs();
-  my $es = Registry::Model::Search->new();
 
   #
   # Test search getting all documents

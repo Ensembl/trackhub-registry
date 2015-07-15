@@ -11,6 +11,7 @@ use JSON;
 # use Registry::GenomeAssembly::Schema;
 use Registry;
 use Registry::Utils;
+use IO::Uncompress::Gunzip qw(gunzip $GunzipError);
 use Registry::TrackHub;
 use Registry::TrackHub::Tree;
 use Registry::TrackHub::Parser;
@@ -715,8 +716,16 @@ sub _add_genome_info {
   # $doc->{assembly}{long_name} = $as->long_name if $as->long_name; # sometimes not defined
   # $doc->{assembly}{synonyms} = $assembly_syn;
 
-  my $gc_assembly_set = 
-    from_json(Registry::Utils::slurp_file(Registry->config()->{GenomeCollection}{assembly_set_file}));
+  # my $gc_assembly_set = 
+  #   from_json(Registry::Utils::slurp_file(Registry->config()->{GenomeCollection}{assembly_set_file}));
+
+  # gc assembly set file is assumed to be compressed (gzip)
+  my $buffer;
+  my $file = Registry->config()->{GenomeCollection}{assembly_set_file};
+  gunzip $file => \$buffer 
+    or die "gunzip failed: $GunzipError\n";
+
+  my $gc_assembly_set = from_json($buffer);
   my $as = $gc_assembly_set->{$assembly_id};
   die "Unable to find GC assembly set entry for $assembly_id"
     unless $as;

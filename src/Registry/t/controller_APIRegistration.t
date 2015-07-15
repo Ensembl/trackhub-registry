@@ -379,7 +379,7 @@ SKIP: {
   		  'Content'      => to_json({ 'dummy' => 1 }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'POST request to /api/trackdb/create (no URL)');
+  ok($response = request($request), 'POST request to /api/trackhub/create (no URL)');
   is($response->code, 400, 'Request unsuccessful 400');
   $content = from_json($response->content);
   like($content->{error}, qr/You must specify.*?URL/i, 'Correct error response');
@@ -391,7 +391,7 @@ SKIP: {
   		  'Content'      => to_json({ url => $URL }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'POST request to /api/trackdb/create (incorrect URL)');
+  ok($response = request($request), 'POST request to /api/trackhub/create (incorrect URL)');
   is($response->code, 400, 'Request unsuccessful 400');
   $content = from_json($response->content);
   like($content->{error}, qr/check the source/i, 'Correct error response');
@@ -405,7 +405,7 @@ SKIP: {
   		  'Content'      => to_json({ url => $URL }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'POST request to /api/trackdb/create?version=dummy (wrong version)');
+  ok($response = request($request), 'POST request to /api/trackhub/create?version=dummy (wrong version)');
   is($response->code, 400, 'Request unsuccessful');  
   $content = from_json($response->content);
   like($content->{error}, qr/invalid version/i, 'Correct error response');
@@ -416,7 +416,7 @@ SKIP: {
   		  'Content'      => to_json({ url => $URL }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'POST request to /api/trackdb/create?version=v5.0 (unsupported version)');
+  ok($response = request($request), 'POST request to /api/trackhub/create?version=v5.0 (unsupported version)');
   is($response->code, 400, 'Request unsuccessful');  
   $content = from_json($response->content);
   like($content->{error}, qr/not supported/i, 'Correct error response');
@@ -427,7 +427,7 @@ SKIP: {
   		  'Content'      => to_json({ url => $URL }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'POST request to /api/trackdb/create');
+  ok($response = request($request), 'POST request to /api/trackhub/create (Plants Hub)');
   ok($response->is_success, 'Request successful 2xx');
   is($response->content_type, 'application/json', 'JSON content type');
   # use Data::Dumper; print Dumper $response->header('Location');
@@ -452,7 +452,7 @@ SKIP: {
   		  'Content'      => to_json({ url => $URL }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'POST request to /api/trackdb/create');
+  ok($response = request($request), 'POST request to /api/trackhub/create (Plants Hub)');
   is($response->code, 400, 'Request unsuccessful');  
   $content = from_json($response->content);
   like($content->{error}, qr/same hub\/assembly/i, 'Correct error response');
@@ -464,7 +464,7 @@ SKIP: {
   		  'Content'      => to_json({ url => $URL, type => 'epigenomics' }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), "POST request to /api/trackdb/create?version=v1.0");
+  ok($response = request($request), "POST request to /api/trackhub/create?version=v1.0 (Methylation Hub)");
   ok($response->is_success, 'Request successful 2xx');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);

@@ -6,6 +6,7 @@ use Data::Dumper;
 BEGIN {
   use FindBin qw/$Bin/;
   use lib "$Bin/../lib";
+  $ENV{CATALYST_CONFIG} = "$Bin/../registry_testing.conf";
 }
 
 use JSON;

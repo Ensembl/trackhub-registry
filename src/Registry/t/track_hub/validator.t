@@ -7,6 +7,7 @@ use Test::Exception;
 BEGIN {
   use FindBin qw/$Bin/;
   use lib "$Bin/../../lib";
+  $ENV{CATALYST_CONFIG} = "$Bin/../../registry_testing.conf";
 }
 
 local $SIG{__WARN__} = sub {};
@@ -22,11 +23,11 @@ my $version = 'v1.0';
 
 throws_ok { Registry::TrackHub::Validator->new() } qr/Undefined/, "Throws if required arg is undefined";
 
-my $validator = Registry::TrackHub::Validator->new(schema => "$Bin/../../../../docs/trackhub-schema/v1.0/schema.json");
+my $validator = Registry::TrackHub::Validator->new(schema => "$Bin/../../root/static/trackhub/json_schema_1_0.json");
 isa_ok($validator, 'Registry::TrackHub::Validator');
 
 SKIP: {
-  skip "No Internet connection: cannot test TrackHub validation on public Track Hubs", 14
+  skip "No Internet connection: cannot test TrackHub validation on public Track Hubs", 18
     unless Registry::Utils::internet_connection_ok();
 
   my $translator = Registry::TrackHub::Translator->new(version => $version, permissive => 1);

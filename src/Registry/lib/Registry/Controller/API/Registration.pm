@@ -49,7 +49,7 @@ sub begin : Private {
   my $authorized = 0;
   if (exists($c->req->headers->{'user'}) && exists($c->req->headers->{'auth-token'})) {
     $authorized = $c->authenticate({ username => $c->req->headers->{'user'}, 
-				     auth_key => $c->req->headers->{'auth-token'} }, 'testauthkey');
+				     auth_key => $c->req->headers->{'auth-token'} }, 'authkey');
   }
 
   $c->forward('deserialize');

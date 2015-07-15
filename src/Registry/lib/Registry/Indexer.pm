@@ -109,9 +109,9 @@ sub new {
 		    },
 		   ];
 
-  &Registry::Utils::es_running() or
-    croak "ElasticSearch instance not available";
-
+  # Module is used for testing, which assumes there's
+  # an ES instance running on the same host.
+  # We don't pass arguments to get the default (localhost)
   $self->{es} = Registry::Model::Search->new();
   $self->create_index();
 

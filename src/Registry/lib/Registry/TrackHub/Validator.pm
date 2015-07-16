@@ -40,13 +40,14 @@ sub validate {
 
   my $cmd = sprintf("validate.py -s %s -f %s", $self->{schema}, $file);
   # my ($rc, $output) = Registry::Utils::run_cmd($cmd);
-  my ($output, $err, $rc) = capture {
-    system( $cmd );
-  };
+  my ($output, $err, $rc) = capture { system( $cmd ); };
   
   # Handle here the unexpected, the python validation script cannot run,
   # e.g. the schema is badly formatted
-  die "Cannot run command $cmd\nReturn code is $rc. Program output is:\n$output" if $rc;
+  if ($rc) {
+    die "Command \"$cmd\" failed $!\n" if $rc == -1;
+    die "Command \"$cmd\" exited with value $rc\n$output\n";
+  }
 
   # insert here whatever condition on the output 
   # is interpreted to be a failure

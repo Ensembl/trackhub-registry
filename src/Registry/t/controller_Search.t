@@ -96,7 +96,7 @@ SKIP: {
 
   foreach my $hub (keys %public_hubs) {
     note "Submitting hub $hub";
-    my $request = POST('/api/trackhub/create?permissive=1',
+    my $request = POST('/api/trackhub?permissive=1',
 		       'Content-type' => 'application/json',
 		       'Content'      => to_json({ url => $public_hubs{$hub} }));
     $request->headers->header(user       => 'trackhub1');

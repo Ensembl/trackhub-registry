@@ -74,7 +74,7 @@ SKIP: {
 
   foreach my $hub (@public_hubs) {
     note sprintf "Submitting hub %s", $hub->{name};
-    $request = POST('/api/trackhub/create?permissive=1',
+    $request = POST('/api/trackhub?permissive=1',
 		    'Content-type' => 'application/json',
 		    'Content'      => to_json({ url => $hub->{url} }));
     $request->headers->header(user       => 'trackhub1');

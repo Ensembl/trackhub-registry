@@ -122,43 +122,6 @@ sub trackdb_list_GET {
   # $self->status_no_content($c);
 }
 
-=head2 trackhub_list
-
-Return the list of available track data hubs for a given user.
-Each trackhub is listed with key/value parameters together with
-a list of URIs of the resources which corresponds to the trackDbs
-beloning to the track hub
-
-=cut 
-
-sub trackhub_list :Path('/api/trackhub') Args(0) ActionClass('REST') {
-  my ($self, $c) = @_;
-}
-
-sub trackhub_list_GET {
-  my ($self, $c) = @_;
-
-  # get all docs for the given user
-  my $trackdbs = $c->model('Search')->get_trackdbs(query => { term => { owner => $c->stash->{user} } });
-
-  my $trackhubs;
-  foreach my $trackdb (@{$trackdbs}) {
-    my $hub = $trackdb->{hub}{name};
-    $trackhubs->{$hub} = $trackdb->{hub} unless exists $trackhubs->{$hub};
-
-    push @{$trackhubs->{$hub}{trackdbs}},
-      {
-       species  => $trackdb->{species}{tax_id},
-       assembly => $trackdb->{assembly}{accession},
-       uri      => $c->uri_for('/api/trackdb/' . $trackdb->{_id})->as_string
-      };
-  }
-
-  my @trackhubs = values %{$trackhubs};
-  $self->status_ok($c, entity => \@trackhubs);
-}
-
-
 =head2 trackdb_create
 
 Create new trackdb document
@@ -246,15 +209,14 @@ sub trackdb_create_POST {
 			 entity   => $c->model('Search')->get_trackhub_by_id($id));
 }
 
-=head2 trackhub_create
 
-Create new trackdb documents from a remote public TrackHub (UCSC spec)
+=head2 trackhub
 
-Action for /api/trackhub/create (POST)
+Actions for /api/trackhub (GET|POST)
 
-=cut
+=cut 
 
-sub trackhub_create :Path('/api/trackhub/create') Args(0) ActionClass('REST') {
+sub trackhub :Path('/api/trackhub') Args(0) ActionClass('REST') {
   my ($self, $c) = @_;
 
   # get the version, if specified
@@ -272,8 +234,39 @@ sub trackhub_create :Path('/api/trackhub/create') Args(0) ActionClass('REST') {
   $c->stash( id =>  $current_max_id?++$current_max_id:1, version => $version, permissive => $permissive ); 
 }
 
-sub trackhub_create_POST {
+# Return the list of available track data hubs for a given user.
+# Each trackhub is listed with key/value parameters together with
+# a list of URIs of the resources which corresponds to the trackDbs
+# beloning to the track hub
+
+sub trackhub_GET {
   my ($self, $c) = @_;
+
+  # get all docs for the given user
+  my $trackdbs = $c->model('Search')->get_trackdbs(query => { term => { owner => $c->stash->{user} } });
+
+  my $trackhubs;
+  foreach my $trackdb (@{$trackdbs}) {
+    my $hub = $trackdb->{hub}{name};
+    $trackhubs->{$hub} = $trackdb->{hub} unless exists $trackhubs->{$hub};
+
+    push @{$trackhubs->{$hub}{trackdbs}},
+      {
+       species  => $trackdb->{species}{tax_id},
+       assembly => $trackdb->{assembly}{accession},
+       uri      => $c->uri_for('/api/trackdb/' . $trackdb->{_id})->as_string
+      };
+  }
+
+  my @trackhubs = values %{$trackhubs};
+  $self->status_ok($c, entity => \@trackhubs);
+}
+
+# Create/update trackdb documents from a remote public TrackHub (UCSC spec)
+
+sub trackhub_POST {
+  my ($self, $c) = @_;
+
   # if the client didn't supply any data, it didn't send a properly formed request
   return $self->status_bad_request($c, message => "You must provide data with the POST request")
     unless defined $c->req->data;
@@ -284,10 +277,39 @@ sub trackhub_create_POST {
 
   return $self->status_bad_request($c, message => "You must specify the remote trackhub URL")
     unless defined $url;
+  $c->log->info("Request to create/update TrackHub at $url");
 
   my ($id, $version, $permissive) = ($c->stash->{id}, $c->stash->{version}, $c->stash->{permissive});
   my $config = Registry->config()->{'Model::Search'};
   my ($location, $entity);
+
+  # call might be a request to update an already registered TrackHub
+  # delete, if it exists, any trackDB in the document store belonging
+  # to the TrackHub
+  my $query = {
+	       filtered => {
+			    filter => {
+				       bool => {
+						must => [
+							 { term => { owner => $c->stash->{user} } },
+							 { term => { 'hub.url' => $url } }
+							]
+					       }
+				      }
+			   }
+	      };
+  my $registered_trackdbs = $c->model('Search')->search_trackhubs(query => $query);
+  if ($registered_trackdbs->{hits}{total}) {
+    $c->log->info("TrackHub already registered. Deleting existing trackDBs");
+    foreach my $doc (@{$registered_trackdbs->{hits}{hits}}) {
+      my $id = $doc->{_id};
+      $c->model('Search')->delete(index   => $config->{index},
+				  type    => $config->{type}{trackhub},
+				  id      => $id);
+      $c->log->info("Deleted doc $id");
+    }
+    $c->model('Search')->indices->refresh(index => $config->{index});
+  } 
 
   my @indexed;
   if ($id) {
@@ -309,35 +331,13 @@ sub trackhub_create_POST {
 	# NOTE: the doc is not indexed if it does not validate (i.e. raises an exception)
 	$c->forward('_validate', [ $json_doc ]);
 
-	# prevent submission of duplicate content, i.e. trackdb
-	# with the same hub/assembly
-	my $hub = $doc->{hub}{name};
-	my $assembly_acc = $doc->{assembly}{accession};
-	defined $hub and defined $assembly_acc or
-	  $c->go('ReturnError', 'custom', ["Unable to find hub/assembly information"]);
-	my $query = {
-		     filtered => {
-				  filter => {
-					     bool => {
-						      must => [
-							       { term => { owner => $c->stash->{user} } },
-							       { term => { 'hub.name' => $hub } },
-							       { term => { 'assembly.accession' => $assembly_acc } }
-							      ]
-						     }
-					    }
-				 }
-		    };
-	$c->go('ReturnError', 'custom', ["Cannot submit: a document with the same hub/assembly exists"])
-	  if $c->model('Search')->count_trackhubs(query => $query)->{count};
-
 	# set the owner of the doc as the current user
 	$doc->{owner} = $c->stash->{user};
 	# set creation date/status 
 	$doc->{created} = time();
 	$doc->{status}{message} = 'Unknown';
 	
-	$c->model('Search')->index(index   => $config->{index},
+ 	$c->model('Search')->index(index   => $config->{index},
 				   type    => $config->{type}{trackhub},
 				   id      => $id,
 				   body    => $doc);

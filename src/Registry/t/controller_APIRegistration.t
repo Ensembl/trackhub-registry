@@ -360,38 +360,38 @@ SKIP: {
   is($content->{owner}, 'trackhub1', 'Correct trackdb owner');
 
   #
-  # /api/trackhub/create (POST): create new documents as direct
+  # /api/trackhub (POST): create new documents as direct
   # translations of assembly trackdb files of a remote public trackhub
   #
   # should fail if no data is provided
-  $request = POST('/api/trackhub/create',
+  $request = POST('/api/trackhub',
   		  'Content-type' => 'application/json');
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'POST request to /api/trackdb/create (no data)');
+  ok($response = request($request), 'POST request to /api/trackdb (no data)');
   is($response->code, 400, 'Request unsuccessful 400');
   $content = from_json($response->content);
   like($content->{error}, qr/You must provide data/, 'Correct error response');
   #
   # should fail if no URL is given
-  $request = POST('/api/trackhub/create',
+  $request = POST('/api/trackhub',
   		  'Content-type' => 'application/json',
   		  'Content'      => to_json({ 'dummy' => 1 }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'POST request to /api/trackhub/create (no URL)');
+  ok($response = request($request), 'POST request to /api/trackhub (no URL)');
   is($response->code, 400, 'Request unsuccessful 400');
   $content = from_json($response->content);
   like($content->{error}, qr/You must specify.*?URL/i, 'Correct error response');
   #
   # should fail if URL is not correct
   my $URL = "http://";
-  $request = POST('/api/trackhub/create?permissive=1',
+  $request = POST('/api/trackhub?permissive=1',
   		  'Content-type' => 'application/json',
   		  'Content'      => to_json({ url => $URL }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'POST request to /api/trackhub/create (incorrect URL)');
+  ok($response = request($request), 'POST request to /api/trackhub (incorrect URL)');
   is($response->code, 400, 'Request unsuccessful 400');
   $content = from_json($response->content);
   like($content->{error}, qr/check the source/i, 'Correct error response');
@@ -400,34 +400,34 @@ SKIP: {
   $URL = "http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants";
   #
   # should fail if wrong schema version is specified
-  $request = POST('/api/trackhub/create?version=dummy',
+  $request = POST('/api/trackhub?version=dummy',
   		  'Content-type' => 'application/json',
   		  'Content'      => to_json({ url => $URL }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'POST request to /api/trackhub/create?version=dummy (wrong version)');
+  ok($response = request($request), 'POST request to /api/trackhub?version=dummy (wrong version)');
   is($response->code, 400, 'Request unsuccessful');  
   $content = from_json($response->content);
   like($content->{error}, qr/invalid version/i, 'Correct error response');
   #
   # should fail if unsupported schema version is specified
-  $request = POST('/api/trackhub/create?version=v5.0',
+  $request = POST('/api/trackhub?version=v5.0',
   		  'Content-type' => 'application/json',
   		  'Content'      => to_json({ url => $URL }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'POST request to /api/trackhub/create?version=v5.0 (unsupported version)');
+  ok($response = request($request), 'POST request to /api/trackhub?version=v5.0 (unsupported version)');
   is($response->code, 400, 'Request unsuccessful');  
   $content = from_json($response->content);
   like($content->{error}, qr/not supported/i, 'Correct error response');
   #
   # request creation with schema version parameter: should get 3 docs
-  $request = POST('/api/trackhub/create?version=v1.0&permissive=1',
+  $request = POST('/api/trackhub?version=v1.0&permissive=1',
   		  'Content-type' => 'application/json',
   		  'Content'      => to_json({ url => $URL }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'POST request to /api/trackhub/create (Plants Hub)');
+  ok($response = request($request), 'POST request to /api/trackhub (Plants Hub)');
   ok($response->is_success, 'Request successful 2xx');
   is($response->content_type, 'application/json', 'JSON content type');
   # use Data::Dumper; print Dumper $response->header('Location');
@@ -445,26 +445,14 @@ SKIP: {
     is($trackdb->{configuration}{repeatMasker_}{shortLabel}, 'RepeatMasker', 'Composite short label');
   }
   #
-  # attempt to submit track collections with the same hub/assembly as
-  # that of another stored collection should fail
-  $request = POST('/api/trackhub/create',
-  		  'Content-type' => 'application/json',
-  		  'Content'      => to_json({ url => $URL }));
-  $request->headers->header(user       => 'trackhub1');
-  $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'POST request to /api/trackhub/create (Plants Hub)');
-  is($response->code, 400, 'Request unsuccessful');  
-  $content = from_json($response->content);
-  like($content->{error}, qr/same hub\/assembly/i, 'Correct error response');
-  #
   # test with other public hubs
   $URL = 'http://smithlab.usc.edu/trackdata/methylation';
-  $request = POST('/api/trackhub/create?permissive=1',
+  $request = POST('/api/trackhub?permissive=1',
   		  'Content-type' => 'application/json',
   		  'Content'      => to_json({ url => $URL, type => 'epigenomics' }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), "POST request to /api/trackhub/create?version=v1.0 (Methylation Hub)");
+  ok($response = request($request), "POST request to /api/trackhub?version=v1.0 (Methylation Hub)");
   ok($response->is_success, 'Request successful 2xx');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);

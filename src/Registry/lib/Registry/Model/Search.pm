@@ -89,6 +89,27 @@ sub get_trackhub_by_id {
   
 }
 
+# return the next available ID for a new trackdb document to insert
+sub next_trackdb_id {
+  my ($self) = @_;
+
+  my $config = Registry->config()->{'Model::Search'};
+  my %args = 
+    (
+     index => $config->{index},
+     type  => $config->{type}{trackhub},
+     size  => 1,
+     body  => {
+	       fields => [ '_id' ],
+	       query  => { match_all => {} },
+	       sort   => [ { _uid => { order => 'desc' } } ]
+	       
+	      }
+    );
+  return $self->search(%args)->{hits}{hits}[0]{_id}+1;
+
+}
+
 sub get_trackdbs {
   my ($self, %args) = @_;
 
@@ -153,6 +174,11 @@ sub get_latest_report {
 			   # would otherwise throw exception if there
 			   # are documents missing the field,
 			   # see http://stackoverflow.com/questions/17051709/no-mapping-found-for-field-in-order-to-sort-on-in-elasticsearch
+			   # TODO:
+			   # Before 1.4.0 there was the ignore_unmapped boolean parameter, which was not enough information to 
+			   # decide on the sort values to emit, and didn’t work for cross-index search. It is still supported 
+			   # but users are encouraged to migrate to the new unmapped_type instead.
+			   # https://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-sort.html
 			   ignore_unmapped => 'true' 
 			  }
 	      }

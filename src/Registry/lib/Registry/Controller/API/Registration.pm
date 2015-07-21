@@ -229,9 +229,7 @@ sub trackhub :Path('/api/trackhub') Args(0) ActionClass('REST') {
   # this is hidden to the user 
   my $permissive = $c->request->param('permissive');
   
-  # get the count of trackhubs to determine the ID of the doc to create
-  my $current_max_id = $c->model('Search')->count_trackhubs()->{count};
-  $c->stash( id =>  $current_max_id?++$current_max_id:1, version => $version, permissive => $permissive ); 
+  $c->stash( id =>  $c->model('Search')->next_trackdb_id(), version => $version, permissive => $permissive ); 
 }
 
 # Return the list of available track data hubs for a given user.
@@ -302,11 +300,10 @@ sub trackhub_POST {
   if ($registered_trackdbs->{hits}{total}) {
     $c->log->info("TrackHub already registered. Deleting existing trackDBs");
     foreach my $doc (@{$registered_trackdbs->{hits}{hits}}) {
-      my $id = $doc->{_id};
       $c->model('Search')->delete(index   => $config->{index},
 				  type    => $config->{type}{trackhub},
-				  id      => $id);
-      $c->log->info("Deleted doc $id");
+				  id      => $doc->{_id});
+      $c->log->info(sprintf "Deleted trackDb %s", $doc->{_id});
     }
     $c->model('Search')->indices->refresh(index => $config->{index});
   } 
@@ -314,6 +311,7 @@ sub trackhub_POST {
   my @indexed;
   if ($id) {
     try {
+      $c->log->info("Translating TrackHub at $url");
       my $translator = Registry::TrackHub::Translator->new(version => $version, permissive => $permissive);
 
       # assembly can be left undefined by the user
@@ -343,6 +341,9 @@ sub trackhub_POST {
 				   body    => $doc);
 	# refresh the index
 	$c->model('Search')->indices->refresh(index => $config->{index});
+
+	$c->log->info("Created trackDb [$id]");
+
 	# record id of indexed doc so we can roll back in case of any failure
 	push @indexed, $id;
 

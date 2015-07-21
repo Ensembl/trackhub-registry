@@ -445,6 +445,22 @@ SKIP: {
     is($trackdb->{configuration}{repeatMasker_}{shortLabel}, 'RepeatMasker', 'Composite short label');
   }
   #
+  # Resubmission is interpreted as an update request
+  # Previous inserted docs should be deleted, and replaced
+  # by new ones
+  #
+  $request = POST('/api/trackhub?version=v1.0&permissive=1',
+  		  'Content-type' => 'application/json',
+  		  'Content'      => to_json({ url => $URL }));
+  $request->headers->header(user       => 'trackhub1');
+  $request->headers->header(auth_token => $auth_token);
+  ok($response = request($request), 'POST request to /api/trackhub (Plants Hub)');
+  ok($response->is_success, 'Request successful 2xx');
+  is($response->content_type, 'application/json', 'JSON content type');
+  $content = from_json($response->content);
+  ok($content, "Docs created");
+
+  #
   # test with other public hubs
   $URL = 'http://smithlab.usc.edu/trackdata/methylation';
   $request = POST('/api/trackhub?permissive=1',
@@ -482,6 +498,9 @@ SKIP: {
   ok($response->is_success, 'Request successful 2xx');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
+  # here we also test the update of the Plant TrackHub
+  # did not alter the number of hubs by deleting the previously
+  # existing trackDbs
   is(scalar @{$content}, 3, 'Number of hubs');
   foreach my $hub (@{$content}) {
     if ($hub->{name} eq 'Blueprint_Hub') {

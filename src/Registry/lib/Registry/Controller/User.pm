@@ -178,7 +178,7 @@ sub delete_trackhub : Chained('base') :Path('delete') Args(1) {
       # } catch {
       # 	Catalyst::Exception->throw($_);
       # };
-      $c->stash(status_msg => sprintf("Deleted track collection [%d]", $id));
+      $c->stash(status_msg => "Deleted track collection [$id]");
       $c->forward('list_trackhubs', [ $c->user->username ]);
     } else {
       $c->stash(error_msg => "Cannot delete collection [$id], does not belong to you");

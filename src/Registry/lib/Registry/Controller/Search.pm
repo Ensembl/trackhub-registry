@@ -42,8 +42,10 @@ sub index :Path :Args(0) {
   # Basic query check: if empty query params, matches all document
   my ($query_type, $query_body) = ('match_all', {});
   if ($params->{q}) {
-    $query_type = 'match';
-    $query_body = { _all => $params->{q} };
+    # $query_type = 'match';
+    # $query_body = { _all => $params->{q} };
+    $query_type = 'query_string';
+    $query_body = { query => $params->{q} }; # default field is _all
   } 
   my $facets = 
     {

@@ -58,8 +58,10 @@ sub search_POST {
   my $query = $data->{query};
   
   if ($query) {
-    $query_type = 'match';
-    $query_body = { _all => $query };
+    # $query_type = 'match';
+    # $query_body = { _all => $query };
+    $query_type = 'query_string';
+    $query_body = { query => $query }; # default field is _all
   }
 
   my $config = Registry->config()->{'Model::Search'};

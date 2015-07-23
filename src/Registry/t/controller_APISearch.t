@@ -64,10 +64,17 @@ SKIP: {
 		    'Content'      => to_json({ url => $hub->{url} }));
     $request->headers->header(user       => 'trackhub1');
     $request->headers->header(auth_token => $auth_token);
-    ok($response = request($request), 'POST request to /api/trackdb/create');
+    ok($response = request($request), 'POST request to /api/trackhub');
     ok($response->is_success, 'Request successful 2xx');
     is($response->content_type, 'application/json', 'JSON content type');
   }
+  
+  # Logout
+  $request = GET('/api/logout');
+  $request->headers->header(user       => 'trackhub1');
+  $request->headers->header(auth_token => $auth_token);
+  ok($response = request($request), 'GET request to /api/logout');
+  ok($response->is_success, 'Request successful 2xx');
 
   #
   # /api/search endpoint
@@ -91,13 +98,10 @@ SKIP: {
   $content = from_json($response->content);
   is($content->{total_entries}, 17, 'Number of search results');
   is(scalar @{$content->{items}}, 5, 'Number of search results per page');
-  # search results shouldn't have neither metadata nor configuration
-  ok(!$content->{items}[0]{data}, 'Search results have no metadata');
-  ok(!$content->{items}[0]{configuration}, 'Search results have no configuration');
   ok($content->{items}[0]{id}, 'Search result item has ID');
-  is($content->{items}[1]{hub}{longLabel}, 'Evidence summaries and provisional results for the new Ensembl Regulatory Build', 'Search result hub');
   ok($content->{items}[1]{score}, 'Search result item has score');
-  is($content->{items}[3]{assembly}{name}, 'MGSCv37', 'Search result assembly');
+  ok(!$content->{items}[2]{data}, 'Search results have no metadata');
+  ok(!$content->{items}[3]{configuration}, 'Search results have no configuration');
 
   # test getting the n-th page
   $request = POST('/api/search?page=3',
@@ -107,8 +111,7 @@ SKIP: {
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
-  is($content->{items}[0]{species}{tax_id}, 3988, 'Search result species');
-  is($content->{items}[1]{assembly}{accession}, 'GCA_000001405.1', 'Search result assembly');
+  is(scalar @{$content->{items}}, 5, 'Number of search results per page');
 
   # test the entries_per_page parameter
   $request = POST('/api/search?page=3&entries_per_page=2',
@@ -119,10 +122,8 @@ SKIP: {
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
   is(scalar @{$content->{items}}, 2, 'Number of entries per page');
-  is($content->{items}[0]{hub}{shortLabel}, 'miRcode microRNA sites', 'Search result hub');
-  is($content->{items}[1]{species}{scientific_name}, 'Homo sapiens', 'Search result species');
   
-  # test with qeury string
+  # test with query string
   # blueprint hub has some metadata to look for
   $request = POST('/api/search',
 		  'Content-type' => 'application/json',
@@ -154,14 +155,17 @@ SKIP: {
   $content = from_json($response->content);
   is(scalar @{$content->{items}}, 3, 'Number of search results');
   is($content->{items}[0]{species}{tax_id}, '7955', 'Search result species');
-  is($content->{items}[0]{hub}{shortLabel}, 'ZebrafishGenomics', 'Search result hub');
-  is($content->{items}[1]{assembly}{name}, 'GRCz10', 'Search result assembly');
+  ok($content->{items}[0]{hub}{shortLabel} eq 'GRC Genome Issues under Review' ||
+     $content->{items}[0]{hub}{shortLabel} eq 'ZebrafishGenomics', 'Search result hub');
+  ok($content->{items}[1]{assembly}{name} eq 'GRCz10' || $content->{items}[1]{assembly}{name} eq 'Zv9', 'Search result assembly');
+  ok($content->{items}[2]{hub}{longLabel} eq 'Burgess Lab Zebrafish Genomic Resources' ||
+     $content->{items}[2]{hub}{longLabel} eq 'Sanger Genome Reference Informatics Team: Genome issues and other features', 'Search result hub');
 
   $request = POST('/api/search',
 		  'Content-type' => 'application/json',
 		  'Content'      => to_json({ species  => 'Danio rerio',
 					      assembly => 'GRCz10' }));
-  ok($response = request($request), 'POST request to /api/search');
+  ok($response = request($request), 'POST request to /api/search [filters: Danio rerio, GRCz10]');
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
@@ -173,7 +177,7 @@ SKIP: {
 		  'Content-type' => 'application/json',
 		  'Content'      => to_json({ species  => 'Danio rerio',
 					      assembly => 'GRCh37'}));
-  ok($response = request($request), 'POST request to /api/search');
+  ok($response = request($request), 'POST request to /api/search [filters: Danio rerio, GRCh37]');
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
@@ -187,7 +191,20 @@ SKIP: {
   ok($response = request($request), 'POST request to /api/search/trackdb/:id');
   is($response->code, 405, 'Request unsuccessful 405');
 
-  $request = GET('/api/search/trackdb/2');
+  # get the ID of the trackDB of the miRcode Hub 
+  # test hub filter meanwhile
+  $request = POST('/api/search',
+		  'Content-type' => 'application/json',
+		  'Content'      => to_json({ hub => 'miRcodeHub'}));
+  ok($response = request($request), 'POST request to /api/search [filters: miRcodeHub]');
+  ok($response->is_success, 'Request successful');
+  is($response->content_type, 'application/json', 'JSON content type');
+  $content = from_json($response->content);
+  is(scalar @{$content->{items}}, 1, 'Number of search results');
+  my $id = $content->{items}[0]{id};
+  ok($id, 'Search result has ID');
+
+  $request = GET("/api/search/trackdb/$id");
   ok($response = request($request), 'GET request to /api/search/trackdb/:id');
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');

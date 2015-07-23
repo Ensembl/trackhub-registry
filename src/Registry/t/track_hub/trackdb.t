@@ -87,12 +87,12 @@ SKIP: {
 
   note "Checking Plants trackhub";
   my $URL = "http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants";  
-  $request = POST('/api/trackhub/create?version=v1.0',
+  $request = POST('/api/trackhub?version=v1.0',
   		  'Content-type' => 'application/json',
   		  'Content'      => to_json({ url => $URL }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'POST request to /api/trackhub/create');
+  ok($response = request($request), 'POST request to /api/trackhub');
   ok($response->is_success, 'Request successful 2xx');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
@@ -102,7 +102,7 @@ SKIP: {
 
   for my $doc (@{$content}) {
     my $location = shift @{$location_header};
-    my ($id) = $location =~ /(\d+)$/;
+    my ($id) = $location =~ /\/([^\/]+?)$/;
     $trackdb = Registry::TrackHub::TrackDB->new($id);
     isa_ok($trackdb, 'Registry::TrackHub::TrackDB');
     $status = $trackdb->update_status();

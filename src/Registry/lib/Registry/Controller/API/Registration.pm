@@ -229,7 +229,7 @@ sub trackhub :Path('/api/trackhub') Args(0) ActionClass('REST') {
   # this is hidden to the user 
   my $permissive = $c->request->param('permissive');
   
-  $c->stash( id =>  $c->model('Search')->next_trackdb_id(), version => $version, permissive => $permissive ); 
+  $c->stash( version => $version, permissive => $permissive ); 
 }
 
 # Return the list of available track data hubs for a given user.
@@ -277,7 +277,7 @@ sub trackhub_POST {
     unless defined $url;
   $c->log->info("Request to create/update TrackHub at $url");
 
-  my ($id, $version, $permissive) = ($c->stash->{id}, $c->stash->{version}, $c->stash->{permissive});
+  my ($version, $permissive) = ($c->stash->{version}, $c->stash->{permissive});
   my $config = Registry->config()->{'Model::Search'};
   my ($location, $entity);
 
@@ -303,66 +303,56 @@ sub trackhub_POST {
       $c->model('Search')->delete(index   => $config->{index},
 				  type    => $config->{type}{trackhub},
 				  id      => $doc->{_id});
-      $c->log->info(sprintf "Deleted trackDb %s", $doc->{_id});
+      $c->log->info(sprintf "Deleted trackDb [%s]", $doc->{_id});
     }
     $c->model('Search')->indices->refresh(index => $config->{index});
   } 
 
-  my @indexed;
-  if ($id) {
-    try {
-      $c->log->info("Translating TrackHub at $url");
-      my $translator = Registry::TrackHub::Translator->new(version => $version, permissive => $permissive);
+  try {
+    $c->log->info("Translating TrackHub at $url");
+    my $translator = Registry::TrackHub::Translator->new(version => $version, permissive => $permissive);
 
-      # assembly can be left undefined by the user
-      # in this case, we get a list of translations of all different 
-      # assembly trackdb files in the hub
-      my $trackdbs_docs = $translator->translate($url);
+    # assembly can be left undefined by the user
+    # in this case, we get a list of translations of all different 
+    # assembly trackdb files in the hub
+    my $trackdbs_docs = $translator->translate($url);
 
-      foreach my $json_doc (@{$trackdbs_docs}) {
-	my $doc = from_json($json_doc);
+    foreach my $json_doc (@{$trackdbs_docs}) {
+      my $doc = from_json($json_doc);
       
-	# add type
-	$doc->{type} = $trackdb_type;
+      # add type
+      $doc->{type} = $trackdb_type;
 
-	# validate the doc
-	# NOTE: the doc is not indexed if it does not validate (i.e. raises an exception)
-	$c->forward('_validate', [ $json_doc ]);
+      # validate the doc
+      # NOTE: the doc is not indexed if it does not validate (i.e. raises an exception)
+      $c->forward('_validate', [ $json_doc ]);
 
-	# set the owner of the doc as the current user
-	$doc->{owner} = $c->stash->{user};
-	# set creation date/status 
-	$doc->{created} = time();
-	$doc->{status}{message} = 'Unknown';
+      # set the owner of the doc as the current user
+      $doc->{owner} = $c->stash->{user};
+      # set creation date/status 
+      $doc->{created} = time();
+      $doc->{status}{message} = 'Unknown';
 	
- 	$c->model('Search')->index(index   => $config->{index},
-				   type    => $config->{type}{trackhub},
-				   id      => $id,
-				   body    => $doc);
-	# refresh the index
-	$c->model('Search')->indices->refresh(index => $config->{index});
+      my $id = $c->model('Search')->index(index   => $config->{index},
+					  type    => $config->{type}{trackhub},
+					  # id      => $id,
+					  body    => $doc)->{_id};
+      # refresh the index
+      $c->model('Search')->indices->refresh(index => $config->{index});
 
-	$c->log->info("Created trackDb [$id]");
+      $c->log->info("Created trackDb [$id]");
 
-	# record id of indexed doc so we can roll back in case of any failure
-	push @indexed, $id;
+      push @{$location}, $c->uri_for( '/api/trackdb/' . $id )->as_string;
+      push @{$entity}, $c->model('Search')->get_trackhub_by_id($id);
+    }
+  } catch {
+    # TODO: roll back and delete any doc which has been indexed previous to the error
+    # NOTE: not sure this is the correct way, since /api/trackhub/:id (GET|POST|DELETE)
+    #       all expect the trackhub doc to be loaded in the stash
+    # map { $c->forward("trackdb_DELETE", $id) } @indexed;
 
-	push @{$location}, $c->uri_for( '/api/trackdb/' . $id )->as_string;
-	push @{$entity}, $c->model('Search')->get_trackhub_by_id($id);
-
-	$id++;
-      };
-    } catch {
-      # TODO: roll back and delete any doc which has been indexed previous to the error
-      # NOTE: not sure this is the correct way, since /api/trackhub/:id (GET|POST|DELETE)
-      #       all expect the trackhub doc to be loaded in the stash
-      # map { $c->forward("trackdb_DELETE", $id) } @indexed;
-
-      $c->go('ReturnError', 'custom', [qq{$_}]);
-    };
-  } else {
-    $c->go('ReturnError', 'custom', ["Couldn't determine doc ID(s)"]);
-  }
+    $c->go('ReturnError', 'custom', [qq{$_}]);
+  };
 
   # location in status_created can be either a scalar or a blessed reference
   bless($location, 'Location');

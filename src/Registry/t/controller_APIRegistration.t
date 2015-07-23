@@ -22,7 +22,7 @@ use Registry::Indexer; # index a couple of sample documents
 
 SKIP: {
   skip "Launch an elasticsearch instance for the tests to run fully",
-    225 unless &Registry::Utils::es_running();
+    226 unless &Registry::Utils::es_running();
 
   # index test data
   note 'Preparing data for test (indexing sample documents)';
@@ -446,7 +446,7 @@ SKIP: {
   }
   #
   # Resubmission is interpreted as an update request
-  # Previous inserted docs should be deleted, and replaced
+  # Previously inserted docs should be deleted, and replaced
   # by new ones
   #
   $request = POST('/api/trackhub?version=v1.0&permissive=1',

@@ -19,45 +19,53 @@
 </div>
 </section>
 -->
-<div class="jumbotron background-color-primary-accent">
-  <div class="container">
-    <div>
-      <h1>TrackHub Registry</h1>
-      <h3>The global centralised collection of publicly accessible TrackHubs</h3>
 
-      <!-- search box goes here -->
+<div class="jumbotron background-color-primary-accent">
+  <div class="container content">
+    <div>
+      <h1>The TrackHub Registry</h1>
+      <h3>A global centralised collection of publicly accessible TrackHubs</h3>
+      <div class="underline"></div>
+      <p><small>The goal of the TrackHub Registry is to allow third parties to advertise <a href="http://genome.ucsc.edu/goldenPath/help/hgTrackHubHelp.html#Intro" target="_blank">TrackHubs</a>, and to make it easier for researchers around the world to discover and use TrackHubs containing different types of genomic research data.</small></p>
+
       <form role="search" method="post" action="[% c.uri_for('/search') %]">
         <div class="input-group">
-          <input type="text" name="q" class="form-control" placeholder="Enter the search terms..." id="search-box" />
+          <input type="text" name="q" class="form-control" placeholder="Search by keywords: hg19, epigenomics, mouse ..." id="search-box" />
           <span class="input-group-btn">
             <button class="btn btn-default" type="submit" id="search-button">
-              <span class="glyphicon glyphicon-search"></span>
+              <span class="glyphicon glyphicon-search glyphicon-white"></span>
             </button>
           </span>
         </div>
       </form>
-      <!--
-      <p>Welcome to the TrackHub Registry, a centralised, global collection of publicly accessible TrackHubs, for third parties to advertise TrackHubs, and to make it easier for researchers around the world to discover and use TrackHubs containing different types of genomic research data.</p>
-      <p><a class="btn btn-primary btn-lg" href="/more" role="button">Learn more</a></p>
-      -->
     </div>
   </div>
 </div>
 
 <section id="">
-<div class="row">
+<div class="row" style="text-align: justify; text-justify: inter-word;">
   <div class="col-sm-6">
     <div class="box-progetto">
-      <h3>Submit Data <span class="glyphicon glyphicon-upload"></span></h3>
-      <p>External TrackHub providers can register themselves and submit their TrackHubs to the registry. Registration and submission happen programatically via our RESTful API. Once submitted and validated, the TrackHubs become available for search by other users worldwide, allowing for automatic and rapid integration into a genome browser.</p>
+      <h2><span class="glyphicon glyphicon-upload"></span> Submit Data</h2>
+
+      <blockquote>
+        <p><em>I want maximum visibility for my track hubs.</em></p>
+      </blockquote>
+
+      <p>External TrackHub providers can register and submit their track databases to the registry. <a href="[% c.uri_for('/user/register') %]">Registration</a> is web-based and done on this site; submission happens programatically via our RESTful API. Once submitted and successfully validated, the track dbs become available for search by other users worldwide, allowing for automatic and rapid integration into a genome browser.</p>
       <a href="[% c.uri_for('/submit_trackhubs') %]" class="btn btn-primary">How to Submit</a>
     </div>
   </div><!-- /.col-sm-6 -->
   <div class="col-sm-6">
     <div class="box-progetto">
-      <h3>Access Data <span class="glyphicon glyphicon-search"></span></h3>
+      <h2><span class="glyphicon glyphicon-search"></span> Access Data</h2>
+
+      <blockquote>
+        <p><em>How do I find omics tracks for an assembly of my favourite organism?</em></p>
+      </blockquote>
+
       <p>TrackHubs can be searched based on metadata information. Free text search is provided from the search box in the header of all TrackHub Registry web pages. Advanced search options are available for more specific and customised searches.</p>
-      <a href="#" class="btn btn-primary">Advanced Search</a>
+      <a href="[% c.uri_for('/search/advanced') %]" class="btn btn-primary">Advanced track search</a>
     </div>
   </div><!-- /.col-sm-6 -->
 </div>

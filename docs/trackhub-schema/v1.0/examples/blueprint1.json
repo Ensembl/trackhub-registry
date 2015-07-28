@@ -1,5 +1,10 @@
 {
-  "hub": "Blueprint example 1",
+  "type": "epigenomics",
+  "hub": {
+    "name": "Blueprint_Hub",
+    "shortLabel": "Blueprint Hub",
+    "longLabel": "Blueprint Epigenomics Data Hub"
+  },
   "description": "An example of trackhub DB from the Blueprint project (1 track)",
   "version": "v1.0",
   "species": {
@@ -7,7 +12,7 @@
     "scientific_name": "Homo sapiens"
   },
   "assembly": {
-    "accession": "GCA_000001405.15",
+    "accession": "GCA_000001405.1",
     "name": "GRCh37",
     "synonyms": "hg19"
   },

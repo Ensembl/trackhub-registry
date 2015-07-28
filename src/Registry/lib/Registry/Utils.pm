@@ -5,6 +5,9 @@ use warnings;
 
 use LWP;
 use HTTP::Tiny;
+use File::Temp qw/ tempfile /;
+use Digest::MD5 qw(md5_hex);
+use Registry::Utils::URL qw(read_file);
 
 sub slurp_file {
   my $file = shift;
@@ -19,6 +22,32 @@ sub slurp_file {
   }
   
   return $string;
+}
+
+# compute checksum for file at a remote URL
+sub checksum_compute {
+  my $url = shift;
+  
+  my $response = read_file($url, { nice => 1 });
+  my $content;
+ 
+  if ($response->{error}) {
+    push @{$response->{error}}, "Please the check the source URL in a web browser.";
+    die join("\n", @{$response->{error}});
+  }
+  $content = $response->{'content'};
+
+  # my ($fh, $filename) = tempfile( DIR => '.', UNLINK => 1);
+  # print $fh $content;
+  # close $fh;
+
+  # my $cmd = sprintf("md5sum %s | cut -d ' ' -f 1", $filename);
+  # my ($rc, $output) = run_cmd($cmd);
+
+  # $output =~ s/^\s+|\s+$|\n//g; # trim left/right spaces and newlines
+  # return $output;
+
+  return md5_hex($content);
 }
 
 # Runs the given command and returns a list of exit code and output

@@ -7,8 +7,10 @@ BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 
 use Data::Dumper;
 use List::Util 'max';
+use Try::Tiny;
 use Registry::Form::User::Registration;
 use Registry::Form::User::Profile;
+use Registry::TrackHub::TrackDB;
 
 =head1 NAME
 
@@ -117,17 +119,78 @@ sub delete : Chained('base') Path('delete') Args(1) Does('ACL') RequiresRole('ad
 sub list_trackhubs : Chained('base') :Path('trackhubs') Args(0) {
   my ($self, $c) = @_;
 
-  my $columns = [ 'name', 'description', 'version', 'status' ];
-  my $trackhubs;
+  my $trackdbs;
   my $query = { term => { owner => $c->user->username } };
 
-  foreach my $doc (@{$c->model('Search')->search_trackhubs(query => $query)->{hits}{hits}}) {
-    push @{$trackhubs}, $doc->{_source};
+  foreach my $doc (@{$c->model('Search')->search_trackhubs(size => 1000000, query => $query)->{hits}{hits}}) {
+    push @{$trackdbs}, Registry::TrackHub::TrackDB->new($doc->{_id});
   }
 
-  $c->stash(trackhubs => $trackhubs,
-	    columns   => $columns,
+  $c->stash(trackdbs => $trackdbs,
 	    template  => "user/trackhub/list.tt");
+}
+
+sub submit_trackhubs : Chained('base') :Path('submit_trackhubs') Args(0) {
+  my ($self, $c) = @_;
+
+  $c->stash(template  => "user/trackhub/submit_update.tt");
+}
+
+sub view_trackhub_status : Chained('base') :Path('view_trackhub_status') Args(1) {
+  my ($self, $c, $id) = @_;
+
+  my $trackdb;
+  try {
+    $trackdb = Registry::TrackHub::TrackDB->new($id);
+  } catch {
+    $c->stash(error_msg => $_);
+  };
+
+  $c->stash(trackdb => $trackdb, template  => "user/trackhub/view.tt");
+}
+
+sub refresh_trackhub_status : Chained('base') :Path('refresh_trackhub_status') Args(1) {
+  my ($self, $c, $id) = @_;
+
+  try {
+    my $trackdb = Registry::TrackHub::TrackDB->new($id);
+    $trackdb->update_status();
+  } catch {
+    $c->stash(error_msg => $_);
+  };
+
+  $c->forward('list_trackhubs', [ $c->user->username ]);
+}
+
+sub delete_trackhub : Chained('base') :Path('delete') Args(1) {
+  my ($self, $c, $id) = @_;
+  
+  my $doc = $c->model('Search')->get_trackhub_by_id($id);
+  if ($doc) {
+    # TODO: this should be redundant, but just to be sure
+    if ($doc->{owner} eq $c->user->username) {
+      my $config = Registry->config()->{'Model::Search'};
+      # try { # TODO: this is not working for some reason
+	$c->model('Search')->delete(index   => $config->{index},
+				    type    => $config->{type}{trackhub},
+				    id      => $id);
+	$c->model('Search')->indices->refresh(index => $config->{index});
+      # } catch {
+      # 	Catalyst::Exception->throw($_);
+      # };
+      $c->stash(status_msg => "Deleted track collection [$id]");
+      $c->forward('list_trackhubs', [ $c->user->username ]);
+    } else {
+      $c->stash(error_msg => "Cannot delete collection [$id], does not belong to you");
+    }
+  } else {
+    $c->stash(error_msg => "Could not fetch track collection [$id]");
+  }
+
+  # TODO: this is not properly working.
+  #       address is still that of delete action,
+  #       and list_trackhubs tab is not active
+  $c->forward('list_trackhubs', [ $c->user->username ]);
 }
 
 #
@@ -143,7 +206,8 @@ sub list_providers : Chained('base') Path('providers') Args(0) Does('ACL') Requi
 
   my $config = Registry->config()->{'Model::Search'};
   foreach my $user_data (@{$c->model('Search')->search(index => $config->{index}, 
-						       type  => $config->{type}{user})->{hits}{hits}}) {
+						       type  => $config->{type}{user},
+						       size => 100000)->{hits}{hits}}) {
     my $user = $user_data->{_source};
     # don't want to show admin user to himself
     next if $user->{username} eq 'admin';
@@ -180,7 +244,7 @@ sub register :Path('register') Args(0) {
     
     # get the max user ID to assign the ID to the new user
     my $config = Registry->config()->{'Model::Search'};
-    my $users = $c->model('Search')->search(index => $config->{index}, type => $config->{type}{user});
+    my $users = $c->model('Search')->search(index => $config->{index}, type => $config->{type}{user}, size => 100000);
     my $current_max_id = max( map { $_->{_id} } @{$users->{hits}{hits}} );
 
     # add default user role to user 

@@ -13,18 +13,22 @@
 </div>
 <div class="row">
   <div class="col-sm-6">
-  <section id="profile-form" class="margine-bottom">
-    <h3 class="contatti-titoli">Edit your details</h3>
     <form id="profile_form" class="form-horizontal">
       <fieldset>
-        <!-- Form Name -->
-        <!--<legend>Please enter your details:</legend>-->
+        <legend>Authentication & Contact</legend>
+
+	<div class="form-group">
+          <label class="col-sm-3 control-label" for="username">Username</label>
+	  <div class="col-sm-8">
+            <input type="text" id="username" class="form-control" placeholder="[% user.username %]" readonly>
+	  </div>
+    	</div>
 
         <!-- First name -->
 	[% f = form.field('first_name') %]
         <div class="form-group">
           <label class="col-sm-3 control-label" for="first_name">First Name</label>
-          <div class="col-sm-9">
+          <div class="col-sm-8">
             <input id="first_name" name="first_name" class="form-control input-md" type="text" value="[% f.fif %]">
           </div>
         </div>
@@ -33,7 +37,7 @@
 	[% f = form.field('last_name') %]
         <div class="form-group">
           <label class="col-sm-3 control-label" for="last_name">Last Name</label>
-          <div class="col-sm-9">
+          <div class="col-sm-8">
             <input id="last_name" name="last_name" class="form-control input-md" type="text" value="[% f.fif %]">
           </div>
         </div>
@@ -42,7 +46,7 @@
 	[% f = form.field('affiliation') %]
         <div class="form-group">
           <label class="col-sm-3 control-label" for="affiliation">Affiliation</label>
-          <div class="col-sm-9">
+          <div class="col-sm-8">
             <input id="affiliation" name="affiliation" class="form-control input-md" type="text" value="[% f.fif %]">
           </div>
         </div>
@@ -51,7 +55,7 @@
 	[% f = form.field('email') %]
         <div class="form-group">
           <label class="col-sm-3 control-label" for="email">Email</label>
-          <div class="col-sm-9">
+          <div class="col-sm-8">
             <input id="email" name="email" class="form-control input-md" required="" type="text" value="[% f.fif %]">
           </div>
         </div>
@@ -60,17 +64,45 @@
 	[% f = form.field('password') %]
         <div class="form-group">
           <label class="col-sm-3 control-label" for="password">Password</label>
-          <div class="col-sm-9">
+          <div class="col-sm-8">
             <input id="password" name="password" class="form-control input-md" required="" type="password" value="[% f.fif %]">
           </div>
         </div>
 
         <div class="form-group">
           <label class="col-sm-3 control-label" for="password_conf">Password (again)</label>
-          <div class="col-sm-9">
+          <div class="col-sm-8">
             <input id="password_conf" name="password_conf" class="form-control input-md" required="" type="password">
           </div>
         </div>
+
+        <legend>Trackhub monitoring configuration</legend>
+	
+	[% f = form.field('check_interval') %]
+	[% selected = 'selected'; %]
+        <div class="form-group">
+	  <label class="col-sm-3 control-label" for="check_interval">Check Interval</label>
+	  <div class="col-sm-5">
+	    <select class="form-control" name="check_interval" id="check_interval">
+	      <option [% selected IF f.fif == 0 %] value="0">Automatic</option>
+	      <option [% selected IF f.fif == 1 %] value="1">Weekly</option>
+	      <option [% selected IF f.fif == 2 %] value="2">Monthly</option>
+	    </select>
+	  </div>
+	</div>
+
+	[% f = form.field('continuous_alert') %]
+	[% checked = 'checked'; %]
+        <div class="form-group">
+	  <!--<label class="col-sm-3 control-label" for="continuous_alert"></label>-->
+	  <div class="checkbox">
+  	    <label class="col-sm-5 control-label">
+    	      <input type="checkbox" id="continuous_alert" name="continuous_alert" value="1" [% checked IF f.fif == 1 %]>
+	      Receive continuous alerts
+  	    </label>
+	  </div>
+	</div>
+
 
         <!-- Button -->
         <div class="form-group">
@@ -82,6 +114,5 @@
 
       </fieldset>
     </form>
-  </section>
   </div>
 </div>

@@ -40,12 +40,13 @@ requires 'Config::General'; # This should reflect the config file format you've 
 requires 'HTML::FormHandler::Moose';
 
 requires 'Try::Tiny';
+requires 'Capture::Tiny';
+requires 'Digest::MD5';
 requires 'File::Temp';
 requires 'List::Util';
 requires 'String::Random';
 requires 'Search::Elasticsearch';
 requires 'Data::SearchEngine';
-requires 'Data::SearchEngine::ElasticSearch::Results';
 
 # for file utils
 requires 'Compress::Zlib';
@@ -58,6 +59,13 @@ requires 'Math::Base36';
 requires 'DBIx::Class';
 requires 'Catalyst::Model::DBIC::Schema';
 requires 'DBIx::Class::Cursor::Cached';
+
+# for production
+recommends 'Log::Log4perl';
+recommends 'Log::Dispatch::Screen';
+recommends 'Getopt::Long';
+recommends 'Email::MIME';
+recommends 'Email::Sender::Simple';
 
 test_requires 'Test::More' => '0.88';
 catalyst;

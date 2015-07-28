@@ -18,6 +18,7 @@ use JSON;
 
 use Registry::Utils;
 use Registry::Model::Search;
+use Registry::TrackHub::TrackDB;
 
 sub new {
   my ($caller, %args) = @_;
@@ -68,6 +69,7 @@ sub new {
 		    {		# the administrator
 		     id       => 1,
 		     fullname => "Administrator",
+		     email    => "avullo\@ebi.ac.uk",
 		     password => "admin",
 		     roles    => ["admin", "user"],
 		     username => "admin",
@@ -107,9 +109,9 @@ sub new {
 		    },
 		   ];
 
-  &Registry::Utils::es_running() or
-    croak "ElasticSearch instance not available";
-
+  # Module is used for testing, which assumes there's
+  # an ES instance running on the same host.
+  # We don't pass arguments to get the default (localhost)
   $self->{es} = Registry::Model::Search->new();
   $self->create_index();
 
@@ -178,9 +180,12 @@ sub index_trackhubs {
     -e $doc->{file} or 
       croak "$doc->{file} does not exist or it's not accessible";
     
-    # load doc from JSON, add owner
+    # load doc from JSON, add owner, set version and status
     my $doc_data = from_json(&Registry::Utils::slurp_file($doc->{file}));
     $doc_data->{owner} = $doc->{owner};
+    $doc_data->{version} = 'v1.0';
+    $doc_data->{created} = time();
+    $doc_data->{status}{message} = 'Unknown';
 
     # index doc
     $self->{es}->index(index   => $self->{index},
@@ -203,8 +208,8 @@ sub index_users {
   my $self = shift;
 
   foreach my $user (@{$self->{users}}) {
-    carp "Indexing user $user->{fullname} document";
-    my $id = delete $user->{id};
+    my $id = $user->{id};
+    carp "Indexing user $id ($user->{fullname}) document";
     $self->{es}->index(index   => $self->{index},
 		       type    => $self->{auth}{type},
 		       id      => $id,

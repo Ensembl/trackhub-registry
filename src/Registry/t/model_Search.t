@@ -6,6 +6,7 @@ use Test::Exception;
 BEGIN {
   use FindBin qw/$Bin/;
   use lib "$Bin/../lib";
+  $ENV{CATALYST_CONFIG} = "$Bin/../registry_testing.conf";
 }
 
 use LWP;
@@ -38,9 +39,8 @@ SKIP: {
 						  mapping => 'authentication_mappings.json'
 						}
 					       );
+  $indexer->index_users();
   $indexer->index_trackhubs();
-
-  my $es = Registry::Model::Search->new();
 
   #
   # Test search getting all documents
@@ -67,14 +67,20 @@ SKIP: {
 
   # getting existing documents
   my $doc = $es->get_trackhub_by_id(1);
-  is($doc->{data}[0]{name}, "bpDnaseRegionsC0010K46DNaseEBI", "Fetch correct document");
+  is($doc->{data}[0]{id}, "bpDnaseRegionsC0010K46DNaseEBI", "Fetch correct document");
   
   $doc = $es->get_trackhub_by_id(2);
   is(scalar @{$doc->{data}}, 4, "Fetch correct document");
 
+  is($es->next_trackdb_id, 5, "Correct next document ID");
+
   # getting document by non-existant ID
   throws_ok { $es->get_trackhub_by_id(5) }
-    qr/Missing/, "Request document by incorrect ID"
+    qr/Missing/, "Request document by incorrect ID";
+
+  # check we get the correct set of all users
+  my $users = $es->get_all_users;
+  is(scalar @{$users}, 4, 'Correct number of users');
 }
 
 done_testing();

@@ -1,9 +1,107 @@
-- JSON spec 1.0
-  X data/configuration
-  X configuration is a tree of hierarchically organised track configurations
-  X track configuration is an associative array of key/value (string) pairs 
+Overview
+========
 
-- Registry::TrackHub::Translator
+- Discuss with Web Search API
+
+- Mail Anne Lyle (core), 29/05/2015, 09:46
+  sharing code
+
+X Periodic checks and updates (TEST)
+  X production script (to run as a cron job)
+    - update trackdb doc upon change on remote hub, use checksum
+    - Trackhub provider notification
+      - user object to store more options
+
+X util method to compute checksum from a file
+
+- trackdb:
+  X source checksum, add to schema
+    source: { url: '', checksum: '' }
+  - add to API actions, move instead to Translator as other attribute setting, e.g. created?
+  - timeout when updating status (parameter?)
+  - validate method
+
+
+- hub type, e.g. genomics, proteomics etc. (parameter of endpoint?)
+  - type not enforced in schema, since it's added after validation
+    adding it during translation would require to change the Translator
+    method prototype
+
+X trackdb/hub URL if public, display
+
+X track file type, e.g. bigbed, bigwig etc. (determine with TrackDB scan)
+  - handle vcf and bed cases, which (could) end with .gz
+
+- limit size of error log
+
+- if th provider updates status on a trackdb and this is very big, the
+  whole site halts. 
+  prevent this operation? have to test with multiple spawned workers
+  at least, warn the user and/or prevent action if number of tracks is 
+  above a certain range
+
+Web Frontend
+============
+
+X Registration
+  - Add more options controlling periodic checks and notifications
+
+- TrackHub provider pages
+  X Profile panel
+    - show and manage additional registration options
+  X Hub list panel
+    - created/updated field 
+    - status with last update 
+    - view for problematic hubs
+  - Submission panel
+
+- Admin pages
+  - more actions/different template according to new settings
+
+- Search results
+  X Show status
+  X View info
+  X Remove hub/type tabbed panels
+  - Facets to provide link to show more elements
+  X Number of search results per page
+  - Correct pagination, use simple approach like DCC?!
+
+- Non authenticated pages
+  X use context user whenever linking to auth pages
+  - link to the original trackhub specification
+  - browse link?
+  - about/help/documentation pages
+
+Registry::Controller::API
+=========================
+
+X add created/update field upon submission/update
+X add status field upon submission/update
+X UCSC track hub submission does not get assembly param,
+  translate everything it finds on the remote hub
+X prevent submission of duplicate content (trackdb with same hub/species?/assembly)
+
+Registry::Controller::User
+==========================
+
+X 'list hub' action and template to use TrackDB
+X 'update status' action to use TrackDB
+
+JSON spec 1.0
+=============
+
+X created/updated fields, not indexed:
+  added to mapping, not schema, since they will be created automatically,
+  user's not aware of it
+X status object, disabled
+? store original trackDb file as attribute 
+  should not be necessary if the configurations are represented as as tree, 
+  should be easy to translate back. 
+X store the source URL
+
+Registry::TrackHub::Translator
+==============================
+
   X finish mapping of UCSC synonyms to assembly accession IDs
   X translate the hierarchy as well
   - test with various public track hubs and assemblies
@@ -11,9 +109,6 @@
   ----> ERROR: the existing parser cannot parse metadata as key=value
                pairs containing quotes with spaces
   - use GenomeAssemblyDB model instead of schema class directly
-  ? store original trackDb file as attribute 
-    should not be necessary if the configurations are represented as as tree, 
-    should be easy to translate back. maybe store the source URL instead?
 
 X Validation class, use python validator script
 
@@ -35,12 +130,8 @@ X Validation class, use python validator script
 
 - Replace trackhub parsing et al. code with ensembl-io routines
 
-- Data::SearchEngine::ElasticSearch
-  - search method options to comply with ES API
-
-- Reimplement Catalyst::Model::ElasticSearch/Registry::Model::Search
-  in terms of Data::SearchEngine::ElasticSearch?
-  This is lower priority
+X Data::SearchEngine::ElasticSearch
+  - search method options to comply with ES API, e.g. aggregations
 
 - Move synonyms to assembly ID mapping to a configuration file 
   - use JSON? load into ElasticSearch? (Pb. comments are lost)
@@ -49,22 +140,17 @@ X Validation class, use python validator script
 - Look at what has changed in the webteam URL et al. modules
 
 - Website
- X single query search highlighted on the front page
  - search by provider (hub attribute should do that, test)
  - provide pages (with links from the front page and menu) to
    list content providers and trackhubs which can be listed
    using various dimensions, e.g. species (like the DAS registry)
- - search to provide minimum faceting according to some dimensions,
+ X search to provide minimum faceting according to some dimensions,
    e.g. species, and a subset of those specified in the
    http://dcc.blueprint-epigenome.eu/#/experiments page
- X remove any reference to the DAS registry
- - insert link to the original trackhub specification
- - search result page, properly styled search result entry
-   with tabbed links to view the hub and load it into Ensembl
-   (see physical notes)
- - new dev GWAS catalog provides a good example of a search interface
-   http://wwwdev.ebi.ac.uk/gwas
 
 - Prototype
+ - Openstack VM
  - install oracle development tools 11.1.0.6.0
+   http://www.oracle.com/technetwork/topics/linuxx86-64soft-092277.html
  - install validation script, must be in the PATH
+ - install postfix

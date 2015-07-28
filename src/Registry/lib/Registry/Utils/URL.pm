@@ -148,7 +148,7 @@ sub read_file {
     }
   }
   else {
-    my %params = ('timeout'       => 10);
+    my %params = ('timeout'       => 30);
     if ($args->{'proxy'}) {
       $params{'http_proxy'}   = $args->{'proxy'};
       $params{'https_proxy'}  = $args->{'proxy'};

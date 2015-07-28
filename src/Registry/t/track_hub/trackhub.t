@@ -16,7 +16,7 @@ use_ok 'Registry::TrackHub';
 throws_ok { Registry::TrackHub->new() } qr/Undefined/, 'Throws if URL not passed';
 
 my $WRONG_URL = "ftp://ftp.ebi.ac.uk/pub/databases/do_no_exist";
-throws_ok { Registry::TrackHub->new(url => $WRONG_URL) } qr/check the source URL/, 'Throws with incorrect URL'; 
+throws_ok { Registry::TrackHub->new(url => $WRONG_URL, permissive => 1) } qr/check the source URL/, 'Throws with incorrect URL'; 
 
 #
 # TODO: Tests more exceptions, e.g. 
@@ -29,12 +29,13 @@ SKIP: {
     unless Registry::Utils::internet_connection_ok();
 
   my $URL = "ftp://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub";
-  my $th = Registry::TrackHub->new(url => $URL);
+  my $th = Registry::TrackHub->new(url => $URL, permissive => 1);
   isa_ok($th, 'Registry::TrackHub');
 
   like($th->hub, qr/Blueprint_Hub/, 'Hub name');
   is($th->shortLabel, 'Blueprint Hub', 'Hub short label');
   is($th->longLabel, 'Blueprint Epigenomics Data Hub', 'Hub long label');
+  is($th->url, $URL, 'Hub URL');
   is($th->genomesFile, 'genomes.txt', 'Hub genomes file');
   is($th->email, "blueprint-info\@ebi.ac.uk", 'Hub contact email');
   like($th->descriptionUrl, qr/http:\/\/www.blueprint-epigenome.eu\/index.cfm/, 'Hub description URL');

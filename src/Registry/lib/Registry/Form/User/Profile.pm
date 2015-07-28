@@ -43,6 +43,18 @@ has_field 'password_conf' => (
     minlength        => 5
 );
 
+has_field 'check_interval' => (
+    type             => 'Select',
+    options          => [{ value => 0, label => 'Automatic'}, { value => 1, label => 'Weekly'}, { value => 2, label => 'Monthly'} ]
+);
+
+has_field 'continuous_alert' => (
+    label            => 'Receive continuos alerts',
+    type             => 'Checkbox',
+    input_without_param => 0,
+    checkbox_value   => 1
+);
+
 sub validate {
   my $self = shift;
 

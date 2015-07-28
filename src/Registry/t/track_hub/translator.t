@@ -7,12 +7,14 @@ use Test::Exception;
 BEGIN {
   use FindBin qw/$Bin/;
   use lib "$Bin/../../lib";
+  $ENV{CATALYST_CONFIG} = "$Bin/../../registry_testing.conf";
 }
 
 local $SIG{__WARN__} = sub {};
 
 use JSON;
 use List::Util qw(first);
+use Registry::TrackHub;
 use Registry::GenomeAssembly::Schema;
 use Registry::Utils;
 
@@ -22,7 +24,7 @@ my $version = 'v1.0';
 
 throws_ok { Registry::TrackHub::Translator->new() } qr/Undefined/, "Throws if required args are undefined";
 
-my $translator = Registry::TrackHub::Translator->new(version => $version);
+my $translator = Registry::TrackHub::Translator->new(version => $version, permissive => 1);
 isa_ok($translator, 'Registry::TrackHub::Translator');
 is($translator->version, $version, 'JSON version');
 
@@ -55,7 +57,13 @@ SKIP: {
 
   my $doc = from_json($json_docs->[0]);
   is($doc->{version}, 'v1.0', 'Correct JSON version');
-  is($doc->{hub}, 'Blueprint Epigenomics Data Hub', 'Correct Hub');
+  ok($doc->{hub}, 'Hub property exists');
+  like($doc->{hub}{name}, qr/Blueprint_Hub/, 'Correct Hub name');
+  is($doc->{hub}{shortLabel}, 'Blueprint Hub', 'Correct Hub shortLabel');
+  is($doc->{hub}{longLabel}, 'Blueprint Epigenomics Data Hub', 'Correct Hub longLabel');
+  is($doc->{hub}{url}, $URL, 'Hub URL');
+  is($doc->{source}{url}, Registry::TrackHub->new(url => $URL, permissive => 1)->get_genome('hg19')->trackDb->[0], "TrackDB source URL");
+  
   is_deeply($doc->{species}, { tax_id => 9606, 
   			       scientific_name => 'Homo sapiens', 
   			       common_name => 'human' }, 'Correct species');
@@ -119,13 +127,19 @@ SKIP: {
     open $FH, ">$Bin/plant$i.json" or die "Cannot open plant$i.json: $!\n";
     print $FH $doc;
     close $FH;
+    $i++;
 
     $doc = from_json($doc);
     is($doc->{version}, 'v1.0', 'Correct JSON version');
-    is($doc->{hub}, 'CSHL Biology of Genomes meeting 2013 demonstration assembly hub', 'Correct Hub');
+    ok($doc->{hub}, 'Hub property exists');
+    is($doc->{hub}{name}, 'cshl2013', 'Correct Hub name');
+    is($doc->{hub}{shortLabel}, 'Plants', 'Correct Hub shortLabel');
+    is($doc->{hub}{longLabel}, 'CSHL Biology of Genomes meeting 2013 demonstration assembly hub', 'Correct Hub longLabel');
+    is($doc->{hub}{url}, $URL, 'Hub URL');
     ok($doc->{species}{tax_id} == 3702 || $doc->{species}{tax_id} == 3988 || $doc->{species}{tax_id} == 3711, 
        "Expected species");
     if ($doc->{species}{tax_id} == 3702) {
+      is($doc->{source}{url}, Registry::TrackHub->new(url => $URL, permissive => 1)->get_genome('araTha1')->trackDb->[0], "TrackDB source URL");
       is_deeply($doc->{species}, { tax_id => 3702, 
 				   scientific_name => 'Arabidopsis thaliana', 
 				   common_name => 'thale cress' }, 'Correct species');
@@ -162,6 +176,7 @@ SKIP: {
       is($member->{bigDataUrl}, 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/araTha1/bbi/araTha1.rmsk.Simple.bb', 'Member bigDataUrl');
 
     } elsif ($doc->{species}{tax_id} == 3988) {
+      is($doc->{source}{url}, Registry::TrackHub->new(url => $URL, permissive => 1)->get_genome('ricCom1')->trackDb->[0], "TrackDB source URL");
       is_deeply($doc->{species}, { tax_id => 3988, 
 				   scientific_name => 'Ricinus communis', 
 				   common_name => 'castor bean' }, 'Correct species');
@@ -198,6 +213,7 @@ SKIP: {
       is($member->{bigDataUrl}, 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/ricCom1/bbi/ricCom1.rmsk.RNA.bb', 'Member bigDataUrl');
 
     } else {
+      is($doc->{source}{url}, Registry::TrackHub->new(url => $URL, permissive => 1)->get_genome('braRap1')->trackDb->[0], "TrackDB source URL");
       is_deeply($doc->{species}, { tax_id => 3711, 
 				   scientific_name => 'Brassica rapa', 
 				   common_name => 'field mustard' }, 'Correct species');
@@ -240,6 +256,12 @@ SKIP: {
   $json_docs = $translator->translate($URL, 'mm10');
   is(scalar @{$json_docs}, 1, "Number of translated track dbs");
   $doc = from_json($json_docs->[0]);
+  ok($doc->{hub}, 'Hub property exists');
+  is($doc->{hub}{name}, 'Smith Lab Public Hub', 'Correct Hub name');
+  is($doc->{hub}{shortLabel}, 'DNA Methylation', 'Correct Hub shortLabel');
+  is($doc->{hub}{longLabel}, 'Hundreds of analyzed methylomes from bisulfite sequencing data', 'Correct Hub longLabel');
+  is($doc->{hub}{url}, $URL, 'Hub URL');
+  is($doc->{source}{url}, Registry::TrackHub->new(url => $URL, permissive => 1)->get_genome('mm10')->trackDb->[0], "TrackDB source URL");
 
   open $FH, ">$Bin/meth.json" or die "Cannot open meth.json: $!\n";
   print $FH $json_docs->[0];
@@ -254,7 +276,7 @@ SKIP: {
 				synonyms => 'mm10' }, 'Correct assembly');
 
   # check metadata and configuration
-  is(scalar @{$doc->{data}}, 649, "Number of data tracks");
+  # is(scalar @{$doc->{data}}, 649, "Number of data tracks");
 
   $metadata = first { $_->{id} eq 'Liu_Mouse_2014' } @{$doc->{data}};
   ok($metadata, "Track metadata exists");
@@ -294,7 +316,18 @@ SKIP: {
   $URL = "http://vizhub.wustl.edu/VizHub/RoadmapReleaseAll.txt";
   $json_docs = $translator->translate($URL);
   is(scalar @{$json_docs}, 1, "Number of translated track dbs");
+
+  open $FH, ">$Bin/vizhub.json" or die "Cannot open vizhub.json: $!\n";
+  print $FH $json_docs->[0];
+  close $FH;
+
   $doc = from_json($json_docs->[0]);
+  ok($doc->{hub}, 'Hub property exists');
+  is($doc->{hub}{name}, 'VizHub', 'Correct Hub name');
+  is($doc->{hub}{shortLabel}, 'Roadmap Epigenomics Data Complete Collection at Wash U VizHub', 'Correct Hub shortLabel');
+  is($doc->{hub}{longLabel}, 'Roadmap Epigenomics Human Epigenome Atlas Data Complete Collection, VizHub at Washington University in St. Louis', 'Correct Hub longLabel');
+  is($doc->{hub}{url}, $URL, 'Hub URL');
+  is($doc->{source}{url}, Registry::TrackHub->new(url => $URL, permissive => 1)->get_genome('hg19')->trackDb->[0], "TrackDB source URL");
 
   is_deeply($doc->{species}, { tax_id => 9606, 
   			       scientific_name => 'Homo sapiens', 
@@ -304,17 +337,26 @@ SKIP: {
   				accession => 'GCA_000001405.1', 
   				synonyms => 'hg19' }, 'Correct assembly');
 
+  $metadata = first { $_->{id} eq 'BBF_mRNA_71_72' } @{$doc->{data}};
+  ok($metadata, "Track metadata exists");
+  is($metadata->{name}, "UCSF-UBC-USC Breast Fibroblast Primary Cells mRNA-Seq Donor RM071 Library A18472 EA Release 9", 
+     "Corrent name");
+  is($metadata->{sample_alias}, "Breast Fibroblast RM071, batch 1", 'Correct sample alias');
+  is($metadata->{sample_common_name}, "Breast, Fibroblast Primary Cells", 'Correct sample common name');
+  is($metadata->{experiment_type}, 'mRNA-Seq', 'Correct experiment type');
+  is($metadata->{extraction_protocol}, "BCCAGSC mRNA Standard Operating Procedure", 'Correct extraction protocol metadata');
+  is($metadata->{library_generation_pcr_number_cycles}, 10, 'Correct library generation PCR num cycles');
+
+  $metadata = first { $_->{id} eq 'XBMC_H3K9me3_TC010A' } @{$doc->{data}};
+  ok($metadata, "Track metadata exists");
+  is($metadata->{name}, "Peripheral_Blood_Mononuclear_Primary_Cells H3K9me3 Histone Modification by Chip-seq Signal from REMC/UCSF (Hotspot_Score=0.1958 Pcnt=66 DonorID:TC010)", 
+     "Corrent name");
+  is($metadata->{biomaterial_provider}, "Weiss Lab UCSF", 'Correct biomaterial provider metadata');
+  is($metadata->{chip_protocol}, "Farnham Lab Protocol", 'Correct chip protocol metadata');
+  is($metadata->{chip_antibody}, 'H3K9me3', 'Correct chip antibody metadata');
+
   $metadata = first { $_->{id} eq 'BFLL_mRNA_14_58' } @{$doc->{data}};
   ok($metadata, "Track metadata exists");
-
-  #
-  # WARNING
-  #
-  # the following tests on the content of metadata fail since the existing parser
-  # is not capable of extracting key=value pairs containing double quotes (with spaces).
-  # Need to inform web about this and wait for a suitable parser, or rewrite that 
-  # part on my own.
-  #
   is($metadata->{name}, "UW Fetal Lung Left mRNA-Seq Donor H-23914 Library lib-RNA.RS18158 EA Release 9", 
      "Corrent name");
   is($metadata->{sample_common_name}, "Fetal Lung, Left", 'Correct sample common name metadata');
@@ -327,7 +369,7 @@ SKIP: {
   is($metadata->{biomaterial_provider}, "Weiss Lab UCSF", 'Correct biomaterial provider metadata');
   is($metadata->{chip_protocol}, "Farnham Lab Protocol", 'Correct chip protocol metadata');
   is($metadata->{chip_antibody}, 'H3K9me3', 'Correct chip antibody metadata');
-
+  
 }
 
 done_testing();

@@ -24,7 +24,7 @@ use namespace::autoclean;
 extends 'Catalyst::Authentication::User';
 
 has '_user'  => (is => 'rw', isa => 'HashRef', );
-has '_es'    => (is => 'ro', isa => 'Search::Elasticsearch::Client::Direct', );
+has '_es'    => (is => 'ro'); # , isa => 'Search::Elasticsearch::Client::Direct', );
 has '_index' => (is => 'ro', isa => 'Str', required => 1, );
 has '_type'  => (is => 'ro', isa => 'Str', required => 1, );
 
@@ -132,6 +132,23 @@ sub get {
   return $self->_user->{_source}{$field}
     if exists $self->_user->{_source}{$field};  
   
+  return;
+}
+
+sub delete {
+  my ($self, $field) = @_;
+
+  return unless defined $self->_user;
+
+  delete $self->_user->{_source}{$field};
+
+  # reindex/refresh user to persist change
+  $self->_es->index(index => $self->_index,
+		    type  => $self->_type,
+		    id    => $self->id,
+		    body  => $self->_user->{_source});
+  $self->_es->indices->refresh(index => $self->_index);
+
   return;
 }
 

@@ -1,0 +1,57 @@
+[% META title = 'TrackHubs' %]
+[% PROCESS user/user_nav.tt %]
+
+<div class="page-header">
+  <h3>TrackDB Collection: [% trackdb.id %]</h3>
+  <span class="label label-primary">[% trackdb.doc.hub.shortLabel %]</span>
+  <span class="label label-success">[% trackdb.doc.species.scientific_name %]</span>
+  <span class="label label-info">[% trackdb.doc.assembly.name %]</span>
+</div>
+<div class="row">
+  <div class="col-sm-12">
+    <div class="panel panel-default">
+      <!-- Default panel contents -->
+      <div class="panel-heading">Report Log</div>
+      [% tracks = trackdb.status.tracks %]
+      <div class="panel-body">
+        <ul class="list-group col-sm-3">
+          <li class="list-group-item">Total number of tracks <span class="badge">[% tracks.total %]</small></li>
+          <li class="list-group-item">Tracks linked to remote data <span class="badge">[% tracks.with_data.total %]</span></li>
+	</ul>
+	<br/><br/><br/><br/><br/><br/>
+      [% IF tracks.with_data.total_ko > 0 %]
+      <p class="lead">
+        [% tracks.with_data.total_ko %] / [% tracks.with_data.total %] tracks linked to remote data have problems.
+      </p>
+        [% IF tracks.with_data.total_ko > 10 %]
+        <p>Showing the first 10:</p>
+        [% END %]
+      </div>
+      <!-- Table -->
+      <table class="table table-condensed table-hover table-striped">
+        <thead>
+	  <tr>
+	    <th>#</td>
+            <th>Track Name</th>
+            <th>Remote Data URL</th>
+	    <th>Error</th>
+	  </tr>
+        </thead>
+	<tbody>
+	[% i = 1 %]
+        [% FOREACH t IN tracks.with_data.ko.keys.sort %]
+	  [% LAST IF i > 10; %]
+	  <tr>
+	    <td>[% i %]</td>
+	    <td>[% t %]</td>
+	    <td>[% tracks.with_data.ko.$t.0 %]</td>
+	    <td>[% tracks.with_data.ko.$t.1 %]</td>
+	  </tr>
+	  [% i = i + 1 %]
+	[% END %]
+	</tbody>
+      </table>
+      [% END %]
+    </div>
+  </div>
+</div>

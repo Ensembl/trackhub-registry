@@ -62,7 +62,7 @@ The page linked by the "Learn More" button in the front page
 
 =cut 
 
-sub learn_more :Path('/more') {
+sub learn_more :Path('/about') {
   my ($self, $c) = @_;
 }
 
@@ -135,7 +135,7 @@ sub submit :Path('/submit_trackhubs') {
 sub login :Path('/api/login') Args(0) {
   my ($self, $c) = @_;
 
-  $c->authenticate({}, 'testhttp');
+  $c->authenticate({}, 'http');
 
   # user should exist
   $c->user->auth_key(String::Random::random_string('s' x 64));

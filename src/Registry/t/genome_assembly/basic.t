@@ -6,6 +6,7 @@ use Test::Exception;
 BEGIN {
   use FindBin qw/$Bin/;
   use lib "$Bin/../../lib";
+  $ENV{CATALYST_CONFIG} = "$Bin/../../registry_testing.conf";
 }
 
 use_ok 'Registry::GenomeAssembly::Schema';

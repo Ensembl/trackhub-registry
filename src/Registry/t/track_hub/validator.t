@@ -7,6 +7,7 @@ use Test::Exception;
 BEGIN {
   use FindBin qw/$Bin/;
   use lib "$Bin/../../lib";
+  $ENV{CATALYST_CONFIG} = "$Bin/../../registry_testing.conf";
 }
 
 local $SIG{__WARN__} = sub {};
@@ -18,18 +19,18 @@ use Registry::TrackHub::Translator;
 
 use_ok 'Registry::TrackHub::Validator';
 
-my $version = '1.0';
+my $version = 'v1.0';
 
 throws_ok { Registry::TrackHub::Validator->new() } qr/Undefined/, "Throws if required arg is undefined";
 
-my $validator = Registry::TrackHub::Validator->new(schema => "$Bin/../../../../docs/trackhub-schema/v1.0/trackhub-schema_1_0.json");
+my $validator = Registry::TrackHub::Validator->new(schema => "$Bin/../../root/static/trackhub/json_schema_1_0.json");
 isa_ok($validator, 'Registry::TrackHub::Validator');
 
 SKIP: {
-  skip "No Internet connection: cannot test TrackHub validation on public Track Hubs", 14
+  skip "No Internet connection: cannot test TrackHub validation on public Track Hubs", 18
     unless Registry::Utils::internet_connection_ok();
 
-  my $translator = Registry::TrackHub::Translator->new(version => $version);
+  my $translator = Registry::TrackHub::Translator->new(version => $version, permissive => 1);
   isa_ok($translator, 'Registry::TrackHub::Translator');
 
   my ($URL, $json_docs);
@@ -38,7 +39,7 @@ SKIP: {
   note "Testing validation of schema 1.0";
   note "Validating translation of Bluprint trackhub";
   $URL = "ftp://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub";
-  $json_docs = $translator->translate($URL, 'hg19');
+  $json_docs = $translator->translate($URL);
 
   # print the translation to file so we can fire the validator
   my $filename = to_temp_file($json_docs->[0]);
@@ -46,7 +47,7 @@ SKIP: {
 
   # test manipulating JSON doc to make it not valid
   # first test validation with missing required elements
-  my @required = qw/species assembly data configuration/;
+  my @required = qw/version hub species assembly configuration/;
   foreach (@required) {
     my $doc = from_json($json_docs->[0]);
     delete $doc->{$_};

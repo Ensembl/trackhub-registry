@@ -7,7 +7,7 @@ extends 'Catalyst::View::TT';
 __PACKAGE__->config(
     TEMPLATE_EXTENSION => '.tt',
     render_die => 1,
-    WRAPPER => 'site/bootstrap.tt'
+    WRAPPER => 'site/wrapper.tt'
 );
 
 =head1 NAME

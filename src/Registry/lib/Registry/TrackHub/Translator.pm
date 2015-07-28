@@ -8,7 +8,10 @@ use strict;
 use warnings;
 
 use JSON;
-use Registry::GenomeAssembly::Schema;
+# use Registry::GenomeAssembly::Schema;
+use Registry;
+use Registry::Utils;
+use IO::Uncompress::Gunzip qw(gunzip $GunzipError);
 use Registry::TrackHub;
 use Registry::TrackHub::Tree;
 use Registry::TrackHub::Parser;
@@ -34,14 +37,15 @@ sub new {
 
   my $self = \%args;
 
-  # TODO: Load the GCAssemblySet from the catalyst model which reads
-  #       the connection parameters from the configuration file
-  my $gcschema = 
-    Registry::GenomeAssembly::Schema->connect("DBI:Oracle:host=ora-vm5-003.ebi.ac.uk;sid=ETAPRO;port=1571", 
-					      'gc_reader', 
-					      'reader', 
-					      { 'RaiseError' => 1, 'PrintError' => 0 });
-  $self->{gc_assembly_set} = $gcschema->resultset('GCAssemblySet');
+  # # TODO: Load the GCAssemblySet from the catalyst model which reads
+  # #       the connection parameters from the configuration file
+  # my $gcschema = 
+  #   Registry::GenomeAssembly::Schema->connect("DBI:Oracle:host=ora-vm5-003.ebi.ac.uk;sid=ETAPRO;port=1571", 
+  # 					      'gc_reader', 
+  # 					      'reader', 
+  # 					      { 'RaiseError' => 1, 'PrintError' => 0 });
+  # $self->{gc_assembly_set} = $gcschema->resultset('GCAssemblySet');
+
   bless $self, $class;
 
   return $self;
@@ -58,7 +62,7 @@ sub translate {
   die sprintf "Version %s not supported", $self->version
     unless $dispatch;
 
-  my $trackhub = Registry::TrackHub->new(url => $url);
+  my $trackhub = Registry::TrackHub->new(url => $url, permissive => $self->permissive);
   
   my $docs;
   unless ($assembly) { 
@@ -94,9 +98,17 @@ sub to_json_1_0 {
   my $doc = 
     {
      version => 'v1.0',
-     hub     => $trackhub->longLabel,
-     # add the original trackDb file(s) content
-     # trackdb => $genome->get_trackdb_content
+     hub     => {
+		 name       => $trackhub->hub,
+		 shortLabel => $trackhub->shortLabel,
+		 longLabel  => $trackhub->longLabel,
+		 url        => $trackhub->url
+		},
+     # add the original trackDb file as the source
+     source => { 
+		url => $genome->trackDb->[0],
+		checksum => Registry::Utils::checksum_compute($genome->trackDb->[0])
+	       }
     };
 
   # add species/assembly information
@@ -145,7 +157,8 @@ sub _make_configuration_object_1_0 {
   
   # add the configuration attributes as they are specified
   my $node_conf = {};
-  map { $node_conf->{$_} = $node->data->{$_} } keys %{$node->data};
+  # map { $node_conf->{$_} = $node->data->{$_} } keys %{$node->data};
+  map { $node->data->{$_} and $node_conf->{$_} = $node->data->{$_} } keys %{$node->data};
   # delete $node_conf->{track};
 
   # now add the configuration of the children, if any
@@ -397,8 +410,9 @@ $synonym2assembly =
    # taeGut2 => '', # not found
    taeGut1 => 'GCA_000151805.2', # 'Taeniopygia_guttata-3.2.4',
    # zebrafish
-   danRer7 => 'GCA_000002035.2', # 'Zv9',
-   danRer6 => 'GCA_000002035.1', # 'Zv8', # no syn on on NCBI
+   danRer10 => 'GCA_000002035.3', # 'GRCz10', no syn on on NCBI
+   danRer7 => 'GCA_000002035.2', # 'Zv9'
+   danRer6 => 'GCA_000002035.1', # 'Zv8', no syn on on NCBI
    danRer5 => 'GCF_000002035.1', # 'Zv7',
    # danRer4 => 'Zv6', # not found on NCBI
    # danRer3 => 'Zv5', # not found on NCBI
@@ -684,13 +698,40 @@ sub _add_genome_info {
   # Get species (tax id, scientific name, common name)
   # and assembly info from the assembly set table in the GC database
   #
-  my $gc_assembly_set = $self->gc_assembly_set;
-  my $as = $gc_assembly_set->find($assembly_id);
+  # my $gc_assembly_set = $self->gc_assembly_set;
+  # my $as = $gc_assembly_set->find($assembly_id);
+  # die "Unable to find GC assembly set entry for $assembly_id"
+  #   unless $as;
+  
+  # my ($tax_id, $scientific_name, $common_name) = 
+  #   ($as->tax_id, $as->scientific_name, $as->common_name);
+  # # TODO: taxid and scientific name are mandatory
+
+  # $doc->{species}{tax_id} = $tax_id if $tax_id;
+  # $doc->{species}{scientific_name} = $scientific_name if $scientific_name;
+  # $doc->{species}{common_name} = $common_name if $common_name;
+
+  # $doc->{assembly}{accession} = $assembly_id;
+  # $doc->{assembly}{name} = $as->name;
+  # $doc->{assembly}{long_name} = $as->long_name if $as->long_name; # sometimes not defined
+  # $doc->{assembly}{synonyms} = $assembly_syn;
+
+  # my $gc_assembly_set = 
+  #   from_json(Registry::Utils::slurp_file(Registry->config()->{GenomeCollection}{assembly_set_file}));
+
+  # gc assembly set file is assumed to be compressed (gzip)
+  my $buffer;
+  my $file = Registry->config()->{GenomeCollection}{assembly_set_file};
+  gunzip $file => \$buffer 
+    or die "gunzip failed: $GunzipError\n";
+
+  my $gc_assembly_set = from_json($buffer);
+  my $as = $gc_assembly_set->{$assembly_id};
   die "Unable to find GC assembly set entry for $assembly_id"
     unless $as;
   
   my ($tax_id, $scientific_name, $common_name) = 
-    ($as->tax_id, $as->scientific_name, $as->common_name);
+    ($as->{tax_id}, $as->{scientific_name}, $as->{common_name});
   # TODO: taxid and scientific name are mandatory
 
   $doc->{species}{tax_id} = $tax_id if $tax_id;
@@ -698,8 +739,8 @@ sub _add_genome_info {
   $doc->{species}{common_name} = $common_name if $common_name;
 
   $doc->{assembly}{accession} = $assembly_id;
-  $doc->{assembly}{name} = $as->name;
-  $doc->{assembly}{long_name} = $as->long_name if $as->long_name; # sometimes not defined
+  $doc->{assembly}{name} = $as->{name};
+  $doc->{assembly}{long_name} = $as->{long_name} if $as->{long_name}; # sometimes not defined
   $doc->{assembly}{synonyms} = $assembly_syn;
 
   return;

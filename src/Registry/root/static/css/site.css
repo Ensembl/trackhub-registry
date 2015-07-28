@@ -1,0 +1,244 @@
+/*
+.footer {
+    background-color: #fff;
+    background-image: url("/other_files/images/nt-main-footer-strip-purple.gif");
+    background-position: 0 0;
+    background-repeat: repeat-x;
+    float: left; 
+    margin: 50px 0 0;
+    padding: 0;
+    position: relative;
+    width: 100%;
+}
+.footer .layout {
+    background-image: url("/other_files/images/nt-main-footer-silhouette-purple.gif");
+    background-position: 50% 0;
+    background-repeat: no-repeat;
+    padding: 100px 0 0;
+    width: 940px;
+}
+.footer .charity {
+    border-top: 1px dotted #7a507e;
+    float: left;
+    margin: 10px 0;
+    padding: 15px 0;
+    width: 100%;
+}
+.footer li {
+    color: #bda8be;
+    float: left;
+    list-style-type: none;
+    margin: 0 15px 0 0;
+}
+.footer .section {
+    float: left;
+    margin: 0 20px 20px 0;
+    width: 150px;
+}
+.footer .first {
+    margin: 0 130px 0 0;
+    width: 320px;
+}
+.footer .last {
+    margin: 0;
+    width: 150px;
+}
+.footer .section li {
+    float: inherit;
+    list-style-type: none;
+    margin: 0 10px 8px 1px;
+}
+.footer .section p {
+    color: #bda8be;
+    margin-left: 1px;
+}
+.footer .section a {
+    color: #bda8be;
+    font-weight: normal;
+    text-decoration: underline;
+}
+.footer .section a:focus {
+    background-color: #bda8be;
+    color: #410546;
+}
+.footer .section a:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+.footer .last .external {
+    background: none repeat scroll 0 0 rgba(0, 0, 0, 0);
+}
+.footer h3 {
+    color: #bda8be;
+    font-weight: normal;
+    line-height: 1.2em;
+    margin: 0 0 15px;
+    padding: 0;
+}
+.footer .gosocial li {
+    margin: 0 10px 8px 1px;
+}
+.footer .gosocial li a {
+    background-image: url("/other_files/images/nt-footer-socialmediabuttons.png");
+    background-position: -3px 0;
+    background-repeat: no-repeat;
+    display: block;
+    margin: -4px 0 0;
+    padding: 6px 0 4px 30px;
+}
+.footer .gosocial li a.twitter {
+    background-position: -3px -270px;
+}
+.footer .gosocial li a.facebook {
+    background-position: -3px -90px;
+}
+.footer .gosocial li a.vimeo {
+    background-position: -3px -630px;
+}
+.footer .gosocial li a.youtube {
+    background-position: -3px -810px;
+}
+.footer .gosocial li a.flickr {
+    background-position: -3px -450px;
+}
+.footer .gosocial li a.pinterest {
+    background-position: -3px -990px;
+}
+.footer .gosocial li a.instagram {
+    background-position: -3px -1200px;
+}
+.footer .gosocial li a.google-plus {
+    background-position: -3px -1380px;
+}
+*/
+
+/* @import url(http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,300,400,600,700,800); */
+
+/* body { */
+/*     font-family: 'Open Sans', sans-serif; */
+/*     font-size:13px; */
+/*     font-weight: 300; */
+/* } */
+
+/*
+@import "http://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic,700,700italic";
+@import "http://fonts.googleapis.com/css?family=Oswald:400,700,300";
+
+html {
+    min-height: 100%;
+    position: relative;
+}
+
+body {
+    background-color: transparent;
+    font-family: "Open Sans",sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+}
+
+h1, h2, h3, h4 {
+    font-weight: 300;
+}
+
+h1 {
+    font-family: "Open Sans",sans-serif;
+    font-size: 50px;
+    font-weight: 300;
+}
+*/
+
+.content {
+    text-align: center;
+}
+
+.underline {
+    border-bottom: 1px solid #b0b0b0;
+    margin: 20px auto 15px;
+    width: 20%;
+}
+
+span.facet-count {
+    color: #999999;
+    float: right;
+    position: relative;
+}
+
+div.hub-summary-compact {
+    line-height: 1.2em;
+    padding: 5px 3px;
+}
+span.hub-title {
+    font-weight: bold;
+    line-height: 1.8em;
+}
+div.hub-summary-box, div.hub-summary-caption {
+    line-height: normal;
+    text-align: center;
+    vertical-align: bottom;
+}
+div.hub-summary-box {
+    background-attachment: scroll;
+    background-color: grey;
+    background-image: none;
+    background-position: 0 0;
+    background-repeat: repeat;
+    color: white;
+    float: left;
+    font-size: 1.85em;
+    line-height: 0.8;
+    padding: 7px 1px 3px;
+    width: 5ex;
+}
+div.hub-summary-score {
+    margin: 0 8px 0 3px;
+}
+div.hub-summary-caption {
+    font-size: 0.5em;
+}
+
+*/
+
+/* Support for bootstrap 3 dropdown menus */
+
+.dropdown-submenu {
+    position:relative;
+}
+.dropdown-submenu>.dropdown-menu {
+    top:0;
+    left:100%;
+    margin-top:-6px;
+    margin-left:-1px;
+    -webkit-border-radius:0 6px 6px 6px;
+    -moz-border-radius:0 6px 6px 6px;
+    border-radius:0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+    display:block;
+}
+.dropdown-submenu>a:after {
+    display:block;
+    content:" ";
+    float:right;
+    width:0;
+    height:0;
+    border-color:transparent;
+    border-style:solid;
+    border-width:5px 0 5px 5px;
+    border-left-color:#cccccc;
+    margin-top:5px;
+    margin-right:-10px;
+}
+.dropdown-submenu:hover>a:after {
+    border-left-color:#ffffff;
+}
+.dropdown-submenu.pull-left {
+    float:none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+    left:-100%;
+    margin-left:10px;
+    -webkit-border-radius:6px 0 6px 6px;
+    -moz-border-radius:6px 0 6px 6px;
+    border-radius:6px 0 6px 6px;
+}
+

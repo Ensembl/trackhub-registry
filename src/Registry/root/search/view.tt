@@ -1,0 +1,153 @@
+<div class="row">
+  <div class="col-sm-12">
+    <ul class="breadcrumb">
+      <li><a href="/">Home</a></li>
+      <li>Search</li>
+      <li class="active">[% trackdb.doc.hub.name %] - [% trackdb.doc.assembly.accession %]</li>
+    </ul>
+  </div>
+</div>
+
+<div class="page-header">
+  <span class="label label-primary">[% trackdb.doc.hub.shortLabel %]</span>
+  <span class="label label-success">[% trackdb.doc.species.scientific_name %]</span>
+  <span class="label label-info">[% trackdb.doc.assembly.name %]</span>
+</div>
+<div class="row">
+  <div class="col-sm-6">
+    <div class="panel panel-default">
+      <!-- Default panel contents -->
+      <div class="panel-heading">General Info</div>
+      [% tracks = trackdb.status.tracks %]
+      <div class="panel-body">
+        <div style="float: right;">
+	[% status = trackdb.status_message; %]
+	[% status_last_update = trackdb.status_last_update(1); %]
+	[% label_class = 'label-success' %]
+	[% IF status == 'Unknown' %]
+	[%   label_class = 'label-warning' %]
+	[% ELSIF status.match('Unavailable') %]
+	[%   label_class = 'label-danger' %]
+	[% END %]
+	  <span class="label [% label_class %]" style="padding-bottom: 1px;">[% status %]</span>
+	[% IF status != 'Unknown' %]
+	  <br/><small>[% status_last_update %]</small><br/><br/>
+	[% END %]
+	[% IF status == 'All is Well' %]
+	  <div class="btn-group btn-group-xs">
+            <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">View in Genome Browser <span class="caret"></span></button>
+            <ul class="dropdown-menu" role="menu">
+              <li><a href="#">EnsEMBL</a></li>
+              <li><a href="#">UCSC</a></li>
+            </ul>
+          </div>
+	[% END %]
+	</div>
+        <ul class="list-group col-sm-6">
+          <li class="list-group-item">Total number of tracks <span class="badge">[% tracks.total %]</span></li>
+          <li class="list-group-item">Tracks linked to remote data <span class="badge">[% tracks.with_data.total %]</span></li>
+	  <li class="list-group-item">Data type: [% trackdb.type %]</li>
+	  <li class="list-group-item">File type(s): [% trackdb.file_type.join(', ') %]</li>
+        [% IF trackdb.doc.source %]
+          <li class="list-group-item">Source URL: <a target="_blank" role=button" class="btn btn-xs btn-default" data-toggle="popover" title="View source URL" data-content="" href="[% trackdb.doc.source.url %]">View</a></li>
+	[% END %]
+	</ul>	
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6">
+    <div class="panel panel-default">
+      <!-- Default panel contents -->
+      <div class="panel-heading">Hub</div>
+      <div class="panel-body">	
+        <p><strong>Name</strong>: [% trackdb.doc.hub.name %]</p>
+	<p><strong>Short Label</strong>: [% trackdb.doc.hub.shortLabel %]</p>
+	<p><strong>Long Label</strong>: [% trackdb.doc.hub.longLabel %]</p>
+	  [% IF trackdb.doc.hub.url %]
+	<p><strong>Public URL</strong>: <a target="_blank" role=button" class="btn btn-xs btn-default" data-toggle="popover" title="View source URL" data-content="" href="[% trackdb.doc.hub.url %]">View</a></p>
+	  [% END %]
+	</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6">
+    <div class="panel panel-default">
+      <!-- Default panel contents -->
+      <div class="panel-heading">Species</div>
+      <div class="panel-body">
+        [% species = trackdb.doc.species %]
+        <p>
+	  <a target="_blank" href="http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=[% species.tax_id %]">Taxonomy</a> <span class="badge">[% species.tax_id %]</span><br/>
+	  <strong>Scientific name</strong>: <em>[% species.scientific_name %]</em><br/>
+	  [% IF species.common_name %]
+	  <strong>Common name</strong>: [% species.common_name %]
+	  [% END %]
+	  <hr/>
+        </p>
+	<p><strong>Assembly Information</strong></p>
+      </div>
+      <table class="table table-condensed table-hover table-striped">
+        <thead>
+	  <tr>
+	    <th>Accession</td>
+            <th>Name</th>
+            <th>Long Name</th>
+	    <th>Synonyms</th>
+	  </tr>
+        </thead>
+	<tbody>
+	  [% assembly = trackdb.doc.assembly %]
+	  <tr>
+	    <td><a target="_blank" href="http://www.ncbi.nlm.nih.gov/assembly/?term=[% assembly.accession %]">[% assembly.accession %]</a></td>
+	    <td>[% assembly.name %]</td>
+	    <td>[% assembly.long_name %]</td>
+	    <td>[% assembly.synonyms %]</td>
+	  </tr>
+	</tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+[% IF tracks.with_data.total_ko > 0 %]
+<div class="row">
+  <div class="col-sm-12">
+    <div class="panel panel-default">
+      <!-- Default panel contents -->
+      <div class="panel-heading">Error Log</div>
+      <div class="panel-body">
+        <p>
+	  [% tracks.with_data.total_ko %] / [% tracks.with_data.total %] tracks linked to remote data have problems.
+	</p>
+	[% IF tracks.with_data.total_ko > 10 %]
+	<p>Showing the first 10:</p>
+	[% END %]
+      </div>
+      <!-- Table -->
+      <table class="table table-condensed table-hover table-striped">
+        <thead>
+	  <tr>
+	    <th>#</td>
+            <th>Track Name</th>
+            <th>Remote Data URL</th>
+	    <th>Error</th>
+	  </tr>
+        </thead>
+	<tbody>
+	[% i = 1 %]
+        [% FOREACH t IN tracks.with_data.ko.keys.sort %]
+	  [% LAST IF i > 10; %]
+	  <tr>
+	    <td>[% i %]</td>
+	    <td>[% t %]</td>
+	    <td>[% tracks.with_data.ko.$t.0 %]</td>
+	    <td>[% tracks.with_data.ko.$t.1 %]</td>
+	  </tr>
+	  [% i = i + 1 %]
+	[% END %]
+	</tbody>
+      </table>
+    </div>
+  </div>
+</div>
+[% END %]

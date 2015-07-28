@@ -27,7 +27,7 @@ use Data::SearchEngine::ElasticSearch::Results;
 
 has '_es' => (
     is => 'ro',
-    isa => 'Search::Elasticsearch::Client::Direct',
+    # isa => 'Search::Elasticsearch::Client::Direct',
     lazy => 1,
     default => sub {
         my $self = shift;
@@ -157,12 +157,14 @@ sub search {
  
   # this has to be reviewed, since the search API expects a query
   # not a filter. Filters need to be wrapped in a filtered query
+  # http://distinctplace.com/2014/07/29/build-zappos-like-products-facets-with-elasticsearch/
+  # shows an example where the following applies
   my @facet_cache = ();
   if ($query->has_filters) {
     foreach my $filter ($query->filter_names) {
-      push(@facet_cache, $query->get_filter($filter));
+      push @facet_cache, { term => { $filter => $query->get_filter($filter) } };
     }
-    $options->{filter}->{$filter_combine} = \@facet_cache;
+    $options->{body}{filter}{$filter_combine} = \@facet_cache;
   }
  
   # and this one too
@@ -175,19 +177,37 @@ sub search {
     # This is really to replicate my expecations and the way facets are
     # usually used.
     my %facets = %{ $query->facets };
-    $options->{facets} = $query->facets;
- 
+     
     if ($query->has_filters) {
       foreach my $f (keys %facets) {
-	$facets{$f}->{facet_filter}->{$filter_combine} = \@facet_cache;
+  	$facets{$f}->{facet_filter}->{$filter_combine} = \@facet_cache;
       }
     }
  
     # Shlep the facets into the final query, even if we didn't do anything
     # with the filters above.
-    $options->{facets} = \%facets;
+    $options->{body}{facets} = \%facets;
   }
+
+  # support for aggregations
+  if ($query->has_aggregations) {
+    my %aggs = %{ $query->aggregations };
+     
+    if ($query->has_filters) {
+      foreach my $f (keys %aggs) {
+	# does logical AND/OR work with aggregations?
+	# cannot find mentioned in the definitive guide
+  	# $aggs{$f}->{filter}->{$filter_combine} = \@facet_cache;
+	# $aggs{$f}->{filter} = { terms => { field => 'species.scientific_name' } };
+	# $aggs{$f}->{filters}{filters} = \@facet_cache;
+      }
+    }
  
+    # Shlep the facets into the final query, even if we didn't do anything
+    # with the filters above.
+    $options->{body}{aggs} = \%aggs;
+  }
+
   if ($query->has_order) {
     $options->{sort} = $query->order;
   }
@@ -241,6 +261,15 @@ sub search {
       }
     }
   }
+  if (exists($resp->{aggregations})) {
+    my $buckets = [];
+    $self->_get_buckets($resp->{aggregations}, $buckets);
+    # use Data::Dumper; 
+    # print Dumper $resp->{aggregations};
+    # print Dumper $buckets;
+    $result->{aggregations} = $buckets;
+  }
+
   foreach my $doc (@{ $resp->{hits}->{hits} }) {
     my $values = $doc->{_source};
     $values->{_index} = $doc->{_index};
@@ -250,6 +279,22 @@ sub search {
  
   return $result;
 }
+
+sub _get_buckets {
+  my ($self, $hash, $buckets) = @_;
+  foreach my $key (keys %{$hash}) {
+    next if $key eq 'doc_count';
+    if ($key eq 'buckets') {
+      foreach my $agg (@{$hash->{$key}}) {
+	push @{$buckets}, { count => $agg->{doc_count}, value => $agg->{key} }
+      }
+      return;
+    }
+
+    $self->_get_buckets($hash->{$key}, $buckets) if ref $hash->{$key} eq 'HASH';
+  }
+}
+
 
 sub _doc_to_item {
   my ($self, $doc) = @_;

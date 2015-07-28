@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" ><![endif]-->
+<!--[if gt IE 8]><!--><html class="no-js" ><!--<![endif]-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="The TrackHub Registry">
+    <meta name="author" content="The EnsEMBL Core Team">
+
+    <title>[% template.title or "The TrackHub Registry" %]</title>
+
+    <!-- style sheets -->
+    <link href="/static/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="/static/lib/bootstrap/css/bootstrap-theme.min.css" rel="stylesheet" media="screen">
+    <link href="/static/css/site.css" rel="stylesheet"> 
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+    <!-- Header and navigation bar -->
+    <img style="position: absolute; top: 0; right: 0; border: 0; z-index: 1031;" src="/static/img/ico_beta.png" />
+
+    <header>
+    <nav class="navbar navbar-inverse">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="[% c.uri_for('/') %]">The TrackHub Registry</a>
+      </div> 
+      <div class="collapse navbar-collapse navbar-responsive-collapse">
+        <ul class="nav navbar-nav">
+	  <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Tools <span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+	      <li><a href="#">Validate TrackHub</a></li>
+              <li><a href="[% c.uri_for('/search/advanced') %]">Advanced Search</a></li>
+            </ul>
+          </li>
+	  <li><a href="[% c.uri_for('/user/register') %]">Submit data</a></li>
+	  <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Documentation <span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+              <li><a href="#">Submission</a></li>
+              <li class="divider"></li>
+              <li><a href="#">Search</a></li>
+            </ul>
+          </li>
+	  <!--
+	  <li class="menu-item dropdown">
+	    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Documentation <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li class="menu-item dropdown dropdown-submenu">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Submission</a>
+                <ul class="dropdown-menu">
+                  <li class="menu-item "><a href="#">Introduction</a></li>
+                  <li class="menu-item "><a href="#">REST API</a></li>
+                </ul>
+              </li>
+	      <li class="menu-item "><a href="#">TrackDB JSON specification</a></li>
+	      <li class="divider"></li>
+              <li class="menu-item dropdown dropdown-submenu">
+                <a href="#aaa" class="dropdown-toggle" data-toggle="dropdown">Search</a>
+                <ul class="dropdown-menu">
+                  <li class="menu-item "><a href="#">REST API</a></li>
+                </ul>
+              </li>	      
+            </ul>
+          </li>
+	  -->
+          <li><a href="[% c.uri_for('/about') %]">About</a></li>
+          <li><a href="[% c.uri_for('/about#contacts') %]">Help</a></li>
+        </ul>
+	<ul class="nav navbar-nav navbar-right">
+	[% IF c.user_exists %]
+	  <li><a href="[% c.uri_for(c.controller('user').action_for('list_trackhubs'), [c.user.username]) %]">Dashboard</a></li>
+          <li><a href="[% c.uri_for('/logout') %]">Logout</a></li>
+        [% ELSE %]
+          <li><a href="[% c.uri_for('/user/register') %]">Sign up</a></li>
+          <li><a href="[% c.uri_for('/login') %]">Login</a></li>
+        [% END %]
+        </ul>
+	<form class="navbar-form navbar-right" role="search" method="post" action="[% c.uri_for('/search') %]">
+          <div class="form-group">
+            <input type="text" name="q" class="form-control" placeholder="Enter the search terms...">
+          </div>
+          <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+      </div>
+    </div>
+    </nav>
+    </header>
+
+    <div class="container">
+      [%# Status and error messages %]
+      [% IF status_msg %]
+      <div class="alert alert-info alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> [% status_msg %]
+      </div>
+      [% END %]
+      [% IF error_msg %]
+      <div class="alert alert-danger alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> [% error_msg %]
+      </div>
+      [% END %]
+      [% content %]
+      <hr/>
+    </div>
+
+
+    <footer class="footer" style="margin-top: 20px;">
+      <div class="container">
+        <p class="text-muted">Copyright &copy;
+	  <a class="icon" id="ebi-logo" href="http://www.ebi.ac.uk" target="_blank">
+              <img alt="EBI logo" src="/static/img/EMBL_EBI_Logo_black.png" />
+          </a>
+          <a href="//www.ebi.ac.uk/about/privacy">Privacy</a> |
+          <a href="//www.ebi.ac.uk/about/cookies">Cookies</a> |
+          <a href="//www.ebi.ac.uk/about/terms-of-use">Terms of use</a></p>
+      </div>
+    </footer>
+<!--
+    <footer>
+      <div class="row">
+	<div class="col-sm-12">
+	  <p class="right">&copy; 2015 TrackHub Registry. &middot; <a href="#">Privacy</a></p>
+	</div>
+      </div>
+    </footer>
+-->
+    <!-- JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/static/lib/jquery/jquery-1.11.2.min.js"></script>
+    <script src="/static/lib/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/static/js/site.js"></script>
+  </body>
+</html>

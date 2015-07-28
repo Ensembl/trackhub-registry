@@ -19,15 +19,15 @@
 </div>
 </section>
 -->
+
 <div class="jumbotron background-color-primary-accent">
-  <div class="container">
+  <div class="container content">
     <div>
       <h1>The TrackHub Registry</h1>
       <h3>A global centralised collection of publicly accessible TrackHubs</h3>
-
+      <div class="underline"></div>
       <p><small>The goal of the TrackHub Registry is to allow third parties to advertise <a href="http://genome.ucsc.edu/goldenPath/help/hgTrackHubHelp.html#Intro" target="_blank">TrackHubs</a>, and to make it easier for researchers around the world to discover and use TrackHubs containing different types of genomic research data.</small></p>
 
-      <!-- search box goes here -->
       <form role="search" method="post" action="[% c.uri_for('/search') %]">
         <div class="input-group">
           <input type="text" name="q" class="form-control" placeholder="Search by keywords: hg19, epigenomics, mouse ..." id="search-box" />

@@ -112,10 +112,54 @@
 }
 */
 
+/* @import url(http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,300,400,600,700,800); */
+
+/* body { */
+/*     font-family: 'Open Sans', sans-serif; */
+/*     font-size:13px; */
+/*     font-weight: 300; */
+/* } */
+
+/*
+@import "http://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic,700,700italic";
+@import "http://fonts.googleapis.com/css?family=Oswald:400,700,300";
+
+html {
+    min-height: 100%;
+    position: relative;
+}
+
+body {
+    background-color: transparent;
+    font-family: "Open Sans",sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+}
+
+h1, h2, h3, h4 {
+    font-weight: 300;
+}
+
+h1 {
+    font-family: "Open Sans",sans-serif;
+    font-size: 50px;
+    font-weight: 300;
+}
+*/
+
+.content {
+    text-align: center;
+}
+
+.underline {
+    border-bottom: 1px solid #b0b0b0;
+    margin: 20px auto 15px;
+    width: 20%;
+}
+
 span.facet-count {
     color: #999999;
     float: right;
-/*    font-size: 11px; */
     position: relative;
 }
 
@@ -151,6 +195,8 @@ div.hub-summary-score {
 div.hub-summary-caption {
     font-size: 0.5em;
 }
+
+*/
 
 /* Support for bootstrap 3 dropdown menus */
 

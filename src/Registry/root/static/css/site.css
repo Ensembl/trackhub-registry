@@ -26,6 +26,16 @@ h1, h2, h3, h4 {
     width: 20%;
 }
 
+/*********************************
+  Overridings for the yeti theme 
+**********************************/
+
+.close {
+  color: #5bc0de;
+}
+
+/**********************************/
+
 span.facet-count {
     color: #999999;
     float: right;

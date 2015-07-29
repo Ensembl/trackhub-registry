@@ -29,7 +29,7 @@
     <img style="position: absolute; top: 0; right: 0; border: 0; z-index: 1031;" src="/static/img/ico_beta.png" />
 
     <header>
-    <nav class="navbar navbar-inverse">
+    <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
       <div class="navbar-header">
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">

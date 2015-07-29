@@ -34,6 +34,12 @@ h1, h2, h3, h4 {
   color: #5bc0de;
 }
 
+h3.panel-title {
+  padding-top: 5px; 
+  padding-left: 10px;
+  font-weight: bold;
+}
+
 /**********************************/
 
 span.facet-count {

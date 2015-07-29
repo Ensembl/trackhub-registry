@@ -164,7 +164,8 @@
 	    [% status = item.get_value('status').message %]
 	    [% IF status == 'All is Well' %]
             <div class="panel panel-info">
-	      <div class="panel-heading"><b>[% h = item.get_value('hub'); h.longLabel %]</b></div>
+	      <!--<div class="panel-heading"><b>[% h = item.get_value('hub'); h.longLabel %]</b></div>-->
+	      <h3 class="panel-title">[% h = item.get_value('hub'); h.longLabel %]</h3>
               <div class="panel-body">
 	        <div class="btn-group  btn-group-xs" style="float: right;">
 		  <div class="btn-group btn-group-xs">
@@ -185,7 +186,8 @@
             </div>
 	    [% ELSIF status.match('Unavailable') %]
             <div class="panel panel-danger">
-	      <div class="panel-heading"><b>[% h = item.get_value('hub'); h.longLabel %]</b></div>
+	      <!--<div class="panel-heading"><b>[% h = item.get_value('hub'); h.longLabel %]</b></div>-->
+	      <h3 class="panel-title">[% h = item.get_value('hub'); h.longLabel %]</h3>
               <div class="panel-body">
 	        <div style="float: right;">
 	          <span class="label label-danger">[% status %]</span>
@@ -201,7 +203,8 @@
 	    [% ELSE %]
 	      [% status = 'Unknown status' %]
             <div class="panel panel-warning">
-	      <div class="panel-heading"><b>[% h = item.get_value('hub'); h.longLabel %]</b></div>
+	      <!--<div class="panel-heading"><b>[% h = item.get_value('hub'); h.longLabel %]</b></div>-->
+	      <h3 class="panel-title">[% h = item.get_value('hub'); h.longLabel %]</h3>
               <div class="panel-body">
 	        <div style="float: right;">
 	          <span class="label label-warning">[% status %]</span>

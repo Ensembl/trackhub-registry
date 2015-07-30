@@ -17,17 +17,11 @@ Catalyst Controller.
 =cut
 
 
-=head2 index
-
-=cut
-
-sub index :Path :Args(0) {
-    my ( $self, $c ) = @_;
-
-    $c->response->body('Matched Registry::Controller::Docs in Docs.');
-}
-
 sub search :Local { }
+
+sub results_page :Path('/docs/search/results') { }
+
+sub advanced_search :Path('/docs/search/advanced') { }
 
 =encoding utf8
 

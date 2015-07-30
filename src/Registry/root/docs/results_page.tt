@@ -55,7 +55,7 @@
       <strong>"OK Status"</strong><br/>
       This status means the test perfomed by Registry to check whether the remote track data for the genome assembly supported by the TrackHub is available, was successful. The search result will have, in this case, a blue border and will show the button to load the data in blue, as it is shown in the image above.
     </p>
-    <p><img src="/static/img/ok_status_result.png" /></p>
+
     <p>
       <strong>"Unknow Status"</strong><br/>
       A TrackHub with unknown status means the Registry has not checked whether remote track data for the genome assembly supported by the TrackHub is available. The search result will have, in this case, a yellow border and will show a yellow label with the text "Unknown status", as it is shown in the figure below.

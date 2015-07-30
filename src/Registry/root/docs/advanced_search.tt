@@ -18,7 +18,16 @@
 	    <ul class="nav nav-list">
 	      <li><a href="[% c.uri_for('/docs/search') %]">Basic TrackHub Search</a></li>
 	      <li><a href="[% c.uri_for('/docs/search/results') %]">Search Results Page</a></li>
-	      <li><a style="font-weight: bold;">Advanced Search</a></li>
+	      <li><a style="font-weight: bold;">Advanced Search</a>
+	        <ul>
+		  <li><a href="#wildcards">Wildcards</a></li>
+		  <li><a href="#regex">Regular Expressions</a></li>
+		  <li><a href="#logical">Logical Operators</a></li>
+		  <li><a href="#fuzzy">Fuzzy Operator</a></li>
+		  <li><a href="#proximity">Proximity Searches</a></li>
+		  <li><a href="#grouping">Grouping</a></li>
+		</ul>
+	      </li>
 	    </ul>
           </div> 
 	</div>
@@ -28,6 +37,29 @@
   <div class="col-sm-9" style="text-align: justify; text-justify: inter-word;">
     <h2>Advanced Search</h2>
     <p>
+      Complex queries can be made for more specific and customised searches, by entering terms and operators according to the simple query language understood by the search application. The language supports the use of wildcards, regular expressions, logical and fuzzy operators, proximity searches and grouping.
     </p>
+    
+    <h4 id="wildcards">Wildcards</h4>
+    <p>
+      Sometimes it may be useful to match recotrds based on a query pattern. Wildcard searches can be run on individual terms, using ? to replace a single character, and * to replace zero or more characters:
+      <pre>GRCh3? rna*</pre>
+      Be aware that wildcard queries, especially those with many terms, can use an enormous amount of memory and perform very badly.
+    </p>
+    
+    <h4 id="regex">Regular Expressions</h4>
+    <p>
+      Regular expression patterns can be embedded in the query string by wrapping them in forward-slashes ("/"):
+      <pre>name:/joh?n(ath[oa]n)/</pre>
+      <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-regexp-query.html#regexp-syntax" target="_blank">Supported regex syntax</a>
+    </p>
+
+    <h4 id="logical">Logical Operators</h4>
+
+    <h4 id="fuzzy">Fuzzy Operator</h4>
+
+    <h4 id="proximity">Proximity Searches</h4>
+
+    <h4 id="grouping">Grouping</h4>
   </div>
 </div>

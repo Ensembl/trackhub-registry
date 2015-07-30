@@ -44,6 +44,10 @@ h3.panel-title {
   font-weight: bold;
 }
 
+.panel-heading > a {
+  color: #ffffff;
+}
+
 .close {
   color: #5bc0de;
 }

@@ -6,7 +6,7 @@ html {
 }
 
 body {
-    background-color: transparent;
+    background-color: #fafafa; /*transparent;*/
     font-family: "Open Sans",sans-serif;
     font-size: 14px;
     font-weight: 300;
@@ -30,14 +30,26 @@ h1, h2, h3, h4 {
   Overridings for the yeti theme 
 **********************************/
 
-.close {
-  color: #5bc0de;
+/* .navbar { */
+/*   min-height: 100px; */
+/* } */
+
+.jumbotron {
+  background-color: #ffffff;
 }
 
 h3.panel-title {
   padding-top: 5px; 
   padding-left: 10px;
   font-weight: bold;
+}
+
+.close {
+  color: #5bc0de;
+}
+
+#header-search-button {
+  height: 31px;
 }
 
 /**********************************/

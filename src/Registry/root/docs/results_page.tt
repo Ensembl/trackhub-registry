@@ -1,0 +1,45 @@
+<!--<div class="page-header">-->
+<div class="row">
+  <div class="col-sm-12">
+    <ul class="breadcrumb">
+      <li><a href="/">Home</a></li>
+      <li><a>Docs</a></li>
+      <li class="active">Search</li>
+    </ul>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-3" style="margin-top: 25px;">
+    <div id="search-sidebar-left">
+        <div class="panel panel-primary">
+	  <div class="panel-heading">Search Documentation</div>
+          <div class="panel-body">
+	    <ul class="nav nav-list">
+	      <li><a href="[% c.uri_for('/docs/search') %]">Basic TrackHub Search</a></li>
+	      <li><a style="font-weight: bold;">Search Results Page</a></li>
+	      <li><a rel="nofollow" href="[% c.uri_for('/docs/search/advanced') %]">Advanced Search</a></li>
+	    </ul>
+          </div> 
+	</div>
+    </div> <!-- sidebar -->
+  </div>
+
+  <div class="col-sm-9" style="text-align: justify; text-justify: inter-word;">
+    <h2>Search Results Page</h2>
+    <p>
+      If track hubs are found containing the entered keywords the results are displayed in order of relevance on the search results tab on the right hand side of each results page. Pagination is supported with five results per page shown (Note: will probably have to support the selection by the user of the number of results per page). 
+    </p>
+    <p>
+      Each page of the search results tab will tell the currently displayed range of results and show a box for each result.
+      <img src="/static/img/search_results.png" />
+    </p>
+    
+    <p>
+      Each result contains summary information about matching data for a genome that is supported by a track data hub. The title of the each result contains a description of the matching track data hub, followed by the name of the hub, species information (i.e. NCBI taxonomy ID, scientific name) and genome assembly information (i.e. NCBI assembly accession number and name).
+    </p>
+    <p>
+      On the left hand side of the results page the filter options are shown with the numbers of results associated with each facet.
+    </p>
+  </div>
+</div>

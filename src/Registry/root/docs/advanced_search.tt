@@ -1,0 +1,33 @@
+<!--<div class="page-header">-->
+<div class="row">
+  <div class="col-sm-12">
+    <ul class="breadcrumb">
+      <li><a href="/">Home</a></li>
+      <li><a>Docs</a></li>
+      <li class="active">Search</li>
+    </ul>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-3" style="margin-top: 25px;">
+    <div id="search-sidebar-left">
+        <div class="panel panel-primary">
+	  <div class="panel-heading">Search Documentation</div>
+          <div class="panel-body">
+	    <ul class="nav nav-list">
+	      <li><a href="[% c.uri_for('/docs/search') %]">Basic TrackHub Search</a></li>
+	      <li><a href="[% c.uri_for('/docs/search/results') %]">Search Results Page</a></li>
+	      <li><a style="font-weight: bold;">Advanced Search</a></li>
+	    </ul>
+          </div> 
+	</div>
+    </div> <!-- sidebar -->
+  </div>
+
+  <div class="col-sm-9" style="text-align: justify; text-justify: inter-word;">
+    <h2>Advanced Search</h2>
+    <p>
+    </p>
+  </div>
+</div>

@@ -17,7 +17,13 @@
           <div class="panel-body">
 	    <ul class="nav nav-list">
 	      <li><a href="[% c.uri_for('/docs/search') %]">Basic TrackHub Search</a></li>
-	      <li><a style="font-weight: bold;">Search Results Page</a></li>
+	      <li><a style="font-weight: bold;">Search Results Page</a>
+	        <ul>
+		  <li><a href="#load">Load TrackHubs in genome browsers</a></li>
+		  <li><a href="#view">Viewing more information</a></li>
+		  <li><a href="#filter">Filtering results</a></li>
+		</ul>
+	      </li>
 	      <li><a rel="nofollow" href="[% c.uri_for('/docs/search/advanced') %]">Advanced Search</a></li>
 	    </ul>
           </div> 
@@ -31,13 +37,58 @@
       If track hubs are found containing the entered keywords the results are displayed in order of relevance on the search results tab on the right hand side of each results page. Pagination is supported with five results per page shown (Note: will probably have to support the selection by the user of the number of results per page). 
     </p>
     <p>
-      Each page of the search results tab will tell the currently displayed range of results and show a box for each result.
+      Each page of the search results tab will tell the currently displayed range of results and show a box for each result. The bottom of the page contains navigation links highlighting the current page number and providing links to jump to other pages.
+    </p>
+    <p>
       <img src="/static/img/search_results.png" />
     </p>
     
     <p>
       Each result contains summary information about matching data for a genome that is supported by a track data hub. The title of the each result contains a description of the matching track data hub, followed by the name of the hub, species information (i.e. NCBI taxonomy ID, scientific name) and genome assembly information (i.e. NCBI assembly accession number and name).
     </p>
+
+    <h5 id="status">TrackHub Status</h5>
+    <p>
+      The way each search result summary is displayed reflects the status of the TrackHub as it is known by the Registry, as it is described in the following.
+    </p>
+    <p>
+      <strong>"OK Status"</strong><br/>
+      This status means the test perfomed by Registry to check whether the remote track data for the genome assembly supported by the TrackHub is available, was successful. The search result will have, in this case, a blue border and will show the button to load the data in blue, as it is shown in the image above.
+    </p>
+    <p><img src="/static/img/ok_status_result.png" /></p>
+    <p>
+      <strong>"Unknow Status"</strong><br/>
+      A TrackHub with unknown status means the Registry has not checked whether remote track data for the genome assembly supported by the TrackHub is available. The search result will have, in this case, a yellow border and will show a yellow label with the text "Unknown status", as it is shown in the figure below.
+    </p>
+    <p><img src="/static/img/unknow_status_result.png" /></p>
+    <p>
+      It is still possible to load the tracks into a genome browser for display (though it's not guaranteed it will work), and show more detailed information.
+    </p>
+    <p>
+      <strong>"Unavailable Data"</strong><br/>
+      In this case, the Registry run a test on the TrackHub and determined some or all of the remote track data for the supported genome assembly is not available. The search result will have, in this case, a red border and will show a label of the same color with the text "Remote Data Unavailable", as it is shown in the figure below.
+    </p>
+    <p><img src="/static/img/unavailable_status_result.png" /></p>
+    <p>
+      You cannot, in this case, load the tracks into a genome browser, as it wouldn't work and would be a waste of time and computational resources. Anyway, you can still view more detailed information about the hub which will contain in this case a report of the faulty tracks. See <a href="#view">Viewing more information</a>.
+    </p>
+
+    <h4 id="load">Loading TrackHubs into Genome Browsers</h4>
+    <p>
+      At the right hand side of each search result there's a button which allows to view the TrackHub data directly into an available genome browser. By clicking on it, a dropdown will appear showing available choices, e.g. "Ensembl", to load the data in the Ensembl browser, or "UCSC" to view the same data on the UCSC genome browser. Upon selection, another page will open with the connection established between the genome browser and the TrackHub.
+    </p>
+    <p>
+      <img src="/static/img/load_result.png" />
+    </p>
+
+    <h4 id="view">Viewing more information</h4>
+    <p>
+    </p>
+    <p>
+      <img src="/static/img/.png" />
+    </p>
+
+    <h4 id="filter">Filtering Results</h4>
     <p>
       On the left hand side of the results page the filter options are shown with the numbers of results associated with each facet.
     </p>

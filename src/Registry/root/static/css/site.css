@@ -48,6 +48,11 @@ h3.panel-title {
   color: #ffffff;
 }
 
+/* align the background with that of the body */
+.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
+    background-color: #fafafa;
+}
+
 .close {
   color: #5bc0de;
 }

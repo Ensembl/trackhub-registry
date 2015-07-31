@@ -13,7 +13,7 @@
   <div class="col-sm-3" style="margin-top: 25px;">
     <div id="search-sidebar-left">
         <div class="panel panel-primary">
-	  <div class="panel-heading">Search Documentation</div>
+	  <div class="panel-heading">Search Docs</div>
           <div class="panel-body">
 	    <ul class="nav nav-list">
 	      <li><a href="[% c.uri_for('/docs/search') %]">Basic TrackHub Search</a></li>
@@ -23,9 +23,9 @@
 		  <li><a href="#wildcards">Wildcards</a></li>
 		  <li><a href="#regex">Regular Expressions</a></li>
 		  <li><a href="#logical">Logical Operators</a></li>
+		  <li><a href="#grouping">Grouping</a></li>
 		  <li><a href="#fuzzy">Fuzzy Operator</a></li>
 		  <li><a href="#proximity">Proximity Searches</a></li>
-		  <li><a href="#grouping">Grouping</a></li>
 		</ul>
 	      </li>
 	    </ul>
@@ -51,15 +51,50 @@
     <p>
       Regular expression patterns can be embedded in the query string by wrapping them in forward-slashes ("/"):
       <pre>name:/joh?n(ath[oa]n)/</pre>
-      <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-regexp-query.html#regexp-syntax" target="_blank">Supported regex syntax</a>
+      <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-regexp-query.html#regexp-syntax" target="_blank">Supported regex syntax</a> (Elasticsearch website).
     </p>
 
     <h4 id="logical">Logical Operators</h4>
-
-    <h4 id="fuzzy">Fuzzy Operator</h4>
-
-    <h4 id="proximity">Proximity Searches</h4>
+    <p>
+      By default, all terms are optional, as long as one term matches. A search for <mark>foo bar baz</mark> will find any document that contains one or more of <mark>foo</mark> or <mark>bar</mark> or <mark>baz</mark>. Alternatively, all the familiar AND, OR  and NOT operators (also written &&, || and !) can be used. Using AND instead of the default OR operator in the previous query would force all terms to be required. 
+    </p>
+    <p>
+      Other boolear operators can be used in the query string itself to provide more control. The preferred operators are + (this term must be present) and - (this term must not be present). All other terms are optional. For example, this query:
+      <pre>quick brown +fox -news</pre>
+      States that:
+      <ul>
+        <li>fox must be present</li>
+    	<li>news must not be present</li>
+    	<li>quick and brown are optional — their presence increases the relevance</li>
+      </ul>
+    </p>
+    <p>
+      When mixing operators, tt is important to take their precedence into account: NOT takes precedence over AND, which takes precedence over OR. While the + and - only affect the term to the right of the operator, AND and OR can affect the terms to the left and right.
+    </p>
 
     <h4 id="grouping">Grouping</h4>
+    <p>
+      Multiple terms or clauses can be grouped together with parentheses, to form sub-queries:
+      <pre>(quick OR brown) AND fox</pre>
+    </p>
+
+    <h4 id="fuzzy">Fuzzy Operator</h4>
+    <p>
+      We can search for terms that are similar to, but not exactly like our search terms, using the fuzzy operator:
+      <pre>quikc~ brwn~ foks~</pre>
+      This uses the Damerau-Levenshtein distance to find all terms with a maximum of two changes, where a change is the insertion, deletion or substitution of a single character, or transposition of two adjacent characters.
+    </p>
+    <p>
+      The default edit distance is 2, but an edit distance of 1 should be sufficient to catch 80% of all human misspellings. It can be specified as:
+      <pre>quikc~1</pre>
+    </p>
+
+    <h4 id="proximity">Proximity Searches</h4>
+    <p>
+      While a phrase query (eg john smith) expects all of the terms in exactly the same order, a proximity query allows the specified words to be further apart or in a different order. In the same way that fuzzy queries can specify a maximum edit distance for characters in a word, a proximity search allows us to specify a maximum edit distance of words in a phrase:
+      <pre>"fox quick"~5</pre>
+      The closer the text in a field is to the original order specified in the query string, the more relevant that document is considered to be. When compared to the above example query, the phrase "quick fox" would be considered more relevant than "quick brown fox".
+    </p>
+
   </div>
 </div>

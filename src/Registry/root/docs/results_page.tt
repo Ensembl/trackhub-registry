@@ -50,7 +50,27 @@
 
     <h4 id="filter">Filtering Results</h4>
     <p>
-      On the left hand side of the results page the filter options are shown with the numbers of results associated with each facet.
+      On the left hand side of the results page various filter options (i.e. facets) are shown, grouped according to four different types in their corresponding panels of the side bar: Species, Assembly, Hub and Data Type.
+    </p>
+    <p>
+      The top panel of the side bar, titled "Current Filters", presents a list of currently selected filters.
+    </p>
+    <p><img src="/static/img/current_filters.png" /></p>
+    <p>
+      By default, when the user initiates a new search with no filters, the panel shows only the query as a filter. By clicking on one of the filters marked with a cross, the Registry will redo the search without that filter.
+    </p>
+    <p>
+      All filter panels are collapsed by default. Click on each panel title to list all available options for the corresponding filter.
+    </p>
+    <p>
+      For instance, the Species filter presents a list of species matching the query where each species is reported with the numbers of results (i.e. data tracks) corresponding to that species.
+    </p>
+    <p><img src="/static/img/species_facet.png" /></p>
+    <p>
+      Clicking on one of the listed facet values will filter the results by the chosen species and will change the current filter panel to display the selection. All other filters work exactly in the same way.
+    </p>
+    <p>
+      The Assembly filter presents a list of names for the genome assemblies matching the query, each one reported with the corresponding number of search results. Similarly, the Hub panel allows to filter the search results by the name of the matching track data hubs. The final facet is Data Type, where one can filter according to the genomic data type of the data tracks of the matching TrackHubs.
     </p>
 
     <h4 id="status">Data Tracks Status</h5>

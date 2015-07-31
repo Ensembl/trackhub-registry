@@ -57,13 +57,13 @@
     </p>
     <p><img src="/static/img/current_filters.png" /></p>
     <p>
-      By default, when the user initiates a new search with no filters, the panel shows only the query as a filter. By clicking on one of the filters marked with a cross, the Registry will redo the search without that filter.
+      By default, when the user initiates a new search with no filters, the panel shows only the query as a filter. By clicking on one of the filters marked with a cross, the Registry will redo the search with that filter excluded.
     </p>
     <p>
       All filter panels are collapsed by default. Click on each panel title to list all available options for the corresponding filter.
     </p>
     <p>
-      For instance, the Species filter presents a list of species matching the query where each species is reported with the numbers of results (i.e. data tracks) corresponding to that species.
+      For instance, the Species filter presents a list of species matching the query where each species is reported with the numbers of results (i.e. data tracks) referring to it.
     </p>
     <p><img src="/static/img/species_facet.png" /></p>
     <p>

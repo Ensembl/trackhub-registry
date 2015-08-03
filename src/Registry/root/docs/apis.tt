@@ -16,8 +16,7 @@
 	  <div class="panel-heading">API Docs</div>
           <div class="panel-body">
 	    <ul class="nav nav-list">
-	      <li><a style="font-weight: bold;">TH Registry APIs</a></li>
-	      <li>
+	      <li><a style="font-weight: bold;">TH Registry APIs</a>
 	        <ul>
 		  <li><a href="#request">API Requests</a>
 		    <ul>
@@ -30,6 +29,7 @@
 		</ul>
 	      </li>
 	      <li><a href="[% c.uri_for('/docs/api/modelling') %]">Modelling TrackHubs</a></li>
+	      <li><a href="[% c.uri_for('/docs/api/info') %]">Info API</a></li>
 	      <li><a href="[% c.uri_for('/docs/api/registration') %]">Registration API</a></li>
 	      <li><a href="[% c.uri_for('/docs/api/search') %]">Search API</a></li>
 	    </ul>
@@ -41,12 +41,13 @@
   <div class="col-sm-9" style="text-align: justify; text-justify: inter-word;">
   <h2>TrackHub Registry APIs</h2>
   <p>
-    The TrackHub Registry implement two APIs which allow a client to interact with the Registry using a RESTful application development style:
+    The TrackHub Registry implement various APIs which allow a client to interact with the Registry using a RESTful application development style:
     <ul>
+      <li><a href="[% c.uri_for('/docs/api/info') %]">Info API</a>: obtain basic information about the service from the Registry;
       <li><a href="[% c.uri_for('/docs/api/registration') %]">Registration API</a>: provides support for hub providers who want to register and manage their track data hubs with the registry;
-      <li><a href="[% c.uri_for('/docs/api/search') %]">Search API</a>: provides support for genome browsers who are building interfaces to display and search publicly available TrackHubs</li>
+      <li><a href="[% c.uri_for('/docs/api/search') %]">Search API</a>: provides support for genome browsers who are building interfaces to display and search publicly available TrackHubs.</li>
     </ul>
-    API clients and the Registry  servers communicate over HTTP, exchanging representations of objects, which take the form of JSON document elements. You use HTTP GET requests to retrieve the current representation of an object, HTTP POST and PUT requests to create or modify an object, and HTTP DELETE requests to delete an object.
+    An API client and the Registry communicate over HTTP, exchanging representations of objects, which take the form of JSON document elements. You use HTTP GET requests to retrieve the current representation of an object, HTTP POST and PUT requests to create or modify an object, and HTTP DELETE requests to delete an object.
   </p>
   <p>
     TrackHub Registry clients implement a RESTful workflow, making HTTP requests to the server and retrieving the information they need from the server’s responses. REST, an acronym for Representational State Transfer, describes an architectural style characteristic of programs that rely on the inherent properties of hypermedia to create and modify the state of an object whose serialized representation is accessible at a URL. If a URL of such an object is known to a client, the client can use an HTTP GET request to retrieve the representation of the object. In the Registry APIs, this representation is a JSON document. In a RESTful workflow, documents that represent an object state are passed back and forth between a client and a service with the explicit assumption that neither party need know anything about an object other than what is presented in a single request or response. The URLs at which these documents are available often persist beyond the lifetime of the request or response that includes them.

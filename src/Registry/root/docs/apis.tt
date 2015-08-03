@@ -1,0 +1,188 @@
+<!--<div class="page-header">-->
+<div class="row">
+  <div class="col-sm-12">
+    <ul class="breadcrumb">
+      <li><a href="/">Home</a></li>
+      <li><a>Docs</a></li>
+      <li class="active">API</li>
+    </ul>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-3" style="margin-top: 25px;">
+    <div id="search-sidebar-left">
+        <div class="panel panel-primary">
+	  <div class="panel-heading">API Docs</div>
+          <div class="panel-body">
+	    <ul class="nav nav-list">
+	      <li><a style="font-weight: bold;">TH Registry APIs</a></li>
+	      <li>
+	        <ul>
+		  <li><a href="#request">API Requests</a>
+		    <ul>
+		      <li><a href="#auth">Authentication</a></li>
+		      <li><a href="#requestheaders">Request Headers</a></li>
+		      <li><a href="#requestbodies">Request Bodies</a></li>
+		    </ul>
+		  </li>
+		  <li><a href="#response">API Responses</a></li>
+		</ul>
+	      </li>
+	      <li><a href="[% c.uri_for('/docs/api/modelling') %]">Modelling TrackHubs</a></li>
+	      <li><a href="[% c.uri_for('/docs/api/registration') %]">Registration API</a></li>
+	      <li><a href="[% c.uri_for('/docs/api/search') %]">Search API</a></li>
+	    </ul>
+          </div> 
+	</div>
+    </div> <!-- sidebar -->
+  </div>
+
+  <div class="col-sm-9" style="text-align: justify; text-justify: inter-word;">
+  <h2>TrackHub Registry APIs</h2>
+  <p>
+    The TrackHub Registry implement two APIs which allow a client to interact with the Registry using a RESTful application development style:
+    <ul>
+      <li><a href="[% c.uri_for('/docs/api/registration') %]">Registration API</a>: provides support for hub providers who want to register and manage their track data hubs with the registry;
+      <li><a href="[% c.uri_for('/docs/api/search') %]">Search API</a>: provides support for genome browsers who are building interfaces to display and search publicly available TrackHubs</li>
+    </ul>
+    API clients and the Registry  servers communicate over HTTP, exchanging representations of objects, which take the form of JSON document elements. You use HTTP GET requests to retrieve the current representation of an object, HTTP POST and PUT requests to create or modify an object, and HTTP DELETE requests to delete an object.
+  </p>
+  <p>
+    TrackHub Registry clients implement a RESTful workflow, making HTTP requests to the server and retrieving the information they need from the server’s responses. REST, an acronym for Representational State Transfer, describes an architectural style characteristic of programs that rely on the inherent properties of hypermedia to create and modify the state of an object whose serialized representation is accessible at a URL. If a URL of such an object is known to a client, the client can use an HTTP GET request to retrieve the representation of the object. In the Registry APIs, this representation is a JSON document. In a RESTful workflow, documents that represent an object state are passed back and forth between a client and a service with the explicit assumption that neither party need know anything about an object other than what is presented in a single request or response. The URLs at which these documents are available often persist beyond the lifetime of the request or response that includes them.
+  </p>
+  <p>
+    Application programs written to a REST API use HTTP requests that are often executed by a script or other higher-level language to make remote procedure calls that create, retrieve, update, or delete objects that the API defines. The operations themselves are HTTP requests, and so are generic to all HTTP clients. All RESTful workflows follow a common pattern:
+    <ul>
+      <li>Make an HTTP request, typically GET, PUT, POST, or DELETE. The target of this request is either a well-known URL  or a URL obtained from the response to a previous request. For example, a GET request to a TrackHub URL returns links to trackDb objects that the organization contains;</li>
+      <li>Examine the response, which always includes an HTTP response code and usually includes a body. In the Registry APIs, a response body is a JSON representation of an object, including elements and attributes that represent object properties, links that implement operations on the object or provide references to contained or containing objects. The response also includes an HTTP response code, which indicates whether the request succeeded or failed.</li>
+    </ul>
+  </p>
+
+  <h3 id="request">API Requests</h3>
+  <p>
+    Requests are typically categorised in terms of the type of requested operation: create, retrieve, update, and delete. This sequence of verbs is often abbreviated with the acronym CRUD.
+    
+    <table class="table">
+      <tbody>
+        <tr>
+	  <th>HTTP Verb</th>
+	  <th>Type</th>
+	  <th>Summary</th>
+	</tr>
+        <tr>
+	  <td>POST</td>
+	  <td>Creates</td>
+	  <td>Create new object</td>
+	</tr>
+        <tr>
+	  <td>GET</td>
+	  <td>Retrieve</td>
+	  <td>Retrieve object representation</td>
+	</tr>
+        <tr>
+	  <td>PUT</td>
+	  <td>Update</td>
+	  <td>Modifies existing object</td>
+	</tr>
+        <tr>
+	  <td>DELETE</td>
+	  <td>Delete</td>
+	  <td>Delete existing object</td>
+	</tr>
+      </tbody>
+    </table>
+  </p>
+
+  <h4 id="auth">Authentication/Authorisation</h4>
+  <p>
+    HTTP communications between a TrackHub Registry API client and the server are secured with SSL. The Registration API implements Basic HTTP Authentication, as defined by RFC 2617, to allow clients to login and obtain an authentication token. Access tokens allow clients send individual authorised HTTP requests by including an auth-token header in the request.
+  </p>
+
+  <h4 id="requestheaders">Request Headers</h4>
+  <p>
+    The following HTTP headers can be included in API requests:
+    <table class="table">
+      <tbody>
+        <tr>
+	  <th>Header</th>
+	  <th>Description</th>
+	</tr>
+        <tr>
+	  <td>Authorization</td>
+	  <td>Login requests to the <a href="">Registration API</a> must include an Authorization header, as specified in RFC 1421. Credentials must be supplied in a MIME Base64 encoding.</td>
+	</tr>
+        <tr>
+	  <td>User</td>
+	  <td>Requests to the Registration API from authenticated clients must include a User header.</td>
+	</tr>
+        <tr>
+	  <td>Auth-Token</td>
+	  <td>Requests to the Registration API from authenticated clients must include an API-key in the form of an Auth-Token header.</td>
+	</tr>
+        <tr>
+	  <td>Content-Type</td>
+	  <td>Requests that include a body (i.e. POST/PUT) must start with the appropriate HTTP Content-Type header set to <strong>application/json</strong></td>
+	</tr>
+      </tbody>
+    </table>    
+  </p>
+
+  <h4 id="requestbodies">Request Bodies</h4>
+  <p>
+    Some API endpoints allow or require requests to include a body. All request bodies must be formatted as JSON documents. In these cases, the request must then start with the header <mark>Content-Type: application/json</mark>. For an endpoint (link) in particular, the Registry API uses a JSON validator that requires elements in the request body to comply with a JSON schema that defines valid trackDb documents within the registry.
+  </p>
+
+  <h3 id="response">API Responses</h3>
+  <p>
+    All responses include an HTTP status code and, unless the status code is 204 (No Content), a <mark>Content-Type</mark> header. Response content depends on the request. Some responses include a document body, some include only a URL, and some are empty.
+  </p>
+
+  <h4>HTTP Response Codes</h4>
+  <p>
+    A TrackHub Registry API client expects a subset of HTTP status codes in a response.
+
+    <table class="table">
+      <tbody>
+        <tr>
+	  <th>Status Code</th>
+	  <th>Description</th>
+	</tr>
+        <tr>
+	  <td>200 OK</td>
+	  <td>The request is valid and was completed. The response includes a document body</td>
+	</tr>
+        <tr>
+	  <td>201 Created</td>
+	  <td>The request is valid. The requested object was created and can be found at the URL specified in the Location header</td>
+	</tr>
+        <tr>
+	  <td>400 Bad Request</td>
+	  <td>The request body is malformed, incomplete, or otherwise invalid</td>
+	</tr>
+        <tr>
+	  <td>401 Unauthorized</td>
+	  <td>HTTP basic authentication failed (an Authorization header was expected but not found, or invalid user credentials), or token based authorisation failed (User/Auth-Token headers were expected but not found or invalid auth-token)</td>
+	</tr>
+        <tr>
+	  <td>404 Not Found</td>
+	  <td>One or more objects specified in the request could not be found in the specified container</td>
+	</tr>
+        <tr>
+	  <td>405 Method Not Allowed</td>
+	  <td>The method specified in the Request-Line is not allowed for the resource identified by the Request-URI (<mark>NOTE: the response MUST include an Allow header containing a list of valid methods for the requested resource</mark>)</td>
+	</tr>
+        <tr>
+	  <td>500 Internal Server Error</td>
+	  <td>The request was received but could not be completed because of an internal error at the server</td>
+	</tr>
+        <tr>
+	  <td>503 Service Unavailable</td>
+	  <td>The server is currently unable to handle the request due to a temporary overloading or maintenance of the server. The implication is that this is a temporary condition which will be alleviated after some delay. If known, the length of the delay MAY be indicated in a <mark>Retry-After</mark> header. If no <mark>Retry-After</mark> is given, the client SHOULD handle the response as it would for a 500 response</td>
+	</tr>
+      </tbody>
+    </table>    
+  </p>
+
+  </div>
+</div>

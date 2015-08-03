@@ -1,0 +1,140 @@
+<!--<div class="page-header">-->
+<div class="row">
+  <div class="col-sm-12">
+    <ul class="breadcrumb">
+      <li><a href="/">Home</a></li>
+      <li><a>Docs</a></li>
+      <li><a>API</a></li>
+      <li>Info</li>
+    </ul>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-3" style="margin-top: 25px;">
+    <div id="search-sidebar-left">
+        <div class="panel panel-primary">
+	  <div class="panel-heading">API Docs</div>
+          <div class="panel-body">
+	    <ul class="nav nav-list">
+	      <li><a href="[% c.uri_for('/docs/apis') %]">TH Registry APIs</a></li>
+	      <li><a href="[% c.uri_for('/docs/api/modelling') %]">Modelling TrackHubs</a></li>
+	      <li><a style="font-weight: bold;"">Info API</a>
+	        <ul>
+		  <li><a href="#version">GET /api/info/version</a></li>
+		  <li><a href="#ping">GET /api/info/ping</a></li>
+		  <li><a href="#species">GET /api/info/species</a></li>
+		  <li><a href="#assemblies">GET /api/info/assemblies</a></li>
+		  <li><a href="#trackhubs">GET /api/info/trackhubs</a></li>
+		</ul>
+	      </li>
+	      <li><a href="[% c.uri_for('/docs/api/registration') %]">Registration API</a></li>
+	      <li><a href="[% c.uri_for('/docs/api/search') %]">Search API</a></li>
+	    </ul>
+          </div> 
+	</div>
+    </div> <!-- sidebar -->
+  </div>
+
+  <div class="col-sm-9" style="text-align: justify; text-justify: inter-word;">
+  <h2>Info API</h2>
+
+  <h3 id="version">GET /api/info/version</h3>
+  <p>
+    Returns the current version of all the Registry APIs.
+  </p>
+  <p>
+    If the request is successful, the Response is an hash with one key, <mark>version</mark>, whose value is a string which identifies the API version.
+  </p>
+
+  <h4>Resource Information</h4>
+  <table class="table" style="width: auto;">
+    <tbody>
+      <tr>
+        <th>Response formats</th>
+	<td>JSON</td>
+      </tr>
+      <tr>
+        <th>Authentication</th>
+	<td>No</td>
+      </tr>
+      <tr>
+        <th>Rate Limited</th>
+	<td>No</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Parameters</h4>
+  <p>None</p>
+
+  <h4>Example Request</h4>
+  <pre>
+    GET https://www.trackhubregistry.org/api/info/version
+  </pre>
+
+  <h4>Example Response</h4>
+  <pre>
+    HTTP/1.0 200 OK
+    {
+      "version": "0.01"
+    }
+  </pre>
+
+
+  <h3 id="ping">GET /api/info/ping</h3>
+  <p>
+    Checks if the service is alive. 
+  </p>
+  <p>
+    If the request is successful, the response is an hash with one key, <mark>ping</mark>. If it's value is 1 the service is available.
+  </p>
+
+  <h4>Resource Information</h4>
+  <table class="table" style="width: auto;">
+    <tbody>
+      <tr>
+        <th>Response formats</th>
+	<td>JSON</td>
+      </tr>
+      <tr>
+        <th>Authentication</th>
+	<td>No</td>
+      </tr>
+      <tr>
+        <th>Rate Limited</th>
+	<td>No</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Parameters</h4>
+  <p>None</p>
+
+  <h4>Example Request</h4>
+  <pre>
+    GET https://www.trackhubregistry.org/api/info/ping
+  </pre>
+
+  <h4>Example Response</h4>
+  <pre>
+    HTTP/1.0 200 OK
+    {
+      "ping": 1
+    }
+  </pre>
+
+  <h3 id="species">GET /api/info/species</h3>
+  <p>
+  </p>
+
+  <h3 id="assemblies">GET /api/info/assemblies</h3>
+  <p>
+  </p>
+
+  <h3 id="trackhubs">GET /api/info/trackhubs</h3>
+  <p>
+  </p>
+
+  </div>
+</div>

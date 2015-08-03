@@ -29,6 +29,13 @@ sub management :Local { }
 
 sub dashboard :Local { }
 
+sub apis :Local { }
+
+sub th_modelling :Path('/docs/api/modelling') { }
+
+sub registration_api :Path('/docs/api/registration') { }
+
+sub search_api :Path('/docs/api/search') { }
 
 
 =encoding utf8

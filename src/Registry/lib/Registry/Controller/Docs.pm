@@ -23,6 +23,14 @@ sub results_page :Path('/docs/search/results') { }
 
 sub advanced_search :Path('/docs/search/advanced') { }
 
+sub registration :Local { }
+
+sub management :Local { }
+
+sub dashboard :Local { }
+
+
+
 =encoding utf8
 
 =head1 AUTHOR

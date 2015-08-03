@@ -1,0 +1,48 @@
+<!--<div class="page-header">-->
+<div class="row">
+  <div class="col-sm-12">
+    <ul class="breadcrumb">
+      <li><a href="/">Home</a></li>
+      <li><a>Docs</a></li>
+      <li class="active">TH Provider</li>
+    </ul>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-3" style="margin-top: 25px;">
+    <div id="search-sidebar-left">
+        <div class="panel panel-primary">
+	  <div class="panel-heading">TrackHub Provider Docs</div>
+          <div class="panel-body">
+	    <ul class="nav nav-list">
+	      <li><a href="[% c.uri_for('/docs/registration') %]">Registration</a></li>
+	      <li><a style="font-weight: bold;">TrackHub Management</a></li>
+	      <li><a href="[% c.uri_for('/docs/dashboard') %]">Dashboard</a></li>
+	    </ul>
+          </div> 
+	</div>
+    </div> <!-- sidebar -->
+  </div>
+
+  <div class="col-sm-9" style="text-align: justify; text-justify: inter-word;">
+    <h2>TrackHub Management</h2>
+    <p>
+      Once you <a href="[% c.uri_for('/user/register') %]" target="_blank">Sign Up</a>, you can start using the <a href="[% c.uri_for('/docs/api/registration') %]">Registration API</a>, which allows you to use RESTful workflows to manage your track data hubs with the Registry.
+    </p>
+    
+    <p>
+      Using this API, you can:
+      <ul>
+        <li>register a track data hub with the registry;</li>
+	<li>list the all your registered track hubs or data bases;</li>
+	<li>get/update/delete a particular track data base.</li>
+      </ul>
+    </p>
+
+    <p>
+      Alternatively, you can use the <a href="[% c.uri_for('/docs/dashboard') %]">dashboard</a> on the registry web interface to query the status of your registered track hubs, or view and delete them from the registry.
+    </p>
+
+  </div>
+</div>

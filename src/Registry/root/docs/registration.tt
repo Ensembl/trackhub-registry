@@ -1,0 +1,52 @@
+<!--<div class="page-header">-->
+<div class="row">
+  <div class="col-sm-12">
+    <ul class="breadcrumb">
+      <li><a href="/">Home</a></li>
+      <li><a>Docs</a></li>
+      <li class="active">TH Provider</li>
+    </ul>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-3" style="margin-top: 25px;">
+    <div id="search-sidebar-left">
+        <div class="panel panel-primary">
+	  <div class="panel-heading">TrackHub Provider Docs</div>
+          <div class="panel-body">
+	    <ul class="nav nav-list">
+	      <li><a style="font-weight: bold;">Registration</a></li>
+	      <li><a href="[% c.uri_for('/docs/management') %]">TrackHub Management</a></li>
+	      <li><a href="[% c.uri_for('/docs/dashboard') %]">Dashboard</a></li>
+	    </ul>
+          </div> 
+	</div>
+    </div> <!-- sidebar -->
+  </div>
+
+  <div class="col-sm-9" style="text-align: justify; text-justify: inter-word;">
+    <div class="alert alert-info alert-dismissible" role="alert">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <p>
+        This section of the documentation concerns you only if you create TrackHubs and want to register them with the Registry.
+      </p>
+      <p>
+        Go to <a href="[% c.uri_for('/docs/search') %]">search documentation</a> if you're just looking to find interesting data hubs.
+      </p>
+    </div>
+
+    <h2>Client Registration</h2>
+    <p>
+      You must have an account with the registry before submitting and managing any data. To create an account, go to the <a href="[% c.uri_for('/user/register') %]" target="_blank">registration page</a>.
+    </p>
+    
+    <p>
+      The client registration interface captures basic contact information (i.e. first/last name, institute, email) of the person responsible of managing the track data hubs with the registry, together with credentials necessary to use the REST API to register and update track data hubs with the registry, and to sign in and access the registry web dashboard. The interface also asks to configure some options that control automatic track hub monitoring by the registry, which is explained here.
+    </p>
+
+    <p>
+      Upon registration, you're immediately logged in into the system and presented the <a href="[% c.uri_for('/docs/dashboard') %]">dashboard</a>.
+    </p>
+  </div>
+</div>

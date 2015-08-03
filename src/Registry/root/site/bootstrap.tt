@@ -56,7 +56,7 @@
               <li class="divider"></li>
               <li><a href="[% c.uri_for('/docs/registration') %]">Managing TrackHubs</a></li>
               <li class="divider"></li>
-              <li><a href="#">Registry APIs</a></li>
+              <li><a href="[% c.uri_for('/docs/apis') %]">Registry APIs</a></li>
             </ul>
           </li>
 	  <!--

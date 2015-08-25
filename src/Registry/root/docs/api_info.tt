@@ -87,7 +87,7 @@
     Checks if the service is alive. 
   </p>
   <p>
-    If the request is successful, the response is an hash with one key, <mark>ping</mark>. If it's value is 1 the service is available.
+    If the request is successful, the response is a hash with one key, <mark>ping</mark>. If it's value is 1 the service is available.
   </p>
 
   <h4>Resource Information</h4>
@@ -126,7 +126,43 @@
 
   <h3 id="species">GET /api/info/species</h3>
   <p>
+    Returns the set of species the TrackHubs registered in the Registry contain data for.
   </p>
+  <p>
+    If the request is successful, the response is an array containing the scientific names of the species.
+  </p>
+
+  <h4>Resource Information</h4>
+  <table class="table" style="width: auto;">
+    <tbody>
+      <tr>
+        <th>Response formats</th>
+	<td>JSON</td>
+      </tr>
+      <tr>
+        <th>Authentication</th>
+	<td>No</td>
+      </tr>
+      <tr>
+        <th>Rate Limited</th>
+	<td>No</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Parameters</h4>
+  <p>None</p>
+
+  <h4>Example Request</h4>
+  <pre>
+    GET https://www.trackhubregistry.org/api/info/species
+  </pre>
+
+  <h4>Example Response</h4>
+  <pre>
+    HTTP/1.0 200 OK
+    ["Homo sapiens","Danio rerio","Mus musculus","Arabidopsis thaliana","Brassica rapa","Drosophila simulans","Ricinus communis"]
+  </pre>
 
   <h3 id="assemblies">GET /api/info/assemblies</h3>
   <p>

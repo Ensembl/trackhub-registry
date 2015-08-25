@@ -166,11 +166,156 @@
 
   <h3 id="assemblies">GET /api/info/assemblies</h3>
   <p>
+    Returns the set of assemblies the TrackHubs registered in the Registry contain data for. The assemblies returned are grouped by their corresponding species.
   </p>
+  <p>
+    If the request is successful, the response is a hash where a key is a species scientific name, and whose value is an array of NCBI assembly accessions for that species.
+  </p>
+
+  <h4>Resource Information</h4>
+  <table class="table" style="width: auto;">
+    <tbody>
+      <tr>
+        <th>Response formats</th>
+	<td>JSON</td>
+      </tr>
+      <tr>
+        <th>Authentication</th>
+	<td>No</td>
+      </tr>
+      <tr>
+        <th>Rate Limited</th>
+	<td>No</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Parameters</h4>
+  <p>None</p>
+
+  <h4>Example Request</h4>
+  <pre>
+    GET https://www.trackhubregistry.org/api/info/assemblies
+  </pre>
+
+  <h4>Example Response</h4>
+  <pre>
+    HTTP/1.0 200 OK
+    {"Brassica rapa":["GCA_000309985.1"],"Homo sapiens":["GCA_000001405.1","GCA_000001405.15"],"Arabidopsis thaliana":["GCA_000001735.1"],"Danio rerio":["GCA_000002035.2","GCA_000002035.3"],"Ricinus communis":["GCA_000151685.2"],"Drosophila simulans":["GCA_000754195.2"],"Mus musculus":["GCA_000001635.1","GCA_000001635.2"]}
+  </pre>
+
 
   <h3 id="trackhubs">GET /api/info/trackhubs</h3>
   <p>
+    Return the list of registered track data hubs. 
   </p>
+  <p>
+    If the request is successful, the response is an array of hashes identifying trackhubs. Each trackhub hash has the following key/value pairs:
+    <ul>
+      <li><mark>name</mark>: the single-word name of the directory containing the track hub files;</li>
+      <li><mark>url</mark>: the track hub remote URL;</li>
+      <li><mark>shortLabel</mark>: the short name for the track hub;</li>
+      <li><mark>longLabel</mark>: the longer descriptive label for the track hub;</li>
+      <li><mark>trackdbs</mark>: a list of hashes containing information for each trackDb (i.e. assembly specific data files) registered for the track hub. Each trackDb hash contains the species NCBI tax id and assembly accession, and the URI of the JSON representation of the trackDb which can be retrieved from the Registry.
+      </li>
+    </ul>
+  </p>
+  
+  <h4>Resource Information</h4>
+  <table class="table" style="width: auto;">
+    <tbody>
+      <tr>
+        <th>Response formats</th>
+	<td>JSON</td>
+      </tr>
+      <tr>
+        <th>Authentication</th>
+	<td>No</td>
+      </tr>
+      <tr>
+        <th>Rate Limited</th>
+	<td>No</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Parameters</h4>
+  <p>None</p>
+
+  <h4>Example Request</h4>
+  <pre>
+    GET https://www.trackhubregistry.org/api/info/trackhubs
+  </pre>
+
+  <h4>Example Response</h4>
+  <pre>
+    HTTP/1.0 200 OK
+[
+  { 
+    "name":"cshl2013",
+    "url":"http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt",
+    "shortLabel":"Plants",
+    "longLabel":"CSHL Biology of Genomes meeting 2013 demonstration assembly hub",
+    "trackdbs":[{"species":"3711","uri":"http://localhost:3000/api/search/trackdb/fI163v_DQDyf7WSKw-8v_g","assembly":"GCA_000309985.1"}, {"species":"3988","uri":"http://localhost:3000/api/search/trackdb/9ztv_BxMRo6gAE6z8CNPOg","assembly":"GCA_000151685.2"}, {"species":"3702","uri":"http://localhost:3000/api/search/trackdb/gOGRzcTSRd2l0LMQTufS4w","assembly":"GCA_000001735.1"}]
+  },
+  {
+    "name":"miRcodeHub",
+    "url":"http://www.mircode.org/ucscHub/hub.txt",
+    "shortLabel":"miRcode microRNA sites",
+    "longLabel":"Predicted microRNA target sites in GENCODE transcripts",
+    "trackdbs":[{"species":"9606","uri":"http://localhost:3000/api/search/trackdb/AR8hZ1QKR-exXMkJkxCAgg","assembly":"GCA_000001405.1"}]
+  },
+  {
+    "name":"454paper",
+    "url":"http://web.stanford.edu/~htilgner/2012_454paper/data/hub.txt",
+    "shortLabel":"454 K562andHelaS3RNAseq",
+    "longLabel":"Whole-Cell 454 Hela and K562 RNAseq",
+    "trackdbs":[{"species":"9606","uri":"http://localhost:3000/api/search/trackdb/QDIwMj-0QR-rRjSUeS2UyQ","assembly":"GCA_000001405.1"}]
+  },
+  {
+    "name":"track_hub",
+    "url":"http://ngs.sanger.ac.uk/production/grit/track_hub/hub.txt",
+    "shortLabel":"GRC Genome Issues under Review",
+    "longLabel":"Sanger Genome Reference Informatics Team: Genome issues and other features",
+    "trackdbs":[{"species":"7955","uri":"http://localhost:3000/api/search/trackdb/4_c-YWQASiayXpf11BZ5Aw","assembly":"GCA_000002035.2"},{"species":"7955","uri":"http://localhost:3000/api/search/trackdb/dMmLmnVgQgWmAUcxKASgng","assembly":"GCA_000002035.3"},{"species":"9606","uri":"http://localhost:3000/api/search/trackdb/-MXT_AKKTHi9IQvC3Y5tZQ","assembly":"GCA_000001405.1"},{"species":"9606","uri":"http://localhost:3000/api/search/trackdb/8XUZuzoqQdSvcISZ5rirMA","assembly":"GCA_000001405.15"},{"species":"10090","uri":"http://localhost:3000/api/search/trackdb/7I5tcGcCTE2BxgmtajXLYA","assembly":"GCA_000001635.1"},{"species":"10090","uri":"http://localhost:3000/api/search/trackdb/tMOCJ3MBSv2k2b7paS6dkQ","assembly":"GCA_000001635.2"}],
+  },
+  {
+    "name":"ThorntonLab",
+    "url":"http://devlaeminck.bio.uci.edu/RogersUCSC/hub.txt",
+    "shortLabel":"ThorntonHub",
+    "longLabel":"DrosophilaGenomeAssemblies",
+    "trackdbs":[{"species":"7240","uri":"http://localhost:3000/api/search/trackdb/gkQbds68R_-Qkj-HFa9BSg","assembly":"GCA_000754195.2"}]
+  },
+  {
+    "name":"Blueprint_Hub_20150128",
+    "url":"ftp://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub",
+    "shortLabel":"Blueprint Hub",
+    "longLabel":"Blueprint Epigenomics Data Hub",
+    "trackdbs":[{"species":"9606","uri":"http://localhost:3000/api/search/trackdb/C7wK0Ov2Tf2-Ei8FaPRpvw","assembly":"GCA_000001405.1"}]
+  },
+  {
+    "name":"EnsemblRegulatoryBuild",
+    "url":"http://ngs.sanger.ac.uk/production/ensembl/regulation/hub.txt",
+    "shortLabel":"Ensembl Regulatory Build",
+    "longLabel":"Evidence summaries and provisional results for the new Ensembl Regulatory Build",
+    "trackdbs":[{"species":"9606","uri":"http://localhost:3000/api/search/trackdb/HccITRN2QFSPN2RTlx2jWQ","assembly":"GCA_000001405.15"},{"species":"9606","uri":"http://localhost:3000/api/search/trackdb/zEnMYwioQD2MNutpWECpyA","assembly":"GCA_000001405.1"}]
+  },
+  {
+    "name":"NHGRI-1",
+    "url":"http://research.nhgri.nih.gov/manuscripts/Burgess/zebrafish/downloads/NHGRI-1/hub.txt",
+    "shortLabel":"ZebrafishGenomics",
+    "longLabel":"Burgess Lab Zebrafish Genomic Resources",
+    "trackdbs":[{"species":"7955","uri":"http://localhost:3000/api/search/trackdb/jViT9wCASoqpvIu1PUCwvw","assembly":"GCA_000002035.2"}]
+  },
+  {
+    "name":"xPADHub",
+    "url":"http://johnlab.org/xpad/Hub/UCSC.txt",
+    "shortLabel":"Cancer genome polyA site & usage",
+    "longLabel":"An in-depth map of polyadenylation sites in cancer (matched-pair tissues and cell lines)",
+    "trackdbs":[{"species":"9606","uri":"http://localhost:3000/api/search/trackdb/8a9goBD0RAWKJOsxH0wPXQ","assembly":"GCA_000001405.1"}]
+  }
+]
+  </pre>
 
   </div>
 </div>

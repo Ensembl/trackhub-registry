@@ -1,0 +1,57 @@
+<!--<div class="page-header">-->
+<div class="row">
+  <div class="col-sm-12">
+    <ul class="breadcrumb">
+      <li><a href="/">Home</a></li>
+      <li><a>Docs</a></li>
+      <li><a>API</a></li>
+      <li>Registration</li>
+    </ul>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-3" style="margin-top: 25px;">
+    <div id="search-sidebar-left">
+        <div class="panel panel-primary">
+	  <div class="panel-heading">API Docs</div>
+          <div class="panel-body">
+	    <ul class="nav nav-list">
+	      <li><a href="[% c.uri_for('/docs/apis') %]">TH Registry APIs</a></li>
+	      <li><a href="[% c.uri_for('/docs/api/modelling') %]">Modelling TrackHubs</a></li>
+	      <li><a href="[% c.uri_for('/docs/api/info') %]">Info API</a></li>
+	      <li><a style="font-weight: bold;"">Registration API</a>
+	        <ul>
+		  <li><a href="#authentication">Authentication</a></li>
+		  <li><a href="#workflow">A simplified RESTful workflow</a></li>
+		  <li><a href="[% c.uri_for('/docs/api/registration/reference') %]">API Reference</a></li>
+		</ul>
+	      </li>
+	      <li><a href="[% c.uri_for('/docs/api/search') %]">Search API</a></li>
+	    </ul>
+          </div> 
+	</div>
+    </div> <!-- sidebar -->
+  </div>
+
+  <div class="col-sm-9" style="text-align: justify; text-justify: inter-word;">
+  <h2>Registration API</h2>
+
+  <h3 id="authentication">Authentication</h3>
+  <p>
+    The vCloud API also implements Basic HTTP Authentication, as defined by RFC 2617, which enables a client to authenticate individual HTTP requests by including an authentication header in the request
+
+    The Registry requires API requests to be authenticated. The first step in any RESTful workflow is to obtain an authentication token. 
+
+    All requests to the service require access tokens. You can acquire an access token two ways: 
+
+    In order to make authorized calls to the API, your application must first obtain an access token.
+    
+  </p>
+
+  <h3 id="workflow">A Simplified RESTful workflow</h3>
+  <p>
+  </p>
+
+  </div>
+</div>

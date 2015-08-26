@@ -41,7 +41,6 @@ sub api_registration_reference :Path('/docs/api/registration/reference') { }
 
 sub api_search :Path('/docs/api/search') { }
 
-sub api_search_reference :Path('/docs/api/search/reference') { }
 
 =encoding utf8
 

@@ -110,8 +110,8 @@ sub search_POST {
     # strip away the metadata/configuration field from each search result
     # this will save bandwidth
     # when a trackdb is chosen the client will request all the details by id
-    delete $response_item->{data};
-    delete $response_item->{configuration};
+    # remove also other fields the user is not interested in
+    map { delete $response_item->{$_} } qw ( source _index owner _version created data configuration );
 
     $response_item->{id} = $item->{id};
     $response_item->{score} = $item->{score};

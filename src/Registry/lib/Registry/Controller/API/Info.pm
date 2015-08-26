@@ -152,7 +152,7 @@ sub trackhubs_GET {
       {
        species  => $trackdb->{species}{tax_id},
        assembly => $trackdb->{assembly}{accession},
-       uri      => $c->uri_for('/api/trackdb/' . $trackdb->{_id})->as_string
+       uri      => $c->uri_for('/api/search/trackdb/' . $trackdb->{_id})->as_string
       };
   }
   

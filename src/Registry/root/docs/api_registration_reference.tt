@@ -1,0 +1,232 @@
+<!--<div class="page-header">-->
+<div class="row">
+  <div class="col-sm-12">
+    <ul class="breadcrumb">
+      <li><a href="/">Home</a></li>
+      <li><a>Docs</a></li>
+      <li><a>API</a></li>
+      <li>Registration</li>
+    </ul>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-3" style="margin-top: 25px;">
+    <div id="search-sidebar-left">
+        <div class="panel panel-primary">
+	  <div class="panel-heading">API Docs</div>
+          <div class="panel-body">
+	    <ul class="nav nav-list">
+	      <li><a href="[% c.uri_for('/docs/apis') %]">TH Registry APIs</a></li>
+	      <li><a href="[% c.uri_for('/docs/api/modelling') %]">Modelling TrackHubs</a></li>
+	      <li><a href="[% c.uri_for('/docs/api/info') %]">Info API</a></li>
+	      <li><a style="font-weight: bold;"">Registration API</a>
+	        <ul>
+		  <li><a href="[% c.uri_for('/docs/api/registration#authentication') %]">Authentication</a></li>
+		  <li><a href="[% c.uri_for('/docs/api/registration#workflow') %]">A simplified RESTful workflow</a></li>
+		  <li>
+		    <a href="#">API Reference</a>
+		    <ul>
+		      <li><a href="#login">GET /api/login</a></li>
+		      <li><a href="#get_trackhub">GET /api/trackhub</a></li>
+		      <li><a href="#logout">GET /api/logout</a></li>
+		    </ul>
+		  </li>
+		</ul>
+	      </li>
+	      <li><a href="[% c.uri_for('/docs/api/search') %]">Search API</a></li>
+	    </ul>
+          </div> 
+	</div>
+    </div> <!-- sidebar -->
+  </div>
+
+  <div class="col-sm-9" style="text-align: justify; text-justify: inter-word;">
+
+  <h2>Registration API</h2>
+  In all the following examples, it is assumed the client has successfully logged in as user <mark>exampleuser</mark> and password <mark>examplepassword</mark> and therefore obtained a valid access token.
+
+  <h3 id="login">GET /api/login</h3>
+  <p>
+    Authenticate the client and obtain an access token in order to make subsequent requests to the Registration API.
+  </p>
+  <p>
+    If the request is successful, the response is formatted as a JSON object with a single key (<mark>auth_token</mark>), whose value is the access token. <u>This token must be included as an <mark>Auth-Token</mark> header in all subsequent requests</u>.
+  </p>
+
+  <h4>Resource Information</h4>
+  <table class="table" style="width: auto;">
+    <tbody>
+      <tr>
+        <th>Response formats</th>
+	<td>JSON</td>
+      </tr>
+      <tr>
+        <th>Authentication</th>
+	<td>Basic, MIME Base64</td>
+      </tr>
+      <tr>
+        <th>Rate Limited</th>
+	<td>No</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Parameters</h4>
+  <p>None.</p>
+
+  <h4>Example Request</h4>
+  <pre>
+    GET https://www.trackhubregistry.org/api/login
+    Authorization: Basic ZXhhbXBsZXVzZXI6ZXhhbXBsZXBhc3N3b3Jk
+  </pre>
+
+  <h4>Example Response</h4>
+  <pre>
+    HTTP/1.0 200 OK
+    Content-type: application/json; charset=utf-8
+    ...
+    {
+      "auth_token":"6l5/GuIiOSCywuSI9HF1VU97clwb/CXPDFS0MyAB/HCZuxtjQBj4uORZL8NY3Yhi"
+    }
+  </pre>
+
+  <h3 id="get_trackhub">GET /api/trackhub</h3>
+  <p>
+    Returns the set of registered track data hubs for the given user.
+  </p>
+  <p>
+    If the request is successful, the response body is an array of JSON objects representing trackhubs registered by the user. A trackhub object has the following attributes:
+    <ul>
+      <li><mark>name</mark>: the single-word trackhub name;</li>
+      <li><mark>url</mark>: the track hub remote URL;</li>
+      <li><mark>shortLabel</mark>: the short name for the track hub;</li>
+      <li><mark>longLabel</mark>: the longer descriptive label for the track hub;</li>
+      <li><mark>trackdbs</mark>: a list of objects for each trackDb (i.e. assembly specific data files) associated to the track hub. Each trackDb object contains the species NCBI tax id and assembly accession, and the URI of the JSON representation of the trackDb which can be retrieved from the Registry.
+      </li>
+    </ul>
+  </p>
+
+  <h4>Resource Information</h4>
+  <table class="table" style="width: auto;">
+    <tbody>
+      <tr>
+        <th>Response formats</th>
+	<td>JSON</td>
+      </tr>
+      <tr>
+        <th>Authentication</th>
+	<td>User+Auth-Token headers</td>
+      </tr>
+      <tr>
+        <th>Rate Limited</th>
+	<td>No</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Parameters</h4>
+  <p>None.</p>
+
+  <h4>Example Request</h4>
+  <pre>
+    GET https://www.trackhubregistry.org/api/trackhub
+    User: exampleuser
+    Auth-Token: 6l5/GuIiOSCywuSI9HF1VU97clwb/CXPDFS0MyAB/HCZuxtjQBj4uORZL8NY3Yhi
+  </pre>
+
+  <h4>Example Response</h4>
+  <pre>
+    HTTP/1.0 200 OK
+    ...
+    [
+      {
+        'trackdbs' => [
+                            {
+                              'species' => '3988',
+                              'assembly' => 'GCA_000151685.2',
+                              'uri' => 'http://localhost/api/trackdb/knB1GHPYSdmeypb-R8sxhA'
+                            },
+                            {
+                              'species' => '3711',
+                              'assembly' => 'GCA_000309985.1',
+                              'uri' => 'http://localhost/api/trackdb/JFF3OqH1QJmIJSlLfICyQg'
+                            },
+                            {
+                              'species' => '3702',
+                              'assembly' => 'GCA_000001735.1',
+                              'uri' => 'http://localhost/api/trackdb/We3M8-1RQnaUYpTspYQpCQ'
+                            }
+                          ],
+        'shortLabel' => 'Plants',
+        'name' => 'cshl2013',
+        'url' => 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt',
+        'longLabel' => 'CSHL Biology of Genomes meeting 2013 demonstration assembly hub'
+      },
+      {
+        'trackdbs' => [
+                            {
+                              'species' => '9606',
+                              'assembly' => 'GCA_000001405.15',
+                              'uri' => 'http://localhost/api/trackdb/rkaQgGf_TxW5xKElGkYQAA'
+                            },
+                            {
+                              'species' => '9606',
+                              'assembly' => 'GCA_000001405.1',
+                              'uri' => 'http://localhost/api/trackdb/-IT64jDKRXiQN_Blhjy4Uw'
+                            }
+                          ],
+        'shortLabel' => 'Ensembl Regulatory Build',
+        'name' => 'EnsemblRegulatoryBuild',
+        'url' => 'http://ngs.sanger.ac.uk/production/ensembl/regulation/hub.txt',
+        'longLabel' => 'Evidence summaries and provisional results for the new Ensembl Regulatory Build'
+      },
+    ]
+  </pre>
+
+
+  <h3 id="logout">GET /api/logout</h3>
+  <p>
+    Logout and invalidate the current access token.    
+  </p>
+  <p>
+    If the request is successful, the response body is a JSON object with message "Successfully logged out".
+  </p>
+
+  <h4>Resource Information</h4>
+  <table class="table" style="width: auto;">
+    <tbody>
+      <tr>
+        <th>Response formats</th>
+	<td>JSON</td>
+      </tr>
+      <tr>
+        <th>Authentication</th>
+	<td>User+Auth-Token headers</td>
+      </tr>
+      <tr>
+        <th>Rate Limited</th>
+	<td>No</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Parameters</h4>
+  <p>None.</p>
+
+  <h4>Example Request</h4>
+  <pre>
+    GET https://www.trackhubregistry.org/api/logout
+    User: exampleuser
+    Auth-Token: 6l5/GuIiOSCywuSI9HF1VU97clwb/CXPDFS0MyAB/HCZuxtjQBj4uORZL8NY3Yhi
+  </pre>
+
+  <h4>Example Response</h4>
+  <pre>
+    HTTP/1.0 200 OK
+    ...
+    { "message": "Successfully logged out" }
+  </pre>
+
+  </div>
+</div>

@@ -23,7 +23,13 @@
 	      <li><a style="font-weight: bold;"">Registration API</a>
 	        <ul>
 		  <li><a href="#authentication">Authentication</a></li>
-		  <li><a href="#workflow">A simplified RESTful workflow</a></li>
+		  <li>
+		    <a href="#workflow">A simplified RESTful workflow</a>
+		    <ul>
+		      <li><a href="#login">Logging in</a></li>
+		      <li><a href="#logout">Log out</a></li>
+		    </ul>
+		  </li>
 		  <li><a href="[% c.uri_for('/docs/api/registration/reference') %]">API Reference</a></li>
 		</ul>
 	      </li>
@@ -39,19 +45,91 @@
 
   <h3 id="authentication">Authentication</h3>
   <p>
-    The vCloud API also implements Basic HTTP Authentication, as defined by RFC 2617, which enables a client to authenticate individual HTTP requests by including an authentication header in the request
-
-    The Registry requires API requests to be authenticated. The first step in any RESTful workflow is to obtain an authentication token. 
-
-    All requests to the service require access tokens. You can acquire an access token two ways: 
-
-    In order to make authorized calls to the API, your application must first obtain an access token.
-    
+    The Registry requires requests to the Registration API to be authenticated. The Registration API implements Basic HTTP Authentication, as defined by RFC 2617, which enables a client to authenticate individual HTTP requests by including an authentication header in the request. In order to make authorized calls to the API, your application must first obtain an access token, and use that token in the authentication header of all subsequent requests.
   </p>
 
   <h3 id="workflow">A Simplified RESTful workflow</h3>
+  <h4 id="login">Logging in</h4>
   <p>
+    All requests to the service require access tokens, so the first step in any RESTful workflow is to obtain an authentication token. You can acquire an access token by programatically logging in.
+  </p>
+  <h5>Procedure</h5>
+  <p>
+    <ol>
+      <li>Make a GET request to the <a href="[% c.uri_for('/docs/api/registration/reference#login') %]">/api/login</a> endpoint that includes your username and password in a MIME Base64 encoding;</li>
+      <li>Examine the response. The response code indicates whether the request succeeded, or how it failed;</li>
+      <li>A successful login request returns an authentication token that you can use in subsequent requests.</li>
+    </ol>
   </p>
 
+  <h5>Example: Login request and response</h5>
+  <p>
+    A request to create a login session must supply the user's credentials in the following form:
+    <pre>user:password</pre>
+    <ul>
+      <li><mark>user</mark> is the user's login name</li>
+      <li><mark>password</mark> is the user's password</li>
+    </ul>
+    These credentials must be supplied in a MIME Base64 encoding, as specified in RFC 1421.
+  </p>
+
+  <p>
+    This example shows a login request and response for a user named <mark>exampleuser</mark> with password <mark>examplepassword</mark>.<br/>
+    Request:
+    <pre>
+      GET https://www.trackhubregistry.org/api/login
+      Authorization: Basic ZXhhbXBsZXVzZXI6ZXhhbXBsZXBhc3N3b3Jk
+    </pre>
+
+    Response:
+    <pre>
+      200 OK
+      Content-type: application/json; charset=utf-8
+      ...
+      {
+        "auth_token":"6l5/GuIiOSCywuSI9HF1VU97clwb/CXPDFS0MyAB/HCZuxtjQBj4uORZL8NY3Yhi"
+      }
+    </pre>
+  </p>
+
+  <p>
+    The response code indicates whether the request succeeded, or how it failed.
+    <ul>
+      <li>
+        If the request is successful, the server returns HTTP response code 200 (OK). The response body is a JSON object with a single key (<mark>auth_token</mark>), whose value is the access token. <u>This token must be included as an <mark>Auth-Token</mark> header in all subsequent requests</u>.
+      </li>
+      <li>If the credentials supplied in the authentication header are invalid, the server returns HTTP response code 401.</li>
+    </ul>
+  </p>
+
+  <h4 id="logout">Log out</h4>
+  <p>
+    When you want to terminate the client session, log out to delete the current access token.
+  </p>
+  
+  <h5>Prerequisites</h5>
+  <p>Verify that you are logged in and have a valid access token.</p>
+  
+  <h5>Procedure</h5>
+  <p>Make a request to the <a href="[% c.uri_for('/docs/api/registration/reference#logout') %]">/api/logout</a> endpoint by specifying your username (resp. access token) with the <mark>User</mark> (resp. <mark>Auth-Token</mark>) header.</p>
+
+  <h5>Example: logging out</h5>
+  <p>
+    This example deletes the current access token which logs the user out.<br/>
+    Request:
+    <pre>
+      GET https://www.trackhubregistry.org/api/logout
+      User: exampleuser
+      Auth-Token: 6l5/GuIiOSCywuSI9HF1VU97clwb/CXPDFS0MyAB/HCZuxtjQBj4uORZL8NY3Yhi
+    </pre>
+
+    Response:
+    <pre>
+      200 OK
+      ...
+      { "message": "Successfully logged out" }
+    </pre>
+  </p>
+  
   </div>
 </div>

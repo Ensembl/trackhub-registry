@@ -29,6 +29,7 @@
 		    <ul>
 		      <li><a href="#login">GET /api/login</a></li>
 		      <li><a href="#get_trackhub">GET /api/trackhub</a></li>
+		      <li><a href="#post_trackhub">POST /api/trackhub</a></li>
 		      <li><a href="#logout">GET /api/logout</a></li>
 		    </ul>
 		  </li>
@@ -44,7 +45,7 @@
   <div class="col-sm-9" style="text-align: justify; text-justify: inter-word;">
 
   <h2>Registration API</h2>
-  In all the following examples, it is assumed the client has successfully logged in as user <mark>exampleuser</mark> and password <mark>examplepassword</mark> and therefore obtained a valid access token.
+  In all the following examples, it is assumed the client has successfully logged in as user <mark>exampleuser</mark> and password <mark>examplepassword</mark> and therefore obtained a valid access token. This token is used in all the following endpoint examples except /api/login.
 
   <h3 id="login">GET /api/login</h3>
   <p>
@@ -184,6 +185,107 @@
     ]
   </pre>
 
+  <h3 id="post_trackhub">POST /api/trackhub</h3>
+  <p>
+    Register/Update a remote public TrackHub with the Registry. The message body specifies the track hub remote URL (can be either the directory or hub.txt file URL) and, optionally, the hub assemblies data type (default: <mark>genomics</mark>), see <a href="#post_trackhub_msg_format">Message Format</a> for a list of possible types.
+  </p>
+  <p>
+    If the trackhub at the specified URL has not been previously submitted, the Registry will register it by translating its trackDb files into JSON documents adhering to a particular <a href="[% c.uri_for('/api/modelling') %]">JSON schema version</a>. If the trackhub has already been submitted, the request is interpreted as a request to update the details of the registered trackhub (e.g. the remote trackhub has been updated and you want to keep its details in the Registry up to date). In this case, the Registry will delete the relevant trackDb documents and replace them with translations of their most up-to-date versions.
+  </p>
+  <p>
+    If the request is successful, the response body is formatted as an array of JSON objects, where each object is a translation of a trackDb document belonging to the trackhub. The response contains the header Location which specifies the URIs of the trackDb documents in their same respective order in the response body. 
+  </p>
+
+  <h4>Resource Information</h4>
+  <table class="table" style="width: auto;">
+    <tbody>
+      <tr>
+        <th>Response formats</th>
+	<td>JSON</td>
+      </tr>
+      <tr>
+        <th>Authentication</th>
+	<td>User+Auth-Token headers</td>
+      </tr>
+      <tr>
+        <th>Rate Limited</th>
+	<td>No</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Parameters</h4>
+  <p>
+    <ul>
+      <li><mark>version</mark> (optional): JSON schema version of the registered trackDb documents for this hub (default: v1.0, see <a href="[% c.uri_for('/api/modelling') %]">Modelling TrackHubs</a> for a discussion)</li>
+    </ul>
+  </p>
+
+  <h4>Message</h4>
+  <table class="table" style="width: auto;">
+    <tbody>
+      <tr>
+        <th>Content-type</th>
+	<td>application/json</td>
+      </tr>
+      <tr>
+        <th id="post_trackhub_msg_format">Format</th>
+	<td>
+	  <pre>
+	    {
+	      "type": "object",
+
+	      "properties": {
+	        "url":    { "type": "string", "format": "uri" },
+		"type":  { "type": "string", "enum": [ "genomics", "epigenomics", "transcriptomics", "proteomics" ] }
+	      }
+
+	      "required": [ "url" ]
+	    }
+	  </pre>
+	</td>
+      </tr>
+      <tr>
+        <th>Example</th>
+	<td>{ "url" : "http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt", "type": "epigenomics" }</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <h4>Example Request</h4>
+  <p>
+    In this example, we are requesting to register/update the CSHL Biology of Genomes meeting 2013 demonstration hub, which contains data for three assemblies. The response body is an array of the three corresponding trackDb representations, with the header Location reporting their respective URIs in the same order.
+  </p>
+
+  <pre>
+    POST https://www.trackhubregistry.org/api/trackhub?type=epigenomics
+    User: exampleuser
+    Auth-Token: 6l5/GuIiOSCywuSI9HF1VU97clwb/CXPDFS0MyAB/HCZuxtjQBj4uORZL8NY3Yhi
+    {
+      "url": "http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt",
+      "type": "epigenomics"
+    }
+  </pre>
+
+  <h4>Example Response</h4>
+  <pre>
+    HTTP/1.0 201 OK
+    Content-type: application/json
+    Location: [ 'http://localhost/api/trackdb/KRBr5PS7RmapaFr7ofpTBA, 'http://localhost/api/trackdb/hB8Npdm1ST2gBwkbQThkVg', 'http://localhost/api/trackdb/FOEM87nETMOCOglmm0sSsg' ]
+    ...
+    [
+      {
+        // trackDb #1 JSON object
+      },
+      {
+        // trackDb #2 JSON object
+      },
+      {
+        // trackDb #3 JSON object
+      }
+    ]
+  </pre>
 
   <h3 id="logout">GET /api/logout</h3>
   <p>

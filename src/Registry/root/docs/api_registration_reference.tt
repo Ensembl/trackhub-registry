@@ -259,7 +259,7 @@
   </p>
 
   <pre>
-    POST https://www.trackhubregistry.org/api/trackhub?type=epigenomics
+    POST https://www.trackhubregistry.org/api/trackhub
     User: exampleuser
     Auth-Token: 6l5/GuIiOSCywuSI9HF1VU97clwb/CXPDFS0MyAB/HCZuxtjQBj4uORZL8NY3Yhi
     {

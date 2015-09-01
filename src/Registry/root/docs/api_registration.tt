@@ -23,13 +23,7 @@
 	      <li><a style="font-weight: bold;"">Registration API</a>
 	        <ul>
 		  <li><a href="#authentication">Authentication</a></li>
-		  <li>
-		    <a href="#workflow">A simplified RESTful workflow</a>
-		    <ul>
-		      <li><a href="#login">Logging in</a></li>
-		      <li><a href="#logout">Log out</a></li>
-		    </ul>
-		  </li>
+		  <li><a href="#workflow">A simplified RESTful workflow</a></li>
 		  <li><a href="[% c.uri_for('/docs/api/registration/reference') %]">API Reference</a></li>
 		</ul>
 	      </li>
@@ -49,86 +43,30 @@
   </p>
 
   <h3 id="workflow">A Simplified RESTful workflow</h3>
-  <h4 id="login">Logging in</h4>
   <p>
-    All requests to the service require access tokens, so the first step in any RESTful workflow is to obtain an authentication token. You can acquire an access token by programatically logging in.
+    Registration API clients and the Registry communicates over HTTPS, exchanging JSON representations of trackhub registry API objects.
   </p>
-  <h5>Procedure</h5>
   <p>
-    <ol>
-      <li>Make a GET request to the <a href="[% c.uri_for('/docs/api/registration/reference#login') %]">/api/login</a> endpoint that includes your username and password in a MIME Base64 encoding;</li>
-      <li>Examine the response. The response code indicates whether the request succeeded, or how it failed;</li>
-      <li>A successful login request returns an authentication token that you can use in subsequent requests.</li>
-    </ol>
+    This simplified example of a RESTful workflow includes requests to register remote track hubs, list registered track data hubs with the Registry and update a registered track hub.
+  </p>
+  <p>
+    These examples assume the trackhub data provider using the API has signed up and created an account with the Registry. To create an account, go to <a href="[% c.uri_for('/user/register') %]" target="_blank">registration</a>.
   </p>
 
-  <h5>Example: Login request and response</h5>
+  <h4 id="login"><a href="[% c.uri_for('/docs/api/registration/workflow/login') %]">Logging in</a></h4>
   <p>
-    A request to create a login session must supply the user's credentials in the following form:
-    <pre>user:password</pre>
-    <ul>
-      <li><mark>user</mark> is the user's login name</li>
-      <li><mark>password</mark> is the user's password</li>
-    </ul>
-    These credentials must be supplied in a MIME Base64 encoding, as specified in RFC 1421.
+    All requests to the service must be authenticated. The first step in any Registration API RESTful workflow is to obtain an authentication token. 
   </p>
 
-  <p>
-    This example shows a login request and response for a user named <mark>exampleuser</mark> with password <mark>examplepassword</mark>.<br/>
-    Request:
-    <pre>
-      GET https://www.trackhubregistry.org/api/login
-      Authorization: Basic ZXhhbXBsZXVzZXI6ZXhhbXBsZXBhc3N3b3Jk
-    </pre>
+  <h4 id=""><a href="[% c.uri_for('/docs/api/registration/workflow/thregister') %]">Registering TrackHubs</a></h4>
 
-    Response:
-    <pre>
-      200 OK
-      Content-type: application/json; charset=utf-8
-      ...
-      {
-        "auth_token":"6l5/GuIiOSCywuSI9HF1VU97clwb/CXPDFS0MyAB/HCZuxtjQBj4uORZL8NY3Yhi"
-      }
-    </pre>
-  </p>
-
-  <p>
-    The response code indicates whether the request succeeded, or how it failed.
-    <ul>
-      <li>
-        If the request is successful, the server returns HTTP response code 200 (OK). The response body is a JSON object with a single key (<mark>auth_token</mark>), whose value is the access token. <u>This token must be included as an <mark>Auth-Token</mark> header in all subsequent requests</u>.
-      </li>
-      <li>If the credentials supplied in the authentication header are invalid, the server returns HTTP response code 401.</li>
-    </ul>
-  </p>
-
-  <h4 id="logout">Log out</h4>
-  <p>
-    When you want to terminate the client session, log out to delete the current access token.
-  </p>
+  <h4 id=""><a href="[% c.uri_for('/docs/api/registration/workflow/thlist') %]">Get the list of registered TrackHubs</a></h4>
   
-  <h5>Prerequisites</h5>
-  <p>Verify that you are logged in and have a valid access token.</p>
-  
-  <h5>Procedure</h5>
-  <p>Make a request to the <a href="[% c.uri_for('/docs/api/registration/reference#logout') %]">/api/logout</a> endpoint by specifying your username (resp. access token) with the <mark>User</mark> (resp. <mark>Auth-Token</mark>) header.</p>
+  <h4 id=""><a href="[% c.uri_for('/docs/api/registration/workflow/register') %]">Delete registered TrackHubs</a></h4>
 
-  <h5>Example: logging out</h5>
+  <h4 id="logout"><a href="[% c.uri_for('/docs/api/registration/workflow/logout') %]">Log out</a></h4>
   <p>
-    This example deletes the current access token which logs the user out.<br/>
-    Request:
-    <pre>
-      GET https://www.trackhubregistry.org/api/logout
-      User: exampleuser
-      Auth-Token: 6l5/GuIiOSCywuSI9HF1VU97clwb/CXPDFS0MyAB/HCZuxtjQBj4uORZL8NY3Yhi
-    </pre>
-
-    Response:
-    <pre>
-      200 OK
-      ...
-      { "message": "Successfully logged out" }
-    </pre>
+    Terminate the client session.
   </p>
   
   </div>

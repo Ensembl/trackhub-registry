@@ -1,0 +1,100 @@
+<!--<div class="page-header">-->
+<div class="row">
+  <div class="col-sm-12">
+    <ul class="breadcrumb">
+      <li><a href="/">Home</a></li>
+      <li><a>Docs</a></li>
+      <li><a>API</a></li>
+      <li>Registration</li>
+    </ul>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-3" style="margin-top: 25px;">
+    <div id="search-sidebar-left">
+        <div class="panel panel-primary">
+	  <div class="panel-heading">API Docs</div>
+          <div class="panel-body">
+	    <ul class="nav nav-list">
+	      <li><a href="[% c.uri_for('/docs/apis') %]">TH Registry APIs</a></li>
+	      <li><a href="[% c.uri_for('/docs/api/modelling') %]">Modelling TrackHubs</a></li>
+	      <li><a href="[% c.uri_for('/docs/api/info') %]">Info API</a></li>
+	      <li><a>Registration API</a>
+	        <ul>
+		  <li><a href="[% c.uri_for('/docs/api/registration#authentication') %]">Authentication</a></li>
+		  <li>
+		    <a href="[% c.uri_for('/docs/api/registration#workflow') %]">A simplified RESTful workflow</a>
+		    <ul>
+		      <li><a style="font-weight: bold;">Logging in</a></li>
+		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/logout') %]">Log out</a></li>
+		    </ul>
+		  </li>
+		  <li><a href="[% c.uri_for('/docs/api/registration/reference') %]">API Reference</a></li>
+		</ul>
+	      </li>
+	      <li><a href="[% c.uri_for('/docs/api/search') %]">Search API</a></li>
+	    </ul>
+          </div> 
+	</div>
+    </div> <!-- sidebar -->
+  </div>
+
+  <div class="col-sm-9" style="text-align: justify; text-justify: inter-word;">
+  <h2>A Simplified RESTful workflow</h2>
+
+  <h3 id="login">Logging in</h3>
+  <p>
+    All requests to the service require access tokens, so the first step in any RESTful workflow is to obtain an authentication token. You can acquire an access token by programatically logging in.
+  </p>
+  <h4>Procedure</h4>
+  <p>
+    <ol>
+      <li>Make a GET request to the <a href="[% c.uri_for('/docs/api/registration/reference#login') %]">/api/login</a> endpoint that includes your username and password in a MIME Base64 encoding;</li>
+      <li>Examine the response. The response code indicates whether the request succeeded, or how it failed;</li>
+      <li>A successful login request returns an authentication token that you can use in subsequent requests.</li>
+    </ol>
+  </p>
+
+  <h4>Example: Login request and response</h4>
+  <p>
+    A request to create a login session must supply the user's credentials in the following form:
+    <pre>user:password</pre>
+    <ul>
+      <li><mark>user</mark> is the user's login name</li>
+      <li><mark>password</mark> is the user's password</li>
+    </ul>
+    These credentials must be supplied in a MIME Base64 encoding, as specified in RFC 1421.
+  </p>
+
+  <p>
+    This example shows a login request and response for a user named <mark>exampleuser</mark> with password <mark>examplepassword</mark>.<br/>
+    Request:
+    <pre>
+      GET https://www.trackhubregistry.org/api/login
+      Authorization: Basic ZXhhbXBsZXVzZXI6ZXhhbXBsZXBhc3N3b3Jk
+    </pre>
+
+    Response:
+    <pre>
+      200 OK
+      Content-type: application/json; charset=utf-8
+      ...
+      {
+        "auth_token":"6l5/GuIiOSCywuSI9HF1VU97clwb/CXPDFS0MyAB/HCZuxtjQBj4uORZL8NY3Yhi"
+      }
+    </pre>
+  </p>
+
+  <p>
+    The response code indicates whether the request succeeded, or how it failed.
+    <ul>
+      <li>
+        If the request is successful, the server returns HTTP response code 200 (OK). The response body is a JSON object with a single key (<mark>auth_token</mark>), whose value is the access token. <u>This token must be included as an <mark>Auth-Token</mark> header in all subsequent requests</u>.
+      </li>
+      <li>If the credentials supplied in the authentication header are invalid, the server returns HTTP response code 401.</li>
+    </ul>
+  </p>
+  
+  </div>
+</div>

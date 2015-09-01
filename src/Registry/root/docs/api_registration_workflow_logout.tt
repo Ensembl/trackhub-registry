@@ -1,0 +1,76 @@
+<!--<div class="page-header">-->
+<div class="row">
+  <div class="col-sm-12">
+    <ul class="breadcrumb">
+      <li><a href="/">Home</a></li>
+      <li><a>Docs</a></li>
+      <li><a>API</a></li>
+      <li>Registration</li>
+    </ul>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-3" style="margin-top: 25px;">
+    <div id="search-sidebar-left">
+        <div class="panel panel-primary">
+	  <div class="panel-heading">API Docs</div>
+          <div class="panel-body">
+	    <ul class="nav nav-list">
+	      <li><a href="[% c.uri_for('/docs/apis') %]">TH Registry APIs</a></li>
+	      <li><a href="[% c.uri_for('/docs/api/modelling') %]">Modelling TrackHubs</a></li>
+	      <li><a href="[% c.uri_for('/docs/api/info') %]">Info API</a></li>
+	      <li><a>Registration API</a>
+	        <ul>
+		  <li><a href="[% c.uri_for('/docs/api/registration#authentication') %]">Authentication</a></li>
+		  <li>
+		    <a href="[% c.uri_for('/docs/api/registration#workflow') %]">A simplified RESTful workflow</a>
+		    <ul>
+		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/login') %]">Logging in</a></li>
+		      <li><a style="font-weight: bold;">Log out</a></li>
+		    </ul>
+		  </li>
+		  <li><a href="[% c.uri_for('/docs/api/registration/reference') %]">API Reference</a></li>
+		</ul>
+	      </li>
+	      <li><a href="[% c.uri_for('/docs/api/search') %]">Search API</a></li>
+	    </ul>
+          </div> 
+	</div>
+    </div> <!-- sidebar -->
+  </div>
+
+  <div class="col-sm-9" style="text-align: justify; text-justify: inter-word;">
+  <h2>A Simplified RESTful workflow</h2>
+
+  <h3 id="logout">Log out</h3>
+  <p>
+    When you want to terminate the client session, log out to delete the current access token.
+  </p>
+  
+  <h4>Prerequisites</h4>
+  <p>Verify that you are logged in and have a valid access token.</p>
+  
+  <h4>Procedure</h4>
+  <p>Make a request to the <a href="[% c.uri_for('/docs/api/registration/reference#logout') %]">/api/logout</a> endpoint by specifying your username (resp. access token) with the <mark>User</mark> (resp. <mark>Auth-Token</mark>) header.</p>
+
+  <h4>Example: logging out</h4>
+  <p>
+    This example deletes the current access token which logs the user out.<br/>
+    Request:
+    <pre>
+      GET https://www.trackhubregistry.org/api/logout
+      User: exampleuser
+      Auth-Token: 6l5/GuIiOSCywuSI9HF1VU97clwb/CXPDFS0MyAB/HCZuxtjQBj4uORZL8NY3Yhi
+    </pre>
+
+    Response:
+    <pre>
+      200 OK
+      ...
+      { "message": "Successfully logged out" }
+    </pre>
+  </p>
+  
+  </div>
+</div>

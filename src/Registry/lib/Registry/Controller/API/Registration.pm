@@ -139,9 +139,7 @@ sub trackdb_create :Path('/api/trackdb/create') Args(0) ActionClass('REST') {
   $c->go('ReturnError', 'custom', ["Invalid version specified, pattern is /^v\\d+\.\\d\$"])
     unless $version =~ /^v\d+\.\d$/;
     
-  # get the count of trackdbs to determine the ID of the doc to create
-  my $current_max_id = $c->model('Search')->count_trackhubs()->{count};
-  $c->stash( id =>  $current_max_id?++$current_max_id:1, version => $version ); 
+  $c->stash( version => $version ); 
 }
 
 sub trackdb_create_POST {
@@ -153,56 +151,54 @@ sub trackdb_create_POST {
   return $self->status_bad_request($c, message => "You must provide a doc to create!")
     unless defined $new_doc_data;
   
-  my $id = $c->stash()->{id};
-  if ($id) {
     # set the owner of the doc as the current user
-    $new_doc_data->{owner} = $c->stash->{user};
-    $new_doc_data->{version} = $c->stash->{version};
-    # set creation date/status 
-    $new_doc_data->{created} = time();
-    $new_doc_data->{status}{message} = 'Unknown';
+  $new_doc_data->{owner} = $c->stash->{user};
+  $new_doc_data->{version} = $c->stash->{version};
+  # set creation date/status 
+  $new_doc_data->{created} = time();
+  $new_doc_data->{status}{message} = 'Unknown';
 
-    try {
-      # validate the doc
-      # NOTE: the doc is not indexed if it does not validate (i.e. raises an exception)
-      $c->forward('_validate', [ to_json($new_doc_data) ]);
+  my $id;
+  try {
+    # validate the doc
+    # NOTE: the doc is not indexed if it does not validate (i.e. raises an exception)
+    $c->forward('_validate', [ to_json($new_doc_data) ]);
 
-      # prevent submission of duplicate content, i.e. trackdb
-      # with the same hub/assembly
-      my $hub = $new_doc_data->{hub}{name};
-      my $assembly_acc = $new_doc_data->{assembly}{accession};
-      defined $hub and defined $assembly_acc or
-	$c->go('ReturnError', 'custom', ["Unable to find hub/assembly information"]);
-      my $query = {
-		   filtered => {
-				filter => {
-					   bool => {
-						    must => [
-							     { term => { owner => $c->stash->{user} } },
-							     { term => { 'hub.name' => $hub } },
-							     { term => { 'assembly.accession' => $assembly_acc } }
-							    ]
-						   }
-					  }
-			       }
-		  };
-      $c->go('ReturnError', 'custom', ["Cannot submit: a document with the same hub/assembly exists"])
-	if $c->model('Search')->count_trackhubs(query => $query)->{count};
+    # prevent submission of duplicate content, i.e. trackdb
+    # with the same hub/assembly
+    my $hub = $new_doc_data->{hub}{name};
+    my $assembly_acc = $new_doc_data->{assembly}{accession};
+    defined $hub and defined $assembly_acc or
+      $c->go('ReturnError', 'custom', ["Unable to find hub/assembly information"]);
+    my $query = {
+		 filtered => {
+			      filter => {
+					 bool => {
+						  must => [
+							   {
+							    term => { owner => $c->stash->{user} } },
+							   {
+							    term => { 'hub.name' => $hub } },
+							   {
+							    term => { 'assembly.accession' => $assembly_acc } }
+							  ]
+						 }
+					}
+			     }
+		};
+    $c->go('ReturnError', 'custom', ["Cannot submit: a document with the same hub/assembly exists"])
+      if $c->model('Search')->count_trackhubs(query => $query)->{count};
 	
-      my $config = Registry->config()->{'Model::Search'};
-      $c->model('Search')->index(index   => $config->{index},
-				 type    => $config->{type}{trackhub},
-				 id      => $id,
-				 body    => $new_doc_data);
+    my $config = Registry->config()->{'Model::Search'};
+    $id = $c->model('Search')->index(index   => $config->{index},
+				     type    => $config->{type}{trackhub},
+				     body    => $new_doc_data)->{_id};
 
-      # refresh the index
-      $c->model('Search')->indices->refresh(index => $config->{index});
-    } catch {
-      $c->go('ReturnError', 'custom', [qq{$_}]);
-    };
-  } else {
-    $c->go('ReturnError', 'custom', ["Couldn't determine doc ID(s)"]);
-  }
+    # refresh the index
+    $c->model('Search')->indices->refresh(index => $config->{index});
+  } catch {
+    $c->go('ReturnError', 'custom', [qq{$_}]);
+  };
 
   $self->status_created( $c,
 			 location => $c->uri_for( '/api/trackdb/' . $id )->as_string,

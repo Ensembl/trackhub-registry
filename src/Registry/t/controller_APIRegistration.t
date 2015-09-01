@@ -300,7 +300,7 @@ SKIP: {
   ok($response->is_success, 'Doc create request successful');
   is($response->code, 201, 'Request successful 201');
   is($response->content_type, 'application/json', 'JSON content type');
-  like($response->header('location'), qr/\/api\/trackdb\/1/, 'Correct URI for created doc');
+  like($response->header('location'), qr/\/api\/trackdb\/[A-Za-z0-9]+?$/, 'Correct URI for created doc');
   $content = from_json($response->content);
   is($content->{data}[0]{id}, 'bpDnaseRegionsC0010K46DNaseEBI', 'Correct content');
   #
@@ -326,7 +326,7 @@ SKIP: {
   ok($response->is_success, 'Doc create request successful');
   is($response->code, 201, 'Request successful 201');
   is($response->content_type, 'application/json', 'JSON content type');
-  like($response->header('location'), qr/\/api\/trackdb\/2/, 'Correct URI for created doc');
+  like($response->header('location'), qr/\/api\/trackdb\/[A-Za-z0-9]+?$/, 'Correct URI for created doc');
   $content = from_json($response->content);
   is(scalar $content->{configuration}{bp}{members}{region}{members}{'bpDnaseRegionsBP_BP_DG-75_d01DNaseHOTSPOT_peakEMBL-EBI'}{shortLabel}, 'DG-75.DNase.DG-75', 'Correct content');
   #
@@ -338,26 +338,20 @@ SKIP: {
   ok($response->is_success, 'Request successful 2xx');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
-  map { like($content->{$_}, qr/api\/trackdb\/$_/, "Contains correct resource (document) URI") } 1 .. 2;
+  my @ids = keys %{$content};
+  map { like($content->{$_}, qr/api\/trackdb\/$_$/, "Contains correct resource (document) URI") } @ids;
   #
   # the owner of these two documents should correspond to the creator
-  $request = GET('/api/trackdb/1');
-  $request->headers->header(user       => 'trackhub1');
-  $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'GET Request to /api/trackdb/1');
-  ok($response->is_success, 'Request successful 2xx');
-  is($response->content_type, 'application/json', 'JSON content type');
-  $content = from_json($response->content);
-  is($content->{owner}, 'trackhub1', 'Correct trackdb owner');
-
-  $request = GET('/api/trackdb/2');
-  $request->headers->header(user       => 'trackhub1');
-  $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'GET Request to /api/trackdb/2');
-  ok($response->is_success, 'Request successful 2xx');
-  is($response->content_type, 'application/json', 'JSON content type');
-  $content = from_json($response->content);
-  is($content->{owner}, 'trackhub1', 'Correct trackdb owner');
+  foreach my $id (@ids) {
+    $request = GET("/api/trackdb/$id");
+    $request->headers->header(user       => 'trackhub1');
+    $request->headers->header(auth_token => $auth_token);
+    ok($response = request($request), "GET Request to /api/trackdb/$id");
+    ok($response->is_success, 'Request successful 2xx');
+    is($response->content_type, 'application/json', 'JSON content type');
+    $content = from_json($response->content);
+    is($content->{owner}, 'trackhub1', 'Correct trackdb owner');
+  }
 
   #
   # /api/trackhub (POST): create new documents as direct

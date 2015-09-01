@@ -31,6 +31,7 @@
 		      <li><a href="#get_trackhub">GET /api/trackhub</a></li>
 		      <li><a href="#post_trackhub">POST /api/trackhub</a></li>
 		      <li><a href="#get_trackdb">GET /api/trackdb/:id</a></li>
+		      <li><a href="#post_trackdb_create">POST /api/trackdb/create</a></li>
 		      <li><a href="#put_trackdb">PUT /api/trackdb/:id</a></li>
 		      <li><a href="#delete_trackdb">DELETE /api/trackdb/:id</a></li>
 		      <li><a href="#logout">GET /api/logout</a></li>
@@ -275,7 +276,7 @@
   <pre>
     HTTP/1.0 201 OK
     Content-type: application/json
-    Location: [ 'http://localhost/api/trackdb/KRBr5PS7RmapaFr7ofpTBA, 'http://localhost/api/trackdb/hB8Npdm1ST2gBwkbQThkVg', 'http://localhost/api/trackdb/FOEM87nETMOCOglmm0sSsg' ]
+    Location: [ 'https://www.trackhubregistry.org/api/trackdb/KRBr5PS7RmapaFr7ofpTBA, 'https://www.trackhubregistry.org/api/trackdb/hB8Npdm1ST2gBwkbQThkVg', 'https://www.trackhubregistry.org/api/trackdb/FOEM87nETMOCOglmm0sSsg' ]
     ...
     [
       {
@@ -360,6 +361,86 @@
                                                     'visibility' => 'dense',
                                                     'compositeTrack' => 'on',
 	  ...
+    }
+  </pre>
+
+  <h3 id="post_trackdb_create">POST /api/trackdb/create</h3>
+  <p>
+    Register a new trackDb with the Registry. The message body specifies the document representing the trackDb in the Registry as a JSON object.
+  </p>
+  <p>
+    If the request is successful, the response contains the header Location which specifies the URI of the trackDb document, while the body contains the registered trackDb JSON document.
+  </p>
+
+  <h4>Resource Information</h4>
+  <table class="table" style="width: auto;">
+    <tbody>
+      <tr>
+        <th>Response formats</th>
+	<td>JSON</td>
+      </tr>
+      <tr>
+        <th>Authentication</th>
+	<td>User+Auth-Token headers</td>
+      </tr>
+      <tr>
+        <th>Rate Limited</th>
+	<td>No</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Parameters</h4>
+  <p>
+    <ul>
+      <li><mark>version</mark> (optional): JSON schema version of the trackDb documents (default: v1.0, see <a href="[% c.uri_for('/api/modelling') %]">Modelling TrackHubs</a> for a discussion)</li>
+    </ul>
+  </p>
+
+  <h4>Message</h4>
+  <table class="table" style="width: auto;">
+    <tbody>
+      <tr>
+        <th>Content-type</th>
+	<td>application/json</td>
+      </tr>
+      <tr>
+        <th id="post_trackdb_msg_format">Format</th>
+	<td>
+	  See <a href="[% c.uri_for('/api/modelling') %]">trackDb JSON schema</a>.
+	</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <h4>Example Request</h4>
+  <p>
+    In this example, we are requesting to register a very basic trackDb which belongs to hub 'Test Hub' and contains epigenomics data in one track for the human GRCh38 assembly.
+  </p>
+
+  <pre>
+    POST https://www.trackhubregistry.org/api/trackdb/create
+    User: exampleuser
+    Auth-Token: 6l5/GuIiOSCywuSI9HF1VU97clwb/CXPDFS0MyAB/HCZuxtjQBj4uORZL8NY3Yhi
+    {
+      type    => 'epigenomics',
+      hub     => { name => 'Test', shortLabel => 'Test Hub', longLabel => 'Test Hub' },
+      version => 'v1.0',
+      species => { tax_id => 9606, scientific_name => 'Homo sapiens' },
+      assembly => { accession => 'GCA_000001405.15' },
+      data => [ { id => 'test', molecule => 'genomic_DNA' } ],
+      configuration => { test => { shortLabel => 'test' } } 
+    }
+  </pre>
+
+  <h4>Example Response</h4>
+  <pre>
+    HTTP/1.0 201 OK
+    Content-type: application/json
+    Location: https://www.trackhubregistry.org/api/trackdb/KRBr5PS7RmapaFr7ofpTBA
+    {
+      ...
     }
   </pre>
 

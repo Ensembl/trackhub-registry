@@ -292,7 +292,7 @@
 
   <h3 id="get_trackdb">GET /api/trackdb/:id</h3>
   <p>
-    Return the Registry JSON representation of a trackDb with the given ID.
+    Return JSON representation of a trackDb with the given ID in the Registry.
   </p>
 
   <h4>Resource Information</h4>
@@ -361,6 +361,123 @@
                                                     'compositeTrack' => 'on',
 	  ...
     }
+  </pre>
+
+  <h3 id="put_trackdb">PUT /api/trackdb/:id</h3>
+  <p>
+    Update registered trackDb with the given ID.
+  </p>
+
+  <h4>Resource Information</h4>
+  <table class="table" style="width: auto;">
+    <tbody>
+      <tr>
+        <th>Response formats</th>
+	<td>JSON</td>
+      </tr>
+      <tr>
+        <th>Authentication</th>
+	<td>User+Auth-Token headers</td>
+      </tr>
+      <tr>
+        <th>Rate Limited</th>
+	<td>No</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Parameters</h4>
+  <p>None.</p>
+
+  <h4>Message</h4>
+  <p>
+    A JSON object representing the trackDb in the corresponding schema, see <a href="[% c.uri_for('/api/modelling') %]">Modelling TrackHubs</a> for a discussion.
+  </p>
+
+  <h4>Example Request</h4>
+  <pre>
+    PUT https://www.trackhubregistry.org/api/trackdb/knB1GHPYSdmeypb-R8sxhA
+    User: exampleuser
+    Auth-Token: 6l5/GuIiOSCywuSI9HF1VU97clwb/CXPDFS0MyAB/HCZuxtjQBj4uORZL8NY3Yhi
+    {
+      type    => 'epigenomics',
+      hub     => { name => 'Test', shortLabel => 'Test Hub', longLabel => 'Test Hub' },
+      version => 'v1.0',
+      species => { tax_id => 9606, scientific_name => 'Homo sapiens' },
+      assembly => { accession => 'GCA_000001405.15' },
+      data => [ { id => 'test', molecule => 'genomic_DNA' } ],
+      configuration => { test => { shortLabel => 'test' } } 
+    }
+  </pre>
+
+  <h4>Example Response</h4>
+  <pre>
+    HTTP/1.0 200 OK
+    Content-type: application/json
+    ...
+    {
+          'owner' => 'exampleuser',
+          'created' => 1440778576,
+          'version' => 'v1.0',
+          'type' => 'epigenomics',
+	  ...
+	  ...
+    }
+  </pre>
+
+  <h3 id="delete_trackdb">DELETE /api/trackdb/:id</h3>
+  <p>
+    Delete the trackDb with the given ID from the Registry.
+  </p>
+  <p>
+    If the request is successful, the response body is a JSON object representing the deleted trackDb.
+  </p>
+
+  <h4>Notes</h4>
+  <p>
+    Alternatively, this operation can be done more simply using the <a href="[% c.uri_for('/docs/dashboard#status') %]">web interface</a>.
+  </p>
+
+  <h4>Resource Information</h4>
+  <table class="table" style="width: auto;">
+    <tbody>
+      <tr>
+        <th>Response formats</th>
+	<td>JSON</td>
+      </tr>
+      <tr>
+        <th>Authentication</th>
+	<td>User+Auth-Token headers</td>
+      </tr>
+      <tr>
+        <th>Rate Limited</th>
+	<td>No</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Parameters</h4>
+  <p>None.</p>
+
+  <h4>Example Request</h4>
+  <pre>
+    DELETE https://www.trackhubregistry.org/api/trackdb/knB1GHPYSdmeypb-R8sxhA
+    User: exampleuser
+    Auth-Token: 6l5/GuIiOSCywuSI9HF1VU97clwb/CXPDFS0MyAB/HCZuxtjQBj4uORZL8NY3Yhi
+  </pre>
+
+  <h4>Example Response</h4>
+  <pre>
+    HTTP/1.0 200 OK
+    ...
+    {
+          'owner' => 'exampleuser',
+          'created' => 1440778576,
+          'version' => 'v1.0',
+          'type' => 'epigenomics',
+	  ...
+	  ...
+    }    
   </pre>
 
   <h3 id="logout">GET /api/logout</h3>

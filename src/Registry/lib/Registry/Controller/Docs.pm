@@ -39,6 +39,8 @@ sub api_registration :Path('/docs/api/registration') { }
 
 sub api_registration_workflow_login :Path('/docs/api/registration/workflow/login') { }
 
+sub api_registration_workflow_thregister :Path('/docs/api/registration/workflow/thregister') { }
+
 sub api_registration_workflow_logout :Path('/docs/api/registration/workflow/logout') { }
 
 sub api_registration_reference :Path('/docs/api/registration/reference') { }

@@ -73,7 +73,7 @@
 
   <h4>Example: registration request and response</h4>
   <p>
-    In this example, we are going to register the <a target="_blank" href="">CSHL Biology of Genomes meeting 2013 demonstration assembly hub</a>. For this, we are obviously assuming we are those who have published this data and are in control of it. The Registry does not make any effort to check this kind of information: you are responsible for your own actions which will be eventually visible by everyone on the Registry itself.
+    In this example, we are going to register the <a target="_blank" href="http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt">CSHL Biology of Genomes meeting 2013 demonstration assembly hub</a>. For this, we are obviously assuming we are those who have published this data and are in control of it. The Registry does not make any effort to check this kind of information: you are responsible for your own actions which will be eventually visible by everyone on the Registry itself.
   </p>
   <p>
     Any request to the Registration API must supply the user's credentials with the following headers:
@@ -184,8 +184,8 @@
       <li>if the credentials supplied in the authentication header are invalid, the server returns HTTP response code 401</li>
       <li>if your hub is not compliant with the UCSC hub specs, the server returns HTTP response code 400. The body contains the message: "hubCheck report: ..."</li>
       <li>if the hub is not available or cannot be correctly parsed, the server returns HTTP response code 400. The response body message contains the error</li>
-      <li>your hub genome subdirectory names should be valid UCSC DB names (i.e. assembly synonyms) which can be mapped to an existing entry in the <a target="_blank" href="http://www.ncbi.nlm.nih.gov/assembly">NCBI assembly database</a> with a corresponding identifier (i.e. assembly accession + version, e.g. <a target="_blank" href="">GCA_000001405.1</a>). If a mapping cannot be found, the server returns HTTP response code 400 with the message "Unable to find an NCBI assembly id..."</li>
-      <li>if one of the hub trackDb configurations cannot be translated to <a href="[% c.uri_for('/docs/api/modelling') %]">valid JSON</a>, the server returns HTTP response code 400. The body contains the message "Failed: ..." containing the reasons why validation failed</li>
+      <li>your hub genome subdirectory names must be <a target="_blank" href="https://genome.ucsc.edu/FAQ/FAQreleases.html#release1">valid UCSC DB names</a> (assembly synonyms, e.g. hg38) which can be mapped to an existing entry in the <a target="_blank" href="http://www.ncbi.nlm.nih.gov/assembly">NCBI assembly database</a> with a corresponding identifier (i.e. assembly accession + version, e.g. <a target="_blank" href="http://www.ncbi.nlm.nih.gov/assembly/GCF_000001405.13">GCA_000001405.1</a>). If a mapping cannot be found, the server returns HTTP response code 400 with the message "Unable to find an NCBI assembly id..."</li>
+      <li>if one of the hub trackDb configurations cannot be translated to <a href="[% c.uri_for('/docs/api/modelling') %]">valid JSON</a>, the server returns HTTP response code 400. The body contains the message "Failed: ..." with an output describing the reasons why validation failed</li>
       <li>if the Registry encountered an unexpected condition which prevented it from fulfilling the request, it returns HTTP response code 500</li>
       <li>if the Registry is currently unable to handle the request due to a temporary overloading or maintenance, it returns HTTP response code 503</li>
     </ul>

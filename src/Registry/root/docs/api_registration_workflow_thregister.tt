@@ -1,0 +1,190 @@
+<!--<div class="page-header">-->
+<div class="row">
+  <div class="col-sm-12">
+    <ul class="breadcrumb">
+      <li><a href="/">Home</a></li>
+      <li><a>Docs</a></li>
+      <li><a>API</a></li>
+      <li>Registration</li>
+    </ul>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-3" style="margin-top: 25px;">
+    <div id="search-sidebar-left">
+        <div class="panel panel-primary">
+	  <div class="panel-heading">API Docs</div>
+          <div class="panel-body">
+	    <ul class="nav nav-list">
+	      <li><a href="[% c.uri_for('/docs/apis') %]">TH Registry APIs</a></li>
+	      <li><a href="[% c.uri_for('/docs/api/modelling') %]">Modelling TrackHubs</a></li>
+	      <li><a href="[% c.uri_for('/docs/api/info') %]">Info API</a></li>
+	      <li><a>Registration API</a>
+	        <ul>
+		  <li><a href="[% c.uri_for('/docs/api/registration#authentication') %]">Authentication</a></li>
+		  <li>
+		    <a href="[% c.uri_for('/docs/api/registration#workflow') %]">A simplified RESTful workflow</a>
+		    <ul>
+		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/login') %]">Logging in</a></li>
+		      <li><a style="font-weight: bold;">Registering TrackHubs</a></li>
+		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/logout') %]">Log out</a></li>
+		    </ul>
+		  </li>
+		  <li><a href="[% c.uri_for('/docs/api/registration/reference') %]">API Reference</a></li>
+		</ul>
+	      </li>
+	      <li><a href="[% c.uri_for('/docs/api/search') %]">Search API</a></li>
+	    </ul>
+          </div> 
+	</div>
+    </div> <!-- sidebar -->
+  </div>
+
+  <div class="col-sm-9" style="text-align: justify; text-justify: inter-word;">
+  <h2>A Simplified RESTful workflow</h2>
+
+  <h3 id="login">Registering TrackHubs</h3>
+  <p>
+    Suppose you've just <a href="[% c.uri_for('/user/register') %]">signed up</a> with the TrackHub Registry. You've also got some remote public track hubs that you want to register with and make available for search on the Registry itself.
+  </p>
+  <p>
+    After you log in, you can simply register one of your publicly accessible track hubs by POSTing its URL at <a href="[% c.uri_for('/docs/api/registration/reference#post_trackhub') %]">/api/trackhub</a>. At present, only one hub can be registered at a time. There's a plan to provide bulk request support to register multiple data hubs at a time.
+  </p>
+
+  <h4>Prerequisites</h4>
+  <p>
+    Verify that:
+    <ul>
+      <li>you are <a href="[% c.uri_for('/docs/api/registration/workflow/login') %]">logged in</a> as a registered track data hub provider and have, as such, obtained a valid authentication token;</li>
+      <li>the remote data hub is publicly accessible and is compliant with <a target="_blank" href="http://genome-euro.ucsc.edu/goldenPath/help/hgTrackHubHelp.html#Setup">UCSC Track Hubs specification</a>.</li>
+    </ul>
+  </p>
+
+  <h4>Procedure</h4>
+  <p>
+    <ol>
+      <li>Make a POST request to the <a href="[% c.uri_for('/docs/api/registration/reference#post_trackhub') %]">/api/trackhub</a> endpoint that includes a <mark>User</mark> header with your username and an <mark>Auth-Token</mark> header with the given authentication token;</li>
+      <li>Examine the response. The response code indicates whether the request succeeded, or how it failed;</li>
+      <li>A successful request returns an array of JSON objects, where each object is a translation of the configuration of a trackDb belonging to the trackhub.</li>
+    </ol>
+  </p>
+
+  <h4>Example: registration request and response</h4>
+  <p>
+    In this example, we are going to register the <a target="_blank" href="">CSHL Biology of Genomes meeting 2013 demonstration assembly hub</a>. For this, we are obviously assuming we are those who have published this data and are in control of it. The Registry does not make any effort to check this kind of information: you are responsible for your own actions which will be eventually visible by everyone on the Registry itself.
+  </p>
+  <p>
+    Any request to the Registration API must supply the user's credentials with the following headers:
+    <pre>
+      User: [username]
+      Auth-Token: [valid token]
+    </pre>
+  </p>
+
+  <p>
+    The <a href="[% c.uri_for('/docs/api/registration/reference#post_trackhub_msg_format') %]">POST /api/trackhub</a> message must contain the URL of remote public hub (can specify the URL of the hub.txt as well) and, optionally, the type of the assembly data contained in the hub, which can be one of "genomics", "epigenomics", "transcriptomics", "proteomics" (default: "genomics"). By specifying the type you allow the user to search for track hubs based on particular types. In this example we specify that the hub contains epigenomics data:
+  </p>
+  <p>
+    Request:
+    <pre>
+      POST https://www.trackhubregistry.org/api/trackhub
+      User: exampleuser
+      Auth-Token: 6l5/GuIiOSCywuSI9HF1VU97clwb/CXPDFS0MyAB/HCZuxtjQBj4uORZL8NY3Yhi
+      {
+        "url": "http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt",
+        "type": "epigenomics"
+      }
+    </pre>
+    Some things happen in the background once you've made the request. Most notably, the server runs the <a target="_blank" href="https://genome.ucsc.edu/goldenPath/help/hgTrackHubHelp.html#Debug">hubCheck</a> from UCSC to check that the files in the hub are correctly formatted. The Registry will ignore error messages related to the use of deprecated features. For any other error, the request will be deemed unsuccessful and the response body will report the hubCheck output report.
+  </p>
+  <p>
+    If the request is successful, the response body is an array of JSON objects, one for each configuration of assembly trackDb belonging to the hub. These are the objects created and stored in the Registry and the ones the user will be able to search on. All trackDb objects specify the same 'hub' property. This allows the Registry to group trackDb documents of different assemblies according to a particular hub. The response header <mark>Location</mark> reports their respective URIs in the same order, which can be used to request individual operations on a single trackDb registry entity with the <a href="[% c.uri_for('/docs/api/registration/reference#get_trackdb') %]">GET|PUT|DELETE /api/trackdb</a> endopoints.
+  </p>
+  <p>
+    In our example, the CSHL Biology of Genomes meeting 2013 demonstration assembly hub contains data for three assemblies (araTha1, ricCom1, braRap1), so the response body is an array of three trackDb objects, one for each of these assemblies.
+  </p>
+  <p>
+    Response:
+    <pre>
+      200 OK
+      Content-type: application/json; charset=utf-8
+      Location: [ 'https://www.trackhubregistry.org/api/trackdb/KRBr5PS7RmapaFr7ofpTBA, 'https://www.trackhubregistry.org/api/trackdb/hB8Npdm1ST2gBwkbQThkVg', 'https://www.trackhubregistry.org/api/trackdb/FOEM87nETMOCOglmm0sSsg' ]
+      ...
+      [
+        {
+          // ricCom1 trackDb configuration
+	  'owner' => 'exampleuser',
+          'source' => {
+                        'checksum' => 'f9561ae6f7883add3698fad7abab7e13',
+                        'url' => 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/ricCom1/trackDb.txt'
+                      },
+          'hub' => {
+                     'shortLabel' => 'Plants',
+                     'name' => 'cshl2013',
+                     'url' => 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt',
+                     'longLabel' => 'CSHL Biology of Genomes meeting 2013 demonstration assembly hub'
+                   },
+          'species' => {
+                         'scientific_name' => 'Ricinus communis',
+                         'common_name' => 'castor bean',
+                         'tax_id' => '3988'
+                       },
+	  'assembly' => {
+                          'synonyms' => 'ricCom1',
+                          'name' => 'JCVI_RCG_1.1',
+                          'accession' => 'GCA_000151685.2'
+                        },
+	  'configuration' => {
+                               'repeatMasker_' => {
+                                                    'priority' => '149.1',
+                                                    'visibility' => 'dense',
+                                                    'compositeTrack' => 'on',
+                                                    'track' => 'repeatMasker_',
+                                                    'shortLabel' => 'RepeatMasker',
+	  ...
+	  ... 
+	},
+        {
+          // araTha1 trackDb configuration 
+	  ...
+	  'hub' => {
+                     'shortLabel' => 'Plants',
+                     'name' => 'cshl2013',
+                     'url' => 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt',
+                     'longLabel' => 'CSHL Biology of Genomes meeting 2013 demonstration assembly hub'
+                   },
+	  ...
+        },
+        {
+	  // braRap1 trackDb configuration
+	  ...
+	  'hub' => {
+                     'shortLabel' => 'Plants',
+                     'name' => 'cshl2013',
+                     'url' => 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt',
+                     'longLabel' => 'CSHL Biology of Genomes meeting 2013 demonstration assembly hub'
+                   },
+	  ...
+        }
+      ]
+    </pre>
+    The response body contains the array of three trackDb configuration objects, the first referring the ricCom1 assembly and the other two to araTha1 and braRap1, respectively. The header Location contains the list of the corresponding URIs in the same order as the response body array. As can be seen, all three assemblies refer to the same hub.
+  </p>
+
+  <h4>What can possibly go wrong</h4>
+  <p>
+    Remember: <u>always check the response code</u> since it indicates whether the request succeeded, or how it failed.
+    <ul>
+      <li>if the request is successful, the server returns HTTP response code 200 (OK)</li>
+      <li>if the credentials supplied in the authentication header are invalid, the server returns HTTP response code 401</li>
+      <li>if your hub is not compliant with the UCSC hub specs, the server returns HTTP response code 400. The body contains the message: "hubCheck report: ..."</li>
+      <li>if the hub is not available or cannot be correctly parsed, the server returns HTTP response code 400. The response body message contains the error</li>
+      <li>if one of the hub trackDb configuration cannot be translated to <a href="[% c.uri_for('/docs/api/modelling') %]">valid JSON</a>, the server returns HTTP response code 400. The body contains the message "Failed: ..." containing the reasons why validation failed</li>
+      <li>if the Registry encountered an unexpected condition which prevented it from fulfilling the request, it returns HTTP response code 500</li>
+      <li>if the Registry is currently unable to handle the request due to a temporary overloading or maintenance, it returns HTTP response code 503</li>
+    </ul>
+  </p>
+  
+  </div>
+</div>

@@ -63,8 +63,11 @@
     You've just signed up and you've got some remote public track hubs that you want to register with and make available for search on the TrackHub Registry.
   </p>
 
-  <h4 id=""><a href="[% c.uri_for('/docs/api/registration/workflow/thlist') %]">Get the list of registered TrackHubs</a></h4>
-  
+  <h4 id=""><a href="[% c.uri_for('/docs/api/registration/workflow/thlist') %]">Retrieve the list of registered TrackHubs</a></h4>
+  <p>
+    You've registered some of your public track hubs. You want to know which ones by retrieving the list of registered track hubs from the Registry.
+  </p>
+
   <h4 id=""><a href="[% c.uri_for('/docs/api/registration/workflow/register') %]">Delete registered TrackHubs</a></h4>
 
   <h4 id="logout"><a href="[% c.uri_for('/docs/api/registration/workflow/logout') %]">Log out</a></h4>

@@ -28,6 +28,7 @@
 		    <ul>
 		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/login') %]">Logging in</a></li>
 		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thregister') %]">Registering TrackHubs</a></li>
+		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thlist') %]">Retrieve the list of registered TrackHubs</a></li>
 		      <li><a style="font-weight: bold;">Log out</a></li>
 		    </ul>
 		  </li>

@@ -28,6 +28,7 @@
 		    <ul>
 		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/login') %]">Logging in</a></li>
 		      <li><a style="font-weight: bold;">Registering TrackHubs</a></li>
+		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thlist') %]">Retrieve the list of registered TrackHubs</a></li>
 		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/logout') %]">Log out</a></li>
 		    </ul>
 		  </li>
@@ -49,14 +50,14 @@
     Suppose you've just <a href="[% c.uri_for('/user/register') %]">signed up</a> with the TrackHub Registry. You've also got some remote public track hubs that you want to register with and make available for search on the Registry itself.
   </p>
   <p>
-    After you log in, you can simply register one of your publicly accessible track hubs by POSTing its URL at <a href="[% c.uri_for('/docs/api/registration/reference#post_trackhub') %]">/api/trackhub</a>. At present, only one hub can be registered at a time. There's a plan to provide bulk request support to register multiple data hubs at a time.
+    After you log in, you can simply register one of your publicly accessible track hubs by POSTing its URL at <a href="[% c.uri_for('/docs/api/registration/reference#post_trackhub') %]">/api/trackhub</a>. At present, only one hub can be registered at a time. There's a plan to provide bulk request support the registration of multiple data hubs at a time.
   </p>
 
   <h4>Prerequisites</h4>
   <p>
     Verify that:
     <ul>
-      <li>you are <a href="[% c.uri_for('/docs/api/registration/workflow/login') %]">logged in</a> as a registered track data hub provider and have, as such, obtained a valid authentication token;</li>
+      <li>your client has successfully <a href="[% c.uri_for('/docs/api/registration/workflow/login') %]">logged in</a>  and have, as such, obtained a valid authentication token;</li>
       <li>the remote data hub is publicly accessible and is compliant with <a target="_blank" href="http://genome-euro.ucsc.edu/goldenPath/help/hgTrackHubHelp.html#Setup">UCSC Track Hubs specification</a>.</li>
     </ul>
   </p>
@@ -99,7 +100,10 @@
     Some things happen in the background once you've made the request. Most notably, the server runs the <a target="_blank" href="https://genome.ucsc.edu/goldenPath/help/hgTrackHubHelp.html#Debug">hubCheck</a> from UCSC to check that the files in the hub are correctly formatted. The Registry will ignore error messages related to the use of deprecated features. For any other error, the request will be deemed unsuccessful and the response body will report the hubCheck output report.
   </p>
   <p>
-    If the request is successful, the response body is an array of JSON objects, one for each configuration of assembly trackDb belonging to the hub. These are the objects created and stored in the Registry and the ones the user will be able to search on. All trackDb objects specify the same 'hub' property. This allows the Registry to group trackDb documents of different assemblies according to a particular hub. The response header <mark>Location</mark> reports their respective URIs in the same order, which can be used to request individual operations on a single trackDb registry entity with the <a href="[% c.uri_for('/docs/api/registration/reference#get_trackdb') %]">GET|PUT|DELETE /api/trackdb</a> endopoints.
+    See <a href="#errors">what can possibly go wrong</a> for a comprehensive list of possible errors.
+  </p>
+  <p>
+    If the request is successful, the response body is an array of JSON objects, one for each configuration of assembly trackDbs belonging to the hub. These are the objects created and stored in the Registry and the ones the user will be able to search on. All trackDb objects specify the same 'hub' property. This allows the Registry to group trackDb documents of different assemblies according to a particular hub. The response header <mark>Location</mark> reports their respective URIs in the same order, which can be used to request individual operations on a single trackDb registry entity with the <a href="[% c.uri_for('/docs/api/registration/reference#get_trackdb') %]">GET|PUT|DELETE /api/trackdb</a> endopoints.
   </p>
   <p>
     In our example, the CSHL Biology of Genomes meeting 2013 demonstration assembly hub contains data for three assemblies (araTha1, ricCom1, braRap1), so the response body is an array of three trackDb objects, one for each of these assemblies.
@@ -172,7 +176,7 @@
     The response body contains the array of three trackDb configuration objects, the first referring the ricCom1 assembly and the other two to araTha1 and braRap1, respectively. The header Location contains the list of the corresponding URIs in the same order as the response body array. As can be seen, all three assemblies refer to the same hub.
   </p>
 
-  <h4>What can possibly go wrong</h4>
+  <h4 id="errors">What can possibly go wrong</h4>
   <p>
     Remember: <u>always check the response code</u> since it indicates whether the request succeeded, or how it failed.
     <ul>
@@ -180,7 +184,8 @@
       <li>if the credentials supplied in the authentication header are invalid, the server returns HTTP response code 401</li>
       <li>if your hub is not compliant with the UCSC hub specs, the server returns HTTP response code 400. The body contains the message: "hubCheck report: ..."</li>
       <li>if the hub is not available or cannot be correctly parsed, the server returns HTTP response code 400. The response body message contains the error</li>
-      <li>if one of the hub trackDb configuration cannot be translated to <a href="[% c.uri_for('/docs/api/modelling') %]">valid JSON</a>, the server returns HTTP response code 400. The body contains the message "Failed: ..." containing the reasons why validation failed</li>
+      <li>your hub genome subdirectory names should be valid UCSC DB names (i.e. assembly synonyms) which can be mapped to an existing entry in the <a target="_blank" href="http://www.ncbi.nlm.nih.gov/assembly">NCBI assembly database</a> with a corresponding identifier (i.e. assembly accession + version, e.g. <a target="_blank" href="">GCA_000001405.1</a>). If a mapping cannot be found, the server returns HTTP response code 400 with the message "Unable to find an NCBI assembly id..."</li>
+      <li>if one of the hub trackDb configurations cannot be translated to <a href="[% c.uri_for('/docs/api/modelling') %]">valid JSON</a>, the server returns HTTP response code 400. The body contains the message "Failed: ..." containing the reasons why validation failed</li>
       <li>if the Registry encountered an unexpected condition which prevented it from fulfilling the request, it returns HTTP response code 500</li>
       <li>if the Registry is currently unable to handle the request due to a temporary overloading or maintenance, it returns HTTP response code 503</li>
     </ul>

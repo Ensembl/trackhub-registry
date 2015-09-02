@@ -306,7 +306,9 @@
 	    <li>hub is not compliant with the UCSC hub specs</li>
 	    <li>hub is not available or cannot be correctly parsed</li>
 	    <li>one of the hub trackDb configurations cannot be translated to <a href="[% c.uri_for('/docs/api/modelling') %]">valid JSON</a></li>
+	    <li>one of the hub genome subdirectory names are not valid UCSC DB names, or cannot be translated to an existing NCBI assembly identifier (e.g. assembly accession + version, e.g. <a target="_blank" href="http://www.ncbi.nlm.nih.gov/assembly/GCF_000001405.13/">GCA_000001405.1</a>)
 	  </ul>
+	  See <a href="[% c.uri_for('/docs/api/registration/workflow/thregister#errors') %]">What can possibly go wrong</a> for more details, in particular about the error messages.
 	</td>
       </tr>
       <tr><td>401</td><td>Unauthorized</td><td>The request requires user authentication</td></tr>

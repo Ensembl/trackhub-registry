@@ -27,6 +27,7 @@
 		    <a href="[% c.uri_for('/docs/api/registration#workflow') %]">A simplified RESTful workflow</a>
 		    <ul>
 		      <li><a style="font-weight: bold;">Logging in</a></li>
+		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thregister') %]">Registering TrackHubs</a></li>
 		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/logout') %]">Log out</a></li>
 		    </ul>
 		  </li>
@@ -50,7 +51,7 @@
   <h4>Procedure</h4>
   <p>
     <ol>
-      <li>Make a GET request to the <a href="[% c.uri_for('/docs/api/registration/reference#login') %]">/api/login</a> endpoint that includes your username and password in a MIME Base64 encoding;</li>
+      <li>Make a GET request to the <a href="[% c.uri_for('/docs/api/registration/reference#login') %]">/api/login</a> endpoint that includes an Authorization header with your username and password in a MIME Base64 encoding;</li>
       <li>Examine the response. The response code indicates whether the request succeeded, or how it failed;</li>
       <li>A successful login request returns an authentication token that you can use in subsequent requests.</li>
     </ol>
@@ -64,7 +65,7 @@
       <li><mark>user</mark> is the user's login name</li>
       <li><mark>password</mark> is the user's password</li>
     </ul>
-    These credentials must be supplied in a MIME Base64 encoding, as specified in RFC 1421.
+    These credentials must be supplied in a MIME Base64 encoding with an Authorization header, as specified in RFC 1421.
   </p>
 
   <p>

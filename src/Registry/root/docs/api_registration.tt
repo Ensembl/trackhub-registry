@@ -59,6 +59,9 @@
   </p>
 
   <h4 id=""><a href="[% c.uri_for('/docs/api/registration/workflow/thregister') %]">Registering TrackHubs</a></h4>
+  <p>
+    You've just signed up and you've got some remote public track hubs that you want to register with and make available for search on the TrackHub Registry.
+  </p>
 
   <h4 id=""><a href="[% c.uri_for('/docs/api/registration/workflow/thlist') %]">Get the list of registered TrackHubs</a></h4>
   

@@ -291,6 +291,36 @@
     ]
   </pre>
 
+  <h4>HTTP Status Codes</h4>
+  <table class="table" style="width: auto;">
+    <tbody>
+      <tr>
+        <th>Code</th><th>Description</th><th>Reason</th>
+      </tr>
+      <tr><td>200</td><td>OK</td><td>Request successful</td></tr>
+      <tr>
+        <td>400</td><td>Bad Request</td>
+	<td>
+	  Request cannot be fulfilled by the Registry. Possible reasons:
+	  <ul>
+	    <li>hub is not compliant with the UCSC hub specs</li>
+	    <li>hub is not available or cannot be correctly parsed</li>
+	    <li>one of the hub trackDb configurations cannot be translated to <a href="[% c.uri_for('/docs/api/modelling') %]">valid JSON</a></li>
+	  </ul>
+	</td>
+      </tr>
+      <tr><td>401</td><td>Unauthorized</td><td>The request requires user authentication</td></tr>
+      <tr><td>500</td><td>Internal Server Error</td><td>Request cannot be fulfilled due to unexpected condition</td></tr>
+      <tr><td>503</td><td>Service Unavailable</td><td>Request cannot be fulfilled due to temporary overloading or maintenance of the server</td></tr>
+      <tr>
+      </tr>
+      <tr>
+      </tr>
+      <tr>
+      </tr>
+    </tbody>
+  </table>
+
   <h3 id="get_trackdb">GET /api/trackdb/:id</h3>
   <p>
     Return JSON representation of a trackDb with the given ID in the Registry.

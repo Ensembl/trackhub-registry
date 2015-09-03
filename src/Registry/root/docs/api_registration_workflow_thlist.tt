@@ -47,7 +47,7 @@
   <div class="col-sm-9" style="text-align: justify; text-justify: inter-word;">
   <h2>A Simplified RESTful workflow</h2>
 
-  <h3 id="login">Registering TrackHubs</h3>
+  <h3 id="login">Retrieving the list of registered TrackHubs</h3>
   <p>
     Suppose you've already submitted some of your public track hubs. At some point, you want to know which ones by retrieving the list of registered track hubs from the Registry, perhaps because you want to update or delete some of them.
   </p>

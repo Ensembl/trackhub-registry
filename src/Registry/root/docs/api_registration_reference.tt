@@ -189,6 +189,25 @@
     ]
   </pre>
 
+  <h4>HTTP Status Codes</h4>
+  <table class="table" style="width: auto;">
+    <tbody>
+      <tr>
+        <th>Code</th><th>Description</th><th>Reason</th>
+      </tr>
+      <tr><td>200</td><td>OK</td><td>Request successful</td></tr>
+      <tr><td>401</td><td>Unauthorized</td><td>The request requires user authentication</td></tr>
+      <tr><td>500</td><td>Internal Server Error</td><td>Request cannot be fulfilled due to unexpected condition</td></tr>
+      <tr><td>503</td><td>Service Unavailable</td><td>Request cannot be fulfilled due to temporary overloading or maintenance of the server</td></tr>
+      <tr>
+      </tr>
+      <tr>
+      </tr>
+      <tr>
+      </tr>
+    </tbody>
+  </table>
+
   <h3 id="post_trackhub">POST /api/trackhub</h3>
   <p>
     Register/Update a remote public TrackHub with the Registry. The message body specifies the track hub remote URL (can be either the directory or hub.txt file URL) and, optionally, the hub assemblies data type (default: <mark>genomics</mark>), see <a href="#post_trackhub_msg_format">Message Format</a> for a list of possible types.

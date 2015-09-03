@@ -73,9 +73,11 @@
     You've updated the structure or content of one of your remote public hubs registered with us. You obviously want the changes to appear on the Registry as well.
   </p>
 
-  <h4 id=""><a href="[% c.uri_for('/docs/api/registration/workflow/register') %]">Delete registered TrackHubs</a></h4>
+  <h4 id=""><a href="[% c.uri_for('/docs/api/registration/workflow/thdelete') %]">Delete registered TrackHubs</a></h4>
   <p>
+    One of your remote public hubs does not exist any more. Or you simply don't want to make it available for search in the TrackHub Registry.
   </p>
+
   <h4 id="logout"><a href="[% c.uri_for('/docs/api/registration/workflow/logout') %]">Log out</a></h4>
   <p>
     This terminates the client session and ends any possible workflow of interaction between the client and the Registration API.

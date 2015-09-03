@@ -43,6 +43,10 @@ sub api_registration_workflow_thregister :Path('/docs/api/registration/workflow/
 
 sub api_registration_workflow_thlist :Path('/docs/api/registration/workflow/thlist') { }
 
+sub api_registration_workflow_thupdate :Path('/docs/api/registration/workflow/thupdate') { }
+
+sub api_registration_workflow_thdelete :Path('/docs/api/registration/workflow/thdelete') { }
+
 sub api_registration_workflow_logout :Path('/docs/api/registration/workflow/logout') { }
 
 sub api_registration_reference :Path('/docs/api/registration/reference') { }

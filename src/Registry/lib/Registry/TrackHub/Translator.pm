@@ -210,7 +210,7 @@ $synonym2assembly =
   {
    #
    # These mappings have been derived from the list of UCSC genome releases at:
-   # https://genome.ucsc.edu/FAQ/FAQreleases.html
+   # https://genome.ucsc.edu/FAQ/FAQreleases.html#release1
    #
    # Mammals
    #
@@ -655,6 +655,20 @@ $synonym2assembly =
    # Drosophila simulans w501
    'Dsim-w501' => 'GCA_000754195.2', # ASM75419v2
   };
+
+#
+# From assembly synonyms to URLs that load the data hub into ensembl
+#
+# UCSC
+#
+# http://genome-euro.ucsc.edu/cgi-bin/hgHubConnect?hubUrl=http%3A%2F%2Fngs.sanger.ac.uk%2Fproduction%2Fensembl%2Fregulation%2Fhub.txt&db=hg38&hgHub_do_redirect=on&hgHubConnect.remakeTrackHub=on
+#
+# EnsEMBL
+#
+# map the assembly synonym to the current (grch37 in case of human and hg19) or an archive web site,
+# based on the list here:
+#  http://www.ensembl.org/info/website/archives/assembly.html
+#
 
 #
 # Add species/assembly info

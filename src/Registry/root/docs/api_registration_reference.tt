@@ -150,17 +150,17 @@
                             {
                               'species' => '3988',
                               'assembly' => 'GCA_000151685.2',
-                              'uri' => 'http://localhost/api/trackdb/knB1GHPYSdmeypb-R8sxhA'
+                              'uri' => 'https://www.trackhubregistry.org/api/trackdb/knB1GHPYSdmeypb-R8sxhA'
                             },
                             {
                               'species' => '3711',
                               'assembly' => 'GCA_000309985.1',
-                              'uri' => 'http://localhost/api/trackdb/JFF3OqH1QJmIJSlLfICyQg'
+                              'uri' => 'https://www.trackhubregistry.org/api/trackdb/JFF3OqH1QJmIJSlLfICyQg'
                             },
                             {
                               'species' => '3702',
                               'assembly' => 'GCA_000001735.1',
-                              'uri' => 'http://localhost/api/trackdb/We3M8-1RQnaUYpTspYQpCQ'
+                              'uri' => 'https://www.trackhubregistry.org/api/trackdb/We3M8-1RQnaUYpTspYQpCQ'
                             }
                           ],
         'shortLabel' => 'Plants',
@@ -173,12 +173,12 @@
                             {
                               'species' => '9606',
                               'assembly' => 'GCA_000001405.15',
-                              'uri' => 'http://localhost/api/trackdb/rkaQgGf_TxW5xKElGkYQAA'
+                              'uri' => 'https://www.trackhubregistry.org/api/trackdb/rkaQgGf_TxW5xKElGkYQAA'
                             },
                             {
                               'species' => '9606',
                               'assembly' => 'GCA_000001405.1',
-                              'uri' => 'http://localhost/api/trackdb/-IT64jDKRXiQN_Blhjy4Uw'
+                              'uri' => 'https://www.trackhubregistry.org/api/trackdb/-IT64jDKRXiQN_Blhjy4Uw'
                             }
                           ],
         'shortLabel' => 'Ensembl Regulatory Build',
@@ -306,7 +306,7 @@
 	    <li>hub is not compliant with the UCSC hub specs</li>
 	    <li>hub is not available or cannot be correctly parsed</li>
 	    <li>one of the hub trackDb configurations cannot be translated to <a href="[% c.uri_for('/docs/api/modelling') %]">valid JSON</a></li>
-	    <li>one of the hub genome subdirectory names are not valid UCSC DB names, or cannot be translated to an existing NCBI assembly identifier (e.g. assembly accession + version, e.g. <a target="_blank" href="http://www.ncbi.nlm.nih.gov/assembly/GCF_000001405.13/">GCA_000001405.1</a>)
+	    <li>one of the hub genome subdirectory names are not <a target="_blank" href="https://genome.ucsc.edu/FAQ/FAQreleases.html#release1">valid UCSC DB names</a>, or cannot be translated to an existing NCBI assembly identifier (e.g. assembly accession + version, e.g. <a target="_blank" href="http://www.ncbi.nlm.nih.gov/assembly/GCF_000001405.13/">GCA_000001405.1</a>)
 	  </ul>
 	  See <a href="[% c.uri_for('/docs/api/registration/workflow/thregister#errors') %]">What can possibly go wrong</a> for more details, in particular about the error messages.
 	</td>

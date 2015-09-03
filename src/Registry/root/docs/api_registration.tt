@@ -65,7 +65,7 @@
 
   <h4 id=""><a href="[% c.uri_for('/docs/api/registration/workflow/thlist') %]">Retrieve the list of registered TrackHubs</a></h4>
   <p>
-    You've registered some of your public track hubs. You want to know which ones by retrieving the list of registered track hubs from the Registry.
+    You've submitted some of your public track hubs to the Registry. You want to know which ones by retrieving the list of registered track hubs from the Registry.
   </p>
 
   <h4 id=""><a href="[% c.uri_for('/docs/api/registration/workflow/register') %]">Delete registered TrackHubs</a></h4>

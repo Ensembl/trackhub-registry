@@ -68,11 +68,17 @@
     You've submitted some of your public track hubs to the Registry. You want to know which ones by retrieving the list of registered track hubs from the Registry.
   </p>
 
-  <h4 id=""><a href="[% c.uri_for('/docs/api/registration/workflow/register') %]">Delete registered TrackHubs</a></h4>
+  <h4 id=""><a href="[% c.uri_for('/docs/api/registration/workflow/thupdate') %]">Update registered TrackHubs</a></h4>
+  <p>
+    You've updated the structure or content of one of your remote public hubs registered with us. You obviously want the changes to appear on the Registry as well.
+  </p>
 
+  <h4 id=""><a href="[% c.uri_for('/docs/api/registration/workflow/register') %]">Delete registered TrackHubs</a></h4>
+  <p>
+  </p>
   <h4 id="logout"><a href="[% c.uri_for('/docs/api/registration/workflow/logout') %]">Log out</a></h4>
   <p>
-    Terminate the client session.
+    This terminates the client session and ends any possible workflow of interaction between the client and the Registration API.
   </p>
   
   </div>

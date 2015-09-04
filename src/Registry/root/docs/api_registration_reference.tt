@@ -96,6 +96,19 @@
     }
   </pre>
 
+  <h4>HTTP Status Codes</h4>
+  <table class="table" style="width: auto;">
+    <tbody>
+      <tr>
+        <th>Code</th><th>Description</th><th>Reason</th>
+      </tr>
+      <tr><td>200</td><td>OK</td><td>Request successful</td></tr>
+      <tr><td>401</td><td>Unauthorized</td><td>The request requires user authentication</td></tr>
+      <tr><td>500</td><td>Internal Server Error</td><td>Request cannot be fulfilled due to unexpected condition</td></tr>
+      <tr><td>503</td><td>Service Unavailable</td><td>Request cannot be fulfilled due to temporary overloading or maintenance of the server</td></tr>
+    </tbody>
+  </table>
+
   <h3 id="get_trackhub">GET /api/trackhub</h3>
   <p>
     Returns the set of registered track data hubs for the given user.
@@ -316,12 +329,15 @@
       <tr>
         <th>Code</th><th>Description</th><th>Reason</th>
       </tr>
-      <tr><td>200</td><td>OK</td><td>Request successful</td></tr>
+      <tr><td>201</td><td>Created</td><td>Request successful, hub trackDb entities created</td></tr>
       <tr>
         <td>400</td><td>Bad Request</td>
 	<td>
 	  Request cannot be fulfilled by the Registry. Possible reasons:
 	  <ul>
+	    <li>empty request body</li>
+	    <li>invalid JSON schema version</li>
+	    <li>request body does not specify remote hub URL</li>
 	    <li>hub is not compliant with the UCSC hub specs</li>
 	    <li>hub is not available or cannot be correctly parsed</li>
 	    <li>one of the hub trackDb configurations cannot be translated to <a href="[% c.uri_for('/docs/api/modelling') %]">valid JSON</a></li>
@@ -415,6 +431,27 @@
     }
   </pre>
 
+  <h4>HTTP Status Codes</h4>
+  <table class="table" style="width: auto;">
+    <tbody>
+      <tr>
+        <th>Code</th><th>Description</th><th>Reason</th>
+      </tr>
+      <tr><td>200</td><td>OK</td><td>Request successful</td></tr>
+      <tr><td>400</td><td>Bad Request</td><td>trackDb entity does not belong to (i.e. has not been registered by) the user</td></tr
+      <tr><td>401</td><td>Unauthorized</td><td>The request requires user authentication</td></tr>
+      <tr><td>404</td><td>Not Found</td><td>Couldn't find the trackDb entity with the given ID</td></tr>
+      <tr><td>500</td><td>Internal Server Error</td><td>Request cannot be fulfilled due to unexpected condition</td></tr>
+      <tr><td>503</td><td>Service Unavailable</td><td>Request cannot be fulfilled due to temporary overloading or maintenance of the server</td></tr>
+      <tr>
+      </tr>
+      <tr>
+      </tr>
+      <tr>
+      </tr>
+    </tbody>
+  </table>
+
   <h3 id="post_trackdb_create">POST /api/trackdb/create</h3>
   <p>
     Register a new trackDb with the Registry. The message body specifies the document representing the trackDb in the Registry as a JSON object.
@@ -495,6 +532,37 @@
     }
   </pre>
 
+  <h4>HTTP Status Codes</h4>
+  <table class="table" style="width: auto;">
+    <tbody>
+      <tr>
+        <th>Code</th><th>Description</th><th>Reason</th>
+      </tr>
+      <tr><td>201</td><td>Created</td><td>Request successful, hub trackDb entities created</td></tr>
+      <tr>
+        <td>400</td><td>Bad Request</td>
+	<td>
+	  Request cannot be fulfilled by the Registry. Possible reasons:
+	  <ul>
+	    <li>empty request body</li>
+	    <li>invalid JSON schema version</li>
+	    <li>trackDb with the same hub and assembly exists</li>
+	    <li>trackDb configuration cannot be translated to <a href="[% c.uri_for('/docs/api/modelling') %]">valid JSON</a></li>
+	  </ul>
+	</td>
+      </tr>
+      <tr><td>401</td><td>Unauthorized</td><td>The request requires user authentication</td></tr>
+      <tr><td>500</td><td>Internal Server Error</td><td>Request cannot be fulfilled due to unexpected condition</td></tr>
+      <tr><td>503</td><td>Service Unavailable</td><td>Request cannot be fulfilled due to temporary overloading or maintenance of the server</td></tr>
+      <tr>
+      </tr>
+      <tr>
+      </tr>
+      <tr>
+      </tr>
+    </tbody>
+  </table>
+
   <h3 id="put_trackdb">PUT /api/trackdb/:id</h3>
   <p>
     Update registered trackDb with the given ID.
@@ -556,6 +624,38 @@
 	  ...
     }
   </pre>
+
+  <h4>HTTP Status Codes</h4>
+  <table class="table" style="width: auto;">
+    <tbody>
+      <tr>
+        <th>Code</th><th>Description</th><th>Reason</th>
+      </tr>
+      <tr><td>200</td><td>OK</td><td>Request successful</td></tr>
+      <tr>
+        <td>400</td><td>Bad Request</td>
+	<td>
+	  Request cannot be fulfilled by the Registry. Possible reasons:
+	  <ul>
+	    <li>empty request body</li>
+	    <li>trackDb entity does not belong to (i.e. has not been registered by) the user</li>
+	    <li>trackDb configuration cannot be translated to <a href="[% c.uri_for('/docs/api/modelling') %]">valid JSON</a></li>
+	    <li>a trackDb entity with the same hub and assembly exists</li>
+	  </ul>
+	</td>
+      </tr>
+      <tr><td>401</td><td>Unauthorized</td><td>The request requires user authentication</td></tr>
+      <tr><td>404</td><td>Not found</td><td>trackDb with the given ID does not exist</td></tr>
+      <tr><td>500</td><td>Internal Server Error</td><td>Request cannot be fulfilled due to unexpected condition</td></tr>
+      <tr><td>503</td><td>Service Unavailable</td><td>Request cannot be fulfilled due to temporary overloading or maintenance of the server</td></tr>
+      <tr>
+      </tr>
+      <tr>
+      </tr>
+      <tr>
+      </tr>
+    </tbody>
+  </table>
 
   <h3 id="delete_trackdb">DELETE /api/trackdb/:id</h3>
   <p>
@@ -675,6 +775,19 @@
     ...
     { "message": "Successfully logged out" }
   </pre>
+
+  <h4>HTTP Status Codes</h4>
+  <table class="table" style="width: auto;">
+    <tbody>
+      <tr>
+        <th>Code</th><th>Description</th><th>Reason</th>
+      </tr>
+      <tr><td>200</td><td>OK</td><td>Request successful</td></tr>
+      <tr><td>401</td><td>Unauthorized</td><td>The request requires user authentication</td></tr>
+      <tr><td>500</td><td>Internal Server Error</td><td>Request cannot be fulfilled due to unexpected condition</td></tr>
+      <tr><td>503</td><td>Service Unavailable</td><td>Request cannot be fulfilled due to temporary overloading or maintenance of the server</td></tr>
+    </tbody>
+  </table>
 
   </div>
 </div>

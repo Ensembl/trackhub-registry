@@ -81,6 +81,17 @@
     }
   </pre>
 
+  <h4>HTTP Status Codes</h4>
+  <table class="table" style="width: auto;">
+    <tbody>
+      <tr>
+        <th>Code</th><th>Description</th><th>Reason</th>
+      </tr>
+      <tr><td>200</td><td>OK</td><td>Request successful</td></tr>
+      <tr><td>500</td><td>Internal Server Error</td><td>Request cannot be fulfilled due to unexpected condition</td></tr>
+      <tr><td>503</td><td>Service Unavailable</td><td>Request cannot be fulfilled due to temporary overloading or maintenance of the server</td></tr>
+    </tbody>
+  </table>
 
   <h3 id="ping">GET /api/info/ping</h3>
   <p>
@@ -124,6 +135,19 @@
     }
   </pre>
 
+  <h4>HTTP Status Codes</h4>
+  <table class="table" style="width: auto;">
+    <tbody>
+      <tr>
+        <th>Code</th><th>Description</th><th>Reason</th>
+      </tr>
+      <tr><td>200</td><td>OK</td><td>Request successful</td></tr>
+      <tr><td>410</td><td>Gone</td><td>Storage server unavailable</td></tr>
+      <tr><td>500</td><td>Internal Server Error</td><td>Request cannot be fulfilled due to unexpected condition</td></tr>
+      <tr><td>503</td><td>Service Unavailable</td><td>Request cannot be fulfilled due to temporary overloading or maintenance of the server</td></tr>
+    </tbody>
+  </table>
+
   <h3 id="species">GET /api/info/species</h3>
   <p>
     Returns the set of species the TrackHubs registered in the Registry contain data for.
@@ -163,6 +187,18 @@
     HTTP/1.0 200 OK
     ["Homo sapiens","Danio rerio","Mus musculus","Arabidopsis thaliana","Brassica rapa","Drosophila simulans","Ricinus communis"]
   </pre>
+
+  <h4>HTTP Status Codes</h4>
+  <table class="table" style="width: auto;">
+    <tbody>
+      <tr>
+        <th>Code</th><th>Description</th><th>Reason</th>
+      </tr>
+      <tr><td>200</td><td>OK</td><td>Request successful</td></tr>
+      <tr><td>500</td><td>Internal Server Error</td><td>Request cannot be fulfilled due to unexpected condition</td></tr>
+      <tr><td>503</td><td>Service Unavailable</td><td>Request cannot be fulfilled due to temporary overloading or maintenance of the server</td></tr>
+    </tbody>
+  </table>
 
   <h3 id="assemblies">GET /api/info/assemblies</h3>
   <p>
@@ -204,6 +240,17 @@
     {"Brassica rapa":["GCA_000309985.1"],"Homo sapiens":["GCA_000001405.1","GCA_000001405.15"],"Arabidopsis thaliana":["GCA_000001735.1"],"Danio rerio":["GCA_000002035.2","GCA_000002035.3"],"Ricinus communis":["GCA_000151685.2"],"Drosophila simulans":["GCA_000754195.2"],"Mus musculus":["GCA_000001635.1","GCA_000001635.2"]}
   </pre>
 
+  <h4>HTTP Status Codes</h4>
+  <table class="table" style="width: auto;">
+    <tbody>
+      <tr>
+        <th>Code</th><th>Description</th><th>Reason</th>
+      </tr>
+      <tr><td>200</td><td>OK</td><td>Request successful</td></tr>
+      <tr><td>500</td><td>Internal Server Error</td><td>Request cannot be fulfilled due to unexpected condition</td></tr>
+      <tr><td>503</td><td>Service Unavailable</td><td>Request cannot be fulfilled due to temporary overloading or maintenance of the server</td></tr>
+    </tbody>
+  </table>
 
   <h3 id="trackhubs">GET /api/info/trackhubs</h3>
   <p>
@@ -316,6 +363,18 @@
   }
 ]
   </pre>
+
+  <h4>HTTP Status Codes</h4>
+  <table class="table" style="width: auto;">
+    <tbody>
+      <tr>
+        <th>Code</th><th>Description</th><th>Reason</th>
+      </tr>
+      <tr><td>200</td><td>OK</td><td>Request successful</td></tr>
+      <tr><td>500</td><td>Internal Server Error</td><td>Request cannot be fulfilled due to unexpected condition</td></tr>
+      <tr><td>503</td><td>Service Unavailable</td><td>Request cannot be fulfilled due to temporary overloading or maintenance of the server</td></tr>
+    </tbody>
+  </table>
 
   </div>
 </div>

@@ -437,7 +437,7 @@ sub trackdb_PUT {
   # cannot update the doc if:
   # - the doc with that ID doesn't exist
   # - it doesn't belong to the user
-  return $self->status_bad_request($c, message => "Cannot update: document (ID: $doc_id) does not exist")
+  return $self->status_not_found($c, message => "Cannot update: document (ID: $doc_id) does not exist")
     unless $c->stash()->{trackhub};
 
   return $self->status_bad_request($c, message => sprintf "Cannot update: document (ID: %d) does not belong to user %s", $doc_id, $c->stash->{user})

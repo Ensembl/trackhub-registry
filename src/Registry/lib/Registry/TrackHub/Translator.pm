@@ -221,8 +221,8 @@ $synonym2assembly =
    hg17 => 'GCF_000001405.11', # 'NCBI35',
    hg16 => 'GCF_000001405.10', # 'NCBI34',
    # alpaca
-   vicPac2 => 'GCA_000164845.2', # 'Vicugna_pacos-2.0.1',
-   vicPac1 => 'GCA_000164845.1', # 'VicPac1.0', # no NCBI syn
+   vicPac2 => 'GCA_000164845.2', # 'Vicugna_pacos-2.0.1' 
+   vicPac1 => 'GCA_000164845.1', # 'VicPac1.0', # no NCBI syn 
    # armadillo
    dasNov3 => 'GCA_000208655.2', # 'Dasnov3.0',
    # bushbaby
@@ -269,12 +269,12 @@ $synonym2assembly =
    cavPor3 => 'GCA_000151735.1', # 'Cavpor3.0',
    # hedgehog
    eriEur2 => 'GCA_000296755.1', # 'EriEur2.0', # no syn on NCBI
-   # eriEur1 => 'Draft_v1', # no Draft_v1 entry in NCBI
+   eriEur1 => 'GCA_000181395.1', # ASM18139v1 (no Draft_v1 entry in NCBI)
    # horse
    equCab2 => 'GCA_000002305.1', # 'EquCab2.0',
    # equCab1 => 'EquCab1.0', # no EquCab1.0 entry on NCBI
-   # kangaroo rat (Dipodomys merriami), not found
-   # dipOrd1 => 'DipOrd1.0',
+   # kangaroo rat (Dipodomys merriami not found, refer to Dipodomys ordii instead
+   dipOrd1 => 'GCA_000151885.1', # DipOrd1.0
    # manatee
    triMan1 => 'GCA_000243295.1', # 'TriManLat1.0',
    # marmoset
@@ -340,7 +340,7 @@ $synonym2assembly =
    # oviAri1 => '', # not found
    # shrew
    sorAra2 => 'GCA_000181275.2', # 'SorAra2.0',
-   # sorAra1 => 'SorAra1.0', # not found
+   sorAra1 => 'GCA_000181275.1', # ASM18127v1, 'SorAra1.0' not found
    # sloth
    choHof1 => 'GCA_000164785.1', # 'ChoHof1.0',
    # squirrel
@@ -396,7 +396,7 @@ $synonym2assembly =
    # painted turtle
    chrPic1 => 'GCA_000241765.1', # 'Chrysemys_picta_bellii-3.0.1',
    # stickleback
-   # gasAcu1 => '', # not found
+   gasAcu1 => 'GCA_000180675.1', # ASM18067v1
    # tetraodon
    # tetNig2 => '',
    tetNig1 => 'GCA_000180735.1', # 'ASM18073v1',
@@ -663,13 +663,93 @@ $synonym2assembly =
 #
 # http://genome-euro.ucsc.edu/cgi-bin/hgHubConnect?hubUrl=http%3A%2F%2Fngs.sanger.ac.uk%2Fproduction%2Fensembl%2Fregulation%2Fhub.txt&db=hg38&hgHub_do_redirect=on&hgHubConnect.remakeTrackHub=on
 #
+# See also http://genome.ucsc.edu/goldenPath/help/hgTrackHubHelp.html#Session
+#
 # EnsEMBL
 #
 # map the assembly synonym to the current (grch37 in case of human and hg19) or an archive web site,
 # based on the list here:
-#  http://www.ensembl.org/info/website/archives/assembly.html
+# http://www.ensembl.org/info/website/archives/assembly.html
 #
-
+# EnsEMBL supported assemblies since v76 (proper track hub support)
+#
+# Note: info, e.g. accession can derived from meta tables
+#
+# species, Assembly name, Accession, UCSC name
+#
+# Alpaca, VicPac1.0, GCA_000164845.1, vicPac1
+# Amazon molly, Poecilia_formosa-5.1.2, GCA_000485575.1, none
+# Anole lizard, Anocar2.0, anoCar2, GCA_000090745.2
+# Armadillo, Dasnov3.0, GCA_000208655.2, dasNov3
+# Bushbaby, OtoGar3, GCA_000181295.3, otoGar3
+# Ciona intestinalis, KH, GCA_000224145.2, none
+# Ciona savignyi, CSAV 2.0, ?, none
+# Caenorhabditis elegans, WBcel215, GCA_000002985.2, ce10
+# Cat, Felis_catus_6.2, GCA_000181335.2, felCat5
+# Cave fish, Astyanax_mexicanus-1.0.2, GCA_000372685.1, none
+# Chicken, Gallus_gallus-4.0, GCA_000002315.2, galGal4
+# Chimpanzee, Pan_troglodytes-2.1.4 (CHIMP2.1.4), GCA_000001515.4, panTro4
+# Chinese softshell turtle, PelSin_1.0, GCA_000230535.1, pelSin1
+# Cod, GadMor_May2010, GCA_000231765.1, gadMor1
+# Coelacanth, LatCha1, GCA_000225785.1, latCha1
+# Cow, Bos_taurus_UMD_3.1 (UMD3.1), GCA_000003055.3, bosTau6
+# Dog, CanFam3.1, GCA_000002285.2, canFam3
+# Dolphin, turTru1, ?, ?
+# Duck, BGI_duck_1.0, GCA_000355885.1, none (anaPla1 in http://hgwdev.cse.ucsc.edu/~jcarmstr/crocBrowserRC2/hub.txt but assembly hub)
+# Elephant, Loxafr3.0, GCA_000001905.1, loxAfr3
+# Ferret, MusPutFur1.0, GCA_000215625.1, musFur1
+# Flycatcher, FicAlb_1.4, GCA_000247815.1, none
+# Fruitfly, Release 6 plus ISO1 MT (BDGP6), GCA_000001215.4, dm6
+# Fruitfly, Release 5 (BDGP 5), GCA_000001215.2, dm3
+# Fugu, FUGU 4.0, ?, fr2
+# Gibbon, Nleu1.0, GCA_000146795.1, nomLeu1
+# Gorilla, gorGor3.1, GCA_000151905.1, gorGor3
+# Guinea Pig, Cavpor3.0 (cavPor3), GCA_000151735.1, cavPor3
+# Hedgehog, ASM18139v1 (eriEur1), GCA_000181395.1, eriEur1
+# Horse, EquCab2.0 (Equ Cab 2), GCA_000002305.1, equCab2
+# Human, GRCh38, GCA_000001405.15, hg38
+# Human, GRCh37, GCA_000001405.1, hg19
+# Hyrax, Procap1.0 (proCap1), GCA_000152225.1, proCap1
+# Kangaroo rat, DipOrd1.0 (dipOrd1), GCA_000151885.1, dipOrd1
+# Lamprey, Petromyzon_marinus-7.0 (Pmarinus_7.0), GCA_000148955.1, petMar2
+# Lesser hedgehog tenrec, EchTel2.0, GCA_000313985.1, echTel2
+# Macaque, CR_1.0 (MMUL 1.0), GCA_000230795.1, rheMac3
+# Marmoset, C_jacchus3.2.1, ?, ? # Callithrix_jacchus-v3.2, GCA_000004665.1, calJac3 instead?
+# Medaka, ASM31367v1 (HdrR), GCA_000313675.1, none
+# Megabat, pteVam1 (Ptevap1.0), GCA_000151845.1, pteVam1
+# Microbat, Myoluc2.0, GCA_000147115.1, myoLuc2
+# Mouse, GRCm38, GCA_000001635.2, mm10
+# Mouse lemur, ASM16544v1 (micMur1), GCA_000165445.1, micMur1
+# Olive baboon, PapAnu2.0 (Panu_2.0), GCA_000264685.1, papAnu2
+# Opossum, monDom5 (MonDom5), GCF_000002295.2, monDom5
+# Orangutan, PPYG2, ?, ?
+# Panda, ailMel1 (AilMel_1.0), GCA_000004335.1, ailMel1
+# Pig, Sscrofa10.2, GCA_000003025.4, susScr3
+# Pika, OchPri2.0 (ASM16482v1), GCA_000164825.1, ochPri2
+# Platyfish, Xipmac4.4.2 (Xiphophorus_maculatus-4.4.2), GCA_000241075.1, none
+# Platypus, OANA5 (Ornithorhynchus_anatinus-5.0.1), GCF_000002275.2, ornAna1
+# Rabbit, OryCun2.0, GCA_000003625.1, oryCun2
+# Rat, Rnor_6.0, GCA_000001895.4, rn6
+# Rat, Rnor_5.0, GCA_000001895.3, rn5
+# Saccharomyces cerevisiae, R64-1-1, GCA_000146045.2, sacCer3
+# Sheep, Oar_v3.1, GCA_000298735.1, oviAri3
+# Shrew, sorAra1 (ASM18127v1), GCA_000181275.1, sorAra1
+# Sloth, choHof1 (ChoHof1.0), GCA_000164785.1, choHof1
+# Spotted gar, LepOcu1, GCA_000242695.1, none
+# Squirrel, spetri2 (SpeTri2.0), GCA_000236235.1, speTri2
+# Stickleback, BROAD S1 (ASM18067v1), GCA_000180675.1, gasAcu1
+# Tarsier, tarSyr1 (Tarsyr1.0), GCA_000164805.1, tarSyr1
+# Tasmanian devil, Devil_ref v7.0, GCA_000189315.1, sarHar1
+# Tetraodon, TETRAODON 8.0, ?, ?
+# Tilapia, Orenil1.0, GCA_000188235.1, none
+# Tree Shrew, tupBel1, ?, ?
+# Turkey, Turkey_2.01, GCA_000146605.2, melGal1
+# Vervet-AGM, ChlSab1.1, GCA_000409795.2, none
+# Wallaby, Meug_1.0, ? , ? # have Meug_1.1 on NCBI instead
+# Xenopus, JGI 4.2 (v4.2), GCA_000004195.1, xenTro3
+# Zebra Finch, taeGut3.2.4 (Taeniopygia_guttata-3.2.4), GCA_000151805.2, taeGut1
+# Zebrafish, GRCz10, GCA_000002035.3, danRer10
+# Zebrafish, Zv9, GCA_000002035.2, danRer7
 #
 # Add species/assembly info
 #

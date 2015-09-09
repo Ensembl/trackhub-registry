@@ -35,7 +35,7 @@
       Using this API, you can:
       <ul>
         <li>register a track data hub with the registry;</li>
-	<li>list the all your registered track hubs or data bases;</li>
+	<li>list all your registered track hubs or data bases;</li>
 	<li>get/update/delete a particular track data base.</li>
       </ul>
     </p>

@@ -75,39 +75,39 @@
 
     <h4 id="status">Data Tracks Status</h5>
     <p>
-      The way each search result summary is displayed reflects the status of the TrackHub as it is known by the Registry. This is described in the following:
+      For each search result summary, the status, as known by the Registry, is displayed. Status is one of the following:
     </p>
     <p>
       <strong>"OK Status"</strong><br/>
-      This status means the test perfomed by Registry to check whether the remote track data for the genome assembly supported by the TrackHub is available, was successful. The search result will have, in this case, a blue border and will show the button to load the data in blue, as it is shown in the image above.
+      This status means the remote track data is available. It is the result of a regular check performed by the Registry on the genome assembly supported by the Trackhub. In this case, the search result will have a blue border and will show the button to load the data in blue, as shown in the image above.
     </p>
 
     <p>
       <strong>"Unknow Status"</strong><br/>
-      A TrackHub with unknown status means the Registry has not checked whether remote track data for the genome assembly supported by the TrackHub is available. The search result will have, in this case, a yellow border and will show a yellow label with the text "Unknown status", as it is shown in the figure below.
+      This status means the remote track data has not been checked. The search result will have, in this case, a yellow border and will show a yellow label with the text "Unknown status", as shown in the figure below.
     </p>
     <p><img src="/static/img/unknow_status_result.png" /></p>
     <p>
-      It is still possible to load the tracks into a genome browser for display (though it's not guaranteed it will work), and show more detailed information.
+      It is still possible to load the tracks into a genome browser for display (though it iss not guaranteed it will work) and show more detailed information.
     </p>
     <p>
       <strong id="kostatus">"Unavailable Data"</strong><br/>
-      In this case, the Registry run a test on the TrackHub and determined some or all of the remote track data for the supported genome assembly is not available. The search result will have, in this case, a red border and will show a label of the same color with the text "Remote Data Unavailable", as it is shown in the figure below.
+      This status meants some remote track data is not available. The search result will have, in this case, a red border and will show a label of the same color with the text "Remote Data Unavailable", as it is shown in the figure below.
     </p>
     <p><img src="/static/img/unavailable_status_result.png" /></p>
     <p>
-      You cannot, in this case, load the tracks into a genome browser, as it wouldn't work and would be a waste of time and computational resources. Anyway, you can still view more detailed information about the hub which will contain in this case a report of the faulty tracks. See <a href="#view">Viewing more information</a>.
+      In this case, the upload option is not available and it is not possible to view tracks in a genome browser. It is still possible to view more detailed information about the hub, see See <a href="#view">Viewing more information</a>. The report will also contain details on the faulty tracks.
     </p>
 
     <h4 id="load">Loading TrackHubs into Genome Browsers</h4>
     <p>
-      At the right hand side of each search result there's a button which allows to view the TrackHub data directly into an available genome browser.
+      A button on the right hand side of each search result allows the user to view the TrackHub data directly into an available genome browser.
     </p>
     <p>
       <img src="/static/img/load_result.png" />
     </p>
     <p>
-      By clicking on it, a dropdown will appear showing available choices, e.g. "Ensembl", to load the data in the Ensembl browser, or "UCSC" to view the same data on the UCSC genome browser. Upon selection, another page will open with the connection established between the genome browser and the TrackHub.
+      Clicking on it will display a dropdown with the available choices, e.g. "Ensembl" or "UCSC". Upon selection, another page will open with the connection established between the genome browser and the TrackHub.
     </p>
 
     <h4 id="view">Viewing more information</h4>
@@ -118,25 +118,25 @@
       <img src="/static/img/view_more_info.png" />
     </p>
     <p>
-      You'll be presented three panels, as it shown in the image above. 
+      You'll be presented three panels, as shown in the image above. 
     </p>
     <p>
-      One is about general information about the track data base: the total number of tracks related to the genome assembly, the number linked to remote data, the data type of the tracks (can be one of "genomics", "epigenomics", "transcriptomics", "proteomics"), the file types of the track data (e.g. bigWig, bigBED, VCF, BAM). Finally, the panel contains a button which you can click to access directly the remote genome assembly <a href="http://genome.ucsc.edu/goldenPath/help/trackDb/trackDbHub.html" target="_blank">trackDB configuration file</a>.  
+      The first panel displays general information about the track data base: the total number of tracks related to the genome assembly, the number linked to remote data, the data type of the tracks (can be one of "genomics", "epigenomics", "transcriptomics", "proteomics"), the file types of the track data (e.g. bigWig, bigBED, VCF, BAM). The panel also contains a button allowing direct access to the remote genome assembly <a href="http://genome.ucsc.edu/goldenPath/help/trackDb/trackDbHub.html" target="_blank">trackDB configuration file</a>.  
     </p>
     <p>
-      Another panel, Hub, reports information about the TrackHub supporting the genome assembly, showing its attributes as they are originally defined in the track hub property file and with a button that, if clicked, will connect to its remote location and show the file.
+      The second panel, Hub, reports information about the TrackHub supporting the genome assembly, showing its attributes as they are originally defined in the track hub property file. The 'View' buttonp provides connection to the remote location and the original file.
     </p>
     <p>
-      Finally, there's a panel showing information about the species with a link, Taxonomy, which will lead you to the page of NCBI web site containing taxonomy information about the organism. There's also general information the genome assembly the TrackHub provides data about; the accession number is a link to the corresponding assembly page on the NCBI web site.
+      The last panel shows information about the species with a link, Taxonomy, leading to a page on the NCBI web site displaying taxonomy information about the organism. There is also general information about the genome assembly; the accession number is a link to the corresponding assembly page on the NCBI web site.
     </p>
     <p>
-      In case some or all the <a href="#kostatus">data tracks are unavailable</a>, you'll be presented a panel at the bottom with a detailed report about the failing tracks, as in the example below:
+      If some or all the <a href="#kostatus">data tracks are unavailable</a>, a panel at the bottom of the panel will show a detailed report about the failing tracks, as in the example below:
     </p>
     <p>
       <img src="/static/img/error_log.png" />
     </p>
     <p>
-      For each unavailable track, its name and remote URL will be shown, together with a description of the detected error.
+      For each unavailable track, name and remote URL will be shown, together with a description of the detected error.
     </p>
 
   </div>

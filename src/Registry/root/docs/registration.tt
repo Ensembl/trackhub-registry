@@ -29,10 +29,10 @@
     <div class="alert alert-info alert-dismissible" role="alert">
       <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
       <p>
-        This section of the documentation concerns you only if you create TrackHubs and want to register them with the Registry.
+        This section of the documentation is about creating Trackhubs and registering them with the Registry.
       </p>
       <p>
-        Go to <a href="[% c.uri_for('/docs/search') %]">search documentation</a> if you're just looking to find interesting data hubs.
+        Go to <a href="[% c.uri_for('/docs/search') %]">search documentation</a> if you only want to explore interesting data hubs.
       </p>
     </div>
 
@@ -42,11 +42,11 @@
     </p>
     
     <p>
-      The client registration interface captures basic contact information (i.e. first/last name, institute, email) of the person responsible of managing the track data hubs with the registry, together with credentials necessary to use the REST API to register and update track data hubs with the registry, and to sign in and access the registry web dashboard. The interface also asks to configure some options that control automatic track hub monitoring by the registry, which is explained here.
+      The client registration interface captures basic contact information (i.e. first/last name, institute, email) of the person responsible for managing the track data hubs with the registry. It provides credentials necessary to use the REST API to register and update track data hubs with the registry, and to sign in and access the registry web dashboard. The interface also allows to configure some options that control automatic track hub monitoring by the registry, explained here.
     </p>
 
     <p>
-      Upon registration, you're immediately logged in into the system and presented the <a href="[% c.uri_for('/docs/dashboard') %]">dashboard</a>.
+      Upon registration, you are immediately logged in into the system and the <a href="[% c.uri_for('/docs/dashboard') %]">dashboard</a> is displayed.
     </p>
   </div>
 </div>

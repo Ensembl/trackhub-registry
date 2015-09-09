@@ -42,7 +42,7 @@
     
     <h4 id="wildcards">Wildcards</h4>
     <p>
-      Sometimes it may be useful to match recotrds based on a query pattern. Wildcard searches can be run on individual terms, using ? to replace a single character, and * to replace zero or more characters:
+      Sometimes it may be useful to match records based on a query pattern. Wildcard searches can be run on individual terms, using ? to replace a single character, and * to replace zero or more characters:
       <pre>GRCh3? rna*</pre>
       Be aware that wildcard queries, especially those with many terms, can use an enormous amount of memory and perform very badly.
     </p>
@@ -59,13 +59,13 @@
       By default, all terms are optional, as long as one term matches. A search for <mark>foo bar baz</mark> will find any document that contains one or more of <mark>foo</mark> or <mark>bar</mark> or <mark>baz</mark>. Alternatively, all the familiar AND, OR  and NOT operators (also written &&, || and !) can be used. Using AND instead of the default OR operator in the previous query would force all terms to be required. 
     </p>
     <p>
-      Other boolear operators can be used in the query string itself to provide more control. The preferred operators are + (this term must be present) and - (this term must not be present). All other terms are optional. For example, this query:
+      Other boolean operators can be used in the query string itself to provide more control. The preferred operators are + (this term must be present) and - (this term must not be present). All other terms are optional. For example, this query:
       <pre>quick brown +fox -news</pre>
       States that:
       <ul>
         <li>fox must be present</li>
     	<li>news must not be present</li>
-    	<li>quick and brown are optional — their presence increases the relevance</li>
+    	<li>quick and brown are optional — their presence increases the relevance</li>
       </ul>
     </p>
     <p>
@@ -80,7 +80,7 @@
 
     <h4 id="fuzzy">Fuzzy Operator</h4>
     <p>
-      We can search for terms that are similar to, but not exactly like our search terms, using the fuzzy operator:
+      We can search for terms that are similar to, but not exactly like, our search terms, using the fuzzy operator:
       <pre>quikc~ brwn~ foks~</pre>
       This uses the Damerau-Levenshtein distance to find all terms with a maximum of two changes, where a change is the insertion, deletion or substitution of a single character, or transposition of two adjacent characters.
     </p>

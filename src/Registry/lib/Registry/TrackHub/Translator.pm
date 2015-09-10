@@ -215,7 +215,7 @@ $synonym2assembly =
    # Mammals
    #
    # human
-   hg38 => 'GCA_000001405.15', # 'GRCh38',
+   hg38 => 'GCA_000001405.15', # 'GRCh38', E
    hg19 => 'GCA_000001405.1', # 'GRCh37',
    hg18 => 'GCF_000001405.12', #'NCBI36',
    hg17 => 'GCF_000001405.11', # 'NCBI35',
@@ -244,7 +244,7 @@ $synonym2assembly =
    # cow
    bosTau8 => 'GCA_000003055.5', # 'Bos_taurus_UMD_3.1.1', # no syn on NCBI
    bosTau7 => 'GCA_000003205.4', # 'Btau_4.6.1',
-   bosTau6 => 'GCA_000003055.3', # 'Bos_taurus_UMD_3.1', # no synonym reported by NCBI
+   bosTau6 => 'GCA_000003055.3', # 'Bos_taurus_UMD_3.1', # no synonym reported by NCBI and E, E
    bosTau4 => 'GCF_000003205.2', # 'Btau_4.0',
    bosTau3 => 'GCF_000003205.1', # 'Btau_3.1', # no synonym reported by NCBI
    # bosTau2 => 'Btau_2.0', # no Btau_2.0 entry in NCBI
@@ -385,7 +385,7 @@ $synonym2assembly =
    petMar2 => 'GCA_000148955.1', # 'Petromyzon_marinus-7.0',
    # petMar1 => '', # not found
    # lizard (Anolis carolinensis)
-   anoCar2 => 'GCA_000090745.2', # 'AnoCar2.0',
+   anoCar2 => 'GCA_000090745.2', # 'AnoCar2.0', E
    # anoCar1 => 'AnoCar1', # not found
    # medaka
    # oryLat2 => '', # not found
@@ -679,7 +679,7 @@ $synonym2assembly =
 #
 # Alpaca, VicPac1.0, GCA_000164845.1, vicPac1
 # Amazon molly, Poecilia_formosa-5.1.2, GCA_000485575.1, none
-# Anole lizard, Anocar2.0, anoCar2, GCA_000090745.2
+# Anole lizard, Anocar2.0, GCA_000090745.2, anoCar2 
 # Armadillo, Dasnov3.0, GCA_000208655.2, dasNov3
 # Bushbaby, OtoGar3, GCA_000181295.3, otoGar3
 # Ciona intestinalis, KH, GCA_000224145.2, none
@@ -750,6 +750,9 @@ $synonym2assembly =
 # Zebra Finch, taeGut3.2.4 (Taeniopygia_guttata-3.2.4), GCA_000151805.2, taeGut1
 # Zebrafish, GRCz10, GCA_000002035.3, danRer10
 # Zebrafish, Zv9, GCA_000002035.2, danRer7
+#
+#
+#
 #
 # Add species/assembly info
 #

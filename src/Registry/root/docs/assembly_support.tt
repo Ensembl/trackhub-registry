@@ -1,0 +1,37 @@
+<div class="row">
+  <div class="col-sm-12">
+    <ul class="breadcrumb">
+      <li><a href="/">Home</a></li>
+      <li class="active">Submit</li>
+    </ul>
+  </div>
+</div>
+
+<div class="page-header">
+  <h2>Supported Genome Assemblies</h2>
+</div>
+<div class="row">
+  <div class="col-sm-12">
+    <p>
+      The TrackHub Registry follows a policy compatible with the <a target="_blank" href="http://ensemblgenomes.org/info/about/legal/browser_agreement">Browser Genome Release Agreement</a> of only allowing the registration of track hubs with assemblies that have been submitted to the <a target="_blank" href="http://www.insdc.org/">INSDC</a> archives (<a target="_blank" href="http://www.ebi.ac.uk/ena">ENA</a>, <a target="_blank" href="http://www.ncbi.nlm.nih.gov/genbank/">GenBank</a> and <a target="_blank" href="http://www.ddbj.nig.ac.jp/">DDBJ</a>).
+    </p>
+    <p>
+      In order to allow for the use of ...
+    </p>
+    <p>
+    <table class="table" style="width: auto;">
+      <tbody>
+        <tr>
+          <th>Common Name</th><th>Scientific Name</th><th>Taxon ID</th><th>Assembly Name</th><th>INSDC Accession</th><th>UCSC synonym</th>
+        </tr>
+        <tr>
+	  <td></td><td></td><td></td><td></td><td></td><td></td>
+	</tr>
+	<tr>
+	  <td></td><td></td><td></td><td></td><td></td><td></td>
+	</tr>
+      </tbody>
+    </table>
+    </p>
+  </div>
+</div>

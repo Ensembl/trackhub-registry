@@ -53,7 +53,7 @@ sub api_registration_reference :Path('/docs/api/registration/reference') { }
 
 sub api_search :Path('/docs/api/search') { }
 
-
+sub assembly_support :Local { }
 =encoding utf8
 
 =head1 AUTHOR

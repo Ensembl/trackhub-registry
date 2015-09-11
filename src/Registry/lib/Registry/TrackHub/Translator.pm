@@ -788,8 +788,28 @@ sub _add_genome_info {
   #
   # unless ($assembly_id) {    
   # } 
-  die "Unable to find an NCBI assembly id from $assembly_syn"
-    unless defined $assembly_id;
+  # die "Unable to find an NCBI assembly id from $assembly_syn"
+  #   unless defined $assembly_id;
+  #
+  # Update: 
+  #   there's an intersection but there are differences between UCSC
+  #   and EnsEMBL supported species/assemblies. If we are to support
+  #   just UCSC, that would leave out a significant portion of genomes
+  #   which could be rendered (and are requested for TrackHub support)
+  #   in the EnsEMBL browser, e.g. EG plants, S.pombe, later could be
+  #   worms and others supported by EG.
+  #   Assembly hubs could be available but are currently not supported
+  #   by Ensembl, it would be just to provide a link to UCSC.
+  #   We want here to provide a mechanism complementary to assembly hubs
+  #   for situations where the data provider submits hubs for genome
+  #   assemblies not supported by UCSC but which are deposited in INSDC
+  #   archives (have an accession) and have a fair chance of being 
+  #   supported by Ensembl, which now covers a reasonable spectrum of
+  #   the vertebrate and non-vertebrate space.
+  #
+  #   
+  
+  
 
   #
   # Get species (tax id, scientific name, common name)

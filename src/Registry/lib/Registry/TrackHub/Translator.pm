@@ -806,8 +806,29 @@ sub _add_genome_info {
   #   archives (have an accession) and have a fair chance of being 
   #   supported by Ensembl, which now covers a reasonable spectrum of
   #   the vertebrate and non-vertebrate space.
-  #
+  #   The idea is to let the registry follow a policy compatible with 
+  #   the Browser Genome Release Agreement of only allowing the registration 
+  #   of track hubs with assemblies that have been submitted to the INSDC 
+  #   archives (ENA, GenBank and DDBJ). 
+  #   This means that it must be possible for any genome assembly name, 
+  #   whether it being a valid UCSC synonym or not, specified in a submitted 
+  #   trackhub, to map it to a valid INSDC accession.
+  #   The map provided for UCSC db names is only a partial solution, since
+  #   it does not cover INSDC deposited assemblies which are supported
+  #   by EnsEMBL. 
+  #   The strategy is to allow the submitters to follow three main assembly
+  #   name specification strategies:
   #   
+  #   1. UCSC db name
+  #   2. Ensembl assembly name
+  #   3. Map name -> INSDC accession
+  #   
+  #   2nd way allows submitters in ensembl to register their trackhubs and
+  #   its supported by consulting Ensembl and Ensembl Genomes meta tables
+  #   to see if there's an accession associated to the provided assembly
+  #   name.
+  #   3rd way is for when everything else fail, there's no other option
+  #   than to provide directly the accession.
   
   
 

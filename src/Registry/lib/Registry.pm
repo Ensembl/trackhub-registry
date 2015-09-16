@@ -67,6 +67,10 @@ __PACKAGE__->config(
 		    {
 		     traits => ['-RenderAsTTTemplate'],
 		    },
+		    static => 
+		    {
+		     ignore_extensions => [ qw/tmpl tt tt2 xhtml/ ],
+		    },
 		    # # the model (to index and search)
 		    # 'Model::Search' => 
 		    # {

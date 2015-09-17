@@ -16,6 +16,9 @@ Catalyst Controller.
 
 =cut
 
+###############
+# Search Docs #
+###############
 
 sub search :Local { }
 
@@ -23,11 +26,25 @@ sub results_page :Path('/docs/search/results') { }
 
 sub advanced_search :Path('/docs/search/advanced') { }
 
+######################
+# TH Management Docs #
+######################
+
+sub th_management_overview :Path('/docs/management/overview') { }
+
+sub th_management_submission :Path('/docs/management/submission') { }
+
+sub th_management_dashboard :Path('/docs/management/dashboard') { }
+
 sub registration :Local { }
 
 sub management :Local { }
 
 sub dashboard :Local { }
+
+#####################
+# Registry API Docs #
+#####################
 
 sub apis :Local { }
 
@@ -53,7 +70,12 @@ sub api_registration_reference :Path('/docs/api/registration/reference') { }
 
 sub api_search :Path('/docs/api/search') { }
 
+#############
+# Misc docs #
+#############
+
 sub assembly_support :Local { }
+
 =encoding utf8
 
 =head1 AUTHOR

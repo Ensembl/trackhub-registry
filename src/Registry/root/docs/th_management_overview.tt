@@ -1,0 +1,76 @@
+<!--<div class="page-header">-->
+<div class="row">
+  <div class="col-sm-12">
+    <ul class="breadcrumb">
+      <li><a href="/">Home</a></li>
+      <li><a>Docs</a></li>
+      <li class="active">TH Provider</li>
+    </ul>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-3" style="margin-top: 25px;">
+    <div id="search-sidebar-left">
+        <div class="panel panel-primary">
+	  <div class="panel-heading">TrackHub Management Docs</div>
+          <div class="panel-body">
+	    <ul class="nav nav-list">
+	      <li><a style="font-weight: bold;">Overview</a></li>
+	      <li><a href="[% c.uri_for('/docs/management/submission') %]">The Submission Process</a></li>
+	      <li><a href="[% c.uri_for('/docs/api/registration') %]">REST API</a></li>
+	      <li><a href="[% c.uri_for('/docs/management/dashboard') %]">Dashboard</a></li>
+	    </ul>
+          </div> 
+	</div>
+    </div> <!-- sidebar -->
+  </div>
+
+  <div class="col-sm-9" style="text-align: justify; text-justify: inter-word;">
+
+    <h2>Managing TrackHubs with the Registry - An Overview</h2>
+
+    <div class="alert alert-warning alert-dismissible" role="alert">
+
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <p>
+        This section of the documentation is for TrackHub creators who want to register their data hubs with the Registry.
+      </p>
+      <p>
+        Go to <a href="[% c.uri_for('/docs/search') %]">search documentation</a> if you only intend to explore interesting data hubs.
+      </p>
+    </div>
+
+    <h3 id="registration">Client Registration</h3>
+    <p>
+      You must have an account with the registry before submitting and managing any data. To create an account, go to the <a href="[% c.uri_for('/user/register') %]" target="_blank">registration page</a>.
+    </p>
+    
+    <p>
+      The client registration interface captures basic contact information (i.e. first/last name, institute, email) of the person responsible of managing the track data hubs with the registry, together with credentials necessary to use the REST API to register and update track data hubs with the registry, and to sign in and access the registry web dashboard. The interface also asks to configure some options that control automatic track hub monitoring by the registry, which is explained here.
+    </p>
+
+    <p>
+      Upon registration, you're immediately logged in into the system and presented the <a href="[% c.uri_for('/docs/management/dashboard') %]">dashboard</a>.
+    </p>
+
+    <h3 id="management">TrackHub Management</h3>
+    <p>
+      Once you <a href="[% c.uri_for('/user/register') %]" target="_blank">Sign Up</a>, you can start using the <a href="[% c.uri_for('/docs/api/registration') %]">Registration API</a>, which allows you to use RESTful workflows to manage your track data hubs with the Registry.
+    </p>
+    
+    <p>
+      Using this API, you can:
+      <ul>
+        <li>register a track data hub with the registry;</li>
+	<li>list the all your registered track hubs or data bases;</li>
+	<li>get/update/delete a particular track data base in the registry</li>
+      </ul>
+    </p>
+
+    <p>
+      Alternatively, you can use the <a href="[% c.uri_for('/docs/management/dashboard') %]">dashboard</a> on the registry web interface to query the status of your registered track hubs, or view and delete them from the registry.
+    </p>
+
+  </div>
+</div>

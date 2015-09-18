@@ -17,7 +17,7 @@
           <div class="panel-body">
 	    <ul class="nav nav-list">
 	      <li><a href="[% c.uri_for('/docs/management/overview') %]">Overview</a></li>
-	      <li><a href="[% c.uri_for('/docs/management/submission') %]">The Submission Process</a></li>
+	      <li><a href="[% c.uri_for('/docs/management/modelling') %]">Modelling TrackHubs</a></li>
 	      <li><a href="[% c.uri_for('/docs/api/registration') %]">REST API</a></li>
 	      <li><a style="font-weight: bold;">Dashboard</a>
 	        <ul>

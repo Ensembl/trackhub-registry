@@ -16,8 +16,14 @@
 	  <div class="panel-heading">TrackHub Management Docs</div>
           <div class="panel-body">
 	    <ul class="nav nav-list">
-	      <li><a style="font-weight: bold;">Overview</a></li>
-	      <li><a href="[% c.uri_for('/docs/management/submission') %]">The Submission Process</a></li>
+	      <li><a style="font-weight: bold;">Overview</a>
+	        <ul>
+		  <li><a href="#registration">Client Registration</a></li>
+		  <li><a href="#management">TrackHub Management</a></li>
+		  <li><a href="#submission">The Submission Process</a></li>
+		</ul>
+	      </li>
+	      <li><a href="[% c.uri_for('/docs/management/modelling') %]">Modelling TrackHubs</a></li>
 	      <li><a href="[% c.uri_for('/docs/api/registration') %]">REST API</a></li>
 	      <li><a href="[% c.uri_for('/docs/management/dashboard') %]">Dashboard</a></li>
 	    </ul>
@@ -72,5 +78,10 @@
       Alternatively, you can use the <a href="[% c.uri_for('/docs/management/dashboard') %]">dashboard</a> on the registry web interface to query the status of your registered track hubs, or view and delete them from the registry.
     </p>
 
+    <h3 id="submission">The Submission Process</h3>
+    <p>
+      The figure below highlights the main steps involved when submitting a track data hub to the Registry.
+    </p>
+    <img src="/static/img/submission.png"/>
   </div>
 </div>

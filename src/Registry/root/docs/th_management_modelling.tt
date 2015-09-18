@@ -1,0 +1,44 @@
+<!--<div class="page-header">-->
+<div class="row">
+  <div class="col-sm-12">
+    <ul class="breadcrumb">
+      <li><a href="/">Home</a></li>
+      <li><a>Docs</a></li>
+      <li class="active">TrackHub Management</li>
+    </ul>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-3" style="margin-top: 25px;">
+    <div id="search-sidebar-left">
+        <div class="panel panel-primary">
+	  <div class="panel-heading">TrackHub Management Docs</div>
+          <div class="panel-body">
+	    <ul class="nav nav-list">
+	      <li><a href="[% c.uri_for('/docs/management/overview') %]">Overview</a></li>
+	      <li><a href="[% c.uri_for('/docs/management/modelling') %]">Modelling TrackHubs</a></li>
+	      <li><a href="[% c.uri_for('/docs/api/registration') %]">REST API</a></li>
+	      <li><a style="font-weight: bold;">Dashboard</a>
+	        <ul>
+		  <li><a href="#profile">Updating Profile</a></li>
+		  <li><a href="#status">Viewing/Editing THs</a></li>
+		  <li><a href="#monitoring">Automatic TH Monitoring</a></li>
+		</ul>
+	      </li>
+	    </ul>
+          </div> 
+	</div>
+    </div> <!-- sidebar -->
+  </div>
+
+  <div class="col-sm-9" style="text-align: justify; text-justify: inter-word;">
+
+  <h2>How the Registry models TrackHubs</h2>
+
+  <h3 id="schema">Track database schema</h3>
+
+  <script src="/static/lib/docson/widget.js" data-schema="/static/trackhub/json_schema_1_0.json" />
+
+  </div>
+</div>

@@ -28,7 +28,6 @@
 		  <li><a href="#response">API Responses</a></li>
 		</ul>
 	      </li>
-	      <li><a href="[% c.uri_for('/docs/api/modelling') %]">Modelling TrackHubs</a></li>
 	      <li><a href="[% c.uri_for('/docs/api/info') %]">Info API</a></li>
 	      <li><a href="[% c.uri_for('/docs/api/registration') %]">Registration API</a></li>
 	      <li><a href="[% c.uri_for('/docs/api/search') %]">Search API</a></li>

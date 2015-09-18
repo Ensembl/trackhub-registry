@@ -18,7 +18,6 @@
           <div class="panel-body">
 	    <ul class="nav nav-list">
 	      <li><a href="[% c.uri_for('/docs/apis') %]">TH Registry APIs</a></li>
-	      <li><a href="[% c.uri_for('/docs/api/modelling') %]">Modelling TrackHubs</a></li>
 	      <li><a style="font-weight: bold;"">Info API</a>
 	        <ul>
 		  <li><a href="#version">GET /api/info/version</a></li>

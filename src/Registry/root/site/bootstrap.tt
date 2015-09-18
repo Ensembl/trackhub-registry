@@ -37,7 +37,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="[% c.uri_for('/') %]">The TrackHub Registry</a>
+        <a class="navbar-brand" href="[% c.uri_for('/') %]"><strong><em>The TrackHub Registry</em></strong></a>
       </div> 
       <div class="collapse navbar-collapse navbar-responsive-collapse">
         <ul class="nav navbar-nav">
@@ -76,7 +76,7 @@
               </li>
 	      <li class="divider"></li>
               <li><a href="[% c.uri_for('/docs/apis') %]">Registry APIs</a></li>
-	      <li class="menu-item "><a href="#">TrackDB JSON specification</a></li>
+	      <li class="menu-item "><a href="[% c.uri_for('/docs/management/modelling') %]">TrackDB JSON specification</a></li>
             </ul>
           </li>
 

@@ -67,7 +67,7 @@ __PACKAGE__->config(
 		    {
 		     traits => ['-RenderAsTTTemplate'],
 		    },
-		    static => 
+		    'Plugin::Static::Simple' => 
 		    {
 		     ignore_extensions => [ qw/tmpl tt tt2 xhtml/ ],
 		    },

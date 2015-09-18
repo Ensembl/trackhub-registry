@@ -4,7 +4,7 @@
     <ul class="breadcrumb">
       <li><a href="/">Home</a></li>
       <li><a>Docs</a></li>
-      <li class="active">TH Provider</li>
+      <li class="active">TrackHub Management</li>
     </ul>
   </div>
 </div>
@@ -47,7 +47,7 @@
     </p>
     
     <p>
-      The client registration interface captures basic contact information (i.e. first/last name, institute, email) of the person responsible of managing the track data hubs with the registry, together with credentials necessary to use the REST API to register and update track data hubs with the registry, and to sign in and access the registry web dashboard. The interface also asks to configure some options that control automatic track hub monitoring by the registry, which is explained here.
+      The client registration interface captures basic contact information (i.e. first/last name, institute, email) of the person responsible of managing the track data hubs with the registry, together with credentials necessary to use the REST API to register and update track data hubs with the registry, and to sign in and access the registry web dashboard. The interface also asks to configure some options that control <a href="[% c.uri_for('/docs/management/dashboard#monitoring') %]">automatic track hub monitoring</a> by the registry.
     </p>
 
     <p>
@@ -56,7 +56,7 @@
 
     <h3 id="management">TrackHub Management</h3>
     <p>
-      Once you <a href="[% c.uri_for('/user/register') %]" target="_blank">Sign Up</a>, you can start using the <a href="[% c.uri_for('/docs/api/registration') %]">Registration API</a>, which allows you to use RESTful workflows to manage your track data hubs with the Registry.
+      Once you <a href="[% c.uri_for('/user/register') %]" target="_blank">Sign Up</a>, you can start using the <a href="[% c.uri_for('/docs/api/registration') %]">Registration API</a>, which allows you to use <a href="[% c.uri_for('/docs/api/registration#workflow') %]">RESTful workflows</a> to manage your track data hubs with the Registry.
     </p>
     
     <p>

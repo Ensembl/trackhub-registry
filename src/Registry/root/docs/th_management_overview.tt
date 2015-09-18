@@ -82,6 +82,20 @@
     <p>
       The figure below highlights the main steps involved when submitting a track data hub to the Registry.
     </p>
+
     <img src="/static/img/submission.png"/>
+
+    <p>
+      Your client submits a remote, publicly accessible track hub using one of the Registry <a href="[% c.uri_for('/docs/api/registration') %]">REST API</a>. 
+    </p> 
+    <p>
+      The server then runs the <a target="_blank" href="https://genome.ucsc.edu/goldenPath/help/hgTrackHubHelp.html#Debug">hubCheck</a> program from UCSC to check that the files in the hub are correctly formatted. It is indeed a good idea to test your hub with this program before submitting it in order to avoid rejection.
+    </p>
+    <p>
+      If the hub passes this check, it is parsed into its various components, and the different genome assembly trackDB configuration files are converted each one into a separate JSON document. This is an important aspect of the whole submission process. The Registry does not store a representation of a TrackHub as a whole; a track hub is implicitly represented by the set of trackDBs storing configuration/visualisation options for the different assemblies in the hub.
+    </p>
+    <p> 
+      Each one of this trackDB JSON documents is validated against a <a href="[% c.uri_for('/docs/management/modelling#schema') %]">schema</a> describing the structure and content of valid trackDB JSON documents. See <a href="[% c.uri_for('/docs/management/modelling') %]">Modelling TrackHubs</a> for more information about design principles. If validation succeeds for all of them, the documents are finally stored in Registry and are immediately available for search.
+    </p>   
   </div>
 </div>

@@ -32,15 +32,9 @@ sub advanced_search :Path('/docs/search/advanced') { }
 
 sub th_management_overview :Path('/docs/management/overview') { }
 
-sub th_management_submission :Path('/docs/management/submission') { }
+sub th_management_modelling :Path('/docs/management/modelling') { }
 
 sub th_management_dashboard :Path('/docs/management/dashboard') { }
-
-sub registration :Local { }
-
-sub management :Local { }
-
-sub dashboard :Local { }
 
 #####################
 # Registry API Docs #

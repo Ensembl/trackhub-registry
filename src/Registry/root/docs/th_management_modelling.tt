@@ -17,18 +17,37 @@
           <div class="panel-body">
 	    <ul class="nav nav-list">
 	      <li><a href="[% c.uri_for('/docs/management/overview') %]">Overview</a></li>
-	      <li><a style="font-weight: bold;">Modelling TrackHubs</a></li>
+	      <li><a style="font-weight: bold;">Modelling TrackHubs</a>
+	        <ul>
+		  <li><a href="#schema">Track database schema</a></li>
+		</ul>	      
+	      </li>
 	      <li><a href="[% c.uri_for('/docs/api/registration') %]">REST API</a></li>
 	      <li><a href="[% c.uri_for('/docs/management/dashboard') %]">Dashboard</a></li>
 	    </ul>
-          </div> 
+          </div>
 	</div>
     </div> <!-- sidebar -->
   </div>
 
   <div class="col-sm-9" style="text-align: justify; text-justify: inter-word;">
 
-  <h2>How the Registry models TrackHubs</h2>
+  <h2>Modelling TrackHubs in the Registry</h2>
+  <p>
+    A single track data hub is formed by a set of files (i.e. hub.txt, genomes.txt) describing the hub structure and content and one or more directories with genome assembly specific data (bigBed, bigWig etc files) and configuration referred to as track data bases. The configuration of a track data base is described in a file, usually named trackDB.txt, defining the location of all the binary indexed track data for each assembly and directives controlling the display of these data on a genome browser.
+  </p>
+  <p>
+    The Registry is designed to provide users with the ability to discover track hubs of interest and easily load them into a genome browser. From this point of view, the purpose of the Registry is not to store a complete representation of a TrackHub, but to introduce a convenient representation with metadata to support search and that can be easily sent to (due to its limited size) and parsed by a genome browser, thus overcoming some of the challenges involved when parsing track data hubs.
+  </p>
+  <p>
+    A user is usually interested in displaying data for a particular assembly of a particular species, and a browser just needs to do that, without having to deal with all possible assemblies managed by a given hub. Within this perspective, <u>the unit of information modelled by the Registry is given by track database (trackDb) settings</u> used in a Track Hub's trackDb.txt file, which specifies display and configuration options for data pertaining to a certain genome assembly. This is enough to allow the browser to organise the display, as the data referred to in the trackDb settings reside at the original hub URL or somewhere in another remote location. Therefore, this is the only information stored in Registry. 
+  </p>
+  <p>
+    <u>The Registry stores assembly track database settings in a JSON document</u>, with metadata attributes and a simple tree-based structure facilitating parsing with <a target="_blank" href="http://genome.ucsc.edu/goldenPath/help/trackDb/trackDbHub.html#groupingTracks">complex track organisations</a>. Some of the document attributes identify the hub the trackDb belongs to, so that a track data hub is implicitly represented by the set of trackDb documents referring to it.
+  </p>
+  <p>
+    The following section presents an interactive diagram of the trackDb <a target="_blank" href="http://json-schema.org">JSON schema</a> against which all trackDbs submitted to Registry are validated (read about the <a href="[% c.uri_for('/docs/management/overview#submission') %]">submission process</a> to know more). To access the original schema document, click <a href="/static/trackhub/json_schema_1_0.json">here</a>.
+  </p>
 
   <h3 id="schema">Track database schema</h3>
 

@@ -21,8 +21,8 @@
 	      <li><a href="[% c.uri_for('/docs/api/registration') %]">REST API</a></li>
 	      <li><a style="font-weight: bold;">Dashboard</a>
 	        <ul>
-		  <li><a href="#profile">Updating Profile</a></li>
 		  <li><a href="#status">Viewing/Editing THs</a></li>
+		  <li><a href="#profile">Updating Profile</a></li>
 		  <li><a href="#monitoring">Automatic TH Monitoring</a></li>
 		</ul>
 	      </li>
@@ -36,9 +36,43 @@
 
     <h2>Managing TrackHubs with the Registry - The Dashboard</h2>
 
-    <h3 id="profile">Updating Your Profile</h3>
+    <p>
+      When you register, you're immediately logged in into the system and presented the so called dashboard, a web interface which allows to explore and edit the track data hubs that you submit to the Registry. The interface is divided into three tabbed panels: <a href="#profile">"Profile"</a>, <a href="#status">"My track collections"</a> and "Submit/Update". The last one is intended to support trackhub submission from the web. This functionality is not yet available, but will be in the near future. At the moment, the panel contains a reminder of the possibility of using the REST API.
+    </p>
 
     <h3 id="status">Viewing and Editing TrackHubs</h3>
+
+    <p>
+      When you login into the registry using the web interface, the default panel which is shown is named "My track collections". It provides a quick overview of the data hubs you've submitted to the TrackHub registry. An imaginary example is shown below:
+    </p>
+
+    <img src="/static/img/dashboard_collection.png"/>
+
+    <p>
+      Each line refers to track database settings for a given assembly in a given hub submitted to the Registry. <em>Id</em> is the ID of the corresponding JSON document as stored in the Registry; <em>Hub</em> and <em>Assembly</em> are respectively the name of the Hub and the assembly the database refers to; <em>Created/Updated</em> are the dates at which the hub was submitted to/updated in the Registry; <em>Status</em> shows a label about the status of the track database as know to the Registry, which can be:
+      <ul>
+	<li>"Unknown": the Registry has not yet checked the status of the hub and the tracks in the database;</li>
+        <li>"All is well": hub and all track data files as available;</li>
+	<li>"Remote data unavailable": some or all of the remote track data is unavailable.</li>
+      </ul>
+      The last two come with the date at which the check was performed. The last column presents buttons for doing some actions depending on the status of the track database. When status reports "Remote data unavailable", you can click on the spyglass icon to access information about the reasons, like in the following:
+    </p>
+    
+    <img src="/static/img/dashboard_status.png" />
+
+    <p>
+      The report will show a summary of the track database, with the hub name, species and assembly, the total number of tracks in the database and the number of them linked to remote data. For these, the report at the bottom presents a list with the name of the track, the URL of the remote binary indexed data file and the reason why it cannot be accessed.
+    </p>
+
+    <p>
+      Independently of the status, there's an icon showing a trash bin which can be clicked to delete the corresponding track database from the Registry. As discussed in <a href="[% c.uri_for('/doc/management/modelling') %]">Modelling Trackhubs</a>, a track data hub is implicitly represented by the set of trackDb documents which refer to it. Similarly to the <a href="/docs/api/registration/workflow/thdelete">REST API</a>, <u>in order to completely remove a TrackHub from the Registry, it is necessary to delete all track databases belonging to the same hub</u>.
+    </p>
+
+    <h3 id="profile">Updating Your Profile</h3>
+
+    <p>
+      
+    </p>
 
     <h3 id="monitoring">Automatic TrackHub Monitoring</h3>
 

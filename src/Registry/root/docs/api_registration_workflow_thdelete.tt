@@ -68,7 +68,7 @@
   <h4>Procedure</h4>
   <p>
     <ol>
-      <li>Make multiple requests to the <a href="[% c.uri_for('/docs/api/registration/reference#delete_trackdb') %]">DELETE /api/trackhub/:id</a> endpoint, each one with the URI of a trackDb associated with the track hub you want to delete. As usual, the request includes a <mark>User</mark> header with your username and an <mark>Auth-Token</mark> header with the given authentication token;</li>
+      <li>Make multiple requests to the <a href="[% c.uri_for('/docs/api/registration/reference#delete_trackdb') %]">DELETE /api/trackdb/:id</a> endpoint, each one with the URI of a trackDb associated with the track hub you want to delete. As usual, the request includes a <mark>User</mark> header with your username and an <mark>Auth-Token</mark> header with the given authentication token;</li>
       <li>Examine the response. The response code indicates whether the request succeeded, or how it failed;</li>
       <li>Each successful request returns a JSON object representing the deleted trackDb.</li>
     </ol>

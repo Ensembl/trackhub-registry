@@ -35,7 +35,7 @@
 
         <!-- First name -->
         <div class="form-group">
-          <label class="col-sm-3 control-label" for="first_name">First Name</label>
+          <label class="col-sm-3 control-label" for="first_name">First Name <a href="#" data-toggle="tooltip" title="TrackHub author's first name, optional."><span class="glyphicon glyphicon-info-sign" /></a></label>
           <div class="col-sm-8">
             <input id="first_name" name="first_name" placeholder="Enter the contact first name" class="form-control input-md" type="text">
           </div>
@@ -43,7 +43,7 @@
 
         <!-- Last name -->
         <div class="form-group">
-          <label class="col-sm-3 control-label" for="last_name">Last Name</label>
+          <label class="col-sm-3 control-label" for="last_name">Last Name <a href="#" data-toggle="tooltip" title="TrackHub author's last name, optional."><span class="glyphicon glyphicon-info-sign" /></a></label>
           <div class="col-sm-8">
             <input id="last_name" name="last_name" placeholder="Enter the contact last name" class="form-control input-md" type="text">
           </div>
@@ -51,7 +51,7 @@
 
         <!-- Affiliation -->
         <div class="form-group">
-          <label class="col-sm-3 control-label" for="affiliation">Affiliation</label>
+          <label class="col-sm-3 control-label" for="affiliation">Affiliation <a href="#" data-toggle="tooltip" title="TrackHub author's affiliation, optional."><span class="glyphicon glyphicon-info-sign" /></a></label>
           <div class="col-sm-8">
             <input id="affiliation" name="affiliation" placeholder="Enter the affiliation" class="form-control input-md" type="text">
           </div>
@@ -59,7 +59,7 @@
 
         <!-- Email -->
         <div class="form-group">
-          <label class="col-sm-3 control-label" for="email">Email * <span class="glyphicon glyphicon-info-sign" /></label>
+          <label class="col-sm-3 control-label" for="email">Email * <a href="#" data-toggle="tooltip" title="A valid email account the Registry can communicate with."><span class="glyphicon glyphicon-info-sign" /></a></label>
           <div class="col-sm-8">
             <input id="email" name="email" placeholder="Enter the contact email" class="form-control input-md" required="" type="text">
           </div>
@@ -68,7 +68,7 @@
 
         <!-- Text input-->
         <div class="form-group">
-          <label class="col-sm-3 control-label" for="username">Username *</label>
+          <label class="col-sm-3 control-label" for="username">Username * <a href="#" data-toggle="tooltip" title="Username for authenticating with the REST API and the web interface. It cannot be changed."><span class="glyphicon glyphicon-info-sign" /></a></label>
           <div class="col-sm-8">
             <input id="username" name="username" placeholder="Enter your username" class="form-control input-md" required="" type="text">
           </div>
@@ -76,14 +76,14 @@
 
         <!-- Password input-->
         <div class="form-group">
-          <label class="col-sm-3 control-label" for="password">Password *</label>
+          <label class="col-sm-3 control-label" for="password">Password * <a href="#" data-toggle="tooltip" title="Password for authenticating with the REST API and the web interface. No special constraints, use something robust enough."><span class="glyphicon glyphicon-info-sign" /></a></label>
           <div class="col-sm-8">
             <input id="password" name="password" placeholder="Enter your password" class="form-control input-md" required="" type="password">
           </div>
         </div>
 
         <div class="form-group">
-          <label class="col-sm-3 control-label" for="password_conf">Again *</label>
+          <label class="col-sm-3 control-label" for="password_conf">Again * <a href="#" data-toggle="tooltip" title="Confirm the password."><span class="glyphicon glyphicon-info-sign" /></a></label>
           <div class="col-sm-8">
             <input id="password_conf" name="password_conf" placeholder="Confirm the password" class="form-control input-md" required="" type="password">
           </div>
@@ -92,7 +92,7 @@
         <legend>Trackhub monitoring configuration</legend>
 	
         <div class="form-group">
-	  <label class="col-sm-3 control-label" for="check_interval">Check Interval <span class="glyphicon glyphicon-info-sign" /></label>
+	  <label class="col-sm-3 control-label" for="check_interval">Check Interval <a href="#" data-toggle="tooltip" title="The frequency with which the Registry checks the availability of your remote track data files."><span class="glyphicon glyphicon-info-sign" /></a></label>
 	  <div class="col-sm-5">
 	    <select class="form-control" name="check_interval" id="check_interval">
 	      <option selected value="0">Automatic</option>
@@ -107,7 +107,7 @@
 	  <div class="checkbox">
   	    <label class="col-sm-5 control-label">
     	      <input type="checkbox" id="continuous_alert" name="continuous_alert" value="1">
-	      Receive continuous alerts	      <span class="glyphicon glyphicon-info-sign" />
+	      Receive continuous alerts	<a href="#" data-toggle="tooltip" title="Tick this if you want to receive an alert in case of problems each time the Registry inspect your track data files."><span class="glyphicon glyphicon-info-sign" /></a>
   	    </label>
 	  </div>
 	</div>

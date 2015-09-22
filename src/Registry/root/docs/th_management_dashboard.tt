@@ -71,10 +71,28 @@
     <h3 id="profile">Updating Your Profile</h3>
 
     <p>
-      
+      Click on the "Profile" tab label to access a page where you can view/update the details of your account profile.
+    </p>
+
+    <img src="/static/img/dashboard_profile.png" />
+
+    <p>
+      You cannot change your username, but you can edit your first/last name and affiliation (optional), the email used for communication from the Registry and the password to authenticate with the website and the REST API.
     </p>
 
     <h3 id="monitoring">Automatic TrackHub Monitoring</h3>
+
+    <p>
+      You may have noticed a section "Trackhub monitoring configuration" when you signed up in the registration form. The same appears in the profile update form. The Registry performs periodic checks on the status of the tracks data files referred to in the submitted TrackHubs and, based on these, it updates the status of the corresponding track databases appearing on the <a href="[% c.uri_for('/docs/search/results#status') %]">search result page</a> and on the <a href="#status">track collection tab</a> in the dashboard.
+    </p>
+    <p>
+      You can control two parameters related to these periodic inspections:
+      <ul>
+        <li><em>Check interval</em>: tells the Registry the frequency with which to perfom the check. If set to <em>Automatic</em> the decision is left to the Registry;</li>
+	<li><em>Receive continuos alerts</em>: if the checkbox is not ticked, you receive an alert message about some faulty tracks only once.</li>
+      </ul>
+      As stated before, the Registry sends an alert message to the profile's email address at the end of each inspection in case something wrong is found with the track data files of your submitted data hubs, and unless you've ticked the checkbox above.
+    </p>
 
   </div>
 </div>

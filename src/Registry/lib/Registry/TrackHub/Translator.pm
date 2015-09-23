@@ -422,7 +422,7 @@ $synonym2assembly =
    # Deuterostomes
    #
    # C. intestinalis
-   # ci2 => '', # not found
+   ci2 => 'GCA_000224145.1', # derived from ensembl meta
    ci1 => 'GCA_000183065.1', # 'v1.0',
    # lancelet, not found
    # braFlo1 => '',
@@ -762,12 +762,8 @@ sub _add_genome_info {
     die "Undefined genome and/or doc arguments";
 
   #
-  # Map the (UCSC) assembly synonym to NCBI assembly entry,
+  # Map the (UCSC) assembly synonym to INSDC assembly accession
   # i.e. an entry in the genome collection db
-  #
-  my $assembly_syn = $genome->assembly;
-  my $assembly_id = $synonym2assembly->{$assembly_syn};
-
   #
   # TODO
   #
@@ -785,11 +781,6 @@ sub _add_genome_info {
   # At the moment, just throw an exception.
   # When submitters discover the error, we can find out which assembly
   # id they mean and update the mappings accordingly
-  #
-  # unless ($assembly_id) {    
-  # } 
-  # die "Unable to find an NCBI assembly id from $assembly_syn"
-  #   unless defined $assembly_id;
   #
   # Update: 
   #   there's an intersection but there are differences between UCSC
@@ -829,8 +820,29 @@ sub _add_genome_info {
   #   name.
   #   3rd way is for when everything else fail, there's no other option
   #   than to provide directly the accession.
-  
-  
+  #
+  # Map the genome assembly name to an INSDC accession
+  #
+  my $assembly_id;
+  my $assembly_syn = $genome->assembly;
+
+  # If the submitter has directly provided a map, this takes precedence
+  my $assembly_map = $self->assemblies;
+  if (exists $assembly_map->{$assembly_syn}) {
+    if ($assembly_map->{$assembly_syn} =~ /^G(CA|CF)_[0-9]+?\.[0-9]+?$/) {
+      $assembly_id = $assembly_map->{$assembly_syn};
+    } else {
+      die "Assembly accession for $assembly_syn does not comply with INSDC format";
+    }  
+  } elsif (exists $synonym2assembly->{$assembly_syn}) {
+    $assembly_id = $synonym2assembly->{$assembly_syn};
+  } else {
+    # TODO: Look up the assembly name in Ensembl Genomes and
+    #       map it to an accession
+  }
+
+  die "Unable to find a valid INSDC accession for genome assembly name $assembly_syn"
+    unless defined $assembly_id;
 
   #
   # Get species (tax id, scientific name, common name)

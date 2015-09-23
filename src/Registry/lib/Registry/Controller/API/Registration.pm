@@ -265,12 +265,23 @@ sub trackhub_POST {
   return $self->status_bad_request($c, message => "You must provide data with the POST request")
     unless defined $c->req->data;
 
-  # read parameters, remote hub URL/type
+  # read parameters, remote hub URL/type/assembly maps
   my $url = $c->req->data->{url};
   my $trackdb_type = $c->req->data->{type} || 'genomics'; # default to genomics type
-
+  my $assembly_map = $c->req->data->{assemblies}; # might have submitted name -> accession map in case of non-UCSC assemblies
+  
   return $self->status_bad_request($c, message => "You must specify the remote trackhub URL")
     unless defined $url;
+  # add hub.txt to hub URL in case is missing
+  # the hub might be submitted twice, with or without the hub.txt file in the URL
+  # the following search using the hub.url as a filter won't detect the hub
+  # as been already submitted and interpret the request as a first submission
+  # so it won't delete the existing trackDbs
+  unless ($url =~ /hub\.txt$/) {
+    $url .= '/' unless $url =~ /\/$/;
+    $url .= 'hub.txt';
+  }
+
   $c->log->info("Request to create/update TrackHub at $url");
 
   my ($version, $permissive) = ($c->stash->{version}, $c->stash->{permissive});
@@ -306,7 +317,9 @@ sub trackhub_POST {
 
   try {
     $c->log->info("Translating TrackHub at $url");
-    my $translator = Registry::TrackHub::Translator->new(version => $version, permissive => $permissive);
+    my $translator = Registry::TrackHub::Translator->new(version => $version, 
+							 permissive => $permissive, 
+							 assemblies => $assembly_map);
 
     # assembly can be left undefined by the user
     # in this case, we get a list of translations of all different 

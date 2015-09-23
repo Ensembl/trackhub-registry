@@ -22,7 +22,7 @@ use Registry::Indexer; # index a couple of sample documents
 
 SKIP: {
   skip "Launch an elasticsearch instance for the tests to run fully",
-    226 unless &Registry::Utils::es_running();
+    241 unless &Registry::Utils::es_running();
 
   # index test data
   note 'Preparing data for test (indexing sample documents)';
@@ -453,6 +453,26 @@ SKIP: {
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
   ok($content, "Docs created");
+  #
+  # Test submission of same hub with assembly name -> INSDC accession map
+  #
+  $request = POST('/api/trackhub?permissive=1',
+		  'Content-type' => 'application/json',
+		  'Content'      => to_json({ url => 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt',
+					      assemblies => {
+							     araTha1 => 'GCA_000001735.1',
+							     ricCom1 => 'GCA_000151685.2',
+							     braRap1 => 'GCA_000309985.1'
+							    }
+					    }));
+  $request->headers->header(user       => 'trackhub1');
+  $request->headers->header(auth_token => $auth_token);
+  ok($response = request($request), 'POST request to /api/trackhub (Plants Hub)');
+  ok($response->is_success, 'Request successful 2xx');
+  is($response->content_type, 'application/json', 'JSON content type');
+  $content = from_json($response->content);
+  ok($content, "Docs created");
+  is(scalar @{$content}, 3, "Correct number of trackdb docs created");
 
   #
   # test with other public hubs

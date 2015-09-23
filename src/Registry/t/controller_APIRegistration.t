@@ -160,7 +160,7 @@ SKIP: {
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'POST request to /api/trackdb/3');
-  is($response->code, 400, 'Request unsuccessful 400');
+  is($response->code, 404, 'Request unsuccessful 404');
   $content = from_json($response->content);
   like($content->{error}, qr/does not exist/, 'Correct error response');
   
@@ -173,7 +173,7 @@ SKIP: {
   is($response->code, 400, 'Request unsuccessful 400');
   $content = from_json($response->content);
   like($content->{error}, qr/You must provide a doc/, 'Correct error response');
-
+  
   # request to update doc with invalid content (non v1.0 compliant)
   $request = PUT('/api/trackdb/1',
   		  'Content-type' => 'application/json',
@@ -300,7 +300,7 @@ SKIP: {
   ok($response->is_success, 'Doc create request successful');
   is($response->code, 201, 'Request successful 201');
   is($response->content_type, 'application/json', 'JSON content type');
-  like($response->header('location'), qr/\/api\/trackdb\/[A-Za-z0-9]+?$/, 'Correct URI for created doc');
+  like($response->header('location'), qr/\/api\/trackdb\/[A-Za-z0-9_-]+?$/, 'Correct URI for created doc');
   $content = from_json($response->content);
   is($content->{data}[0]{id}, 'bpDnaseRegionsC0010K46DNaseEBI', 'Correct content');
   #
@@ -326,7 +326,7 @@ SKIP: {
   ok($response->is_success, 'Doc create request successful');
   is($response->code, 201, 'Request successful 201');
   is($response->content_type, 'application/json', 'JSON content type');
-  like($response->header('location'), qr/\/api\/trackdb\/[A-Za-z0-9]+?$/, 'Correct URI for created doc');
+  like($response->header('location'), qr/\/api\/trackdb\/[A-Za-z0-9_-]+?$/, 'Correct URI for created doc');
   $content = from_json($response->content);
   is(scalar $content->{configuration}{bp}{members}{region}{members}{'bpDnaseRegionsBP_BP_DG-75_d01DNaseHOTSPOT_peakEMBL-EBI'}{shortLabel}, 'DG-75.DNase.DG-75', 'Correct content');
   #
@@ -467,7 +467,7 @@ SKIP: {
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
   ok($content, "Docs created");
-  is(scalar @{$content}, 8, "Eight trackdb docs created");
+  is(scalar @{$content}, 10, "Ten trackdb docs created");
   foreach my $trackdb (@{$content}) {
     is($trackdb->{type}, 'epigenomics', 'Correct hub type');
     is($trackdb->{hub}{name}, 'Smith Lab Public Hub', 'Correct trackdb hub name');
@@ -516,7 +516,7 @@ SKIP: {
       }
     } elsif ($hub->{name} eq 'Smith Lab Public Hub') {
       is($hub->{shortLabel}, 'DNA Methylation', 'Hub short label');
-      is(scalar @{$hub->{trackdbs}}, 8, 'Number of trackDbs');
+      is(scalar @{$hub->{trackdbs}}, 10, 'Number of trackDbs');
     }
   }
 

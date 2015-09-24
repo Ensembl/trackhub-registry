@@ -17,6 +17,7 @@
           <div class="panel-body">
 	    <ul class="nav nav-list">
 	      <li><a href="[% c.uri_for('/docs/management/overview') %]">Overview</a></li>
+	      <li><a href="[% c.uri_for('/docs/management/assembly_support') %]">Supported Genome Assemblies</a></li>
 	      <li><a style="font-weight: bold;">Modelling TrackHubs</a>
 	        <ul>
 		  <li><a href="#schema">Track database schema</a></li>

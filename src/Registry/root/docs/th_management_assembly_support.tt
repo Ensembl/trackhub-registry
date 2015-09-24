@@ -1,0 +1,54 @@
+<!--<div class="page-header">-->
+<div class="row">
+  <div class="col-sm-12">
+    <ul class="breadcrumb">
+      <li><a href="/">Home</a></li>
+      <li><a>Docs</a></li>
+      <li class="active">TrackHub Management</li>
+    </ul>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-3" style="margin-top: 25px;">
+    <div id="search-sidebar-left">
+        <div class="panel panel-primary">
+	  <div class="panel-heading">TrackHub Management Docs</div>
+          <div class="panel-body">
+	    <ul class="nav nav-list">
+	      <li><a href="[% c.uri_for('/docs/management/assembly_support') %]">Overview</a></li>
+	      <li><a style="font-weight: bold;">Supported Genome Assemblies</a></li>
+	      <li><a href="[% c.uri_for('/docs/management/modelling') %]">Modelling TrackHubs</a></li>
+	      <li><a href="[% c.uri_for('/docs/api/registration') %]">REST API</a></li>
+	      <li><a href="[% c.uri_for('/docs/management/dashboard') %]">Dashboard</a></li>
+	    </ul>
+          </div> 
+	</div>
+    </div> <!-- sidebar -->
+  </div>
+
+  <div class="col-sm-9" style="text-align: justify; text-justify: inter-word;">
+
+    <h2>Genome Assembly Support</h2>
+    
+    <p>
+      The TrackHub Registry provides automatic and rapid integration of searched track hubs into two of the most popular genome browsers, <a href="https://genome.ucsc.edu/" target="_blank">UCSC</a> and <a href="http://www.ensembl.org" target="_blank">EnsEMBL</a>. In order to avoid committing to one specific browser, the registry has been designed in a way that takes into account common features and differences between them.
+    </p>
+
+    <p>
+      The UCSC browser supports a relatively limited set of <a href="https://genome.ucsc.edu/FAQ/FAQreleases.html#release1" target="_blank">genomes</a>, but unsupported genome assemblies can be loaded and viewed by providing genomic sequence using <a href="http://genome.ucsc.edu/goldenPath/help/hgTrackHubHelp.html#Assembly" target="_blank">assembly hubs</a>. On the other hand, EnsEMBL (including its sister project <a href="http://www.ensemblgenomes.org" target="_blank">Ensembl Genomes</a>) does not currently support assembly hubs, but it contains annotation and can show track hubs for a vast array of <a href="http://www.ensembl.org/info/about/species.html" target="_blank">vertebrate</a> and <a href="http://ensemblgenomes.org/info/genomes" target="_blank">non-vertebrate</a> species.
+    </p>
+
+    <p>
+    </p>
+
+    <p>
+      The TrackHub Registry follows a policy compatible with the <a target="_blank" href="http://ensemblgenomes.org/info/about/legal/browser_agreement">Browser Genome Release Agreement</a>, in that it <u>only allows the registration of track hubs with data for assemblies that have been submitted to the <a target="_blank" href="http://www.insdc.org/">INSDC</a> archives</u> (<a target="_blank" href="http://www.ebi.ac.uk/ena">ENA</a>, <a target="_blank" href="http://www.ncbi.nlm.nih.gov/genbank/">GenBank</a> and <a target="_blank" href="http://www.ddbj.nig.ac.jp/">DDBJ</a>). These assemblies have an accession number (e.g. <a href="http://www.ebi.ac.uk/ena/data/view/GCA_000001405.15">GCA_000001405.15</a>) from the INSDC <a target="_blank" href="http://www.ebi.ac.uk/ena/about/genome_assembly_database">Genome Assembly Database</a>, which is used as an authorative source of assemblies. These include a large subset of assemblies hosted natively both on the UCSC and EnsEMBL browser.
+    </p>
+
+    <p>
+      The above policy allows to automatically detect the assembly accession from the genome assembly tag in the genomes.txt file.
+    </p>
+
+  </div>
+</div>

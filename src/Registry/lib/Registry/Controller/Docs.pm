@@ -34,6 +34,8 @@ sub th_management_overview :Path('/docs/management/overview') { }
 
 sub th_management_modelling :Path('/docs/management/modelling') { }
 
+sub th_management_assembly_support :Path('/docs/management/assembly_support') { }
+
 sub th_management_dashboard :Path('/docs/management/dashboard') { }
 
 #####################

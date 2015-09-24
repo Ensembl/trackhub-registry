@@ -226,7 +226,7 @@
     Register/Update a remote public TrackHub with the Registry. The message body specifies the track hub remote URL (can be either the directory or hub.txt file URL) and, optionally, the hub assemblies data type (default: <mark>genomics</mark>), see <a href="#post_trackhub_msg_format">Message Format</a> for a list of possible types.
   </p>
   <p>
-    If the trackhub at the specified URL has not been previously submitted, the Registry will register it by translating its trackDb files into JSON documents adhering to a particular <a href="[% c.uri_for('/api/modelling') %]">JSON schema version</a>. If the trackhub has already been submitted, the request is interpreted as a request to update the details of the registered trackhub (e.g. the remote trackhub has been updated and you want to keep its details in the Registry up to date). In this case, the Registry will delete the relevant trackDb documents and replace them with translations of their most up-to-date versions.
+    If the trackhub at the specified URL has not been previously submitted, the Registry will register it by translating its trackDb files into JSON documents adhering to a particular <a href="[% c.uri_for('/docs/management/modelling') %]">JSON schema version</a>. If the trackhub has already been submitted, the request is interpreted as a request to update the details of the registered trackhub (e.g. the remote trackhub has been updated and you want to keep its details in the Registry up to date). In this case, the Registry will delete the relevant trackDb documents and replace them with translations of their most up-to-date versions.
   </p>
   <p>
     If the request is successful, the response body is formatted as an array of JSON objects, where each object is a translation of a trackDb document belonging to the trackhub. The response contains the header Location which specifies the URIs of the trackDb documents in their same respective order in the response body. 
@@ -253,7 +253,7 @@
   <h4>Parameters</h4>
   <p>
     <ul>
-      <li><mark>version</mark> (optional): JSON schema version of the registered trackDb documents for this hub (default: v1.0, see <a href="[% c.uri_for('/api/modelling') %]">Modelling TrackHubs</a> for a discussion)</li>
+      <li><mark>version</mark> (optional): JSON schema version of the registered trackDb documents for this hub (default: v1.0, see <a href="[% c.uri_for('/docs/management/modelling') %]">Modelling TrackHubs</a> for a discussion)</li>
     </ul>
   </p>
 
@@ -273,7 +273,13 @@
 
 	      "properties": {
 	        "url":    { "type": "string", "format": "uri" },
-		"type":  { "type": "string", "enum": [ "genomics", "epigenomics", "transcriptomics", "proteomics" ] }
+		"type":  { "type": "string", "enum": [ "genomics", "epigenomics", "transcriptomics", "proteomics" ] },
+		"assemblies": {
+		  "type": "object",
+		  "patternProperties": {
+		    "[a-zA-z][a-zA-Z0-9]+$": { "type": "string", "pattern": "^G(CA|CF)_[0-9]+.[0-9]+$" }
+		  }
+		}
 	      }
 
 	      "required": [ "url" ]

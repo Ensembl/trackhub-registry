@@ -90,13 +90,16 @@
       The process begins with your client authenticating itself and submitting the URL of a remote, publicly accessible track hub using one of the Registry <a href="[% c.uri_for('/docs/api/registration') %]">REST APIs</a>. 
     </p> 
     <p>
-      The server then runs the <a target="_blank" href="https://genome.ucsc.edu/goldenPath/help/hgTrackHubHelp.html#Debug">hubCheck</a> program from UCSC to check that the files in the hub are correctly formatted. It is indeed a good idea to test your hub with this program before submitting it in order to avoid rejection.
+      The server then runs the <a target="_blank" href="https://genome.ucsc.edu/goldenPath/help/hgTrackHubHelp.html#Debug">hubCheck</a> program from UCSC to check that the files in the hub are correctly formatted. It is indeed a good idea to test your hub with this program before submitting it in order to avoid an unnecessary rejection.
     </p>
     <p>
-      If the hub passes this check, it is parsed into its various components, and the different genome assembly trackDB configuration files are converted each one into a separate JSON document. This is an important aspect of the whole submission process. The Registry does not store a representation of a TrackHub as a whole; a track hub is implicitly represented by its set of trackDBs which store configuration/visualisation options for the different assemblies managed by the hub (see <a href="[% c.uri_for('/docs/management/modelling') %]">Modelling TrackHubs</a> for more information about the design principles).
+      If the hub passes the validation above, it is parsed into its various components, mainly the various assembly names and the corresponding data configuration and directories. In order to correctly identify each assembly, the Registry tries to map their names (as declared in the genomes.txt file) to valid INSDC accession numbers. See <a href="[% c.uri_for('/docs/management/assembly_support') %]">Genome Assembly Support</a> for a discussion about the motivation and details of this approach.
+    </p>
+    <p>
+      If all genomes are mapped, the different genome assembly database configuration files (i.e. trackDb.txt) are converted each one into a separate JSON document. This is an important aspect of the whole submission process. The Registry does not store a representation of a TrackHub as a whole; a track hub is implicitly represented by its set of trackDbs which store configuration/visualisation options for the different assemblies managed by the hub. See <a href="[% c.uri_for('/docs/management/modelling') %]">Modelling TrackHubs</a> for more information about the design principles.
     </p>
     <p> 
-      Each one of these trackDB JSON documents is validated against a <a href="[% c.uri_for('/docs/management/modelling#schema') %]">schema</a> describing the structure and content of valid trackDB JSON documents. If validation succeeds for all of them, the documents are finally stored in Registry and are immediately available for search.
+      Each one of these trackDB JSON documents is validated against a <a href="[% c.uri_for('/docs/management/modelling#schema') %]">schema</a> describing the structure and content of valid trackDb JSON documents. If validation succeeds for all of them, the documents are finally stored in the Registry and are immediately available for search.
     </p>   
   </div>
 </div>

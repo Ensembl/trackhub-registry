@@ -72,7 +72,7 @@
     </p>
 
     <p>
-      However an assembly is mapped to an INSDC accession number, this is used to query the Genome Assembly Database to find and present the user with <a href="[% c.uri_for('/docs/search/results#view') %]">information about the assembly and the corresponding species in a specific TrackHub</a>, and to give him the ability to <a href="[% c.uri_for('/docs/search/results#load') %]">integrate the hub</a> in either UCSC, EnsEMBL or both.
+      However an assembly is mapped to an INSDC accession number, this is used to query the Genome Assembly Database to find and present the user with <a href="[% c.uri_for('/docs/search/results#view') %]">information about the assembly and the corresponding species</a> in a specific TrackHub, and to give him the ability to <a href="[% c.uri_for('/docs/search/results#load') %]">load the data</a> in either UCSC, EnsEMBL or both.
     </p>
 
   </div>

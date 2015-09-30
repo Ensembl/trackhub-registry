@@ -20,7 +20,8 @@ my %format_lookup = (
 		     'bb'     => 'bigBed',
 		     'bw'     => 'bigWig',
 		     'bam'    => 'bam',
-		     'vcf'    => 'vcfTabix'
+		     'vcf'    => 'vcfTabix',
+		     'cram'   => 'cram'
 		    );
 
 sub new {

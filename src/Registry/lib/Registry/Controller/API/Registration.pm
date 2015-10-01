@@ -377,7 +377,7 @@ sub _validate: Private {
   
   my $validator = 
     Registry::TrackHub::Validator->new(schema => Registry->config()->{TrackHub}{schema}{$version});
-  my ($fh, $filename) = tempfile( DIR => '.', SUFFIX => '.json', UNLINK => 1);
+  my ($fh, $filename) = tempfile( DIR => '.', SUFFIX => '.json', UNLINK => 1 );
   print $fh $doc;
   close $fh;
 
@@ -394,9 +394,11 @@ sub _validate: Private {
   try {
     $validator->validate($filename);
   } catch {
+    unlink $filename or $c->log->warn("Couldn't remove file $filename");
     $c->go('ReturnError', 'custom', [qq{$_}]);
   };
-    
+  
+  unlink $filename or $c->log->warn("Couldn't remove file $filename");
   return;
 }
 

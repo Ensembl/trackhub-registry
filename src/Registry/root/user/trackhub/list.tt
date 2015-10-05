@@ -9,7 +9,8 @@
     <table class="table table-condensed table-hover table-striped">
       <thead>
         <tr>
-	  <th>Id</td>
+	  <th>#</th>
+	  <th>Id</th>
           <th>Hub</th>
           <th>Assembly</th>
 	  <th>Schema</th>
@@ -20,8 +21,10 @@
         </tr>
     </thead>
     <tbody>
+      [% i = 0; %]
       [% FOR trackdb IN trackdbs %]
       <tr>
+        <td style="word-wrap: break-word;">[% i = i + 1; i %]</td>
         <td style="word-wrap: break-word;">[% trackdb.id %]</td>
 	<td style="word-wrap: break-word;">[% trackdb.doc.hub.name %]</td>
 	<td style="word-wrap: break-word;">[% trackdb.doc.assembly.name %]</td>

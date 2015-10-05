@@ -187,7 +187,7 @@ sub index :Path :Args(0) {
 
   my $query = 
     Data::SearchEngine::ElasticSearch::Query->new($query_args);
-  my $se = Data::SearchEngine::ElasticSearch->new(nodex => $config->{nodes});
+  my $se = Data::SearchEngine::ElasticSearch->new(nodes => $config->{nodes});
   my ($results, $results_by_hub);
 
   # do the search

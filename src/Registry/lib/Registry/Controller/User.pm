@@ -120,10 +120,8 @@ sub list_trackhubs : Chained('base') :Path('trackhubs') Args(0) {
   my ($self, $c) = @_;
 
   my $trackdbs;
-  my $query = { term => { owner => $c->user->username } };
-
-  foreach my $doc (@{$c->model('Search')->search_trackhubs(size => 1000000, query => $query)->{hits}{hits}}) {
-    push @{$trackdbs}, Registry::TrackHub::TrackDB->new($doc->{_id});
+  foreach my $trackdb (@{$c->model('Search')->get_trackdbs(query => { term => { owner => $c->user->username } })}) {
+    push @{$trackdbs}, Registry::TrackHub::TrackDB->new($trackdb->{_id});
   }
 
   $c->stash(trackdbs => $trackdbs,

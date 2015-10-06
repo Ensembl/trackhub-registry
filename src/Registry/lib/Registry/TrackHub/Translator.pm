@@ -832,7 +832,7 @@ sub _add_genome_info {
     if ($assembly_map->{$assembly_syn} =~ /^G(CA|CF)_[0-9]+?\.[0-9]+?$/) {
       $assembly_id = $assembly_map->{$assembly_syn};
     } else {
-      die "Assembly accession for $assembly_syn does not comply with INSDC format";
+      die sprintf "Assembly accession %s for %s does not comply with INSDC format", $assembly_map->{$assembly_syn}, $assembly_syn;
     }  
   } elsif (exists $synonym2assembly->{lc $assembly_syn}) {
     $assembly_id = $synonym2assembly->{lc $assembly_syn};

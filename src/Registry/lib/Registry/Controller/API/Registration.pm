@@ -288,22 +288,44 @@ sub trackhub_POST {
   my $config = Registry->config()->{'Model::Search'};
   my ($location, $entity);
 
-  # call might be a request to update an already registered TrackHub
-  # delete, if it exists, any trackDB in the document store belonging
-  # to the TrackHub
+  #
+  # prevent submission of a hub submitted by another user
+  #
   my $query = {
 	       filtered => {
 			    filter => {
 				       bool => {
 						must => [
-							 { term => { owner => $c->stash->{user} } },
 							 { term => { 'hub.url' => $url } }
-							]
+							],
+						must_not => [
+							     { term => { owner => $c->stash->{user} } }
+							    ]
 					       }
 				      }
 			   }
 	      };
   my $registered_trackdbs = $c->model('Search')->search_trackhubs(query => $query);
+  if ($registered_trackdbs->{hits}{total}) {
+    $c->go('ReturnError', 'custom', [qq{Cannot submit a track hub registered by another user}]);
+  }
+
+  # call might be a request to update an already registered TrackHub
+  # delete, if it exists, any trackDB in the document store belonging
+  # to the TrackHub
+  $query = {
+	    filtered => {
+			 filter => {
+				    bool => {
+					     must => [
+						      { term => { owner => $c->stash->{user} } },
+						      { term => { 'hub.url' => $url } }
+						     ]
+					    }
+				   }
+			}
+	   };
+  $registered_trackdbs = $c->model('Search')->search_trackhubs(query => $query);
   if ($registered_trackdbs->{hits}{total}) {
     $c->log->info("TrackHub already registered. Deleting existing trackDBs");
     foreach my $doc (@{$registered_trackdbs->{hits}{hits}}) {

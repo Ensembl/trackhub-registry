@@ -50,7 +50,7 @@ SKIP: {
   my $content = from_json($response->content);
   ok(exists $content->{auth_token}, 'Logged in');
   my $auth_token = $content->{auth_token};
-  
+
   #
   # /api/trackdb (GET): get list of documents with their URIs
   #
@@ -70,10 +70,10 @@ SKIP: {
   ok($response = request($request), 'Request to log in');
   $content = from_json($response->content);
   ok(exists $content->{auth_token}, 'Logged in');
-  $auth_token = $content->{auth_token};
+  my $auth_token2 = $content->{auth_token};
   $request = GET('/api/trackdb');
   $request->headers->header(user       => 'trackhub2');
-  $request->headers->header(auth_token => $auth_token);
+  $request->headers->header(auth_token => $auth_token2);
   ok($response = request($request), 'GET request to /api/trackdb');
   ok($response->is_success, 'Request successful 2xx');
   is($response->content_type, 'application/json', 'JSON content type');
@@ -87,10 +87,10 @@ SKIP: {
   ok($response = request($request), 'Request to log in');
   $content = from_json($response->content);
   ok(exists $content->{auth_token}, 'Logged in');
-  $auth_token = $content->{auth_token};
+  my $auth_token3 = $content->{auth_token};
   $request = GET('/api/trackdb');
   $request->headers->header(user       => 'trackhub3');
-  $request->headers->header(auth_token => $auth_token);
+  $request->headers->header(auth_token => $auth_token3);
   ok($response = request($request), 'GET request to /api/trackdb');
   ok($response->is_success, 'Request successful 2xx');
   is($response->content_type, 'application/json', 'JSON content type');
@@ -102,12 +102,12 @@ SKIP: {
   # /api/trackdb/:id (GET)
   #
   # go back to user trackhub1 authentication
-  $request = GET('/api/login');
-  $request->headers->authorization_basic('trackhub1', 'trackhub1');
-  ok($response = request($request), 'Request to log in');
-  $content = from_json($response->content);
-  ok(exists $content->{auth_token}, 'Logged in');
-  $auth_token = $content->{auth_token};
+  # $request = GET('/api/login');
+  # $request->headers->authorization_basic('trackhub1', 'trackhub1');
+  # ok($response = request($request), 'Request to log in');
+  # $content = from_json($response->content);
+  # ok(exists $content->{auth_token}, 'Logged in');
+  # $auth_token = $content->{auth_token};
   #
   # request correct document
   $request = GET('/api/trackdb/1');
@@ -411,7 +411,7 @@ SKIP: {
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'POST request to /api/trackhub?version=v5.0 (unsupported version)');
-  is($response->code, 400, 'Request unsuccessful');  
+  is($response->code, 400, 'Request unsuccessful');
   $content = from_json($response->content);
   like($content->{error}, qr/not supported/i, 'Correct error response');
   #
@@ -453,6 +453,24 @@ SKIP: {
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
   ok($content, "Docs created");
+  #
+  # Submission of the same hub by another user should fail
+  #
+  $request = GET('/api/login');
+  $request->headers->authorization_basic('trackhub2', 'trackhub2');
+  ok($response = request($request), 'Request to log in');
+  $content = from_json($response->content);
+  ok(exists $content->{auth_token}, 'Logged in');
+  my $auth_token2 = $content->{auth_token};
+  $request = POST('/api/trackhub?version=v1.0&permissive=1',
+  		  'Content-type' => 'application/json',
+  		  'Content'      => to_json({ url => $URL }));
+  $request->headers->header(user       => 'trackhub2');
+  $request->headers->header(auth_token => $auth_token2);
+  ok($response = request($request), 'POST request to /api/trackhub (Plants Hub)');
+  is($response->code, 400, 'Request unsuccessful');
+  $content = from_json($response->content);
+  like($content->{error}, qr/by another user/i, 'Correct error response');
   #
   # Test submission of same hub with assembly name -> INSDC accession map
   #

@@ -81,9 +81,10 @@ sub _hub_check {
     my @lines = split /\n/, $output;
     shift @lines;
     for my $line (@lines) {
-      # raise exception as soon as we detect some problem
+      # Raise exception as soon as we detect some problem
       # which is not related to some deprecated feature
-      next if $line =~ /deprecated/;
+      # Also skip in case of some unsupported file formats like cram
+      next if $line =~ /deprecated|cram/;
 
       die "hubCheck report:\n$output\n\nPlease refer to the (versioned) spec document: http://genome-test.cse.ucsc.edu/goldenPath/help/trackDb/trackDbHub.html";
     }

@@ -60,7 +60,7 @@ sub _parse_file_content {
 		       'bb'     => 'bigbed',
 		       'bw'     => 'bigwig',
 		       'bam'    => 'bam',
-		       'gz'     => 'vcftabix' # should be 'vcf.gz', but the parser will have taken the token after last '.',
+		       'gz'     => 'vcftabix', # should be 'vcf.gz', but the parser will have taken the token after last '.',
 		       'cram'   => 'cram'
                       );
  

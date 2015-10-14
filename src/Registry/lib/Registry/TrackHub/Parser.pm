@@ -181,10 +181,10 @@ sub _parse_file_content {
 	  my @tokens2;
 
 	  for (my $i = 0; $i <= $#tokens1; $i++) {
-	    if ($tokens1[$i] =~ /^\w+$/) {
+	    if ($tokens1[$i] =~ /^[\w:_]+$/) {
 	      push @tokens2, $tokens1[$i];
 	    } elsif ($tokens1[$i] =~ /"|'/) {
-	      push @tokens2, grep { defined $_ } $tokens1[$i] =~ /"(.*)"|'(.*)'|([\w-]+)/g;;
+	      push @tokens2, grep { defined $_ } $tokens1[$i] =~ /"(.*)"|'(.*)'|([\w-:_]+)/g;;
 	    } else {
 	      push @tokens2, split(/\s+/, $tokens1[$i]);
 	    }
@@ -193,7 +193,6 @@ sub _parse_file_content {
 	  for (my $i = 0; $i < $#tokens2; $i += 2) {
 	    $tracks->{$id}{$key}{$tokens2[$i]} = $tokens2[$i+1];
 	  }
-
         } else {
           $tracks->{$id}{$key} = $value;
         }

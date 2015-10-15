@@ -185,7 +185,7 @@ sub _parse_file_content {
 	    if ($tokens1[$i] =~ /^[\w:_]+$/) {
 	      push @tokens2, $tokens1[$i];
 	    } elsif ($tokens1[$i] =~ /"|'/) {
-	      push @tokens2, grep { defined $_ } $tokens1[$i] =~ /"(.*)"|'(.*)'|([\w-:_]+)/g;;
+	      push @tokens2, grep { defined $_ } $tokens1[$i] =~ /"(.*)"|'(.*)'|([\w:_]+)/g;;
 	    } else {
 	      push @tokens2, split(/\s+/, $tokens1[$i]);
 	    }

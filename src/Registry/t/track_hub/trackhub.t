@@ -41,16 +41,16 @@ SKIP: {
   like($th->descriptionUrl, qr/http:\/\/www.blueprint-epigenome.eu\/index.cfm/, 'Hub description URL');
 
   is(scalar $th->assemblies, 1, 'Number of genomes');
-  is(($th->assemblies)[0], 'hg19', 'Stored genome assembly data');
+  is(($th->assemblies)[0], 'hg38', 'Stored genome assembly data');
   #
   # Should probably do the following as Registry::TrackHub::Genome
   # specific tests. I presume this is ok since the specific trackDb
   # attribute information is created and manipulated by the module
   # tested here.
   #
-  my $genome = $th->get_genome('hg19');
+  my $genome = $th->get_genome('hg38');
   isa_ok($genome, 'Registry::TrackHub::Genome');
-  is_deeply($genome->trackDb, [ "$URL/hg19/tracksDb.txt" ], 'Hub trackDb assembly info');
+  is_deeply($genome->trackDb, [ "$URL/grch38/tracksDb.txt" ], 'Hub trackDb assembly info');
 }
 
 done_testing();

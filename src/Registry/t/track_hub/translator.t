@@ -45,7 +45,7 @@ SKIP: {
   # Test Bluprint Track Data Hub
   #
   note "Checking translation of Bluprint trackhub";
-  $URL = "ftp://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub";
+  $URL = "http://ftp.ebi.ac.uk/pub/databases/blueprint/releases/20150128/homo_sapiens/hub";
   throws_ok { $translator->translate($URL, 'hg18') } qr/No genome data/, "Throws if translate is given wrong assembly";
 
   $json_docs = $translator->translate($URL, 'hg19');
@@ -111,7 +111,7 @@ SKIP: {
   $member = $view->{members}{'bpDNAMethC002CTA1bsBS-SeqCPG_methylation_sdCNAG'};
   ok($member, "View member exists");
   is($member->{type}, "bigwig", "View member type");
-  is($member->{bigDataUrl}, 'http://ftp.ebi.ac.uk/pub/databases/blueprint/data/homo_sapiens/Venous_blood/C002CT/cytotoxic_CD56-dim_natural_killer_cell/Bisulfite-Seq/CNAG/C002CTA1bs.CPG_methylation_sd.bs_call.20140106.bw', "View member bigDataUrl");
+  is($member->{bigDataUrl}, 'http://ftp.ebi.ac.uk/pub/databases/blueprint/data/homo_sapiens/GRCh37/Venous_blood/C002CT/cytotoxic_CD56-dim_natural_killer_cell/Bisulfite-Seq/CNAG/C002CTA1bs.CPG_methylation_sd.bs_call.20140106.bw', "View member bigDataUrl");
   is($member->{shortLabel}, 'C002CT.BS-Seq.StDev.NK', "View member short label");
   
   #

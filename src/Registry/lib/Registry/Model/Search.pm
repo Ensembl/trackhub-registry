@@ -32,8 +32,8 @@ sub search_trackhubs {
   # add required (by Search::Elasticsearch)
   # index and type parameter
   my $config = Registry->config()->{'Model::Search'};
-  $args{index} = $config->{index};
-  $args{type}  = $config->{type}{trackhub};
+  $args{index} = $config->{trackhub}{index};
+  $args{type}  = $config->{trackhub}{type};
 
   # this is what Search::Elasticsearch expect 
   $args{body} = { query => $args{query} };
@@ -55,8 +55,8 @@ sub count_trackhubs {
   # add required (by Search::Elasticsearch)
   # index and type parameter
   my $config = Registry->config()->{'Model::Search'};
-  $args{index} = $config->{index};
-  $args{type}  = $config->{type}{trackhub};
+  $args{index} = $config->{trackhub}{index};
+  $args{type}  = $config->{trackhub}{type};
 
   # this is what Search::Elasticsearch expect 
   $args{body} = { query => $args{query} };
@@ -79,8 +79,8 @@ sub get_trackhub_by_id {
     unless defined $id;
 
   my $config = Registry->config()->{'Model::Search'};
-  return $self->_es->get_source(index => $config->{index},           # add required (by Search::Elasticsearch)
-				type  => $config->{type}{trackhub},  # index and type parameter 
+  return $self->_es->get_source(index => $config->{trackhub}{index},           # add required (by Search::Elasticsearch)
+				type  => $config->{trackhub}{type},  # index and type parameter 
 				id    => $id) unless $orig;
 
   return $self->_es->get(index => $config->{index},           
@@ -96,8 +96,8 @@ sub next_trackdb_id {
   my $config = Registry->config()->{'Model::Search'};
   # my %args = 
   #   (
-  #    index => $config->{index},
-  #    type  => $config->{type}{trackhub},
+  #    index => $config->{trackhub}{index},
+  #    type  => $config->{trackhub}{type},
   #    size  => 1,
   #    body  => {
   # 	       fields => [ '_id' ],
@@ -118,8 +118,8 @@ sub next_trackdb_id {
 
   my %args =
     (
-     index => $config->{index},
-     type  => $config->{type}{trackhub},
+     index => $config->{trackhub}{index},
+     type  => $config->{trackhub}{type},
      body  => { query => { match_all => {} } },
      search_type => 'scan'
     );
@@ -130,7 +130,7 @@ sub next_trackdb_id {
     $max_id = $trackdb->{_id} if $max_id < $trackdb->{_id};
   }
 
-  return $max_id>0?$max_id:1;
+  return $max_id>0?$max_id+1:1;
 }
 
 sub get_trackdbs {
@@ -141,8 +141,8 @@ sub get_trackdbs {
     unless exists $args{query};
 
   my $config = Registry->config()->{'Model::Search'};
-  $args{index} = $config->{index};
-  $args{type}  = $config->{type}{trackhub};
+  $args{index} = $config->{trackhub}{index};
+  $args{type}  = $config->{trackhub}{type};
 
   # this is what Search::Elasticsearch expect 
   $args{body} = { query => $args{query} };
@@ -170,8 +170,8 @@ sub get_all_users {
   
   # use scan & scroll API
   # see https://metacpan.org/pod/Search::Elasticsearch::Scroll
-  my $scroll = $self->_es->scroll_helper(index => $config->{index},
-					 type  => $config->{type}{user});
+  my $scroll = $self->_es->scroll_helper(index => $config->{user}{index},
+					 type  => $config->{user}{type});
 					 # body  => { query => {... some query ... }});
   my @users;
   while (my $user = $scroll->next) {
@@ -185,8 +185,8 @@ sub get_latest_report {
 
   my $config = Registry->config()->{'Model::Search'};
   my %args;
-  $args{index} = $config->{index};
-  $args{type}  = $config->{type}{report};
+  $args{index} = $config->{report}{index};
+  $args{type}  = $config->{report}{type};
   $args{size} = 1;
   $args{body} = 
     {

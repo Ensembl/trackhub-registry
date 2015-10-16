@@ -28,13 +28,14 @@ SKIP: {
   note 'Preparing data for test (indexing sample documents)';
   my $config = Registry->config()->{'Model::Search'};
   my $indexer = Registry::Indexer->new(dir   => "$Bin/trackhub-examples/",
-						index => $config->{index},
 						trackhub => {
-						  type  => $config->{type}{trackhub},
+						  index => $config->{trackhub}{index},
+						  type  => $config->{trackhub}{type},
 						  mapping => 'trackhub_mappings.json'
 						},
 						authentication => {
-						  type  => $config->{type}{user},
+						  index => $config->{user}{index},
+						  type  => $config->{user}{type},
 						  mapping => 'authentication_mappings.json'
 						}
 					       );
@@ -248,7 +249,7 @@ SKIP: {
 
 
   note "Re-creating index test";
-  $indexer->create_index(); # do not index the documents this time through the indexer, the API will do that
+  $indexer->create_indices(); # do not index the documents this time through the indexer, the API will do that
   $indexer->index_users();
 
   #
@@ -461,7 +462,7 @@ SKIP: {
   ok($response = request($request), 'Request to log in');
   $content = from_json($response->content);
   ok(exists $content->{auth_token}, 'Logged in');
-  my $auth_token2 = $content->{auth_token};
+  $auth_token2 = $content->{auth_token};
   $request = POST('/api/trackhub?version=v1.0&permissive=1',
   		  'Content-type' => 'application/json',
   		  'Content'      => to_json({ url => $URL }));

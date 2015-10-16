@@ -190,12 +190,12 @@ sub trackdb_create_POST {
       if $c->model('Search')->count_trackhubs(query => $query)->{count};
 	
     my $config = Registry->config()->{'Model::Search'};
-    $id = $c->model('Search')->index(index   => $config->{index},
-				     type    => $config->{type}{trackhub},
+    $id = $c->model('Search')->index(index   => $config->{trackhub}{index},
+				     type    => $config->{trackhub}{type},
 				     body    => $new_doc_data)->{_id};
 
     # refresh the index
-    $c->model('Search')->indices->refresh(index => $config->{index});
+    $c->model('Search')->indices->refresh(index => $config->{trackhub}{index});
   } catch {
     $c->go('ReturnError', 'custom', [qq{$_}]);
   };
@@ -329,12 +329,12 @@ sub trackhub_POST {
   if ($registered_trackdbs->{hits}{total}) {
     $c->log->info("TrackHub already registered. Deleting existing trackDBs");
     foreach my $doc (@{$registered_trackdbs->{hits}{hits}}) {
-      $c->model('Search')->delete(index   => $config->{index},
-				  type    => $config->{type}{trackhub},
+      $c->model('Search')->delete(index   => $config->{trackhub}{index},
+				  type    => $config->{trackhub}{type},
 				  id      => $doc->{_id});
       $c->log->info(sprintf "Deleted trackDb [%s]", $doc->{_id});
     }
-    $c->model('Search')->indices->refresh(index => $config->{index});
+    $c->model('Search')->indices->refresh(index => $config->{trackhub}{index});
   } 
 
   try {
@@ -364,12 +364,12 @@ sub trackhub_POST {
       $doc->{created} = time();
       $doc->{status}{message} = 'Unknown';
 	
-      my $id = $c->model('Search')->index(index   => $config->{index},
-					  type    => $config->{type}{trackhub},
+      my $id = $c->model('Search')->index(index   => $config->{trackhub}{index},
+					  type    => $config->{trackhub}{type},
 					  # id      => $id,
 					  body    => $doc)->{_id};
       # refresh the index
-      $c->model('Search')->indices->refresh(index => $config->{index});
+      $c->model('Search')->indices->refresh(index => $config->{trackhub}{index});
 
       $c->log->info("Created trackDb [$id]");
 
@@ -548,13 +548,13 @@ sub trackdb_PUT {
     # update a document is to retrieve it, change it, then reindex the whole document.
     #
     my $config = Registry->config()->{'Model::Search'};
-    $c->model('Search')->index(index   => $config->{index},
-			       type    => $config->{type}{trackhub},
+    $c->model('Search')->index(index   => $config->{trackhub}{index},
+			       type    => $config->{trackhub}{type},
 			       id      => $doc_id,
 			       body    => $new_doc_data);
 
     # refresh the index
-    $c->model('Search')->indices->refresh(index => $config->{index});
+    $c->model('Search')->indices->refresh(index => $config->{trackhub}{index});
   } catch {
     $c->go('ReturnError', 'custom', [qq{$_}]);
   };
@@ -590,8 +590,8 @@ sub trackdb_DELETE {
     # index, type and id, or will throw a Missing error.
     #
     my $config = Registry->config()->{'Model::Search'};
-    $c->model('Search')->delete(index   => $config->{index},
-				type    => $config->{type}{trackhub},
+    $c->model('Search')->delete(index   => $config->{trackhub}{index},
+				type    => $config->{trackhub}{type},
 				id      => $doc_id);
 
     $self->status_ok($c, entity => $trackhub) if $trackhub;

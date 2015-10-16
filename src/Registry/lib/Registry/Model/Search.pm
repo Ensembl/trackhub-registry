@@ -83,8 +83,8 @@ sub get_trackhub_by_id {
 				type  => $config->{trackhub}{type},  # index and type parameter 
 				id    => $id) unless $orig;
 
-  return $self->_es->get(index => $config->{index},           
-			 type  => $config->{type}{trackhub},  
+  return $self->_es->get(index => $config->{trackhub}{index},           
+			 type  => $config->{trackhub}{type},  
 			 id    => $id);
   
 }

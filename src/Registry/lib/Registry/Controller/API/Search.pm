@@ -65,7 +65,7 @@ sub search_POST {
   }
 
   my $config = Registry->config()->{'Model::Search'};
-  my ($index, $type) = ($config->{index}, $config->{type}{trackhub});
+  my ($index, $type) = ($config->{trackhub}{index}, $config->{trackhub}{type});
 
   my $query_args = 
     {

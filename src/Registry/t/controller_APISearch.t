@@ -25,13 +25,14 @@ SKIP: {
   note 'Preparing data for test (indexing users)';
   my $config = Registry->config()->{'Model::Search'};
   my $indexer = Registry::Indexer->new(dir   => "$Bin/trackhub-examples/",
-						index => $config->{index},
 						trackhub => {
-						  type  => $config->{type}{trackhub},
+						  index => $config->{trackhub}{index},
+						  type  => $config->{trackhub}{type},
 						  mapping => 'trackhub_mappings.json'
 						},
 						authentication => {
-						  type  => $config->{type}{user},
+						  index => $config->{user}{index},
+						  type  => $config->{user}{type},
 						  mapping => 'authentication_mappings.json'
 						}
 					       );
@@ -39,7 +40,7 @@ SKIP: {
 
   # submit some public hubs
   my @public_hubs = (
-		     { name => 'polyA', url => 'http://johnlab.org/xpad/Hub/UCSC.txt' },
+		     # { name => 'polyA', url => 'http://johnlab.org/xpad/Hub/UCSC.txt' },
 		     { name => 'mRNA', url => 'http://www.mircode.org/ucscHub/hub.txt' },
 		     { name => 'blueprint', url => 'ftp://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub' },
 		     { name => 'plants', url => 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt' },
@@ -96,7 +97,7 @@ SKIP: {
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
-  is($content->{total_entries}, 17, 'Number of search results');
+  is($content->{total_entries}, 16, 'Number of search results');
   is(scalar @{$content->{items}}, 5, 'Number of search results per page');
   ok($content->{items}[0]{id}, 'Search result item has ID');
   ok($content->{items}[1]{score}, 'Search result item has score');
@@ -134,7 +135,7 @@ SKIP: {
   $content = from_json($response->content);
   is(scalar @{$content->{items}}, 1, 'Number of search results');
   is($content->{items}[0]{hub}{shortLabel}, 'Blueprint Hub', 'Search result hub');
-  is($content->{items}[0]{assembly}{accession}, 'GCA_000001405.1', 'Search result assembly');
+  is($content->{items}[0]{assembly}{accession}, 'GCA_000001405.15', 'Search result assembly');
 
   $request = POST('/api/search?page=2',
 		  'Content-type' => 'application/json',

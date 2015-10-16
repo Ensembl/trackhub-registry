@@ -76,8 +76,8 @@ sub species_GET {
 
   # get the list of unique species, use aggregations
   my $config = Registry->config()->{'Model::Search'};
-  my $results = $c->model('Search')->search(index => $config->{index},
-					    type  => $config->{type}{trackhub},
+  my $results = $c->model('Search')->search(index => $config->{trackhub}{index},
+					    type  => $config->{trackhub}{type},
 					    body => 
 					    {
 					     aggs => {
@@ -105,8 +105,8 @@ sub assemblies_GET {
 
   # get the list of unique assemblies, grouped by species
   my $config = Registry->config()->{'Model::Search'};
-  my $results = $c->model('Search')->search(index => $config->{index},
-					    type  => $config->{type}{trackhub},
+  my $results = $c->model('Search')->search(index => $config->{trackhub}{index},
+					    type  => $config->{trackhub}{type},
 					    body => 
 					    {
 					     aggs => {

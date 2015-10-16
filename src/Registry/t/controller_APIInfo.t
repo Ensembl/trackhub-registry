@@ -40,13 +40,14 @@ SKIP: {
   note 'Preparing data for test (indexing users)';
   my $config = Registry->config()->{'Model::Search'};
   my $indexer = Registry::Indexer->new(dir   => "$Bin/trackhub-examples/",
-						index => $config->{index},
 						trackhub => {
-						  type  => $config->{type}{trackhub},
+						  index => $config->{trackhub}{index},
+						  type  => $config->{trackhub}{type},
 						  mapping => 'trackhub_mappings.json'
 						},
 						authentication => {
-						  type  => $config->{type}{user},
+						  index => $config->{user}{index},
+						  type  => $config->{user}{type},
 						  mapping => 'authentication_mappings.json'
 						}
 					       );
@@ -54,7 +55,7 @@ SKIP: {
 
   # submit some public hubs
   my @public_hubs = (
-		     { name => 'polyA', url => 'http://johnlab.org/xpad/Hub/UCSC.txt' },
+		     # { name => 'polyA', url => 'http://johnlab.org/xpad/Hub/UCSC.txt' },
 		     { name => 'mRNA', url => 'http://www.mircode.org/ucscHub/hub.txt' },
 		     { name => 'blueprint', url => 'ftp://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub' },
 		     { name => 'plants', url => 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt' },
@@ -121,7 +122,7 @@ SKIP: {
   ok($response = request($request), 'GET request to /api/info/trackhubs');
   ok($response->is_success, 'Request successful');
   $content = from_json($response->content);
-  is(scalar @{$content}, 9, 'Number of hubs');
+  is(scalar @{$content}, scalar @public_hubs, 'Number of hubs');
 
   # test a couple of hubs
   my $hub = first { $_->{name} eq 'EnsemblRegulatoryBuild' } @{$content};
@@ -131,8 +132,8 @@ SKIP: {
   is($hub->{trackdbs}[0]{species} && $hub->{trackdbs}[1]{species}, 9606, 'trackDb species');
   like($hub->{trackdbs}[0]{assembly}, qr/GCA_000001405/, 'trackDb assembly');
   like($hub->{trackdbs}[1]{assembly}, qr/GCA_000001405/, 'trackDb assembly');
-  like($hub->{trackdbs}[0]{uri}, qr/api\/trackdb/, 'trackDb uri');
-  like($hub->{trackdbs}[1]{uri}, qr/api\/trackdb/, 'trackDb uri');
+  like($hub->{trackdbs}[0]{uri}, qr/api\/search\/trackdb/, 'trackDb uri');
+  like($hub->{trackdbs}[1]{uri}, qr/api\/search\/trackdb/, 'trackDb uri');
 
   $hub = first { $_->{name} eq 'NHGRI-1' } @{$content};
   ok($hub, 'Zebrafish hub');
@@ -140,7 +141,7 @@ SKIP: {
   is(scalar @{$hub->{trackdbs}}, 1, 'Number of trackDbs');
   is($hub->{trackdbs}[0]{species}, 7955, 'trackDb species');
   is($hub->{trackdbs}[0]{assembly}, 'GCA_000002035.2', 'trackDb assembly');
-  like($hub->{trackdbs}[0]{uri}, qr/api\/trackdb/, 'trackDb uri');
+  like($hub->{trackdbs}[0]{uri}, qr/api\/search\/trackdb/, 'trackDb uri');
 
 }
 

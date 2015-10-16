@@ -1,5 +1,5 @@
 {
-  "trackhub": {
+  "trackdb": {
     "properties": {
       "created": { "type": "long", "index": "not_analyzed"  },
 

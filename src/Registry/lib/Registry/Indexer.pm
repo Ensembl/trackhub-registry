@@ -13,25 +13,22 @@ BEGIN {
 }
 
 use Carp;
-use LWP;
 use JSON;
 
 use Registry::Utils;
 use Registry::Model::Search;
-use Registry::TrackHub::TrackDB;
 
 sub new {
   my ($caller, %args) = @_;
 
-  my ($dir, $index, $trackhub_settings, $auth_settings) = ($args{dir}, $args{index}, $args{trackhub}, $args{authentication});
+  my ($dir, $trackhub_settings, $auth_settings) = ($args{dir}, $args{trackhub}, $args{authentication});
   defined $dir or croak "Undefined directory arg";
-  defined $index or croak "Undefined index arg";
   defined $trackhub_settings and defined $auth_settings or
     croak "Undefined trackhub and/or authentication settings";
 
   my $class = ref($caller) || $caller;
   # my $self = bless({ index => $index, type => $type, mapping => "$dir/$mapping" }, $class);
-  my $self = bless({ index => $index, trackhub => $trackhub_settings, auth => $auth_settings }, $class);
+  my $self = bless({ trackhub => $trackhub_settings, auth => $auth_settings }, $class);
   $self->{trackhub}{mapping} = "$dir/" . $self->{trackhub}{mapping};
   $self->{auth}{mapping} = "$dir/" . $self->{auth}{mapping};
 
@@ -113,18 +110,22 @@ sub new {
   # an ES instance running on the same host.
   # We don't pass arguments to get the default (localhost)
   $self->{es} = Registry::Model::Search->new();
-  $self->create_index();
+  $self->create_indices();
 
   return $self;
 }
 
 #
-# Create index, mapping 
+# Create indices, mapping 
 #
-sub create_index {
+sub create_indices {
   my $self = shift;
 
-  my $index = $self->{index};
+  # create trackhub index/mapping
+  my ($index, $type, $mapping) = ($self->{trackhub}{index}, $self->{trackhub}{type}, $self->{trackhub}{mapping});
+  defined $index && defined $type && defined $mapping or
+    croak "Missing trackhub parameters (index|type|mapping)";
+
   my $indices = $self->{es}->indices;
 
   #
@@ -141,27 +142,31 @@ sub create_index {
   #
   # create the trackhub mapping
   #
-  exists $self->{trackhub}{type} && exists $self->{trackhub}{mapping} or
-    croak "Missing trackhub parameters (type|mapping)";
   $indices->put_mapping(index => $index,
-			type  => $self->{trackhub}{type},
-			body  => from_json(&Registry::Utils::slurp_file($self->{trackhub}{mapping})));
-  my $mapping_json = $indices->get_mapping(index => $index,
-					   type  => $self->{trackhub}{type});
-  exists $mapping_json->{$index}{mappings}{trackhub} or croak "TrackHub mapping not created";
+			type  => $type,
+			body  => from_json(&Registry::Utils::slurp_file($mapping)));
+  my $mapping_json = $indices->get_mapping(index => $index, type  => $type);
+  exists $mapping_json->{$index}{mappings}{$type} or croak "TrackHub mapping not created";
   carp "TrackHub mapping created";
 
   #
   # create the authentication/authorisation mapping
   #
-  exists $self->{auth}{type} && exists $self->{auth}{mapping} or
-    croak "Missing authentication/authorization parameters (type|mapping)";
+  # Note: we might/might not store user data on the same index as that of the trackhubs
+  #       do not delete/recreate the index if it exists
+  ($index, $type, $mapping) = ($self->{auth}{index}, $self->{auth}{type}, $self->{auth}{mapping});
+  defined $index && defined $type && defined $mapping or
+    croak "Missing trackhub parameters (index|type|mapping)";
+  unless ($indices->exists(index => $index)) {
+    carp "Creating index $index";
+    $indices->create(index => $index);  
+  }
+
   $indices->put_mapping(index => $index,
-			type  => $self->{auth}{type},
-			body  => from_json(&Registry::Utils::slurp_file($self->{auth}{mapping})));
-  $mapping_json = $indices->get_mapping(index => $index,
-					type  => $self->{auth}{type});
-  exists $mapping_json->{$index}{mappings}{user} or croak "Authentication/authorisation mapping not created";
+			type  => $type,
+			body  => from_json(&Registry::Utils::slurp_file($mapping)));
+  $mapping_json = $indices->get_mapping(index => $index, type  => $type);
+  exists $mapping_json->{$index}{mappings}{$type} or croak "Authentication/authorisation mapping not created";
   carp "Authentication/authorisation mapping created";
 
 }
@@ -188,7 +193,7 @@ sub index_trackhubs {
     $doc_data->{status}{message} = 'Unknown';
 
     # index doc
-    $self->{es}->index(index   => $self->{index},
+    $self->{es}->index(index   => $self->{trackhub}{index},
 		       type    => $self->{trackhub}{type},
 		       id      => $doc->{id},
 		       body    => $doc_data);
@@ -198,7 +203,7 @@ sub index_trackhubs {
   # allowing recent changes to become visible to search. 
   # This process normally happens automatically once every second by default.
   carp "Flushing recent changes";
-  $self->{es}->indices->refresh(index => $self->{index});
+  $self->{es}->indices->refresh(index => $self->{trackhub}{index});
 }
 
 #
@@ -210,14 +215,14 @@ sub index_users {
   foreach my $user (@{$self->{users}}) {
     my $id = $user->{id};
     carp "Indexing user $id ($user->{fullname}) document";
-    $self->{es}->index(index   => $self->{index},
+    $self->{es}->index(index   => $self->{auth}{index},
 		       type    => $self->{auth}{type},
 		       id      => $id,
 		       body    => $user);
   }
 
   carp "Flushing recent changes";
-  $self->{es}->indices->refresh(index => $self->{index});
+  $self->{es}->indices->refresh(index => $self->{auth}{index});
 }
 
 
@@ -227,7 +232,9 @@ sub index_users {
 sub delete {
   my $self = shift;
 
-  $self->{es}->indices->delete(index => $self->{index});
+  $self->{es}->indices->delete(index => $self->{trackhub}{index});
+  $self->{es}->indices->delete(index => $self->{auth}{index})
+    if $self->{auth}{index} ne $self->{trackhub}{index};
 }
 
 #

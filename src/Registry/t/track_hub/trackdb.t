@@ -29,13 +29,14 @@ throws_ok { Registry::TrackHub::TrackDB->new() } qr/Undefined/, 'Throws if id no
 # tests with the example tracks from v1.0 schema
 my $config = Registry->config()->{'Model::Search'};
 my $indexer = Registry::Indexer->new(dir   => "$Bin/../trackhub-examples/",
-				     index => $config->{index},
 				     trackhub => {
-						  type  => $config->{type}{trackhub},
+						  index => $config->{trackhub}{index},
+						  type  => $config->{trackhub}{type},
 						  mapping => 'trackhub_mappings.json'
 						 },
 				     authentication => {
-							type  => $config->{type}{user},
+							index => $config->{user}{index},
+							type  => $config->{user}{type},
 							mapping => 'authentication_mappings.json'
 						       }
 				    );

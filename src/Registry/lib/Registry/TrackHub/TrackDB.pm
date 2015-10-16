@@ -33,8 +33,8 @@ sub new {
 	      _id  => $id,
 	      _es  => {
 		       client => Registry::Model::Search->new(nodes => $search_config->{nodes}),
-		       index  => $search_config->{index},
-		       type   => $search_config->{type}{trackhub}
+		       index  => $search_config->{trackhub}{index},
+		       type   => $search_config->{trackhub}{type}
 		      }
 	     };
   $self->{_doc} = $self->{_es}{client}->get_trackhub_by_id($id);

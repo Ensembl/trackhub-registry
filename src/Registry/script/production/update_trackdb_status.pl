@@ -241,11 +241,11 @@ foreach my $user (@{$users}) {
 	  $updated_doc->{source}{checksum} = $checksum;
 
 	  $logger->info("Writing document store with updates.");
-	  $es->index(index   => $config->{index},
-		     type    => $config->{type}{trackhub},
+	  $es->index(index   => $config->{trackhub}{index},
+		     type    => $config->{trackhub}{type},
 		     id      => $trackdb->id,
 		     body    => $updated_doc);
-	  $es->indices->refresh(index => $config->{index});
+	  $es->indices->refresh(index => $config->{trackhub}{index});
 
 	  # re-instantiate the trackdb since the document has changed
 	  $trackdb = Registry::TrackHub::TrackDB->new($trackdb->id);
@@ -361,11 +361,11 @@ if ($current_report) {
   my $current_report_id = $last_report_id?++$last_report_id:1;
 
   try {
-    $es->index(index   => $config->{index},
-	       type    => $config->{type}{report},
+    $es->index(index   => $config->{report}{index},
+	       type    => $config->{report}{type},
 	       id      => $current_report_id,
 	       body    => $current_report);
-    $es->indices->refresh(index => $config->{index});
+    $es->indices->refresh(index => $config->{report}{index});
   } catch {
     $logger->logdie($_);
   };

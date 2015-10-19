@@ -50,8 +50,8 @@ sub base : Chained('/login/required') PathPrefix CaptureArgs(1) {
 
   my $config = Registry->config()->{'Model::Search'};
   my $query = { term => { username => $username } };
-  my $user_search = $c->model('Search')->search( index => $config->{index},
-						 type  => $config->{type}{user},
+  my $user_search = $c->model('Search')->search( index => $config->{user}{index},
+						 type  => $config->{user}{type},
 						 body => { query => $query } );
 
   $c->stash(user => $user_search->{hits}{hits}[0]{_source},
@@ -84,12 +84,12 @@ sub profile : Chained('base') :Path('profile') Args(0) {
   
   # update user profile on the backend
   my $config = Registry->config()->{'Model::Search'};
-  $c->model('Search')->index(index   => $config->{index},
-			     type    => $config->{type}{user},
+  $c->model('Search')->index(index   => $config->{user}{index},
+			     type    => $config->{user}{type},
 			     id      => $c->stash->{id},
 			     body    => $new_user_profile);
 
-  $c->model('Search')->indices->refresh(index => $config->{index});
+  $c->model('Search')->indices->refresh(index => $config->{user}{index});
 
   $c->stash(status_msg => 'Profile updated');
 }
@@ -104,10 +104,10 @@ sub delete : Chained('base') Path('delete') Args(1) Does('ACL') RequiresRole('ad
       unless defined $id;
 
   my $config = Registry->config()->{'Model::Search'};
-  $c->model('Search')->delete(index   => $config->{index},
-			      type    => $config->{type}{user},
+  $c->model('Search')->delete(index   => $config->{user}{index},
+			      type    => $config->{user}{type},
 			      id      => $id);
-  $c->model('Search')->indices->refresh(index => $config->{index});
+  $c->model('Search')->indices->refresh(index => $config->{user}{index});
 
   # redirect to the list of providers page
   $c->detach('list_providers', [$c->stash->{user}{username}]);
@@ -169,10 +169,10 @@ sub delete_trackhub : Chained('base') :Path('delete') Args(1) {
     if ($doc->{owner} eq $c->user->username) {
       my $config = Registry->config()->{'Model::Search'};
       # try { # TODO: this is not working for some reason
-	$c->model('Search')->delete(index   => $config->{index},
-				    type    => $config->{type}{trackhub},
+	$c->model('Search')->delete(index   => $config->{trackhub}{index},
+				    type    => $config->{trackhub}{type},
 				    id      => $id);
-	$c->model('Search')->indices->refresh(index => $config->{index});
+	$c->model('Search')->indices->refresh(index => $config->{trackhub}{index});
       # } catch {
       # 	Catalyst::Exception->throw($_);
       # };
@@ -203,8 +203,8 @@ sub list_providers : Chained('base') Path('providers') Args(0) Does('ACL') Requi
   #   @{$c->model('Search')->query(index => 'test', type => 'user')->{hits}{hits}};
 
   my $config = Registry->config()->{'Model::Search'};
-  foreach my $user_data (@{$c->model('Search')->search(index => $config->{index}, 
-						       type  => $config->{type}{user},
+  foreach my $user_data (@{$c->model('Search')->search(index => $config->{user}{index}, 
+						       type  => $config->{user}{type},
 						       size => 100000)->{hits}{hits}}) {
     my $user = $user_data->{_source};
     # don't want to show admin user to himself
@@ -242,20 +242,20 @@ sub register :Path('register') Args(0) {
     
     # get the max user ID to assign the ID to the new user
     my $config = Registry->config()->{'Model::Search'};
-    my $users = $c->model('Search')->search(index => $config->{index}, type => $config->{type}{user}, size => 100000);
+    my $users = $c->model('Search')->search(index => $config->{user}{index}, type => $config->{user}{type}, size => 100000);
     my $current_max_id = max( map { $_->{_id} } @{$users->{hits}{hits}} );
 
     # add default user role to user 
     my $user_data = $self->registration_form->value;
     $user_data->{roles} = [ 'user' ];
 
-    $c->model('Search')->index(index => $config->{index},
-			       type  => $config->{type}{user},
+    $c->model('Search')->index(index => $config->{user}{index},
+			       type  => $config->{user}{type},
 			       id      => $current_max_id?$current_max_id + 1:1,
 			       body    => $user_data);
 
     # refresh the index
-    $c->model('Search')->indices->refresh(index => $config->{index});
+    $c->model('Search')->indices->refresh(index => $config->{user}{index});
 
     # authenticate and redirect to the user profile page
     if ($c->authenticate({ username => $username,

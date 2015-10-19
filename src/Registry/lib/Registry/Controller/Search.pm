@@ -60,7 +60,7 @@ sub index :Path :Args(0) {
   my $entries_per_page = $params->{entries_per_page} || 5;
 
   my $config = Registry->config()->{'Model::Search'};
-  my ($index, $type) = ($config->{index}, $config->{type}{trackhub});
+  my ($index, $type) = ($config->{trackhub}{index}, $config->{trackhub}{type});
 
   my $query_args = 
     {
@@ -225,8 +225,8 @@ sub advanced_search :Path('advanced') Args(0) {
 
   # get the list of unique species/assemblies/hubs
   my $config = Registry->config()->{'Model::Search'};
-  my $results = $c->model('Search')->search(index => $config->{index},
-					    type  => $config->{type}{trackhub},
+  my $results = $c->model('Search')->search(index => $config->{trackhub}{index},
+					    type  => $config->{trackhub}{type},
 					    body => 
 					    {
 					     aggs => {

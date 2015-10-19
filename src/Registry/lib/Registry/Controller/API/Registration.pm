@@ -275,9 +275,9 @@ sub trackhub_POST {
   # add hub.txt to hub URL in case is missing
   # the hub might be submitted twice, with or without the hub.txt file in the URL
   # the following search using the hub.url as a filter won't detect the hub
-  # as been already submitted and interpret the request as a first submission
+  # as being already submitted and interpret the request as a first submission
   # so it won't delete the existing trackDbs
-  unless ($url =~ /hub\.txt$/) {
+  unless ($url =~ /\.txt$/) {
     $url .= '/' unless $url =~ /\/$/;
     $url .= 'hub.txt';
   }

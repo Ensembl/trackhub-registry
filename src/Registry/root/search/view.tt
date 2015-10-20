@@ -29,18 +29,24 @@
 	[% ELSIF status.match('Unavailable') %]
 	[%   label_class = 'label-danger' %]
 	[% END %]
-	  <span class="label [% label_class %]" style="padding-bottom: 1px;">[% status %]</span>
+	  <span class="label [% label_class %]" style="padding-bottom: 1px;">[% status %]</span><br/>
 	[% IF status != 'Unknown' %]
-	  <br/><small>[% status_last_update %]</small><br/><br/>
+	  <small>[% status_last_update %]</small><br/>
 	[% END %]
-	[% IF status == 'All is Well' %]
+	[% IF status == 'All is Well' || status == 'Unknown' %]
+	  [% IF urls %]
 	  <div class="btn-group btn-group-xs">
             <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">View in Genome Browser <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu">
-              <li><a href="#">EnsEMBL</a></li>
-              <li><a href="#">UCSC</a></li>
+	      [% IF urls.ensembl %]
+              <li><a target="_blank" href="http://www.ensembl.org">EnsEMBL</a></li>
+	      [% END %]
+	      [% IF urls.ucsc %]
+              <li><a target="_blank" href="[% urls.ucsc %]">UCSC</a></li>
+	      [% END %]
             </ul>
           </div>
+	  [% END %]
 	[% END %]
 	</div>
         <ul class="list-group col-sm-6">

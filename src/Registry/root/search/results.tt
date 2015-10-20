@@ -168,14 +168,21 @@
 	      <h3 class="panel-title">[% h = item.get_value('hub'); h.longLabel %]</h3>
               <div class="panel-body">
 	        <div class="btn-group  btn-group-xs" style="float: right;">
+		  [% urls = item.get_value('genome_browser_url'); %]
+		  [% IF urls %]
 		  <div class="btn-group btn-group-xs">
                     <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">View in Genome Browser <span class="caret"></span></button>
                     <ul class="dropdown-menu" role="menu">
-                      <li><a href="#">EnsEMBL</a></li>
-                      <li><a href="#">UCSC</a></li>
+		      [% IF urls.ensembl %]
+                      <li><a target="_blank" href="http://www.ensembl.org">EnsEMBL</a></li>
+		      [% END %]
+		      [% IF urls.ucsc %]
+                      <li><a target="_blank" href="[% urls.ucsc %]">UCSC</a></li>
+		      [% END %]
                     </ul>
                   </div>
-		  <a role="button" class="btn btn-lg btn-default" data-toggle="popover" title="More info about this collection" data-content="" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [ item.id ]) %]">View Info</a>
+		  [% END %]
+		  <a role="button" class="btn btn-lg btn-default" data-toggle="popover" title="More info about this collection" data-content="" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [ item.id ]) %]?ucscUrl=[% urls.ucsc | uri %]&ensemblUrl=[% urls.ensembl | uri %]">View Info</a>
 		</div>
 	        <p>
 		  <strong>Hub</strong>: [% h.shortLabel %]<br/>
@@ -207,14 +214,21 @@
 	      <h3 class="panel-title">[% h = item.get_value('hub'); h.longLabel %]</h3>
               <div class="panel-body">
 	        <div class="btn-group  btn-group-xs" style="float: right;">
+		  [% urls = item.get_value('genome_browser_url'); %]
+		  [% IF urls %]
 		  <div class="btn-group btn-group-xs">
                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">View in Genome Browser <span class="caret"></span></button>
                     <ul class="dropdown-menu" role="menu">
-                      <li><a href="#">EnsEMBL</a></li>
-                      <li><a href="#">UCSC</a></li>
+		      [% IF urls.ensembl %]
+                      <li><a target="_blank" href="http://www.ensembl.org">EnsEMBL</a></li>
+		      [% END %]
+		      [% IF urls.ucsc %]
+                      <li><a target="_blank" href="[% urls.ucsc %]">UCSC</a></li>
+		      [% END %]
                     </ul>
                   </div>
-		  <a role="button" class="btn btn-lg btn-default" data-toggle="popover" title="More info about this collection" data-content="" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [ item.id ]) %]">View Info</a><br/><br/>
+		  [% END %]
+		  <a role="button" class="btn btn-lg btn-default" data-toggle="popover" title="More info about this collection" data-content="" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [ item.id ]) %]?ucscUrl=[% urls.ucsc | uri %]&ensemblUrl=[% urls.ensembl | uri %]">View Info</a><br/><br/>
 	          <span class="label label-warning">[% status %]</span>
 		</div>
 	        <p>

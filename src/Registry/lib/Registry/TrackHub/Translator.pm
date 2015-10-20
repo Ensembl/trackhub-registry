@@ -519,11 +519,11 @@ $synonym2assembly =
    # http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt
    #
    # Arabidopsis thaliana
-   # aratha1 => 'GCA_000001735.1', # TAIR10
-   # # Ricinus communis
-   # riccom1 => 'GCA_000151685.2', # JCVI_RCG_1.1
-   # # brassica rapa
-   # brarap1 => 'GCA_000309985.1', # Brapa_1.0
+   aratha1 => 'GCA_000001735.1', # TAIR10
+   # Ricinus communis
+   riccom1 => 'GCA_000151685.2', # JCVI_RCG_1.1
+   # brassica rapa
+   brarap1 => 'GCA_000309985.1', # Brapa_1.0
    #
    # http://genome-test.cse.ucsc.edu/~nknguyen/ecoli/publicHubs/pangenome/hub.txt
    # http://genome-test.cse.ucsc.edu/~nknguyen/ecoli/publicHubs/pangenomeWithDups/hub.txt

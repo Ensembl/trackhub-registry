@@ -9,6 +9,7 @@ use Data::SearchEngine::ElasticSearch::Query;
 use Data::SearchEngine::ElasticSearch;
 
 use Registry::TrackHub::TrackDB;
+use Registry::TrackHub::Translator;
 
 BEGIN { extends 'Catalyst::Controller'; }
 
@@ -197,6 +198,34 @@ sub index :Path :Args(0) {
     Catalyst::Exception->throw( qq/$_/ );
   };
   
+  # build and attach hub URL to each search result for browser integration
+  foreach my $item (@{$results->items}) {
+    my $hub = $item->get_value('hub');
+    my $assembly = $item->get_value('assembly');
+
+    #
+    # build UCSC track hub URL
+    # look up assembly synonym in translator table
+    #
+    my $genome_browser_url;
+    if (exists $Registry::TrackHub::Translator::synonym2assembly->{lc $assembly->{synonyms}}) {
+      $genome_browser_url->{ucsc} = 
+	# sprintf "http://genome.ucsc.edu/cgi-bin/hgTracks?db=%s&hubUrl=%s", $assembly->{synonyms}, $hub->{url};
+	sprintf "http://genome.ucsc.edu/cgi-bin/hgHubConnect?db=%s&hubUrl=%s&hgHub_do_redirect=on&hgHubConnect.remakeTrackHub=on", $assembly->{synonyms}, $hub->{url};
+    } else { # ($hub->{assembly}) { # this is an assembly hub
+      # see http://genome.ucsc.edu/goldenPath/help/hubQuickStartAssembly.html#blatGbib
+      $genome_browser_url->{ucsc} =
+	sprintf "http://genome.ucsc.edu/cgi-bin/hgGateway?hubUrl=%s", $hub->{url};
+    } 
+
+    #
+    # build EnsEMBL track hub URL
+    # TODO
+    #
+
+    $item->set_value('genome_browser_url', $genome_browser_url);
+  }
+
   $c->stash(query_string    => $params->{q},
 	    filters         => $params,
 	    items           => $results->items,
@@ -209,6 +238,12 @@ sub index :Path :Args(0) {
 
 sub view_trackhub :Path('view_trackhub') Args(1) {
   my ($self, $c, $id) = @_;
+  my $params = $c->req->params;
+  my $urls = 
+    {
+     ucsc => $params->{ucscUrl},
+     ensembl => $params->{ensemblUrl}
+    };
 
   my $trackdb;
   try {
@@ -217,7 +252,7 @@ sub view_trackhub :Path('view_trackhub') Args(1) {
     $c->stash(error_msg => $_);
   };
 
-  $c->stash(trackdb => $trackdb, template  => "search/view.tt");
+  $c->stash(trackdb => $trackdb, urls => $urls, template  => "search/view.tt");
 }
 
 sub advanced_search :Path('advanced') Args(0) {

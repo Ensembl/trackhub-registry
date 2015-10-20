@@ -519,11 +519,11 @@ $synonym2assembly =
    # http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt
    #
    # Arabidopsis thaliana
-   aratha1 => 'GCA_000001735.1', # TAIR10
-   # Ricinus communis
-   riccom1 => 'GCA_000151685.2', # JCVI_RCG_1.1
-   # brassica rapa
-   brarap1 => 'GCA_000309985.1', # Brapa_1.0
+   # aratha1 => 'GCA_000001735.1', # TAIR10
+   # # Ricinus communis
+   # riccom1 => 'GCA_000151685.2', # JCVI_RCG_1.1
+   # # brassica rapa
+   # brarap1 => 'GCA_000309985.1', # Brapa_1.0
    #
    # http://genome-test.cse.ucsc.edu/~nknguyen/ecoli/publicHubs/pangenome/hub.txt
    # http://genome-test.cse.ucsc.edu/~nknguyen/ecoli/publicHubs/pangenomeWithDups/hub.txt
@@ -662,6 +662,7 @@ $synonym2assembly =
 # UCSC
 #
 # http://genome-euro.ucsc.edu/cgi-bin/hgHubConnect?hubUrl=http%3A%2F%2Fngs.sanger.ac.uk%2Fproduction%2Fensembl%2Fregulation%2Fhub.txt&db=hg38&hgHub_do_redirect=on&hgHubConnect.remakeTrackHub=on
+# http://genome-euro.ucsc.edu/cgi-bin/hgHubConnect?hubUrl=http%3A%2F%2Fftp.ebi.ac.uk%2Fpub%2Fdatabases%2Fblueprint%2Freleases%2Fcurrent_release%2Fhomo_sapiens%2Fhub%2Fhub.txt&db=hg38&hgHub_do_redirect=on&hgHubConnect.remakeTrackHub=on&hgsid=209865411_yg74GaQ2WyJfv1cRBADYVmA38euZ
 #
 # See also http://genome.ucsc.edu/goldenPath/help/hgTrackHubHelp.html#Session
 #

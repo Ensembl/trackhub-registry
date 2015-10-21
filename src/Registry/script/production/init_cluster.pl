@@ -10,6 +10,7 @@ use Getopt::Long;
 use Pod::Usage;
 
 use Data::Dumper;
+use JSON;
 use HTTP::Tiny;
 use Search::Elasticsearch;
 
@@ -67,10 +68,19 @@ my $es = Search::Elasticsearch->new(nodes => $config{cluster}{nodes});
 $logger->info("Deleting existing indices/aliases");
 my $response = $es->indices->get(index => '_all', feature => '_aliases');
 my @indices = keys %{$response};
-my @aliases = map { keys $response->{$_}{aliases} } @indices;
 if (scalar @indices) {
   try {
-    $es->delete(index => \@indices);
+    map { my $index = $_; 
+	  map { $logger->info("Deleting alias $_") and 
+		  $es->indices->delete_alias(index => $index,
+					     name  => $_) } keys %{$response->{$index}{aliases}};
+	} @indices;
+  } catch {
+    $logger->logdie("Couldn't delete existing index/alias: $_");
+  };
+
+  try {
+    $es->indices->delete(index => \@indices) and $logger->info("Deleted indices: @indices");
   } catch {
     $logger->logdie("Couldn't delete existing indices: $_");
   };
@@ -78,16 +88,66 @@ if (scalar @indices) {
   $logger->info("Empty index list: none deleted");
 }
 
-# TODO: delete aliases
-
 foreach my $index_type (qw/trackhubs users reports/) {
   my $index = $config{$index_type}{index};
-  $logger->logdie("Unable to get index name for $index_type");
+  $logger->logdie("Unable to get index name for $index_type") unless $index;
+
   $logger->info("Creating index $index for $index_type");
-  
+  my $settings;
+  $settings->{number_of_shards} = $config{$index_type}{number_of_shards}
+    if exists $config{$index_type}{number_of_shards};
+  $settings->{number_of_replicas} = $config{$index_type}{number_of_replicas}
+    if exists $config{$index_type}{number_of_replicas};
+
+  try {
+    if ($settings) {
+      $es->indices->create(index => $index, 
+			   body  => { settings => $settings }) if $settings;
+    } else {
+      $es->indices->create(index => $index);
+    }
+  } catch {
+    $logger->logdie("Couldn't create index $index: $_");
+  };
+
+  if (exists $config{$index_type}{mapping}) {
+    my $type = $config{$index_type}{type};
+    $logger->logdie("Unable to get type for index $index") unless $type;
+    $logger->info("Creating mapping for type $type on index $index");
+    try {
+      $es->indices->put_mapping(index => $index,
+				type  => $type,
+				body  => from_json(slurp_file($config{$index_type}{mapping})));				
+    } catch {
+      $logger->logdie("Couldn't put mapping on index $index: $_");
+    };
+  }
+
+  $logger->info("Creating aliases on index $index");
+  try {
+    $es->indices->put_alias(index => $index,
+			    name  => $config{$index_type}{alias});
+  } catch {
+    $logger->logdie("Couldn't add alias to index $index: $_");
+  };
 }
 
 
+
+sub slurp_file {
+  my $file = shift;
+  defined $file or $logger->logdie("Undefined file");
+
+  my $string;
+  {
+    local $/=undef;
+    open FILE, "<$file" or $logger->logdie("Couldn't open file: $!");
+    $string = <FILE>;
+    close FILE;
+  }
+  
+  return $string;
+}
 
 __END__
 

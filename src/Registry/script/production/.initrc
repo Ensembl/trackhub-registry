@@ -5,22 +5,28 @@ nodes: 127.0.0.1:9200
 # nodes: 192.168.1.2:9200
 
 [trackhubs]
-index   : trackdb_v1
-alias   : trackdb
+index   : trackhubs_v1
+alias   : trackhubs
+type    : trackdb
 mapping : /home/avullo/work/ensembl/trackhub-registry/docs/trackhub-schema/v1.0/examples/trackhub_mappings.json
 # could specify some settings with index API,
 # see https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-update-settings.html
-# settings:
+number_of_shards  : 3
+number_of_replicas: 1
 
 [users]
-index      : user_v1
-alias      : user
+index      : users_v1
+alias      : users
+type       : user
 mapping    : /home/avullo/work/ensembl/trackhub-registry/docs/trackhub-schema/v1.0/examples/authentication_mappings.json
 admin_name : admin
 admin_pass : admin
-# settings   :
+number_of_shards  : 1
+number_of_replicas: 1
 
 [reports]
-name : report_v1
-alias: report
-# settings:
+index      : reports_v1
+alias      : reports
+type       : report
+number_of_shards  : 1
+number_of_replicas: 1

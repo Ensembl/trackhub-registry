@@ -1,6 +1,6 @@
 [cluster]
 name : thregistry
-nodes: 127.0.0.1:9200
+nodes: 
 # add other nodes here, will be assigned to the same nodes arrayref
 # nodes: 192.168.1.2:9200
 
@@ -20,7 +20,7 @@ alias      : users
 type       : user
 mapping    : /home/avullo/work/ensembl/trackhub-registry/docs/trackhub-schema/v1.0/examples/authentication_mappings.json
 admin_name : admin
-admin_pass : admin
+admin_pass : 
 number_of_shards  : 1
 number_of_replicas: 1
 

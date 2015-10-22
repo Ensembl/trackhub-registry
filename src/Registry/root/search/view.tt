@@ -69,6 +69,14 @@
         <p><strong>Name</strong>: [% trackdb.doc.hub.name %]</p>
 	<p><strong>Short Label</strong>: [% trackdb.doc.hub.shortLabel %]</p>
 	<p><strong>Long Label</strong>: [% trackdb.doc.hub.longLabel %]</p>
+	<p>
+	  <strong>Assembly Hub</strong>: 
+	  [% IF assembly_hub %]
+	    <span class="glyphicon glyphicon-ok">
+	  [% ELSE %]
+            <span class="glyphicon glyphicon-remove">
+	  [% END %]
+	</p>
 	  [% IF trackdb.doc.hub.url %]
 	<p><strong>Public URL</strong>: <a target="_blank" role=button" class="btn btn-xs btn-default" data-toggle="popover" title="View source URL" data-content="" href="[% trackdb.doc.hub.url %]">View</a></p>
 	  [% END %]

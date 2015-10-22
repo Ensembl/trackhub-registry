@@ -88,6 +88,7 @@ if (scalar @indices) {
   $logger->info("Empty index list: none deleted");
 }
 
+$logger->info("Creating index structure");
 foreach my $index_type (qw/trackhubs users reports/) {
   my $index = $config{$index_type}{index};
   $logger->logdie("Unable to get index name for $index_type") unless $index;
@@ -132,7 +133,29 @@ foreach my $index_type (qw/trackhubs users reports/) {
   };
 }
 
+$logger->info("Creating admin user");
+my $admin_user = 
+  {
+   id          => 1,
+   first_name  => "Alessandro",
+   last_name   => "Vullo",
+   affiliation => "EMBL-EBI",
+   email       => "avullo\@ebi.ac.uk",
+   fullname    => "Alessandro Vullo",
+   password    => $config{users}{admin_pass},
+   roles       => ["admin", "user"],
+   username    => $config{users}{admin_name},
+  };
+try {
+  $es->index(index => $config{users}{alias},
+	     type  => $config{users}{type},
+	     id    => $admin_user->{id},
+	     body  => $admin_user);
+} catch {
+  $logger->logdie("Unable to index admin user: $_");
+};
 
+$logger->info("DONE.");
 
 sub slurp_file {
   my $file = shift;

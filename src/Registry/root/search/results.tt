@@ -162,13 +162,14 @@
 
 	  [% FOREACH item = items %]
 	    [% status = item.get_value('status').message %]
+            [% urls = item.get_value('genome_browser_url'); %]
+	    [% assembly_hub = item.get_value('assembly_hub'); %]
 	    [% IF status == 'All is Well' %]
             <div class="panel panel-info">
 	      <!--<div class="panel-heading"><b>[% h = item.get_value('hub'); h.longLabel %]</b></div>-->
 	      <h3 class="panel-title">[% h = item.get_value('hub'); h.longLabel %]</h3>
               <div class="panel-body">
 	        <div class="btn-group  btn-group-xs" style="float: right;">
-		  [% urls = item.get_value('genome_browser_url'); %]
 		  [% IF urls %]
 		  <div class="btn-group btn-group-xs">
                     <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">View in Genome Browser <span class="caret"></span></button>
@@ -182,7 +183,7 @@
                     </ul>
                   </div>
 		  [% END %]
-		  <a role="button" class="btn btn-lg btn-default" data-toggle="popover" title="More info about this collection" data-content="" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [ item.id ]) %]?ucscUrl=[% urls.ucsc | uri %]&ensemblUrl=[% urls.ensembl | uri %]">View Info</a>
+		  <a role="button" class="btn btn-lg btn-default" data-toggle="popover" title="More info about this collection" data-content="" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [ item.id ]) %]?ucscUrl=[% urls.ucsc | uri %]&ensemblUrl=[% urls.ensembl | uri %]&assembly_hub=[% assembly_hub %]">View Info</a>
 		</div>
 	        <p>
 		  <strong>Hub</strong>: [% h.shortLabel %]<br/>
@@ -228,7 +229,7 @@
                     </ul>
                   </div>
 		  [% END %]
-		  <a role="button" class="btn btn-lg btn-default" data-toggle="popover" title="More info about this collection" data-content="" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [ item.id ]) %]?ucscUrl=[% urls.ucsc | uri %]&ensemblUrl=[% urls.ensembl | uri %]">View Info</a><br/><br/>
+		  <a role="button" class="btn btn-lg btn-default" data-toggle="popover" title="More info about this collection" data-content="" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [ item.id ]) %]?ucscUrl=[% urls.ucsc | uri %]&ensemblUrl=[% urls.ensembl | uri %]&assembly_hub=[% assembly_hub %]">View Info</a><br/><br/>
 	          <span class="label label-warning">[% status %]</span>
 		</div>
 	        <p>

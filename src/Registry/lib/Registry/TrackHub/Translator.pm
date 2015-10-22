@@ -108,7 +108,8 @@ sub to_json_1_0 {
      source => { 
 		url => $genome->trackDb->[0],
 		checksum => Registry::Utils::checksum_compute($genome->trackDb->[0])
-	       }
+	       },
+     assembly_hub => $genome->twoBitPath?1:0, # detect if it is an assembly hub
     };
 
   # add species/assembly information

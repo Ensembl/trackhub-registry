@@ -202,7 +202,7 @@ sub index :Path :Args(0) {
   foreach my $item (@{$results->items}) {
     my $hub = $item->get_value('hub');
     my $assembly = $item->get_value('assembly');
-
+    my $is_assembly_hub = $item->get_value('assembly_hub');
     #
     # build UCSC track hub URL
     # look up assembly synonym in translator table
@@ -212,7 +212,7 @@ sub index :Path :Args(0) {
       $genome_browser_url->{ucsc} = 
 	# sprintf "http://genome.ucsc.edu/cgi-bin/hgTracks?db=%s&hubUrl=%s", $assembly->{synonyms}, $hub->{url};
 	sprintf "http://genome.ucsc.edu/cgi-bin/hgHubConnect?db=%s&hubUrl=%s&hgHub_do_redirect=on&hgHubConnect.remakeTrackHub=on", $assembly->{synonyms}, $hub->{url};
-    } else { # ($hub->{assembly}) { # this is an assembly hub
+    } elsif ($is_assembly_hub) { # this is an assembly hub
       # see http://genome.ucsc.edu/goldenPath/help/hubQuickStartAssembly.html#blatGbib
       $genome_browser_url->{ucsc} =
 	sprintf "http://genome.ucsc.edu/cgi-bin/hgGateway?hubUrl=%s", $hub->{url};
@@ -224,6 +224,7 @@ sub index :Path :Args(0) {
     #
 
     $item->set_value('genome_browser_url', $genome_browser_url);
+    $item->set_value('assembly_hub', $is_assembly_hub);
   }
 
   $c->stash(query_string    => $params->{q},
@@ -244,6 +245,7 @@ sub view_trackhub :Path('view_trackhub') Args(1) {
      ucsc => $params->{ucscUrl},
      ensembl => $params->{ensemblUrl}
     };
+  my $assembly_hub = $params->{assembly_hub};
 
   my $trackdb;
   try {
@@ -252,7 +254,7 @@ sub view_trackhub :Path('view_trackhub') Args(1) {
     $c->stash(error_msg => $_);
   };
 
-  $c->stash(trackdb => $trackdb, urls => $urls, template  => "search/view.tt");
+  $c->stash(trackdb => $trackdb, urls => $urls, assembly_hub => $assembly_hub, template  => "search/view.tt");
 }
 
 sub advanced_search :Path('advanced') Args(0) {

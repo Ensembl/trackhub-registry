@@ -271,7 +271,7 @@ sub trackhub_POST {
   my $assembly_map = $c->req->data->{assemblies}; # might have submitted name -> accession map in case of non-UCSC assemblies
   
   return $self->status_bad_request($c, message => "You must specify the remote trackhub URL")
-    unless defined $url;
+    unless $url;
   # add hub.txt to hub URL in case is missing
   # the hub might be submitted twice, with or without the hub.txt file in the URL
   # the following search using the hub.url as a filter won't detect the hub

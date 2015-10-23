@@ -148,7 +148,7 @@ sub to_json_1_0 {
   map { $doc->{configuration}{$_->id} = $self->_make_configuration_object_1_0($_) } 
     @{$ctree->child_nodes};
   
-  return to_json($doc, { utf8 => 1, pretty => 1 });
+  return to_json($doc, { pretty => 1 });
 }
 
 

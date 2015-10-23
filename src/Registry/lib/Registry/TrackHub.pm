@@ -9,6 +9,7 @@ use warnings;
 use Registry::TrackHub::Genome;
 use Registry::Utils qw(run_cmd);
 use Registry::Utils::URL qw(read_file);
+use Encode qw(decode_utf8);
 
 use vars qw($AUTOLOAD);
 
@@ -122,7 +123,7 @@ sub _get_hub_info {
   foreach (split /\n/, $content) {
     my @line = split /\s/, $_, 2;
     $line[1] =~ s/^\s+|\s+$//g; # trim left/right spaces
-    $hub_details{$line[0]} = $line[1];
+    $hub_details{$line[0]} = Encode::decode_utf8($line[1]);
   }
   die 'No genomesFile found' unless $hub_details{genomesFile};
  
@@ -139,6 +140,7 @@ sub _get_hub_info {
   foreach (split /\n/, $genome_file) {
     my ($k, $v) = split(/\s/, $_);
     next unless $k =~ /^\w/;
+
     if ($k =~ /genome/) {
       $genome = $v;
       $genomes->{$genome} = Registry::TrackHub::Genome->new(assembly => $genome);

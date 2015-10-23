@@ -110,7 +110,8 @@ sub delete : Chained('base') Path('delete') Args(1) Does('ACL') RequiresRole('ad
   $c->model('Search')->indices->refresh(index => $config->{user}{index});
 
   # redirect to the list of providers page
-  $c->detach('list_providers', [$c->stash->{user}{username}]);
+  # $c->detach('list_providers', [$c->stash->{user}{username}]);
+  $c->res->redirect($c->uri_for($c->controller->action_for('list_providers', [$c->stash->{user}{username}])));
 }
 
 #
@@ -157,7 +158,8 @@ sub refresh_trackhub_status : Chained('base') :Path('refresh_trackhub_status') A
     $c->stash(error_msg => $_);
   };
 
-  $c->forward('list_trackhubs', [ $c->user->username ]);
+  $c->res->redirect($c->uri_for($c->controller->action_for('list_trackhubs', [$c->user->username])));
+  $c->detach;
 }
 
 sub delete_trackhub : Chained('base') :Path('delete') Args(1) {
@@ -177,7 +179,6 @@ sub delete_trackhub : Chained('base') :Path('delete') Args(1) {
       # 	Catalyst::Exception->throw($_);
       # };
       $c->stash(status_msg => "Deleted track collection [$id]");
-      $c->forward('list_trackhubs', [ $c->user->username ]);
     } else {
       $c->stash(error_msg => "Cannot delete collection [$id], does not belong to you");
     }
@@ -185,10 +186,8 @@ sub delete_trackhub : Chained('base') :Path('delete') Args(1) {
     $c->stash(error_msg => "Could not fetch track collection [$id]");
   }
 
-  # TODO: this is not properly working.
-  #       address is still that of delete action,
-  #       and list_trackhubs tab is not active
-  $c->forward('list_trackhubs', [ $c->user->username ]);
+  $c->res->redirect($c->uri_for($c->controller->action_for('list_trackhubs', [$c->user->username])));
+  $c->detach;
 }
 
 #

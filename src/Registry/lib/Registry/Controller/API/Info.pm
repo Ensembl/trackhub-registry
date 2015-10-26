@@ -52,10 +52,17 @@ sub ping :Local Args(0) ActionClass('REST') { }
 sub ping_GET {
   my ($self, $c) = @_;
 
-  my $es_url = sprintf "http://%s", Registry->config()->{'Model::Search'}{nodes};
+  my $nodes = sprintf "http://%s", Registry->config()->{'Model::Search'}{nodes};
+  my $es_url;
+  # can have multiple nodes specified in the configuration
+  if (ref $nodes eq 'ARRAY') {
+    $es_url = $nodes->[0]; # take the first node as URL to ping
+  } else {
+    $es_url = $nodes;
+  }
   my $ping = (HTTP::Tiny->new()->request('GET', $es_url)->{status} eq '200')?1:0;
 
-  $self->status_ok($c, entity => { ping => $ping}) if $ping;
+  $self->status_ok($c, entity => { ping => $ping }) if $ping;
   $self->status_gone($c, message => 'Storage is unavailable') unless $ping;
 }
 

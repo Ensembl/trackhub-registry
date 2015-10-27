@@ -326,15 +326,19 @@ sub trackhub_POST {
 			}
 	   };
   $registered_trackdbs = $c->model('Search')->search_trackhubs(query => $query);
+  my $updated = 0;
+  my $created;
   if ($registered_trackdbs->{hits}{total}) {
     $c->log->info("TrackHub already registered. Deleting existing trackDBs");
     foreach my $doc (@{$registered_trackdbs->{hits}{hits}}) {
+      $created = $doc->{_source}{created};
       $c->model('Search')->delete(index   => $config->{trackhub}{index},
 				  type    => $config->{trackhub}{type},
 				  id      => $doc->{_id});
       $c->log->info(sprintf "Deleted trackDb [%s]", $doc->{_id});
     }
     $c->model('Search')->indices->refresh(index => $config->{trackhub}{index});
+    $updated = 1;
   } 
 
   try {
@@ -360,8 +364,14 @@ sub trackhub_POST {
 
       # set the owner of the doc as the current user
       $doc->{owner} = $c->stash->{user};
-      # set creation date/status 
-      $doc->{created} = time();
+      # set creation/update date/status 
+      unless ($updated) {
+	$doc->{created} = time();
+      } else {
+	$doc->{created} = $created;
+	$doc->{updated} = time();
+      }
+
       $doc->{status}{message} = 'Unknown';
 	
       my $id = $c->model('Search')->index(index   => $config->{trackhub}{index},

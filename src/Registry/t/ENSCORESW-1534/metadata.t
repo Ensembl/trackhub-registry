@@ -22,14 +22,16 @@ SKIP: {
   skip "No Internet connection: cannot test Track DB parsing", 8
     unless Registry::Utils::internet_connection_ok();
 
-  my $URL = "http://www.ebi.ac.uk/~avullo/tmp/test/SRP026336";
+  # my $URL = "http://www.ebi.ac.uk/~avullo/tmp/test/SRP026336";
+  my $URL = "http://www.ebi.ac.uk/~tapanari/data/test/SRP022925/";
   my $th = Registry::TrackHub->new(url => $URL, permissive => 1);
-  my $parser = Registry::TrackHub::Parser->new(files => $th->get_genome('IRGSP-1.0')->trackDb);
+  # my $parser = Registry::TrackHub::Parser->new(files => $th->get_genome('IRGSP-1.0')->trackDb);
+  my $parser = Registry::TrackHub::Parser->new(files => $th->get_genome('TAIR10')->trackDb);
   isa_ok($parser, 'Registry::TrackHub::Parser');
 
   # now parse the tracksDB file
   my $tracks = $parser->parse;
-  print Dumper $tracks->{SRR922137}{metadata};
+  map { print $_, ' ', Dumper $tracks->{$_}{metadata} } keys %{$tracks};
   # is(scalar keys %{$tracks}, 1445, 'Number of tracks');
 
   # #

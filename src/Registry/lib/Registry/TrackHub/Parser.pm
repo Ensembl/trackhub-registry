@@ -6,6 +6,8 @@ package Registry::TrackHub::Parser;
 use strict;
 use warnings;
 
+use Encode qw(decode_utf8 FB_CROAK);
+
 use Registry::Utils::URL qw(read_file);
 
 use vars qw($AUTOLOAD);
@@ -41,7 +43,7 @@ sub parse {
     my $response = read_file($_, { 'nice' => 1 });
     die join("\n", @{$response->{error}})
       if $response->{error};
-  
+    $response->{content} = Encode::decode_utf8($response->{content}, Encode::FB_CROAK);
     $self->_parse_file_content($tracks, $response->{content} =~ s/\r//gr, $_);
   }
   

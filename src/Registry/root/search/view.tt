@@ -51,7 +51,7 @@
 	</div>
         <ul class="list-group col-sm-6">
           <li class="list-group-item">Total number of tracks <span class="badge">[% tracks.total %]</span></li>
-          <li class="list-group-item">Tracks linked to remote data <span class="badge">[% tracks.with_data.total %]</span></li>
+          <li class="list-group-item">Remote data tracks <span class="badge">[% tracks.with_data.total %]</span></li>
 	  <li class="list-group-item">Data type: [% trackdb.type %]</li>
 	  <li class="list-group-item">File type(s): [% trackdb.file_type.join(', ') %]</li>
         [% IF trackdb.doc.source %]

@@ -253,6 +253,7 @@ sub view_trackhub :Path('view_trackhub') Args(1) {
      ensembl => $params->{ensemblUrl}
     };
   my $assembly_hub = $params->{assembly_hub};
+  my $hubok = $params->{hubok};
 
   my $trackdb;
   try {
@@ -261,7 +262,7 @@ sub view_trackhub :Path('view_trackhub') Args(1) {
     $c->stash(error_msg => $_);
   };
 
-  $c->stash(trackdb => $trackdb, urls => $urls, assembly_hub => $assembly_hub, template  => "search/view.tt");
+  $c->stash(trackdb => $trackdb, urls => $urls, assembly_hub => $assembly_hub, hubok => $hubok, template  => "search/view.tt");
 }
 
 sub advanced_search :Path('advanced') Args(0) {

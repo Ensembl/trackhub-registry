@@ -213,7 +213,6 @@
               </div>
             </div>
 	    [% ELSE %]
-	      [% status = 'Unchecked' %]
             <div class="panel panel-warning">
 	      <h3 class="panel-title">[% h.longLabel %]</h3>
               <div class="panel-body">

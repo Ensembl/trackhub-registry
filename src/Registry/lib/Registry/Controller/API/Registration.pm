@@ -156,7 +156,7 @@ sub trackdb_create_POST {
   $new_doc_data->{version} = $c->stash->{version};
   # set creation date/status 
   $new_doc_data->{created} = time();
-  $new_doc_data->{status}{message} = 'Unknown';
+  $new_doc_data->{status}{message} = 'Unchecked';
 
   my $id;
   try {
@@ -372,7 +372,7 @@ sub trackhub_POST {
 	$doc->{updated} = time();
       }
 
-      $doc->{status}{message} = 'Unknown';
+      $doc->{status}{message} = 'Unchecked';
 	
       my $id = $c->model('Search')->index(index   => $config->{trackhub}{index},
 					  type    => $config->{trackhub}{type},
@@ -547,7 +547,7 @@ sub trackdb_PUT {
     
     # set update time and reset status
     $new_doc_data->{updated} = time();
-    $new_doc_data->{status}{message} = 'Unknown';
+    $new_doc_data->{status}{message} = 'Unchecked';
 
     #
     # Updates in Elasticsearch

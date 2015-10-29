@@ -188,7 +188,7 @@
                     </ul>
                   </div>
 		  [% END %]
-		  <a role="button" class="btn btn-lg btn-default" data-toggle="popover" title="More info about this collection" data-content="" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [ item.id ]) %]?ucscUrl=[% urls.ucsc | uri %]&ensemblUrl=[% urls.ensembl | uri %]&assembly_hub=[% assembly_hub %]">View Info</a>
+		  <a role="button" class="btn btn-lg btn-default" data-toggle="popover" title="More info about this collection" data-content="" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [ item.id ]) %]?ucscUrl=[% urls.ucsc | uri %]&ensemblUrl=[% urls.ensembl | uri %]&assembly_hub=[% assembly_hub %]&hubok=[% h.ok %]">View Info</a>
 		</div>
 	        <p>
 		  <strong>Hub</strong>: [% h.shortLabel %]<br/>
@@ -203,7 +203,7 @@
               <div class="panel-body">
 	        <div style="float: right;">
 	          <span class="label label-danger">[% status %]</span>
-		  <a role="button" class="btn btn-xs btn-default" data-toggle="popover" title="More info about this collection" data-content="" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [ item.id ]) %]">View Info</a>
+		  <a role="button" class="btn btn-xs btn-default" data-toggle="popover" title="More info about this collection" data-content="" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [ item.id ]) %]?hubok=[% h.ok %]">View Info</a>
 		</div>
 	        <p>
   		  <strong>Hub</strong>: [% h.shortLabel %]<br/>
@@ -231,7 +231,7 @@
                     </ul>
                   </div>
 		  [% END %]
-		  <a role="button" class="btn btn-lg btn-default" data-toggle="popover" title="More info about this collection" data-content="" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [ item.id ]) %]?ucscUrl=[% urls.ucsc | uri %]&ensemblUrl=[% urls.ensembl | uri %]&assembly_hub=[% assembly_hub %]">View Info</a><br/><br/>
+		  <a role="button" class="btn btn-lg btn-default" data-toggle="popover" title="More info about this collection" data-content="" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [ item.id ]) %]?ucscUrl=[% urls.ucsc | uri %]&ensemblUrl=[% urls.ensembl | uri %]&assembly_hub=[% assembly_hub %]&hubok=[% h.ok %]">View Info</a><br/><br/>
 	          <span class="label label-warning">[% status %]</span>
 		</div>
 	        <p>

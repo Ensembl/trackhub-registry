@@ -30,6 +30,15 @@ sub AUTOLOAD {
   return $self->{$attr};
 }
 
+my %format_lookup = (
+		     'bed'    => 'BED',
+		     'bb'     => 'bigBed',
+		     'bw'     => 'bigWig',
+		     'bam'    => 'bam',
+		     'vcf'    => 'vcfTabix',
+		     'cram'   => 'cram'
+		    );
+
 sub new {
   my ($class, %args) = @_;
   
@@ -148,6 +157,23 @@ sub to_json_1_0 {
   map { $doc->{configuration}{$_->id} = $self->_make_configuration_object_1_0($_) } 
     @{$ctree->child_nodes};
   
+  # collect trackDB stats, i.e. # tracks, # tracks linked to data, file types
+  $doc->{status} =
+    { 
+     tracks  => {
+		 total => 0,
+		 with_data => {
+			       total => 0,
+			       total_ko => 0
+			      }
+		},
+     message => 'Unknown',
+     last_update => ''
+    };
+  $doc->{file_type} = {};
+
+  $self->_collect_track_info($doc->{configuration}, $doc->{status}, $doc->{file_type});
+  
   return to_json($doc, { pretty => 1 });
 }
 
@@ -170,6 +196,34 @@ sub _make_configuration_object_1_0 {
 
   return $node_conf;
 }
+
+sub _collect_track_info {
+  my ($self, $hash, $status, $file_type) = @_;
+  foreach my $track (keys %{$hash}) { # key is track name
+    ++$status->{tracks}{total};
+
+    if (ref $hash->{$track} eq 'HASH') {
+      foreach my $attr (keys %{$hash->{$track}}) {
+	next unless $attr =~ /bigdataurl/i or $attr eq 'members';
+	if ($attr eq 'members') {
+	  $self->_collect_track_info($hash->{$track}{$attr}, $status, $file_type) if ref $hash->{$track}{$attr} eq 'HASH';
+	} else {
+	  ++$status->{tracks}{with_data}{total};
+
+	  # determine type
+	  my $url = $hash->{$track}{$attr};
+	  my @path = split(/\./, $url);
+	  my $index = -1;
+	  # handle compressed formats
+	  $index = -2 if $path[-1] eq 'gz';
+	  $file_type->{$format_lookup{$path[$index]}}++;
+	}
+
+      }
+    }
+  } 
+}
+
 #
 ##################################################################################
 

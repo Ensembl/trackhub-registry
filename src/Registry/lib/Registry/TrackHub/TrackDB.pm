@@ -154,18 +154,7 @@ sub update_status {
 
   # initialise status to pending
   my $last_update = $doc->{status}{last_update};
-  $doc->{status} = 
-    { 
-     tracks  => {
-		 total => 0,
-		 with_data => {
-			       total => 0,
-			       total_ko => 0
-			      }
-		},
-     message => 'Pending',
-     last_update => $last_update || ''
-    };
+  $doc->{status}{message} = 'Pending';
 
   # reindex doc to flag other processes its pending status
   # and refresh the index to immediately commit changes
@@ -175,7 +164,15 @@ sub update_status {
 			      body   => $doc);
   $self->{_es}{client}->indices->refresh(index => $self->{_es}{index});
 
-  # check remote URL and record status
+  # check remote data URLs and record stats
+  $doc->{status}{tracks} = 
+    {
+     total => 0,
+     with_data => {
+		   total => 0,
+		   total_ko => 0
+		  }
+    };
   $self->_collect_track_info($doc->{configuration});
   $doc->{status}{message} = 
     $doc->{status}{tracks}{with_data}{total_ko}?'Remote Data Unavailable':'All is Well';

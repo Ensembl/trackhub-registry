@@ -35,13 +35,13 @@
 	[% status = trackdb.status_message; %]
 	[% status_last_update = trackdb.status_last_update(1); %]
 	[% label_class = 'label-success' %]
-	[% IF status == 'Unknown' %]
+	[% IF status == 'Unchecked' %]
 	[%   label_class = 'label-warning' %]
 	[% ELSIF status.match('Unavailable') %]
 	[%   label_class = 'label-danger' %]
 	[% END %]
 	  <span class="label [% label_class %]" style="padding-bottom: 1px;">[% status %]</span>
-	[% IF status != 'Unknown' %]
+	[% IF status != 'Unchecked' %]
 	  <br/><small>[% status_last_update %]</small>
 	[% END %]
 	</td>

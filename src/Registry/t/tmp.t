@@ -10,7 +10,7 @@ use HTTP::Request::Common;
 use LWP::UserAgent;
 
 my $ua = LWP::UserAgent->new;
-my $server; # = 'http://193.62.54.43:3000';
+my $server = 'http://127.0.0.1:3000';
 my ($user, $pass) = ('trackhub1', 'trackhub1'); # ('etapanari', 'ensemblplants');
 my $request = GET("$server/api/login");
 $request->headers->authorization_basic($user, $pass);
@@ -19,15 +19,15 @@ my $content = from_json($response->content);
 my $auth_token = $content->{auth_token};
 print "Logged in\n" if $auth_token;
 
-$request = GET("$server/api/trackdb/AVCPMQaDKUenkhf5K5tA");
+$request = GET("$server/api/trackdb/AVCzG8pAaLx8j0yTm-ob");
 $request->headers->header(user       => $user);
 $request->headers->header(auth_token => $auth_token);
 $response = $ua->request($request);
+my $doc;
 if ($response->is_success) {
-  print Dumper from_json($response->content);
-} else {
-  
-  print "Couldn't get trackDB AVCPMQaDKUenkhf5K5tA\n";
+  $doc = from_json($response->content);
+} else {  
+  print "Couldn't get trackDB\n";
 }
 
   # $request = POST('/api/trackhub?permissive=1',

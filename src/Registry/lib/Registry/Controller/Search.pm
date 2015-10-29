@@ -8,6 +8,7 @@ use Catalyst::Exception;
 use Data::SearchEngine::ElasticSearch::Query;
 use Data::SearchEngine::ElasticSearch;
 
+use Registry::Utils::URL qw(file_exists);
 use Registry::TrackHub::TrackDB;
 use Registry::TrackHub::Translator;
 
@@ -223,6 +224,12 @@ sub index :Path :Args(0) {
     # TODO
     #
 
+    # check hub is accessible
+    $hub->{ok} = 1;
+    my $response = file_exists($hub->{url}, { nice => 1 });
+    $hub->{ok} = 0 if $response->{error};
+    
+    $item->set_value('hub', $hub);
     $item->set_value('genome_browser_url', $genome_browser_url);
     $item->set_value('assembly_hub', $is_assembly_hub);
   }

@@ -22,18 +22,21 @@
       <div class="panel-body">
         <div style="float: right;">
 	[% status = trackdb.status_message; %]
+	[% IF hubok == 0 %]
+	  [% status = 'Hub Unavailable' %]
+	[% END %]
 	[% status_last_update = trackdb.status_last_update(1); %]
 	[% label_class = 'label-success' %]
-	[% IF status == 'Unknown' %]
+	[% IF status == 'Unchecked' %]
 	[%   label_class = 'label-warning' %]
 	[% ELSIF status.match('Unavailable') %]
 	[%   label_class = 'label-danger' %]
 	[% END %]
-	  <span class="label [% label_class %]" style="padding-bottom: 1px;">[% status %]</span><br/>
-	[% IF status != 'Unknown' %]
+	  <span class="label [% label_class %]" style="padding-bottom: 1px;">[% status %]</span><br/><br/>
+	[% IF status != 'Unchecked' %]
 	  <small>[% status_last_update %]</small><br/>
 	[% END %]
-	[% IF status == 'All is Well' || status == 'Unknown' %]
+	[% IF status == 'All is Well' || status == 'Unchecked' %]
 	  [% IF urls %]
 	  <div class="btn-group btn-group-xs">
             <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">View in Genome Browser <span class="caret"></span></button>

@@ -32,10 +32,11 @@
 	[% ELSIF status.match('Unavailable') %]
 	[%   label_class = 'label-danger' %]
 	[% END %]
-	  <span class="label [% label_class %]" style="padding-bottom: 1px;">[% status %]</span><br/><br/>
+	  <span class="label [% label_class %]" style="padding-bottom: 1px;">[% status %]</span><br/>
 	[% IF status != 'Unchecked' %]
 	  <small>[% status_last_update %]</small><br/>
 	[% END %]
+	<br/>
 	[% IF status == 'All is Well' || status == 'Unchecked' %]
 	  [% IF urls %]
 	  <div class="btn-group btn-group-xs">

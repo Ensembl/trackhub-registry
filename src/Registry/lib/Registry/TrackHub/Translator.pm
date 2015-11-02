@@ -167,7 +167,7 @@ sub to_json_1_0 {
 			       total_ko => 0
 			      }
 		},
-     message => 'Unknown',
+     message => 'Unchecked',
      last_update => ''
     };
   $doc->{file_type} = {};

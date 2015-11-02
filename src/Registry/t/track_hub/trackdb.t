@@ -108,10 +108,10 @@ SKIP: {
     isa_ok($trackdb, 'Registry::TrackHub::TrackDB');
     $status = $trackdb->update_status();
     if ($doc->{species}{tax_id} == 3702) { # Arabidopsis thaliana
-      is($status->{tracks}{total}, 21, 'Number of tracks');
-      is($status->{tracks}{with_data}{total}, 20, 'Number of tracks with data');
+      is($status->{tracks}{total}, 23, 'Number of tracks');
+      is($status->{tracks}{with_data}{total}, 22, 'Number of tracks with data');
       is($status->{tracks}{with_data}{total_ko}, 0, 'Number of tracks with remote data unavailable');
-      is($trackdb->compute_checksum, 'c70af2c480087b45848d60c9ae76f1ad', 'araTha1 checksum');
+      is($trackdb->compute_checksum, '7de1d11f74702fc1a7ca824a49f1f07d', 'araTha1 checksum');
     } elsif ($doc->{species}{tax_id} == 3988) { # Ricinus communis
       is($status->{tracks}{total}, 13, 'Number of tracks');
       is($status->{tracks}{with_data}{total}, 12, 'Number of tracks with data');

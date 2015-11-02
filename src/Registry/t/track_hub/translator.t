@@ -148,7 +148,7 @@ SKIP: {
 				    synonyms => 'araTha1' }, 'Correct assembly');
 
       # check metadata and configuration
-      is(scalar @{$doc->{data}}, 21, "Number of data tracks");
+      is(scalar @{$doc->{data}}, 23, "Number of tracks");
 
       my $metadata = first { $_->{id} eq 'genscan_' } @{$doc->{data}};
       ok($metadata, "Track metadata exists");
@@ -160,7 +160,7 @@ SKIP: {
       is($metadata->{id}, 'repeatMaskerRNA_', 'Track id');
       is($metadata->{name}, 'RNA Repeating Elements by RepeatMasker', 'Track name');
       
-      is(scalar keys $doc->{configuration}, 12, "Root configuration cardinality");
+      is(scalar keys $doc->{configuration}, 14, "Root configuration cardinality");
       my $conf = $doc->{configuration}{lastzBraRap1};
       ok($conf, "Configuration object exists");
       is($conf->{visibility}, 'dense', "Visibility attribute");
@@ -185,7 +185,7 @@ SKIP: {
 				    synonyms => 'ricCom1' }, 'Correct assembly');
 
       # check metadata and configuration
-      is(scalar @{$doc->{data}}, 13, "Number of data tracks");
+      is(scalar @{$doc->{data}}, 13, "Number of tracks");
 
       my $metadata = first { $_->{id} eq 'gc5Base_' } @{$doc->{data}};
       ok($metadata, "Track metadata exists");

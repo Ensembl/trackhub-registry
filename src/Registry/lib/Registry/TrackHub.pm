@@ -115,7 +115,7 @@ sub _get_hub_info {
     push @{$response->{error}}, "Please the check the source URL in a web browser.";
     die join("\n", @{$response->{error}});
   }
-  $content = $response->{'content'};
+  $content = Encode::decode_utf8($response->{'content'}, Encode::FB_CROAK);
 
   my %hub_details;
 
@@ -123,7 +123,7 @@ sub _get_hub_info {
   foreach (split /\n/, $content) {
     my @line = split /\s/, $_, 2;
     $line[1] =~ s/^\s+|\s+$//g; # trim left/right spaces
-    $hub_details{$line[0]} = Encode::decode_utf8($line[1], Encode::FB_CROAK);
+    $hub_details{$line[0]} = $line[1];
   }
   die 'No genomesFile found' unless $hub_details{genomesFile};
  

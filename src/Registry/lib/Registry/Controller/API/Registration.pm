@@ -372,8 +372,6 @@ sub trackhub_POST {
 	$doc->{updated} = time();
       }
 
-      $doc->{status}{message} = 'Unchecked';
-	
       my $id = $c->model('Search')->index(index   => $config->{trackhub}{index},
 					  type    => $config->{trackhub}{type},
 					  # id      => $id,

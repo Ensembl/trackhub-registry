@@ -45,6 +45,10 @@ sub validate {
   # Handle here the unexpected, the python validation script cannot run,
   # e.g. the schema is badly formatted
   if ($rc) {
+    # this is to handle errors of the Python script
+    # which cannot decode some UTF characters
+    return 0 if $rc == 256;
+
     die "Command \"$cmd\" failed $!\n" if $rc == -1;
     die "Command \"$cmd\" exited with value $rc\n$output\n";
   }

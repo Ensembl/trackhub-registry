@@ -1,14 +1,14 @@
 [cluster]
 name : thregistry
-nodes: 
+nodes: 192.168.0.87:9200
 # add other nodes here, will be assigned to the same nodes arrayref
-# nodes: 192.168.1.2:9200
+nodes: 192.168.0.88:9200
 
 [trackhubs]
 index   : trackhubs_v1
 alias   : trackhubs
 type    : trackdb
-mapping : /home/avullo/work/ensembl/trackhub-registry/docs/trackhub-schema/v1.0/examples/trackhub_mappings.json
+mapping : /home/ubuntu/src/trackhub-registry/docs/trackhub-schema/v1.0/examples/trackhub_mappings.json
 # could specify some settings with index API,
 # see https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-update-settings.html
 number_of_shards  : 3
@@ -18,7 +18,7 @@ number_of_replicas: 1
 index      : users_v1
 alias      : users
 type       : user
-mapping    : /home/avullo/work/ensembl/trackhub-registry/docs/trackhub-schema/v1.0/examples/authentication_mappings.json
+mapping    : /home/ubuntu/src/trackhub-registry/docs/trackhub-schema/v1.0/examples/authentication_mappings.json
 admin_name : admin
 admin_pass : 
 number_of_shards  : 1

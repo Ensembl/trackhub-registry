@@ -137,8 +137,9 @@ foreach my $index_type (qw/trackhubs users reports/) {
 $logger->info("Creating admin user");
 # conf file in the repo does not specify admin pass,
 # should check it is set in the file it's being used
-defined $config{users}{admin_pass} or
-  $logger->logdie("Specify password for admin user");
+$logger->logdie("Specify password for admin user")
+  unless $config{users}{admin_pass};
+  
 my $admin_user = 
   {
    id          => 1,

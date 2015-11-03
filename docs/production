@@ -1,0 +1,84 @@
+Openstack cluster installation
+------------------------------
+
+- Create new instance
+
+m1.EBI-Ensembl16
+VCPUS 4
+RAM 16GB
+Disk 60GB
+
+- Create and attach disk to instance
+
+Volumes, Create volume:
+
+No volume source,
+No volume type,
+60GB
+
+Actions, edit attachments, attach to instance
+
+- Partition and format new volume
+
+$ sudo fdisk /dev/vdb
+$ sudo mkfs.ext4 /dev/vdb1
+
+- Install later Elasticsearch version
+
+$ mkdir Downloads; mkdir Downloads/elasticsearch; cd Downloads/elasticsearch
+$ wget https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-1.7.3.deb
+$ sudo dpkg -i elasticsearch-1.7.3.deb
+
+- Create data directory on existing and new volume partition
+
+$ sudo mkdir /var/lib/elasticsearch0; sudo chown -R elasticsearch.elasticsearch /var/lib/elasticsearch0
+$ sudo mkdir /var/lib/elasticsearch1; sudo chown -R elasticsearch.elasticsearch /var/lib/elasticsearch1
+
+# mount at bootime
+$ sudo apt-get install libblkid1
+$ sudo blkid
+...
+/dev/vdb1: UUID="061d7465-1db2-4936-a1d7-38b0920b83e4" TYPE="ext4"
+
+$ sudo nano /etc/fstab
+...
+UUID=061d7465-1db2-4936-a1d7-38b0920b83e4       /var/lib/elasticsearch1	auto    rw,user,auto    0       0
+
+- Reboot instance
+
+Action, Soft Reboot Instance
+
+- Install latest java
+
+$ sudo apt-add-repository ppa:webupd8team/java
+$ sudo apt-get update
+$ sudo apt-get install oracle-java8-installer # should say yes to questions
+
+# set JAVA_HOME in .basrc
+$ sudo nano .bashrc
+
+export JAVA_HOME=/usr/lib/jvm/java-8-oracle
+
+- Configure Elasticsearch init service
+
+$ sudo nano /etc/default/elasticsearch
+
+ES_HEAP_SIZE=8g
+ES_GC_LOG_FILE=/var/log/elasticsearch/gc.log
+MAX_OPEN_FILES=65535
+MAX_LOCKED_MEMORY=unlimited
+
+$ sudo nano /usr/lib/systemd/system/elasticsearch.service
+
+LimitNOFILE=65535
+LimitMEMLOCK=infinity
+
+$ sudo nano /etc/elasticsearch/elasticsearch.yml
+
+cluster.name: thregistry
+node.name: "Node [node number]"
+path.data: /var/lib/elasticsearch0,/var/lib/elasticsearch1
+bootstrap.mlockall: true
+
+Openstack web server installation
+---------------------------------

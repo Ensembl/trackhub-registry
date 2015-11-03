@@ -63,7 +63,8 @@ $logger->logdie(sprintf "Cluster %s is not up", $config{cluster}{name})
   unless HTTP::Tiny->new()->request('GET', $esurl)->{status} eq '200';
 
 $logger->info("Instantiating ES client");
-my $es = Search::Elasticsearch->new(nodes => $config{cluster}{nodes});
+my $es = Search::Elasticsearch->new(cxn_pool => 'Sniff',
+				    nodes => $config{cluster}{nodes});
 
 $logger->info("Deleting existing indices/aliases");
 my $response = $es->indices->get(index => '_all', feature => '_aliases');
@@ -182,7 +183,7 @@ init_cluster.pl - Set up Elasticsearch cluster, make it ready for production
 
 init_cluster.pl [options]
 
-   -c --config          configuration file [default: ./configrc]
+   -c --config          configuration file [default: .initrc]
    -h --help            display this help and exits
 
 =cut

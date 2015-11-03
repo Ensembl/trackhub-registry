@@ -64,7 +64,9 @@ requires 'DBIx::Class::Cursor::Cached';
 # for production
 recommends 'Log::Log4perl';
 recommends 'Log::Dispatch::Screen';
+recommends 'Config::Std';
 recommends 'Getopt::Long';
+recommends 'Pod::Usage';
 recommends 'Email::MIME';
 recommends 'Email::Sender::Simple';
 

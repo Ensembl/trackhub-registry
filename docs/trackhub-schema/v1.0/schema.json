@@ -94,7 +94,7 @@
 
           "description": "The NCBI assembly identifier (accession and version)",
 
-          "pattern": "^G(CA|CF)_[0-9]+.[0-9]+$"
+          "pattern": "^G(CA|CF)_[0-9]+.[0-9]+$|^NA$"
 	},
 
 	"name": { "type": "string" },

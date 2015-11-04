@@ -882,6 +882,9 @@ sub _add_genome_info {
   my $assembly_id;
   my $assembly_syn = $genome->assembly;
 
+  # manage EnsemblPlants genomes which do not have an accession
+  return if _handle_ensemblplants_exceptions($assembly_syn, $doc);
+
   # If the submitter has directly provided a map, this takes precedence
   my $assembly_map = $self->assemblies;
   if (exists $assembly_map->{$assembly_syn}) {
@@ -893,7 +896,7 @@ sub _add_genome_info {
   } elsif (exists $synonym2assembly->{lc $assembly_syn}) {
     $assembly_id = $synonym2assembly->{lc $assembly_syn};
   } else {
-    # TODO: Look up the assembly name in Ensembl Genomes and
+    # TODO: Look up the assembly name in the shared genome info Ensembl DB
     #       map it to an accession
   }
 
@@ -950,6 +953,36 @@ sub _add_genome_info {
   $doc->{assembly}{synonyms} = $assembly_syn;
 
   return;
+}
+
+sub _handle_ensemblplants_exceptions {
+  my ($self, $assembly_name, $doc) = @_;
+
+  return 0 unless $assembly_name eq 'v0117-2013Aug' or # Oryza longistaminata 
+    $assembly_name eq 'PRJEB4137' or # Oryza rufipogon
+      $assembly_name eq 'IWGSC1.0+popseq'; # Triticum aestivum
+
+  if ($assembly_name eq 'IWGSC1.0+popseq') { # Triticum aestivum
+    $doc->{species}{tax_id} = 4565;
+    $doc->{species}{scientific_name} = 'Triticum aestivum';
+    $doc->{species}{common_name} = 'bread wheat';
+    
+  } elsif ($assembly_name eq 'PRJEB4137') { # Oryza rufipogon
+    $doc->{species}{tax_id} = 4529;
+    $doc->{species}{scientific_name} = 'Oryza rufipogon';
+    $doc->{species}{common_name} = 'common wild rice';
+
+  } else { # Oryza longistaminata 
+    $doc->{species}{tax_id} = 4528;
+    $doc->{species}{scientific_name} = 'Oryza longistaminata';
+    $doc->{species}{common_name} = 'long-staminate rice';
+
+  }
+
+  $doc->{assembly}{accession} = 'NA';
+  $doc->{assembly}{name} = $assembly_name;
+
+  return 1;
 }
 
 1;

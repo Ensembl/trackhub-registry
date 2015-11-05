@@ -30,7 +30,7 @@
 	"assembly": { "type": "number" }
       },
 
-      "additionalProperties": false,
+      "additionalProperties": true,
 
       "required": [ "name", "shortLabel", "longLabel" ]
     },
@@ -107,7 +107,7 @@
 
       "additionalProperties": false,
 
-      "required": [ "accession" ]
+      "required": [ "accession", "name" ]
     },
 
     "data": {

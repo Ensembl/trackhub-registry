@@ -203,26 +203,33 @@ sub index :Path :Args(0) {
   foreach my $item (@{$results->items}) {
     my $hub = $item->get_value('hub');
     my $assembly = $item->get_value('assembly');
-    my $is_assembly_hub = $item->get_value('assembly_hub');
+    my $is_assembly_hub = $hub->{assembly};
+
     #
     # build UCSC track hub URL
     # look up assembly synonym in translator table
     #
     my $genome_browser_url;
-    if (exists $Registry::TrackHub::Translator::synonym2assembly->{lc $assembly->{synonyms}}) {
-      $genome_browser_url->{ucsc} = 
-	# sprintf "http://genome.ucsc.edu/cgi-bin/hgTracks?db=%s&hubUrl=%s", $assembly->{synonyms}, $hub->{url};
-	sprintf "http://genome.ucsc.edu/cgi-bin/hgHubConnect?db=%s&hubUrl=%s&hgHub_do_redirect=on&hgHubConnect.remakeTrackHub=on", $assembly->{synonyms}, $hub->{url};
-    } elsif ($is_assembly_hub) { # this is an assembly hub
+    if ($is_assembly_hub) { # this is an assembly hub
       # see http://genome.ucsc.edu/goldenPath/help/hubQuickStartAssembly.html#blatGbib
       $genome_browser_url->{ucsc} =
 	sprintf "http://genome.ucsc.edu/cgi-bin/hgGateway?hubUrl=%s", $hub->{url};
-    } 
-
+    } elsif (exists $Registry::TrackHub::Translator::synonym2assembly->{lc $assembly->{synonyms}}) {
+      # assembly supported by UCSC
+      $genome_browser_url->{ucsc} = 
+	# sprintf "http://genome.ucsc.edu/cgi-bin/hgTracks?db=%s&hubUrl=%s", $assembly->{synonyms}, $hub->{url};
+	sprintf "http://genome.ucsc.edu/cgi-bin/hgHubConnect?db=%s&hubUrl=%s&hgHub_do_redirect=on&hgHubConnect.remakeTrackHub=on", $assembly->{synonyms}, $hub->{url};
+    }
+    
     #
-    # build EnsEMBL track hub URL
     # TODO
     #
+    # build EnsEMBL track hub URL
+    #
+    # Connect to ensemblgenomes info DB
+    #
+    # If human, must see whether it's GRCh37 or newer
+    # 
 
     # check hub is accessible
     $hub->{ok} = 1;
@@ -231,7 +238,6 @@ sub index :Path :Args(0) {
     
     $item->set_value('hub', $hub);
     $item->set_value('genome_browser_url', $genome_browser_url);
-    $item->set_value('assembly_hub', $is_assembly_hub);
   }
 
   $c->stash(query_string    => $params->{q},

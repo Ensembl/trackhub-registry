@@ -22,7 +22,9 @@
       <div class="panel-body">
         <div style="float: right;">
 	[% status = trackdb.status_message; %]
-	[% IF hubok == 0 %]
+	[% hub = trackdb.hub %]
+	[% urls = hub.browser_links %]
+	[% IF hub.ok == 0 %]
 	  [% status = 'Hub Unavailable' %]
 	[% END %]
 	[% status_last_update = trackdb.status_last_update(1); %]
@@ -70,18 +72,18 @@
       <!-- Default panel contents -->
       <div class="panel-heading">Hub</div>
       <div class="panel-body">	
-        <p><strong>Name</strong>: [% trackdb.doc.hub.name %]</p>
-	<p><strong>Short Label</strong>: [% trackdb.doc.hub.shortLabel %]</p>
-	<p><strong>Long Label</strong>: [% trackdb.doc.hub.longLabel %]</p>
+        <p><strong>Name</strong>: [% hub.name %]</p>
+	<p><strong>Short Label</strong>: [% hub.shortLabel %]</p>
+	<p><strong>Long Label</strong>: [% hub.longLabel %]</p>
 	<p>
-	  <strong>Assembly Hub</strong>: 
-	  [% IF trackdb.doc.hub.assembly %]
+	  <strong>Assembly Hub</strong>:
+	  [% IF hub.assembly %]
 	    <span class="glyphicon glyphicon-ok">
 	  [% ELSE %]
             <span class="glyphicon glyphicon-remove">
 	  [% END %]
 	</p>
-	  [% IF trackdb.doc.hub.url %]
+	  [% IF hub.url %]
 	<p><strong>Public URL</strong>: <a target="_blank" role=button" class="btn btn-xs btn-default" data-toggle="popover" title="View source URL" data-content="" href="[% trackdb.doc.hub.url %]">View</a></p>
 	  [% END %]
 	</p>
@@ -117,7 +119,7 @@
 	  [% assembly = trackdb.doc.assembly %]
 	  <tr>
 	    <td>
-	    [% IF assembly.accession.match('GCA') %]
+	    [% IF assembly.accession.match('GC') %]
 	    <!--  <a target="_blank" href="http://www.ncbi.nlm.nih.gov/assembly/?term=[% assembly.accession %]">[% assembly.accession %]</a>-->
 	      <a target="_blank" href="http://www.ebi.ac.uk/ena/data/view/[% assembly.accession %]">[% assembly.accession %]</a>
 	    [% END %]

@@ -26,7 +26,8 @@
         "name": { "type": "string" },
 	"shortLabel": { "type": "string" },
 	"longLabel": { "type": "string" },
-	"url": { "type": "string", "format": "uri" }
+	"url": { "type": "string", "format": "uri" },
+	"assembly": { "type": "number" }
       },
 
       "additionalProperties": false,

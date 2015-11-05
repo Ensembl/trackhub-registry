@@ -195,7 +195,7 @@ SKIP: {
 					     hub     => { name => 'Test', shortLabel => 'Test Hub', longLabel => 'Test Hub' },
 					     version => 'v1.0',
 					     species => { tax_id => 9606, scientific_name => 'Homo sapiens' },
-					     assembly => { accession => 'GCA_000001405.15' },
+					     assembly => { accession => 'GCA_000001405.15', name => 'GRCh38' },
 					     data => [ { id => 'test', molecule => 'genomic_DNA' } ],
 					     configuration => { test => { shortLabel => 'test' } } }));
   $request->headers->header(user       => 'trackhub1');

@@ -199,45 +199,15 @@ sub index :Path :Args(0) {
     Catalyst::Exception->throw( qq/$_/ );
   };
   
-  # build and attach hub URL to each search result for browser integration
+  # check hub is available for each search result
   foreach my $item (@{$results->items}) {
     my $hub = $item->get_value('hub');
-    my $assembly = $item->get_value('assembly');
-    my $is_assembly_hub = $hub->{assembly};
 
-    #
-    # build UCSC track hub URL
-    # look up assembly synonym in translator table
-    #
-    my $genome_browser_url;
-    if ($is_assembly_hub) { # this is an assembly hub
-      # see http://genome.ucsc.edu/goldenPath/help/hubQuickStartAssembly.html#blatGbib
-      $genome_browser_url->{ucsc} =
-	sprintf "http://genome.ucsc.edu/cgi-bin/hgGateway?hubUrl=%s", $hub->{url};
-    } elsif (exists $Registry::TrackHub::Translator::synonym2assembly->{lc $assembly->{synonyms}}) {
-      # assembly supported by UCSC
-      $genome_browser_url->{ucsc} = 
-	# sprintf "http://genome.ucsc.edu/cgi-bin/hgTracks?db=%s&hubUrl=%s", $assembly->{synonyms}, $hub->{url};
-	sprintf "http://genome.ucsc.edu/cgi-bin/hgHubConnect?db=%s&hubUrl=%s&hgHub_do_redirect=on&hgHubConnect.remakeTrackHub=on", $assembly->{synonyms}, $hub->{url};
-    }
-    
-    #
-    # TODO
-    #
-    # build EnsEMBL track hub URL
-    #
-    # Connect to ensemblgenomes info DB
-    #
-    # If human, must see whether it's GRCh37 or newer
-    # 
-
-    # check hub is accessible
     $hub->{ok} = 1;
     my $response = file_exists($hub->{url}, { nice => 1 });
     $hub->{ok} = 0 if $response->{error};
     
     $item->set_value('hub', $hub);
-    $item->set_value('genome_browser_url', $genome_browser_url);
   }
 
   $c->stash(query_string    => $params->{q},
@@ -252,23 +222,15 @@ sub index :Path :Args(0) {
 
 sub view_trackhub :Path('view_trackhub') Args(1) {
   my ($self, $c, $id) = @_;
-  my $params = $c->req->params;
-  my $urls = 
-    {
-     ucsc => $params->{ucscUrl},
-     ensembl => $params->{ensemblUrl}
-    };
-  my $assembly_hub = $params->{assembly_hub};
-  my $hubok = $params->{hubok};
-
   my $trackdb;
+
   try {
     $trackdb = Registry::TrackHub::TrackDB->new($id);
   } catch {
     $c->stash(error_msg => $_);
   };
 
-  $c->stash(trackdb => $trackdb, urls => $urls, assembly_hub => $assembly_hub, hubok => $hubok, template  => "search/view.tt");
+  $c->stash(trackdb => $trackdb, template  => "search/view.tt");
 }
 
 sub advanced_search :Path('advanced') Args(0) {

@@ -16,7 +16,7 @@ use Registry::TrackHub;
 use Registry::TrackHub::Tree;
 use Registry::TrackHub::Parser;
 
-use vars qw($AUTOLOAD $synonym2assembly);
+use vars qw($AUTOLOAD $ucscdb2insdc);
 
 sub AUTOLOAD {
   my $self = shift;
@@ -264,7 +264,7 @@ sub _make_configuration_tree {
 # I presume this can be shared across translations
 # to different versions
 #
-$synonym2assembly = 
+$ucscdb2insdc = 
   {
    #
    # These mappings have been derived from the list of UCSC genome releases at:
@@ -896,8 +896,8 @@ sub _add_genome_info {
     } else {
       die sprintf "Assembly accession %s for %s does not comply with INSDC format", $assembly_map->{$assembly_syn}, $assembly_syn;
     }  
-  } elsif (exists $synonym2assembly->{lc $assembly_syn}) {
-    $assembly_id = $synonym2assembly->{lc $assembly_syn};
+  } elsif (exists $ucscdb2insdc->{lc $assembly_syn}) {
+    $assembly_id = $ucscdb2insdc->{lc $assembly_syn};
   } else {
     # TODO: Look up the assembly name in the shared genome info Ensembl DB
     #       map it to an accession
@@ -963,7 +963,35 @@ sub _add_genome_browser_links {
   defined $genome and defined $doc or
     die "Undefined genome and/or doc arguments";
 
-  my $is_assembly_hub;
+  my $assemblysyn = $genome->assembly;
+  defined $assemblysyn or die "Couldn't get assembly identifier from hub genome";
+
+  my $hub = $doc->{hub};
+  defined $hub->{url} or die "Couldn't get hub URL";
+
+  my $is_assembly_hub = $hub->{assembly};
+  defined $is_assembly_hub or 
+    die "Couldn't detect assembly hub";
+
+  #
+  # UCSC browser link
+  #
+  # Provide different links in case it's an assembly hub
+  # or an assembly supported by UCSC
+  if ($is_assembly_hub) { 
+    # see http://genome.ucsc.edu/goldenPath/help/hubQuickStartAssembly.html#blatGbib
+     $doc->{hub}{browser_links}{ucsc} = sprintf "http://genome.ucsc.edu/cgi-bin/hgGateway?hubUrl=%s", $hub->{url};
+  } elsif (exists $ucscdb2insdc->{lc $assemblysyn}) {
+    # assembly supported by UCSC
+    $doc->{hub}{browser_links}{ucsc} = 
+      # sprintf "http://genome.ucsc.edu/cgi-bin/hgTracks?db=%s&hubUrl=%s", $asseblysyn, $hub->{url};
+      sprintf "http://genome.ucsc.edu/cgi-bin/hgHubConnect?db=%s&hubUrl=%s&hgHub_do_redirect=on&hgHubConnect.remakeTrackHub=on", $assemblysyn, $hub->{url};
+  }
+
+  #
+  # EnsEMBL browser link
+  #
+  
 }
 
 sub _handle_ensemblplants_exceptions {

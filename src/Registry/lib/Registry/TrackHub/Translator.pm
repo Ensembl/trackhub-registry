@@ -111,18 +111,21 @@ sub to_json_1_0 {
 		 name       => $trackhub->hub,
 		 shortLabel => $trackhub->shortLabel,
 		 longLabel  => $trackhub->longLabel,
-		 url        => $trackhub->url
+		 url        => $trackhub->url,
+		 assembly   => $genome->twoBitPath?1:0 # detect if it is an assembly hub
 		},
      # add the original trackDb file as the source
      source => { 
 		url => $genome->trackDb->[0],
 		checksum => Registry::Utils::checksum_compute($genome->trackDb->[0])
-	       },
-     assembly_hub => $genome->twoBitPath?1:0, # detect if it is an assembly hub
+	       }
     };
 
   # add species/assembly information
   $self->_add_genome_info($genome, $doc);
+
+  # add links to genome browsers
+  $self->_add_genome_browser_links($genome, $doc);
 
   # now the tracks, metadata and display/configuration
   my $tracks = Registry::TrackHub::Parser->new(files => $genome->trackDb)->parse;
@@ -883,7 +886,7 @@ sub _add_genome_info {
   my $assembly_syn = $genome->assembly;
 
   # manage EnsemblPlants genomes which do not have an accession
-  return if _handle_ensemblplants_exceptions($assembly_syn, $doc);
+  return if $self->_handle_ensemblplants_exceptions($assembly_syn, $doc);
 
   # If the submitter has directly provided a map, this takes precedence
   my $assembly_map = $self->assemblies;
@@ -953,6 +956,14 @@ sub _add_genome_info {
   $doc->{assembly}{synonyms} = $assembly_syn;
 
   return;
+}
+
+sub _add_genome_browser_links {
+  my ($self, $genome, $doc) = @_;
+  defined $genome and defined $doc or
+    die "Undefined genome and/or doc arguments";
+
+  my $is_assembly_hub;
 }
 
 sub _handle_ensemblplants_exceptions {

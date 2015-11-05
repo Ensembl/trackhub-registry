@@ -75,7 +75,7 @@
 	<p><strong>Long Label</strong>: [% trackdb.doc.hub.longLabel %]</p>
 	<p>
 	  <strong>Assembly Hub</strong>: 
-	  [% IF assembly_hub %]
+	  [% IF trackdb.doc.hub.assembly %]
 	    <span class="glyphicon glyphicon-ok">
 	  [% ELSE %]
             <span class="glyphicon glyphicon-remove">
@@ -116,7 +116,12 @@
 	<tbody>
 	  [% assembly = trackdb.doc.assembly %]
 	  <tr>
-	    <td><a target="_blank" href="http://www.ncbi.nlm.nih.gov/assembly/?term=[% assembly.accession %]">[% assembly.accession %]</a></td>
+	    <td>
+	    [% IF assembly.accession.match('GCA') %]
+	    <!--  <a target="_blank" href="http://www.ncbi.nlm.nih.gov/assembly/?term=[% assembly.accession %]">[% assembly.accession %]</a>-->
+	      <a target="_blank" href="http://www.ebi.ac.uk/ena/data/view/[% assembly.accession %]">[% assembly.accession %]</a>
+	    [% END %]
+	    </td>
 	    <td>[% assembly.name %]</td>
 	    <td>[% assembly.long_name %]</td>
 	    <td>[% assembly.synonyms %]</td>

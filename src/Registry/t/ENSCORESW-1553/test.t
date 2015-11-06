@@ -39,9 +39,13 @@ $request = POST("$server/api/trackhub?permissive=1",
 		'Content-type' => 'application/json',
 		'Content'      => to_json({ 
 					   # url => 'http://www.ebi.ac.uk/~tapanari/data/test/SRP022925/hub.txt', 
-					   url => 'http://www.ebi.ac.uk/~tapanari/data/test2/SRP061745/hub.txt', 
+					   # url => 'http://www.ebi.ac.uk/~tapanari/data/test2/SRP061745/hub.txt', 
 					   # assemblies => { "IRGSP-1.0" => 'GCA_000005425.2' }
-					   assemblies => { MA1 => 'GCA_000005425.2' }
+					   # assemblies => { MA1 => 'GCA_000005425.2' }
+					   # url => 'ftp://ftp.ensemblgenomes.org/pub/misc_data/TrackHubs/SRP050323/hub.txt', 
+					   # url => 'http://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub/hub.txt'
+					   # url => 'http://smithlab.usc.edu/trackdata/methylation'
+					   url => 'http://fantom.gsc.riken.jp/5/datahub/hub.txt'
 					  }));
 $request->headers->header(user       => 'trackhub1');
 $request->headers->header(auth_token => $auth_token);

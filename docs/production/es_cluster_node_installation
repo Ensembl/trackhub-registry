@@ -79,6 +79,3 @@ cluster.name: thregistry
 node.name: "Node [node number]"
 path.data: /var/lib/elasticsearch0,/var/lib/elasticsearch1
 bootstrap.mlockall: true
-
-Openstack web server installation
----------------------------------

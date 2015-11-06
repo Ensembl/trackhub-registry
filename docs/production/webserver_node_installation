@@ -1,0 +1,60 @@
+Openstack web server installation
+---------------------------------
+
+- Create new instance
+
+- Install system performance monitoring tool
+$ sudo apt-get install -y sysstat
+$ sudo sed s/false/true/ </etc/default/sysstat >~/sysstat; cp ~/sysstat /etc/default
+
+- Install perl & accompanying packages
+
+$ \curl -L http://install.perlbrew.pl | bash
+$ perlbrew install perl-5.16.0
+$ perlbrew switch perl-5.16.0
+$ nano ~/.bashrc
+
+# last line
+source ~/perl5/perlbrew/etc/bashrc
+
+$ curl -L http://cpanmin.us | perl - --sudo App::cpanminus
+
+$ sudo apt-get install -y build-essential
+$ sudo apt-get install -y libxml2 libxml2-dev zlib1g zlib1g-dev libexpat1 libexpat1-dev
+
+$ sudo apt-get install -y mysql-client libmysqlclient-dev
+$ cpanm DBI
+$ cpanm DBD::mysql
+
+$ cpanm Module::Install
+$ cpanm Module::Install::Catalyst
+
+# HERE
+
+- Install Ensembl APIs
+
+$ sudo apt-get install -y git
+$ cd src
+$ git clone https://github.com/bioperl/bioperl-live.git
+$ cd bioperl-live
+$ git checkout bioperl-release-1-6-1
+$ cd ..
+$ git clone https://github.com/Ensembl/ensembl-git-tools.git
+$ nano ~/.bashrc
+
+export PATH:${HOME}/src/ensembl-git-tools/bin:${HOME}/bin:${PATH}
+
+$ . ~/.bashrc
+$ git ensembl --clone api
+$ git clone https://github.com/EnsemblGenomes/ensemblgenomes-api.git
+
+$ nano ~/.bashrc
+
+bioperl_libs=( ${HOME}/src/bioperl* )
+ensembl_libs=( ${HOME}/src/ensembl*/modules )
+for lib_path in "${ensembl_libs[@]}" "${bioperl_libs[@]}"
+do
+  PERL5LIB=${PERL5LIB:+$PERL5LIB:}${lib_path}
+done
+
+export PERL5LIB

@@ -16,6 +16,8 @@ use Registry::TrackHub;
 use Registry::TrackHub::Tree;
 use Registry::TrackHub::Parser;
 
+use Bio::EnsEMBL::Utils::MetaData::DBSQL::GenomeInfoAdaptor;
+
 use vars qw($AUTOLOAD $ucscdb2insdc);
 
 sub AUTOLOAD {
@@ -973,6 +975,11 @@ sub _add_genome_browser_links {
   defined $is_assembly_hub or 
     die "Couldn't detect assembly hub";
 
+  my ($assembly_accession, $assembly_name) =
+    ($doc->{assembly}{accession}, $doc->{assembly}{name});
+  defined $assembly_accession and defined $assembly_name or
+    die "Assembly accession|name not defined";
+
   #
   # UCSC browser link
   #
@@ -991,7 +998,66 @@ sub _add_genome_browser_links {
   #
   # EnsEMBL browser link
   #
+  return if $is_assembly_hub; # Ensembl does not support assembly hubs at the moment
+
+  my ($domain, $species) = 
+    ('http://### DIVISION ###.ensembl.org', $doc->{species}{scientific_name});
+  defined $species or die "Couldn't get species to build Ensembl URL";
+
+  $species = join('_', split/\s/, $species);
+  $species =~ /^\w+_\w+$/ or die "Couldn't get the required species name to build the Ensembl URL";
+
+  my $division;
+
+  if ($species =~ /homo_sapiens/i) { # if it's human assembly
+    # only GRCh38.* and GRCh37.* assemblies are supported,
+    # domain is different in the two cases
+    if ($assembly_name =~ /grch38/i) {
+      $division = 'www';
+    } elsif ($assembly_name =~ /grch37/i) {
+      $division = 'grch37';
+    } # other human assemblies are not supported
+
+  } elsif ($species =~ /mus_musculus/i) { # if it's mouse assembly
+    # any GRCm38 patch is supported, other assemblies are not
+    $division = 'www' if $assembly_name =~ /grcm38/i;
+  } else {
+    # Look up division in shared genome DB, by using assembly accession,
+    # when provided, or assembly name
+
+    # create an adaptor to work with genomes
+    my $gdba = Bio::EnsEMBL::Utils::MetaData::DBSQL::GenomeInfoAdaptor->build_adaptor();
+    
+    # first see if we can get by assembly accession
+    my ($genome, $genome_division);
+    if ($assembly_accession =~ /^GC/) {
+      $genome = $gdba->fetch_by_assembly_id($assembly_accession);
+    } else { 
+      # assembly accession not available: try fetch by assembly name
+      #
+      # TODO: there's no method in GenomeInfoAdaptor to fetch by assembly name. Ask Dan S to provide one
+      #
+      # Can still fetch by taxonomy ID
+      $genome = $gdba->fetch_all_by_taxonomy_id($doc->{species}{tax_id})->[0] if $doc->{species}{tax_id};
+    }
+    
+    $genome_division = $genome->division if $genome;
+    if ($genome_division =~ /^Ensembl/) {
+      if ($genome_division eq 'Ensembl') {
+	$division = 'www';
+      } else {
+	($division = lc $genome_division) =~ s/ensembl//i;
+      }
+    }
+  }
+
+  if ($division) {
+    $domain =~ s/### DIVISION ###/$division/;
+    $doc->{hub}{browser_links}{ensembl} =
+      sprintf "%s/%s/Location/View?contigviewbottom=url:%s;format=TRACKHUB;#modal_user_data", $domain, $species, $hub->{url};
+  }
   
+  return;
 }
 
 sub _handle_ensemblplants_exceptions {

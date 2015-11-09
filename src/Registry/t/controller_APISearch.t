@@ -44,7 +44,7 @@ SKIP: {
 		     { name => 'mRNA', url => 'http://www.mircode.org/ucscHub/hub.txt' },
 		     { name => 'blueprint', url => 'ftp://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub' },
 		     { name => 'plants', url => 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt' },
-		     { name => 'ensembl', url => 'http://ngs.sanger.ac.uk/production/ensembl/regulation/hub.txt' },
+		     # { name => 'ensembl', url => 'http://ngs.sanger.ac.uk/production/ensembl/regulation/hub.txt' },
 		     { name => 'rnaseq', url => 'http://web.stanford.edu/~htilgner/2012_454paper/data/hub.txt' },
 		     { name => 'zebrafish', url => 'http://research.nhgri.nih.gov/manuscripts/Burgess/zebrafish/downloads/NHGRI-1/hub.txt' },
 		     { name => 'sanger', url => 'http://ngs.sanger.ac.uk/production/grit/track_hub/hub.txt' },
@@ -69,6 +69,17 @@ SKIP: {
     ok($response->is_success, 'Request successful 2xx');
     is($response->content_type, 'application/json', 'JSON content type');
   }
+
+  # Now register another hub but do not make it available for search
+  note sprintf "Submitting hub polyA (not searchable)";
+  $request = POST('/api/trackhub?permissive=1',
+		  'Content-type' => 'application/json',
+		  'Content'      => to_json({ url => 'http://johnlab.org/xpad/Hub/UCSC.txt', public => 0 }));
+  $request->headers->header(user       => 'trackhub1');
+  $request->headers->header(auth_token => $auth_token);
+  ok($response = request($request), 'POST request to /api/trackhub');
+  ok($response->is_success, 'Request successful 2xx');
+  is($response->content_type, 'application/json', 'JSON content type');
   
   # Logout
   $request = GET('/api/logout');
@@ -97,7 +108,7 @@ SKIP: {
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
-  is($content->{total_entries}, 16, 'Number of search results');
+  is($content->{total_entries}, 14, 'Number of search results');
   is(scalar @{$content->{items}}, 5, 'Number of search results per page');
   ok($content->{items}[0]{id}, 'Search result item has ID');
   ok($content->{items}[1]{score}, 'Search result item has score');
@@ -112,7 +123,7 @@ SKIP: {
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
-  is(scalar @{$content->{items}}, 5, 'Number of search results per page');
+  is(scalar @{$content->{items}}, 4, 'Number of search results per page');
 
   # test the entries_per_page parameter
   $request = POST('/api/search?page=3&entries_per_page=2',
@@ -184,6 +195,16 @@ SKIP: {
   $content = from_json($response->content);
   is(scalar @{$content->{items}}, 0, 'Number of search results');
   
+  # search for non public hub should get no results
+  $request = POST('/api/search',
+		  'Content-type' => 'application/json',
+		  'Content'      => to_json({ hub => 'xPADHub'}));
+  ok($response = request($request), 'POST request to /api/search [filters: xPADHub]');
+  ok($response->is_success, 'Request successful');
+  is($response->content_type, 'application/json', 'JSON content type');
+  $content = from_json($response->content);
+  is(scalar @{$content->{items}}, 0, 'Number of search results');
+
   #
   # /api/search/trackdb/:id endpoint
   #

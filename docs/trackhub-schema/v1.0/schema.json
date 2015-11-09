@@ -9,6 +9,12 @@
 
   "properties": {
 
+    "public": {
+      "type": "boolean",
+
+      "description": "Whether the trackDb is to made available for search or not"
+    },
+
     "type": { 
       "type": "string",
       

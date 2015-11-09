@@ -1,6 +1,8 @@
 {
   "trackdb": {
     "properties": {
+      "public": { "type": "boolean", "index": "not_analyzed" },
+
       "created": { "type": "long", "index": "not_analyzed"  },
 
       "updated": { "type": "long", "index": "not_analyzed"  },

@@ -269,6 +269,8 @@ sub trackhub_POST {
   my $url = $c->req->data->{url};
   my $trackdb_type = $c->req->data->{type} || 'genomics'; # default to genomics type
   my $assembly_map = $c->req->data->{assemblies}; # might have submitted name -> accession map in case of non-UCSC assemblies
+  my $public = # whether the trackDbs are available for search or not, default: yes
+    defined $c->req->data->{public}?$c->req->data->{public}:1; 
   
   return $self->status_bad_request($c, message => "You must specify the remote trackhub URL")
     unless $url;
@@ -355,6 +357,8 @@ sub trackhub_POST {
     foreach my $json_doc (@{$trackdbs_docs}) {
       my $doc = from_json($json_doc);
       
+      $doc->{public} = $public;
+
       # add type
       $doc->{type} = $trackdb_type;
 

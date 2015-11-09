@@ -18,7 +18,9 @@ use Registry::Utils::URL qw(file_exists);
 my %format_lookup = (
 		     'bed'    => 'BED',
 		     'bb'     => 'bigBed',
+		     'bigBed' => 'bigBed',
 		     'bw'     => 'bigWig',
+		     'bigWig' => 'bigWig',
 		     'bam'    => 'bam',
 		     'vcf'    => 'vcfTabix',
 		     'cram'   => 'cram'

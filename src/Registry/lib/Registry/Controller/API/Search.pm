@@ -78,7 +78,7 @@ sub search_POST {
     };
 
   # process filters, i.e. species, assembly, hub
-  my $filters;
+  my $filters = { public => 1 }; # present only 'public' hubs
   $filters->{'species.scientific_name'} = $data->{species}
     if $data->{species};
   $filters->{'assembly.name'} = $data->{assembly}

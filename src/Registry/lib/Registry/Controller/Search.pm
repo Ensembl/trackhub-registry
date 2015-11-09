@@ -76,7 +76,8 @@ sub index :Path :Args(0) {
     };
 
   # pass extra (i.e. besides query) parameters as ANDed filters
-  my $filters;
+  my $filters = { public => 1 }; # present only 'public' trackDbs
+  
   foreach my $param (keys %{$params}) {
     next if $param eq 'q' or $param eq 'page' or $param eq 'entries_per_page';
     # my $filter = ($param =~ /species/)?'species.tax_id':'assembly.name';

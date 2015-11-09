@@ -1006,7 +1006,7 @@ sub _add_genome_browser_links {
     ('http://### DIVISION ###.ensembl.org', $doc->{species}{scientific_name});
   defined $species or die "Couldn't get species to build Ensembl URL";
 
-  $species = join('_', split/\s/, $species);
+  $species = join('_', (split(/\s/, $species))[0 .. 1]);
   $species =~ /^\w+_\w+$/ or die "Couldn't get the required species name to build the Ensembl URL";
 
   my $division;
@@ -1056,7 +1056,8 @@ sub _add_genome_browser_links {
   if ($division) {
     $domain =~ s/### DIVISION ###/$division/;
     $doc->{hub}{browser_links}{ensembl} =
-      sprintf "%s/%s/Location/View?contigviewbottom=url:%s;format=TRACKHUB;#modal_user_data", $domain, $species, $hub->{url};
+      # sprintf "%s/%s/Location/View?contigviewbottom=url:%s;format=TRACKHUB;#modal_user_data", $domain, $species, $hub->{url};
+      sprintf "%s/TrackHub?url=%s;species=%s", $domain, $hub->{url}, $species;
   }
   
   return;

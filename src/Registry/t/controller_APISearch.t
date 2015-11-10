@@ -20,7 +20,7 @@ use Registry::Indexer; # index a couple of sample documents
 
 SKIP: {
   skip "Cannot run tests: either elasticsearch is not running or there's no internet connection",
-    86 unless &Registry::Utils::es_running() and Registry::Utils::internet_connection_ok();
+    95 unless &Registry::Utils::es_running() and Registry::Utils::internet_connection_ok();
 
   note 'Preparing data for test (indexing users)';
   my $config = Registry->config()->{'Model::Search'};
@@ -44,7 +44,7 @@ SKIP: {
 		     { name => 'mRNA', url => 'http://www.mircode.org/ucscHub/hub.txt' },
 		     { name => 'blueprint', url => 'ftp://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub' },
 		     { name => 'plants', url => 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt' },
-		     # { name => 'ensembl', url => 'http://ngs.sanger.ac.uk/production/ensembl/regulation/hub.txt' },
+		     { name => 'ensembl', url => 'http://ngs.sanger.ac.uk/production/ensembl/regulation/hub.txt' },
 		     { name => 'rnaseq', url => 'http://web.stanford.edu/~htilgner/2012_454paper/data/hub.txt' },
 		     { name => 'zebrafish', url => 'http://research.nhgri.nih.gov/manuscripts/Burgess/zebrafish/downloads/NHGRI-1/hub.txt' },
 		     { name => 'sanger', url => 'http://ngs.sanger.ac.uk/production/grit/track_hub/hub.txt' },
@@ -108,7 +108,7 @@ SKIP: {
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
-  is($content->{total_entries}, 14, 'Number of search results');
+  is($content->{total_entries}, 17, 'Number of search results');
   is(scalar @{$content->{items}}, 5, 'Number of search results per page');
   ok($content->{items}[0]{id}, 'Search result item has ID');
   ok($content->{items}[1]{score}, 'Search result item has score');
@@ -123,7 +123,7 @@ SKIP: {
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
-  is(scalar @{$content->{items}}, 4, 'Number of search results per page');
+  is(scalar @{$content->{items}}, 5, 'Number of search results per page');
 
   # test the entries_per_page parameter
   $request = POST('/api/search?page=3&entries_per_page=2',

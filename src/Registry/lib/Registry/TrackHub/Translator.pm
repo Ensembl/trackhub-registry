@@ -1041,8 +1041,13 @@ sub _add_genome_browser_links {
       #
       # Can still fetch by taxonomy ID
       $genome = $gdba->fetch_all_by_taxonomy_id($doc->{species}{tax_id})->[0] if $doc->{species}{tax_id};
+      
     }
-    
+    # disconnect otherwise will end up with lots of sleeping connections on the
+    # public server causing "Too many connections" error
+    $gdba->{dbc}->disconnect_if_idle && 
+      die "Couldn't close connection to ensemblgenomes info DB";
+
     $genome_division = $genome->division if $genome;
     if ($genome_division =~ /^Ensembl/) {
       if ($genome_division eq 'Ensembl') {

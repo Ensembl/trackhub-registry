@@ -34,6 +34,7 @@ for lib_path in "${ensembl_libs[@]}" "${bioperl_libs[@]}"
 do
   PERL5LIB=${PERL5LIB:+$PERL5LIB:}${lib_path}
 done
+PERL5LIB=$APP_HOME/lib:$PERL5LIB
 export PERL5LIB
 
 . $HOME/perl5/perlbrew/etc/bashrc

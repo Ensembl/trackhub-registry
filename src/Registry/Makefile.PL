@@ -69,16 +69,16 @@ recommends 'Getopt::Long';
 recommends 'Pod::Usage';
 recommends 'Email::MIME';
 recommends 'Email::Sender::Simple';
-recommends 'DateTime'
-recommends 'Server::Starter'
-recommends 'Net::CIDR::Lite'
-recommends 'Net::Server::SS::PreFork'
-recommends 'Cache::Memcached'
-recommends 'Plack::Middleware::CrossOrigin'
-recommends 'Plack::Middleware::SizeLimit'
-recommends 'Plack::Middleware::Deflater'
-recommends 'Plack::Middleware::Assets'
-recommends 'CHI::Driver::Memcached'
+recommends 'DateTime';
+recommends 'Server::Starter';
+recommends 'Net::CIDR::Lite';
+recommends 'Net::Server::SS::PreFork';
+recommends 'Cache::Memcached';
+recommends 'Plack::Middleware::CrossOrigin';
+recommends 'Plack::Middleware::SizeLimit';
+recommends 'Plack::Middleware::Deflater';
+recommends 'Plack::Middleware::Assets';
+recommends 'CHI::Driver::Memcached';
 
 test_requires 'Test::More' => '0.88';
 catalyst;

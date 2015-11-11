@@ -141,6 +141,13 @@ __PACKAGE__->config(
 		   );
 
 # Start the application
+my $log4perl_conf = $ENV{REGISTRY_LOG4PERL} || 'log4perl.conf';
+if(-f $log4perl_conf) {
+  __PACKAGE__->log(Log::Log4perl::Catalyst->new($log4perl_conf));
+}
+else {
+  __PACKAGE__->log(Log::Log4perl::Catalyst->new());
+}
 __PACKAGE__->setup();
 
 =encoding utf8

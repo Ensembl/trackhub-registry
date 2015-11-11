@@ -79,6 +79,7 @@ recommends 'Plack::Middleware::SizeLimit';
 recommends 'Plack::Middleware::Deflater';
 recommends 'Plack::Middleware::Assets';
 recommends 'CHI::Driver::Memcached';
+recommends 'Term::Size::Any';
 
 test_requires 'Test::More' => '0.88';
 catalyst;

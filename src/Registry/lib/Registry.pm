@@ -1,6 +1,7 @@
 package Registry;
 use Moose;
 use namespace::autoclean;
+use Log::Log4perl::Catalyst;
 
 use Catalyst::Runtime 5.80;
 
@@ -144,8 +145,7 @@ __PACKAGE__->config(
 my $log4perl_conf = $ENV{REGISTRY_LOG4PERL} || 'log4perl.conf';
 if(-f $log4perl_conf) {
   __PACKAGE__->log(Log::Log4perl::Catalyst->new($log4perl_conf));
-}
-else {
+} else {
   __PACKAGE__->log(Log::Log4perl::Catalyst->new());
 }
 __PACKAGE__->setup();

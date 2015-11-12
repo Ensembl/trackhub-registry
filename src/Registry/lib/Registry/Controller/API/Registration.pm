@@ -404,6 +404,47 @@ sub trackhub_POST {
 			 entity   => $entity);
 }
 
+=head2 trackhub_by_name
+
+Action for /api/trackhub/:id (GET)
+
+=cut 
+
+sub trackhub_by_name :Path('/api/trackhub') Args(1) ActionClass('REST') { }
+
+sub trackhub_by_name_GET {
+  my ($self, $c, $hubid) = @_;
+
+  my $query = {
+	       filtered => {
+			    filter => {
+				       bool => {
+						must => [
+							 { term => { owner => $c->stash->{user} } },
+							 { term => { 'hub.name' => $hubid } }
+							]
+					       }
+				      }
+			   }
+	      };
+  
+  my $trackhub;
+  foreach my $trackdb (@{$c->model('Search')->get_trackdbs(query => $query)}) {
+    # record trackhub attributes
+    map { $trackhub->{$_} = $trackdb->{hub}{$_} } qw / name shortLabel longLabel url /
+      unless defined $trackhub;
+
+    push @{$trackhub->{trackdbs}},
+      {
+       species  => $trackdb->{species}{tax_id},
+       assembly => $trackdb->{assembly}{accession},
+       uri      => $c->uri_for('/api/trackdb/' . $trackdb->{_id})->as_string
+      };
+  }
+
+  $self->status_ok($c, entity => $trackhub);
+}
+
 sub _validate: Private {
   my ($self, $c, $doc) = @_;
   

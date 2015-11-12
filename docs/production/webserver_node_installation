@@ -3,38 +3,69 @@ Openstack web server installation
 
 - Create new instance
 
+$ sudo nano /etc/hosts
+
+127.0.0.1 localhost thregistry-web-0
+
+$ sudo apt-get update
+$ sudo apt-get upgrade
+
 - Install system performance monitoring tool
 $ sudo apt-get install -y sysstat
 $ sudo sed s/false/true/ </etc/default/sysstat >~/sysstat; cp ~/sysstat /etc/default
 
+- Install oracle development tools
+
+$ sudo apt-get install -y libaio1
+$ sudo mkdir /opt/oracle && cd /opt/oracle
+$ sudo unzip ~/Downloads/oracle/basic-11.1.0.6.0-linux-x86_64.zip
+$ sudo unzip ~/Downloads/oracle/sdk-11.1.0.6.0-linux-x86_64.zip
+$ sudo unzip ~/Downloads/oracle/sqlplus-11.1.0.6.0-linux-x86_64.zip
+$ cd /opt/oracle/instantclient_11_1
+$ sudo ln -s libclntsh.so.11.1 libclntsh.so
+$ sudo tar zxvf ~/Downloads/oracle/network.tgz 
+$ cd
+$ nano .bashrc
+
+export ORACLE_BASE=/opt/oracle
+export ORACLE_HOME=$ORACLE_BASE/instantclient_11_1
+export PATH=$ORACLE_HOME:$PATH
+export TNS_ADMIN=$HOME/etc
+export NLS_LANG=ITALIAN_ITALY.WE8ISO8859P15
+export LD_LIBRARY_PATH=$ORACLE_HOME:$LD_LIBRARY_PATH
+
 - Install perl & accompanying packages
 
+$ sudo apt-get install -y build-essential
 $ \curl -L http://install.perlbrew.pl | bash
-$ perlbrew install perl-5.16.0
-$ perlbrew switch perl-5.16.0
 $ nano ~/.bashrc
 
 # last line
 source ~/perl5/perlbrew/etc/bashrc
 
+$ perlbrew install perl-5.16.0
+$ perlbrew switch perl-5.16.0
+
 $ curl -L http://cpanmin.us | perl - --sudo App::cpanminus
 
-$ sudo apt-get install -y build-essential
 $ sudo apt-get install -y libxml2 libxml2-dev zlib1g zlib1g-dev libexpat1 libexpat1-dev
 
 $ sudo apt-get install -y mysql-client libmysqlclient-dev
+
+# have to do this since installing DBI will try to create dir which is owned by root hence will fail
+$ sudo chown -R ubuntu.ubuntu /home/ubuntu/perl5/perlbrew/perls/perl-5.16.0/lib/site_perl/5.16.0/x86_64-linux/auto
+$ sudo chown -R ubuntu.ubuntu /home/ubuntu/perl5/perlbrew/perls/perl-5.16.0/lib/site_perl/5.16.0/App
+
 $ cpanm DBI
 $ cpanm DBD::mysql
 
 $ cpanm Module::Install
 $ cpanm Module::Install::Catalyst
 
-# HERE
-
 - Install Ensembl APIs
 
 $ sudo apt-get install -y git
-$ cd src
+$ mkdir src && cd src
 $ git clone https://github.com/bioperl/bioperl-live.git
 $ cd bioperl-live
 $ git checkout bioperl-release-1-6-1
@@ -58,3 +89,29 @@ do
 done
 
 export PERL5LIB
+
+- Install trackhub registry app
+
+$ cd src
+$ git clone https://github.com/Ensembl/trackhub-registry
+$ cd trackhub-registry/src/Registry
+$ sudo apt-get install libssl-dev # for module Net::SSLeay
+
+# OPTIONAL (installation complains but not strictly needed)
+$ sudo apt-get install libgd-dev # for module GD
+
+# reissue if some modules fail to install (probably because of wrong precedence in Makefile)
+$ cpanm --installdeps --with-recommends . 
+
+-- Install validation script
+
+$ mkdir ~/bin
+$ cp ../../docs/trackhub-schema/validate.py ~/bin # ~/bin should be already in PATH
+
+$ sudo apt-get install -y python-pip
+$ cd Downloads/python # assume we've got Downloads/python/jsonschema-2.5.1.tar.gz
+$ tar zxvf jsonschema-2.5.1.tar.gz
+$ cd jsonschema-2.5.1
+$ sudo python setup.py install
+
+- Install postfix

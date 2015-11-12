@@ -22,7 +22,7 @@ use Registry::Indexer; # index a couple of sample documents
 
 SKIP: {
   skip "Launch an elasticsearch instance for the tests to run fully",
-    243 unless &Registry::Utils::es_running();
+    258 unless &Registry::Utils::es_running();
 
   # index test data
   note 'Preparing data for test (indexing sample documents)';
@@ -363,7 +363,7 @@ SKIP: {
   		  'Content-type' => 'application/json');
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'POST request to /api/trackdb (no data)');
+  ok($response = request($request), 'POST request to /api/trackhub (no data)');
   is($response->code, 400, 'Request unsuccessful 400');
   $content = from_json($response->content);
   like($content->{error}, qr/You must provide data/, 'Correct error response');
@@ -557,6 +557,25 @@ SKIP: {
       is($hub->{shortLabel}, 'DNA Methylation', 'Hub short label');
       is(scalar @{$hub->{trackdbs}}, 10, 'Number of trackDbs');
     }
+  }
+
+  #
+  # Test /api/trackhub/:id (GET)
+  #
+  $request = GET('/api/trackhub/cshl2013');
+  $request->headers->header(user       => 'trackhub1');
+  $request->headers->header(auth_token => $auth_token);
+  ok($response = request($request), 'GET request to /api/trackhub');
+  ok($response->is_success, 'Request successful 2xx');
+  is($response->content_type, 'application/json', 'JSON content type');
+  my $hub = from_json($response->content);
+  is($hub->{name}, 'cshl2013', 'Hub name');
+  is($hub->{shortLabel}, 'Plants', 'Hub short label');
+  is(scalar @{$hub->{trackdbs}}, 3, 'Number of trackDbs');
+  foreach my $trackdb (@{$hub->{trackdbs}}) {
+    ok(($trackdb->{species} == 3702) || ($trackdb->{species} == 3711) || ($trackdb->{species} == 3988), 'trackDb species');
+    ok(($trackdb->{assembly} eq 'GCA_000151685.2') || ($trackdb->{assembly} eq 'GCA_000309985.1') || ($trackdb->{assembly} eq 'GCA_000001735.1'), 'trackDb assembly');
+    like($trackdb->{uri}, qr/api\/trackdb/, 'trackDb uri');
   }
 
   # Logout 

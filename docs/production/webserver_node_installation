@@ -16,12 +16,15 @@ $ sudo sed s/false/true/ </etc/default/sysstat >~/sysstat; cp ~/sysstat /etc/def
 
 - Install oracle development tools
 
-$ sudo apt-get install -y libaio1
+$ sudo apt-get install -y libaio1 unzip
 $ sudo mkdir /opt/oracle && cd /opt/oracle
+
+# assume the following packages have been transferred
 $ sudo unzip ~/Downloads/oracle/basic-11.1.0.6.0-linux-x86_64.zip
 $ sudo unzip ~/Downloads/oracle/sdk-11.1.0.6.0-linux-x86_64.zip
 $ sudo unzip ~/Downloads/oracle/sqlplus-11.1.0.6.0-linux-x86_64.zip
-$ cd /opt/oracle/instantclient_11_1
+
+$ cd instantclient_11_1
 $ sudo ln -s libclntsh.so.11.1 libclntsh.so
 $ sudo tar zxvf ~/Downloads/oracle/network.tgz 
 $ cd
@@ -73,7 +76,7 @@ $ cd ..
 $ git clone https://github.com/Ensembl/ensembl-git-tools.git
 $ nano ~/.bashrc
 
-export PATH:${HOME}/src/ensembl-git-tools/bin:${HOME}/bin:${PATH}
+export PATH=${HOME}/src/ensembl-git-tools/bin:${HOME}/bin:${PATH}
 
 $ . ~/.bashrc
 $ git ensembl --clone api
@@ -95,10 +98,10 @@ export PERL5LIB
 $ cd src
 $ git clone https://github.com/Ensembl/trackhub-registry
 $ cd trackhub-registry/src/Registry
-$ sudo apt-get install libssl-dev # for module Net::SSLeay
+$ sudo apt-get install -y libssl-dev # for module Net::SSLeay
 
 # OPTIONAL (installation complains but not strictly needed)
-$ sudo apt-get install libgd-dev # for module GD
+$ sudo apt-get install -y libgd-dev # for module GD
 
 # reissue if some modules fail to install (probably because of wrong precedence in Makefile)
 $ cpanm --installdeps --with-recommends . 

@@ -151,21 +151,21 @@ sub get_trackdbs {
   # use scan & scroll API
   # see https://metacpan.org/pod/Search::Elasticsearch::Scroll
   # use scan search type to disable sorting for efficient scrolling
-  # $args{search_type} = 'scan';
-  # my $scroll = $self->_es->scroll_helper(%args);
+  $args{search_type} = 'scan';
+  my $scroll = $self->_es->scroll_helper(%args);
   
-  # my @trackdbs;
-  # while (my $trackdb = $scroll->next) {
-  #   $trackdb->{_source}{_id} = $trackdb->{_id};
-  #   push @trackdbs, $trackdb->{_source};
-  # }
-
   my @trackdbs;
-  $args{size} = 10000;
-  foreach my $doc (@{$self->_es->search(%args)->{hits}{hits}}) {
-    $doc->{_source}{_id} = $doc->{_id};
-    push @trackdbs, $doc->{_source};
+  while (my $trackdb = $scroll->next) {
+    $trackdb->{_source}{_id} = $trackdb->{_id};
+    push @trackdbs, $trackdb->{_source};
   }
+
+  # my @trackdbs;
+  # $args{size} = 10000;
+  # foreach my $doc (@{$self->_es->search(%args)->{hits}{hits}}) {
+  #   $doc->{_source}{_id} = $doc->{_id};
+  #   push @trackdbs, $doc->{_source};
+  # }
   
   return \@trackdbs;
 }

@@ -28,10 +28,13 @@
 		    <ul>
 		      <li><a href="#login">GET /api/login</a></li>
 		      <li><a href="#get_trackhub">GET /api/trackhub</a></li>
+		      <li><a href="#get_trackhub_id">GET /api/trackhub/:id</a></li>
 		      <li><a href="#post_trackhub">POST /api/trackhub</a></li>
 		      <li><a href="#get_trackdb">GET /api/trackdb/:id</a></li>
-		      <li><a href="#post_trackdb_create">POST /api/trackdb/create</a></li>
-		      <li><a href="#put_trackdb">PUT /api/trackdb/:id</a></li>
+		      <!--
+		        <li><a href="#post_trackdb_create">POST /api/trackdb/create</a></li>
+		        <li><a href="#put_trackdb">PUT /api/trackdb/:id</a></li>
+		      -->
 		      <li><a href="#delete_trackdb">DELETE /api/trackdb/:id</a></li>
 		      <li><a href="#logout">GET /api/logout</a></li>
 		    </ul>
@@ -209,6 +212,79 @@
       </tr>
       <tr><td>200</td><td>OK</td><td>Request successful</td></tr>
       <tr><td>401</td><td>Unauthorized</td><td>The request requires user authentication</td></tr>
+      <tr><td>500</td><td>Internal Server Error</td><td>Request cannot be fulfilled due to unexpected condition</td></tr>
+      <tr><td>503</td><td>Service Unavailable</td><td>Request cannot be fulfilled due to temporary overloading or maintenance of the server</td></tr>
+      <tr>
+      </tr>
+      <tr>
+      </tr>
+      <tr>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 id="get_trackhub_id">GET /api/trackhub/:id</h3>
+  <p>
+    Return a JSON representation of a track hub with the given name in the Registry.
+  </p>
+
+  <h4>Resource Information</h4>
+  <table class="table" style="width: auto;">
+    <tbody>
+      <tr>
+        <th>Response formats</th>
+	<td>JSON</td>
+      </tr>
+      <tr>
+        <th>Authentication</th>
+	<td>User+Auth-Token headers</td>
+      </tr>
+      <tr>
+        <th>Rate Limited</th>
+	<td>No</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Parameters</h4>
+  <table class="table table-striped">
+    <thead><tr><th>Name</th><th>Type</th><th>Description</th><th>Example Values</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>id</td>
+	<td><var>String</var></td>
+    	<td>A track hub name (i.e. 'hub' attribute value in hub.txt)</td>
+	<td><var>cshl2013</var></td>
+      </tr>	
+    </tbody>
+  </table>
+
+  <h4>Example Request</h4>
+  <pre>
+    GET https://www.trackhubregistry.org/api/trackhub/cshl2013
+    User: exampleuser
+    Auth-Token: 6l5/GuIiOSCywuSI9HF1VU97clwb/CXPDFS0MyAB/HCZuxtjQBj4uORZL8NY3Yhi
+  </pre>
+
+  <h4>Example Response</h4>
+  <pre>
+    HTTP/1.0 200 OK
+    Content-type: application/json
+    ...
+    {
+    }
+  </pre>
+
+  <h4>HTTP Status Codes</h4>
+  <table class="table" style="width: auto;">
+    <tbody>
+      <tr>
+        <th>Code</th><th>Description</th><th>Reason</th>
+      </tr>
+      <tr><td>200</td><td>OK</td><td>Request successful</td></tr>
+      <tr><td>400</td><td>Bad Request</td><td>there are no trackDbs for the specified trackhub which belong to (i.e. has been registered by) the user</td></tr
+      <tr><td>401</td><td>Unauthorized</td><td>The request requires user authentication</td></tr>
+      <tr><td>404</td><td>Not Found</td><td>Couldn't find trackDbs for the trackhub with the given name</td></tr>
       <tr><td>500</td><td>Internal Server Error</td><td>Request cannot be fulfilled due to unexpected condition</td></tr>
       <tr><td>503</td><td>Service Unavailable</td><td>Request cannot be fulfilled due to temporary overloading or maintenance of the server</td></tr>
       <tr>
@@ -461,12 +537,13 @@
       <tr>
       </tr>
       <tr>
-      </tr>
+      </tr> 
       <tr>
       </tr>
     </tbody>
   </table>
 
+  <!--
   <h3 id="post_trackdb_create">POST /api/trackdb/create</h3>
   <p>
     Register a new trackDb with the Registry. The message body specifies the document representing the trackDb in the Registry as a JSON object.
@@ -681,6 +758,7 @@
       </tr>
     </tbody>
   </table>
+  -->
 
   <h3 id="delete_trackdb">DELETE /api/trackdb/:id</h3>
   <p>

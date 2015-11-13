@@ -145,6 +145,7 @@ sub view_trackhub_status : Chained('base') :Path('view_trackhub_status') Args(1)
     $c->stash(error_msg => $_);
   };
 
+  $trackdb->toggle_search if $c->req->params->{toggle_search};
   $c->stash(trackdb => $trackdb, template  => "user/trackhub/view.tt");
 }
 

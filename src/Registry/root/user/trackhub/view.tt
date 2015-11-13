@@ -1,6 +1,13 @@
 [% META title = 'TrackHubs' %]
 [% PROCESS user/user_nav.tt %]
 
+<script type="text/javascript">
+function toggle(b) { 
+  var redirect = window.location.href;  
+  document.location = redirect.substr(0, redirect.indexOf('?')) + '?toggle_search=1' 
+}
+</script>
+
 <div class="page-header">
   <h3>TrackDB Collection: [% trackdb.id %]</h3>
   <span class="label label-primary">[% trackdb.doc.hub.shortLabel %]</span>
@@ -28,6 +35,14 @@
 	[% IF status != 'Unchecked' %]
 	  <small>[% status_last_update %]</small><br/>
 	[% END %]
+        [% IF trackdb.doc.public %]
+	  <br/><span class="label label-info" style="padding-bottom: 1px;">Searchable</span>
+        [% ELSE %]
+	  <br/><span class="label label-danger" style="padding-bottom: 1px;">Not Searchable</span>
+        [% END %]
+	  <form action="">
+	    <input type="button" id="searchable" value="Toggle" style="color:blue" onclick="toggle(this);">
+          </form>
 	</div>
         <ul class="list-group col-sm-6">
           <li class="list-group-item">Total number of tracks <span class="badge">[% tracks.total %]</span></li>

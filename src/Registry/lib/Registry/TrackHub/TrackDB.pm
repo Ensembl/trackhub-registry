@@ -138,6 +138,19 @@ sub status_last_update {
   return $self->{_doc}{status}{last_update};
 }
 
+sub toggle_search {
+  my $self = shift;
+
+  my $doc = $self->{_doc};
+  $doc->{public} = $doc->{public}?0:1;
+
+  $self->{_es}{client}->index(index  => $self->{_es}{index},
+			      type   => $self->{_es}{type},
+			      id     => $self->{_id},
+			      body   => $doc);
+  $self->{_es}{client}->indices->refresh(index => $self->{_es}{index});
+}
+
 sub update_status {
   my $self = shift;
 

@@ -1,6 +1,0 @@
-import requests, sys
-
-def login(server, user, password):
-    r = requests.get(server+'/api/login', auth=(user, password))
-
-    return token

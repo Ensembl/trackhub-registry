@@ -1,4 +1,0 @@
-import requests, sys
-
-server = 'https://twitter.com'
-r = requests.get('https://kennethreitz.com', verify=True)

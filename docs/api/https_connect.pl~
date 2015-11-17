@@ -1,0 +1,11 @@
+#
+# Must install LWP::Protocol::https
+#
+use strict;
+use warnings;
+
+use LWP::UserAgent;	
+use Data::Dumper;
+
+my $ua = LWP::UserAgent->new(ssl_opts => { verify_hostname => 0 });
+my $res = $ua->get("https://twitter.com");

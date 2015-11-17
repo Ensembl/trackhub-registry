@@ -1,0 +1,19 @@
+# authentication with python client based on urllib2
+
+import urllib2, base64
+
+request = urllib2.Request("http://api.foursquare.com/v1/user")
+base64string = base64.encodestring('%s:%s' % (username, password)).replace('\n', '')
+request.add_header("Authorization", "Basic %s" % base64string)   
+result = urllib2.urlopen(request)
+
+# more easily with requests module
+
+import requests, sys
+
+r = requests.get('127.0.0.1:3000/api/login', auth=('trackhub1', 'trackhub1'))
+auth_token = r.json()[u'auth_token']
+
+# make an authorized request
+r = requests.get('http://127.0.0.1:3000/api/trackhub/cshl2013', headers={'user':'trackhub1','auth_token':auth_token})
+print r.json()['url'] # for instance

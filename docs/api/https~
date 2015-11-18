@@ -1,7 +1,0 @@
-use strict;
-use warnings;
-
-use LWP::UserAgent;	
-
-$ua = LWP::UserAgent->new(ssl_opts => { verify_hostname => 0 });
-$res = $ua->get("https://www.example.com");

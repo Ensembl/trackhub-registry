@@ -74,6 +74,141 @@
       { "message": "Successfully logged out" }
     </pre>
   </p>
+
+  <h4>Example Clients</h4>
+  
+  <ul class="nav nav-pills">
+    <li class="active"><a href="#perl" data-toggle="tab">Perl</a></li>
+    <li><a href="#python" data-toggle="tab">Python</a></li>
+    <li><a href="#ruby" data-toggle="tab">Ruby</a></li>
+  </ul>
+  <div class='tab-content'>
+    <div class='tab-pane active' id='perl'>
+      <pre class="pre-scrollable prettyprint linenums">
+use strict;
+use warnings;
+
+use JSON;
+use HTTP::Request::Common;
+use LWP::UserAgent;
+
+my $ua = LWP::UserAgent->new(ssl_opts => { verify_hostname => 0 });
+my $server = 'https://www.trackhubregistry.org';
+my ($user, $pass, $auth_token) = ('exampleuser', 'examplepass');
+
+$auth_token = login($server, $user, $pass);
+
+my $request = GET("$server/api/logout");
+$request->headers->header(user       => $user);
+$request->headers->header(auth_token => $auth_token);
+
+my $response = $ua->request($request);
+if ($response->is_success) {
+  print "Logged out\n";
+} else {
+  die sprintf "Unable to logout: %s [%d]", $response->content, $response->code;
+} 
+
+sub login {
+  my ($server, $user, $pass) = @_;
+
+  my $ua = LWP::UserAgent->new;
+  my $request = GET("$server/api/login");
+  $request->headers->authorization_basic($user, $pass);
+  
+  my $response = $ua->request($request);
+  my $auth_token;
+  if ($response->is_success) {
+    $auth_token = from_json($response->content)->{auth_token};
+    print "Logged in [$auth_token]\n" if $auth_token;
+  } else {
+    die sprintf "Couldn't login: %s [%d]", $response->content, $response->code;
+  }
+
+  return $auth_token;
+}
+      </pre> 
+    </div>
+
+    <div class='tab-pane' id='python'>
+      <pre class="pre-scrollable prettyprint linenums">
+import requests, sys
+
+server = 'https://www.trackhubregistry.org'
+user = 'exampleuser'
+password = 'examplepass'
+
+def login(server, user, password):
+    r = requests.get(server+'/api/login', auth=(user, password), verify=False)
+    if not r.ok:
+        print "Couldn't login, reason: %s [%d]" % (r.text, r.status_code)
+        sys.exit
+
+    auth_token = r.json()[u'auth_token']
+    print 'Logged in [%s]' % auth_token
+    return auth_token
+
+auth_token = login(server, user, password)
+r = requests.get(server+'/api/logout', headers={ 'user': user, 'auth_token': auth_token })
+if not r.ok:
+    print "Couldn't logout, reason: %s [%d]" % (r.text, r.status_code)
+    sys.exit
+print 'Logged out'
+      </pre>
+    </div>
+
+<!-- RUBY EXAMPLE -->
+    <div class='tab-pane' id='ruby'>
+      <pre class="pre-scrollable prettyprint linenums">
+require 'net/https'
+require 'uri'
+
+require 'rubygems'
+require 'json'
+
+def login(user, pass)
+  request = Net::HTTP::Get.new('/api/login')
+  request.basic_auth(user, pass)
+  response = $http.request(request)
+  
+  if response.code != "200"
+    puts "Couldn't login, reason: #{response.body} [#{response.code}]"
+    exit
+  end
+
+  result = JSON.parse(response.body)
+  puts "Logged in [#{result["auth_token"]}]"
+  
+  return result["auth_token"]
+end
+
+server = 'https://www.trackhubregistry.org'
+user = 'exampleuser'
+pass = 'examplepass'
+
+url = URI.parse(server)
+$http = Net::HTTP.new(url.host, url.port)
+$http.use_ssl = true
+$http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+auth_token = login(user, pass)
+
+request = Net::HTTP::Get.new('/api/logout')
+request["User"] = user
+request["Auth-Token"] = auth_token
+response = $http.request(request)
+ 
+if response.code != "200"
+  puts "Invalid response: #{response.code}"
+  puts response.body
+  exit
+end
+
+puts 'Logged out'
+      </pre>
+    </div>
+
+  </div>
   
   </div>
 </div>

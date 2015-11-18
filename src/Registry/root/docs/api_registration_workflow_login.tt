@@ -98,6 +98,86 @@
       <li>If the credentials supplied in the authentication header are invalid, the server returns HTTP response code 401.</li>
     </ul>
   </p>
+
+  <h4>Example Clients</h4>
   
+  <ul class="nav nav-pills">
+    <li class="active"><a href="#perl" data-toggle="tab">Perl</a></li>
+    <li><a href="#python" data-toggle="tab">Python</a></li>
+    <li><a href="#ruby" data-toggle="tab">Ruby</a></li>
+  </ul>
+  <div class='tab-content'>
+    <div class='tab-pane active' id='perl'>
+      <pre class="pre-scrollable prettyprint linenums">
+use strict;
+use warnings;
+
+use JSON;
+use HTTP::Request::Common;
+use LWP::UserAgent; # install LWP::Protocol::https as well
+
+my $ua = LWP::UserAgent->new(ssl_opts => { verify_hostname => 0 });
+my ($user, $pass) = ('trackhub1', 'trackhub1');
+
+my $request = GET('https://www.trackhubregistry.org/api/login');
+$request->headers->authorization_basic($user, $pass);
+
+my $response = $ua->request($request);
+my $auth_token;
+if ($response->is_success) {
+  $auth_token = from_json($response->content)->{auth_token};
+  print "Logged in [", $auth_token, "]\n" if $auth_token;
+} else {
+  die sprintf "Couldn't login, reason: %s [%d] ", $response->content, $response->code;
+}
+      </pre> 
+    </div>
+
+    <div class='tab-pane' id='python'>
+      <pre class="pre-scrollable prettyprint linenums">
+import requests, sys
+
+r = requests.get('https://www.trackhubregistry.org/api/login', auth=('trackhub1', 'trackhub1'), verify=False)
+if not r.ok:
+    print "Couldn't login, reason: %s [%d]" % (r.text, r.status_code) 
+    sys.exit()
+
+auth_token = r.json()[u'auth_token']
+print 'Logged in [%s]' % auth_token
+      </pre>
+    </div>
+
+<!-- RUBY EXAMPLE -->
+    <div class='tab-pane' id='ruby'>
+      <pre class="pre-scrollable prettyprint linenums">
+require 'net/https'
+require 'uri'
+ 
+server='https://www/trackhubregistry.org'
+path = '/api/login'
+ 
+url = URI.parse(server)
+http = Net::HTTP.new(url.host, url.port)
+http.use_ssl = true
+http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+request = Net::HTTP::Get.new(path)
+request.basic_auth("exampleuser", "examplepass")
+response = http.request(request)
+ 
+if response.code != "200"
+  puts "Invalid response: #{response.code}"
+  puts response.body
+  exit
+end
+
+require 'rubygems'
+require 'json'
+ 
+result = JSON.parse(response.body)
+puts "Logged in [#{result["auth_token"]}]"
+      </pre>
+    </div>
+
   </div>
 </div>

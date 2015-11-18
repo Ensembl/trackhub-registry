@@ -5,7 +5,7 @@ use JSON;
 use HTTP::Request::Common;
 use LWP::UserAgent;
 
-my $ua = LWP::UserAgent->new;
+my $ua = LWP::UserAgent->new(ssl_opts => { verify_hostname => 0 });
 my $server = 'http://127.0.0.1:3000';
 my ($user, $pass, $auth_token) = ('trackhub1', 'trackhub1');
 
@@ -33,7 +33,7 @@ sub login {
   my $auth_token;
   if ($response->is_success) {
     $auth_token = from_json($response->content)->{auth_token};
-    print "Logged in [$server]\n" if $auth_token;
+    print "Logged in [$auth_token]\n" if $auth_token;
   } else {
     die sprintf "Couldn't login: %s [%d]", $response->content, $response->code;
   }

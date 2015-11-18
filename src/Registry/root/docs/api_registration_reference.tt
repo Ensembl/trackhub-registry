@@ -347,8 +347,20 @@
 	      "type": "object",
 
 	      "properties": {
-	        "url":    { "type": "string", "format": "uri" },
-		"type":  { "type": "string", "enum": [ "genomics", "epigenomics", "transcriptomics", "proteomics" ] },
+	        "url":    { 
+		  "description": "The hub URL (i.e. location of the hub.txt file)",
+		  "type": "string", 
+		  "format": "uri"
+		},
+		"type":  {
+		  "description": "The main type of data contained in the hub",
+		  "type": "string", 
+		  "enum": [ "genomics", "epigenomics", "transcriptomics", "proteomics" ] 
+		},
+		"public": {
+		  "description": "Whether the hub is available for search (1) or not (0)",
+		  "type": "number"
+		},
 		"assemblies": {
 		  "type": "object",
 		  "patternProperties": {

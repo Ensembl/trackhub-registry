@@ -85,7 +85,7 @@
   </p>
 
   <p>
-    The <a href="[% c.uri_for('/docs/api/registration/reference#post_trackhub_msg_format') %]">POST /api/trackhub</a> message must contain the URL of remote public hub (can specify the URL of the hub.txt as well) and, optionally, the type of the assembly data contained in the hub, which can be one of "genomics", "epigenomics", "transcriptomics", "proteomics" (default: "genomics"). By specifying the type you allow the user to search for track hubs based on particular types. In this example we specify that the hub contains epigenomics data:
+    The <a href="[% c.uri_for('/docs/api/registration/reference#post_trackhub_msg_format') %]">POST /api/trackhub</a> message must contain the URL of remote public hub (can specify the URL of the hub.txt as well), a map from assembly names as specified in the hub to INSDC accessions (in case of assemblies not supported by UCSC, see <a href="[% c.uri_for('/docs/management/assembly_support') %]">genome assembly support</a>), and, optionally, the type of the assembly data contained in the hub, which can be one of "genomics", "epigenomics", "transcriptomics", "proteomics" (default: "genomics"). By specifying the type you allow the user to search for track hubs based on particular types. The hub in this example is an assembly hub so we're also posting a map of hub assembly names to their respective accessions. Also, we implicitly specify that the hub contains genomics data:
   </p>
   <p>
     Request:
@@ -95,7 +95,11 @@
       Auth-Token: 6l5/GuIiOSCywuSI9HF1VU97clwb/CXPDFS0MyAB/HCZuxtjQBj4uORZL8NY3Yhi
       {
         "url": "http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt",
-        "type": "epigenomics"
+        "assemblies": {
+	  araTha1 => 'GCA_000001735.1',
+	  ricCom1 => 'GCA_000151685.2',
+	  braRap1 => 'GCA_000309985.1'
+	}
       }
     </pre>
     Some things happen in the background once you've made the request. Most notably, the server runs the <a target="_blank" href="https://genome.ucsc.edu/goldenPath/help/hgTrackHubHelp.html#Debug">hubCheck</a> from UCSC to check that the files in the hub are correctly formatted. The Registry will ignore error messages related to the use of deprecated features. For any other error, the request will be deemed unsuccessful and the response body will report the hubCheck output report.

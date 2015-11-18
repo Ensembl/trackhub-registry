@@ -66,13 +66,18 @@
     <p>
       When one submits a TrackHub URL for registration, two possible scenarios apply:
       <ul>
-        <li>if a genome tag value refers to a valid UCSC database name, the Registry consults an internal mapping between <em>most</em> of UCSC database names and the corresponding INSDC accession numbers. Coverage it's not 100%, since not all UCSC assemblies have been submitted to the INSDC archives. If a mapping can be found, registration can proceed;</li>
+        <li>if a genome tag value refers to a valid UCSC database name, the Registry automatically determines the corresponding INSDC accession using an internal table. Coverage it's not 100%, since not all UCSC assemblies have been submitted to the INSDC archives. If a mapping can be found, registration can proceed;</li>
 	<li>if the hub contains one or more genome tag values which are not UCSC database names, the submitter must provide a map between these values and the corresponding INSDC accession numbers. It is responsibility of the submitter to provide valid data in this case. See the <a href="[% c.uri_for('/docs/api/registration/reference#post_trackhub_msg_format') %]">API reference</a>.</li>
       </ul>
     </p>
 
+    <h5><span class="label label-warning" style="padding-bottom: 1px;">Important Note</span></h5>
     <p>
-      However an assembly is mapped to an INSDC accession number, this is used to query the Genome Assembly Database to find and present the user with <a href="[% c.uri_for('/docs/search/results#view') %]">information about the assembly and the corresponding species</a> in a specific TrackHub, and to give him the ability to <a href="[% c.uri_for('/docs/search/results#load') %]">load the data</a> in either UCSC, EnsEMBL or both.
+      It follows from the above discussion that <u>even if you submit an assembly hub its assemblies must have been submitted to an INSDC archive and you must provide the map between the hub assembly names and INSDC accessions</u>.
+    </p>
+
+    <p>
+      However an assembly is mapped to an INSDC accession number, this is used to consult the Genome Assembly Database to find and present the user with <a href="[% c.uri_for('/docs/search/results#view') %]">information about the assembly and the corresponding species</a> in a specific TrackHub, and to give him the ability to <a href="[% c.uri_for('/docs/search/results#load') %]">load the data</a> in either UCSC, EnsEMBL or both.
     </p>
 
   </div>

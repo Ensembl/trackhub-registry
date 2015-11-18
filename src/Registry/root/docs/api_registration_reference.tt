@@ -298,7 +298,7 @@
 
   <h3 id="post_trackhub">POST /api/trackhub</h3>
   <p>
-    Register/Update a remote public TrackHub with the Registry. The message body specifies the track hub remote URL (can be either the directory or hub.txt file URL) and, optionally, the hub assemblies data type (default: <mark>genomics</mark>), see <a href="#post_trackhub_msg_format">Message Format</a> for a list of possible types.
+    Register/Update a remote public TrackHub with the Registry. The message body specifies the track hub remote URL (can be either the directory or hub.txt file URL), a map from assembly names as specified in the hub to INSDC accessions (in case of assemblies not supported by UCSC, see <a href="[% c.uri_for('/docs/management/assembly_support') %]">genome assembly support</a>), and, optionally, the hub assemblies data type (default: <mark>genomics</mark>). See <a href="#post_trackhub_msg_format">Message Format</a> for a list of possible types.
   </p>
   <p>
     If the trackhub at the specified URL has not been previously submitted, the Registry will register it by translating its trackDb files into JSON documents adhering to a particular <a href="[% c.uri_for('/docs/management/modelling') %]">JSON schema version</a>. If the trackhub has already been submitted, the request is interpreted as a request to update the details of the registered trackhub (e.g. the remote trackhub has been updated and you want to keep its details in the Registry up to date). In this case, the Registry will delete the relevant trackDb documents and replace them with translations of their most up-to-date versions.
@@ -364,15 +364,30 @@
       </tr>
       <tr>
         <th>Example</th>
-	<td>{ "url" : "http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt", "type": "epigenomics" }</td>
+	<td>
+	  <pre>
+	    { 
+	      "url" : "http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt", 
+	      "assemblies": {
+	        araTha1 => 'GCA_000001735.1',
+		ricCom1 => 'GCA_000151685.2',
+		braRap1 => 'GCA_000309985.1'
+	      }
+	    }
+	  </pre>
+	</td>
       </tr>
     </tbody>
   </table>
 
-
   <h4>Example Request</h4>
   <p>
-    In this example, we are requesting to register/update the CSHL Biology of Genomes meeting 2013 demonstration hub, which contains data for three assemblies. The response body is an array of the three corresponding trackDb representations, with the header Location reporting their respective URIs in the same order.
+    In this example, we are requesting to register/update the CSHL Biology of Genomes meeting 2013 demonstration hub, which contains data for three assemblies referred to by the names "araTha1", "ricCom1" and "braRap1" respectively. 
+  </p>
+
+  <h5><span class="label label-warning" style="padding-bottom: 1px;">Important Note</span></h5>
+  <p>
+    As can be seen in the body of the following request, we're posting the mapping between the above hub assembly names and their respective INSDC accessions. This is because this is an assembly hub and there's no other way for the Registry to infer species/assembly information.
   </p>
 
   <pre>
@@ -381,7 +396,11 @@
     Auth-Token: 6l5/GuIiOSCywuSI9HF1VU97clwb/CXPDFS0MyAB/HCZuxtjQBj4uORZL8NY3Yhi
     {
       "url": "http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt",
-      "type": "epigenomics"
+      "assemblies": {
+        araTha1 => 'GCA_000001735.1',
+	ricCom1 => 'GCA_000151685.2',
+	braRap1 => 'GCA_000309985.1'
+      }
     }
   </pre>
 
@@ -404,6 +423,10 @@
     ]
   </pre>
 
+  <p>
+    The response body is an array of the three corresponding trackDb representations, with the header Location reporting their respective URIs in the same order.
+  </p>
+
   <h4>HTTP Status Codes</h4>
   <table class="table" style="width: auto;">
     <tbody>
@@ -421,7 +444,7 @@
 	    <li>request body does not specify remote hub URL</li>
 	    <li>hub is not compliant with the UCSC hub specs</li>
 	    <li>hub is not available or cannot be correctly parsed</li>
-	    <li>one of the hub trackDb configurations cannot be translated to <a href="[% c.uri_for('/docs/api/modelling') %]">valid JSON</a></li>
+	    <li>one of the hub trackDb configurations cannot be translated to <a href="[% c.uri_for('/docs/management/modelling') %]">valid JSON</a></li>
 	    <li>one of the hub genome subdirectory names are not <a target="_blank" href="https://genome.ucsc.edu/FAQ/FAQreleases.html#release1">valid UCSC DB names</a>, or cannot be translated to an existing NCBI assembly identifier (e.g. assembly accession + version, e.g. <a target="_blank" href="http://www.ncbi.nlm.nih.gov/assembly/GCF_000001405.13/">GCA_000001405.1</a>)
 	  </ul>
 	  See <a href="[% c.uri_for('/docs/api/registration/workflow/thregister#errors') %]">What can possibly go wrong</a> for more details, in particular about the error messages.
@@ -573,7 +596,7 @@
   <h4>Parameters</h4>
   <p>
     <ul>
-      <li><mark>version</mark> (optional): JSON schema version of the trackDb documents (default: v1.0, see <a href="[% c.uri_for('/api/modelling') %]">Modelling TrackHubs</a> for a discussion)</li>
+      <li><mark>version</mark> (optional): JSON schema version of the trackDb documents (default: v1.0, see <a href="[% c.uri_for('/management/modelling') %]">Modelling TrackHubs</a> for a discussion)</li>
     </ul>
   </p>
 
@@ -693,7 +716,7 @@
 
   <h4>Message</h4>
   <p>
-    A JSON object representing the trackDb in the corresponding schema, see <a href="[% c.uri_for('/api/modelling') %]">Modelling TrackHubs</a> for a discussion.
+    A JSON object representing the trackDb in the corresponding schema, see <a href="[% c.uri_for('/docs/management/modelling') %]">Modelling TrackHubs</a> for a discussion.
   </p>
 
   <h4>Example Request</h4>
@@ -741,7 +764,7 @@
 	  <ul>
 	    <li>empty request body</li>
 	    <li>trackDb entity does not belong to (i.e. has not been registered by) the user</li>
-	    <li>trackDb configuration cannot be translated to <a href="[% c.uri_for('/docs/api/modelling') %]">valid JSON</a></li>
+	    <li>trackDb configuration cannot be translated to <a href="[% c.uri_for('/docs/management/modelling') %]">valid JSON</a></li>
 	    <li>a trackDb entity with the same hub and assembly exists</li>
 	  </ul>
 	</td>

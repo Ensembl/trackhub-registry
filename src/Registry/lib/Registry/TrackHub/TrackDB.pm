@@ -17,13 +17,13 @@ use Registry::Utils::URL qw(file_exists);
 
 my %format_lookup = (
 		     'bed'    => 'BED',
-		     'bb'     => 'bigBed',
-		     'bigBed' => 'bigBed',
-		     'bw'     => 'bigWig',
-		     'bigWig' => 'bigWig',
-		     'bam'    => 'bam',
-		     'vcf'    => 'vcfTabix',
-		     'cram'   => 'cram'
+		     'bb'     => 'BigBed',
+		     'bigBed' => 'BigBed',
+		     'bw'     => 'BigWig',
+		     'bigWig' => 'BigWig',
+		     'bam'    => 'BAM',
+		     'gz'     => 'VCFTabix',
+		     'cram'   => 'CRAM'
 		    );
 
 sub new {
@@ -227,8 +227,8 @@ sub _collect_track_info {
 	  # determine type
 	  my @path = split(/\./, $url);
 	  my $index = -1;
-	  # handle compressed formats
-	  $index = -2 if $path[-1] eq 'gz';
+	  # # handle compressed formats
+	  # $index = -2 if $path[-1] eq 'gz';
 	  $self->{_doc}{file_type}{$format_lookup{$path[$index]}}++;
 	}
 

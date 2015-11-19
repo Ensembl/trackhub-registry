@@ -34,13 +34,13 @@ sub AUTOLOAD {
 
 my %format_lookup = (
 		     'bed'    => 'BED',
-		     'bb'     => 'bigBed',
-		     'bigBed' => 'bigBed',
-		     'bw'     => 'bigWig',
-		     'bigWig' => 'bigWig',
-		     'bam'    => 'bam',
-		     'vcf'    => 'vcfTabix',
-		     'cram'   => 'cram'
+		     'bb'     => 'BigBed',
+		     'bigBed' => 'BigBed',
+		     'bw'     => 'BigWig',
+		     'bigWig' => 'BigWig',
+		     'bam'    => 'BAM',
+		     'gz'     => 'VCFTabix',
+		     'cram'   => 'CRAM'
 		    );
 
 sub new {
@@ -221,8 +221,8 @@ sub _collect_track_info {
 	  my $url = $hash->{$track}{$attr};
 	  my @path = split(/\./, $url);
 	  my $index = -1;
-	  # handle compressed formats
-	  $index = -2 if $path[-1] eq 'gz';
+	  # # handle compressed formats
+	  # $index = -2 if $path[-1] eq 'gz';
 	  $file_type->{$format_lookup{$path[$index]}}++;
 	}
 

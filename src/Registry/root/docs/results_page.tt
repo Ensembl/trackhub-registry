@@ -16,12 +16,12 @@
 	  <div class="panel-heading">Search Docs</div>
           <div class="panel-body">
 	    <ul class="nav nav-list">
-	      <li><a href="[% c.uri_for('/docs/search') %]">Basic TrackHub Search</a></li>
+	      <li><a href="[% c.uri_for('/docs/search') %]">Basic Track Hub Search</a></li>
 	      <li><a style="font-weight: bold;">Search Results Page</a>
 	        <ul>
 		  <li><a href="#filter">Filtering results</a></li>
 		  <li><a href="#status">Data tracks status</a></li>
-		  <li><a href="#load">Load TrackHubs in genome browsers</a></li>
+		  <li><a href="#load">Load track hubs in genome browsers</a></li>
 		  <li><a href="#view">Viewing more information</a></li>
 		</ul>
 	      </li>
@@ -70,7 +70,7 @@
       Clicking on one of the listed facet values will filter the results by the chosen species and will change the current filter panel to display the selection. All other filters work exactly in the same way.
     </p>
     <p>
-      The Assembly filter presents a list of names for the genome assemblies matching the query, each one reported with the corresponding number of search results. Similarly, the Hub panel allows to filter the search results by the name of the matching track data hubs. The final facet is Data Type, where one can filter according to the genomic data type of the data tracks of the matching TrackHubs.
+      The Assembly filter presents a list of names for the genome assemblies matching the query, each one reported with the corresponding number of search results. Similarly, the Hub panel allows to filter the search results by the name of the matching track data hubs. The final facet is Data Type, where one can filter according to the genomic data type of the data tracks of the matching track hubs.
     </p>
 
     <h4 id="status">Data Tracks Status</h5>
@@ -79,7 +79,7 @@
     </p>
     <p>
       <strong>"OK Status"</strong><br/>
-      This status means the remote track data is available. It is the result of a regular check performed by the Registry on the genome assembly supported by the Trackhub. In this case, the search result will have a blue border and will show the button to load the data in blue, as shown in the image above.
+      This status means the remote track data is available. It is the result of a regular check performed by the Registry on the genome assembly supported by the track hub. In this case, the search result will have a blue border and will show the button to load the data in blue, as shown in the image above.
     </p>
 
     <p>
@@ -99,20 +99,20 @@
       In this case, the upload option is not available and it is not possible to view tracks in a genome browser. It is still possible to view more detailed information about the hub, see See <a href="#view">Viewing more information</a>. The report will also contain details on the faulty tracks.
     </p>
 
-    <h4 id="load">Loading TrackHubs into Genome Browsers</h4>
+    <h4 id="load">Loading Track Hubs into Genome Browsers</h4>
     <p>
-      A button on the right hand side of each search result allows the user to view the TrackHub data directly into an available genome browser.
+      A button on the right hand side of each search result allows the user to view the track hub data directly into an available genome browser.
     </p>
     <p>
       <img src="/static/img/load_result.png" />
     </p>
     <p>
-      Clicking on it will display a dropdown with the available choices, e.g. "Ensembl" or "UCSC". Upon selection, another page will open with the connection established between the genome browser and the TrackHub.
+      Clicking on it will display a dropdown with the available choices, e.g. "Ensembl" or "UCSC". Upon selection, another page will open with the connection established between the genome browser and the track hub.
     </p>
 
     <h4 id="view">Viewing more information</h4>
     <p>
-      Click on the "Info" button on the right hand side of each search result to view more detailed information about the corresponding TrackHub and its supported genome assembly.
+      Click on the "Info" button on the right hand side of each search result to view more detailed information about the corresponding track hub and its supported genome assembly.
     </p>
     <p>
       <img src="/static/img/view_more_info.png" />
@@ -124,7 +124,7 @@
       The first panel displays general information about the track data base: the total number of tracks related to the genome assembly, the number linked to remote data, the data type of the tracks (can be one of "genomics", "epigenomics", "transcriptomics", "proteomics"), the file types of the track data (e.g. bigWig, bigBED, VCF, BAM). The panel also contains a button allowing direct access to the remote genome assembly <a href="http://genome.ucsc.edu/goldenPath/help/trackDb/trackDbHub.html" target="_blank">trackDB configuration file</a>.  
     </p>
     <p>
-      The second panel, Hub, reports information about the TrackHub supporting the genome assembly, showing its attributes as they are originally defined in the track hub property file. The 'View' buttonp provides connection to the remote location and the original file.
+      The second panel, Hub, reports information about the track hub supporting the genome assembly, showing its attributes as they are originally defined in the track hub property file. The 'View' buttonp provides connection to the remote location and the original file.
     </p>
     <p>
       The last panel shows information about the species with a link, Taxonomy, leading to a page on the NCBI web site displaying taxonomy information about the organism. There is also general information about the genome assembly; the accession number is a link to the corresponding assembly page on the NCBI web site.

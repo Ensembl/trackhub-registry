@@ -16,7 +16,7 @@
 	  <div class="panel-heading">Search Docs</div>
           <div class="panel-body">
 	    <ul class="nav nav-list">
-	      <li><a href="[% c.uri_for('/docs/search') %]">Basic TrackHub Search</a></li>
+	      <li><a href="[% c.uri_for('/docs/search') %]">Basic Track Hub Search</a></li>
 	      <li><a href="[% c.uri_for('/docs/search/results') %]">Search Results Page</a></li>
 	      <li><a style="font-weight: bold;">Advanced Search</a>
 	        <ul>

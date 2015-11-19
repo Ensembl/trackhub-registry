@@ -16,7 +16,7 @@
 	  <div class="panel-heading">Search Docs</div>
           <div class="panel-body">
 	    <ul class="nav nav-list">
-	      <li><a style="font-weight: bold;">Basic TrackHub Search</a></li>
+	      <li><a style="font-weight: bold;">Basic Track Hub Search</a></li>
 	      <li><a href="[% c.uri_for('/docs/search/results') %]">Search Results Page</a></li>
 	      <li><a href="[% c.uri_for('/docs/search/advanced') %]">Advanced Search</a></li>
 	    </ul>
@@ -26,15 +26,15 @@
   </div>
 
   <div class="col-sm-9" style="text-align: justify; text-justify: inter-word;">
-  <h2>Basic TrackHub Search</h2>
+  <h2>Basic Track Hub Search</h2>
   <p>
-    Full text search is provided from the search box in the header of all TrackHub Registry web pages and on the home page. Enter search terms within the search input box and hit enter or click on the spy glass icon. A search term can be a single word or a phrase surrounded by double quotes, which searches for all the words in the phrase, in the same order. 
+    Full text search is provided from the search box in the header of all Trackhub Registry web pages and on the home page. Enter search terms within the search input box and hit enter or click on the spy glass icon. A search term can be a single word or a phrase surrounded by double quotes, which searches for all the words in the phrase, in the same order. 
   </p>
   <p>
     When querying using multiple terms, by default the search application uses the logical operator OR, so entering <a href="[% c.uri_for('/search', { q => 'GRCm38 mouse' }) %]">GRCm38 mouse</a> into the search box actually translates to GRCm38 OR mouse which will find any document that contains one or more of GRCm38 or mouse: some of the results will contain GRCm38, some will contain mouse and others may contain both, with results of the latter case being ranked at the top.
   </p>
   <p>
-    Read about the <a href="[% c.uri_for('/docs/search/results') %]">search results page</a> to learn how to filter search results according to different criteria and know how matching TrackHubs are displayed and how they can be loaded for display in genome browsers.
+    Read about the <a href="[% c.uri_for('/docs/search/results') %]">search results page</a> to learn how to filter search results according to different criteria and know how matching track hubs are displayed and how they can be loaded for display in genome browsers.
   </p>
   <p>
     See <a href="[% c.uri_for('/docs/search/advanced') %]">Advanced Search</a> for more specific and customised searches using complex queries in the search box.

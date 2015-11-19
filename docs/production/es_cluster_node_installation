@@ -6,8 +6,29 @@ Openstack cluster installation
 m1.EBI-Ensembl16
 VCPUS 4
 RAM 16GB
-Disk 60GB
+Disk 10GB
 
+$ sudo nano /etc/hosts
+
+127.0.0.1 localhost thregistry-web-0
+
+$ sudo apt-get update
+$ sudo apt-get -y upgrade
+
+- Install system performance monitoring tool
+$ sudo apt-get install -y sysstat
+$ sudo nano /etc/default/sysstat 
+
+ENABLED="true"
+
+$ sudo service sysstat start
+
+########################################################
+#
+# NOTE:
+#
+# This is no longer applied as I've switched to RAID0
+#
 - Create and attach disk to instance
 
 Volumes, Create volume:
@@ -43,10 +64,104 @@ $ sudo blkid
 $ sudo nano /etc/fstab
 ...
 UUID=061d7465-1db2-4936-a1d7-38b0920b83e4       /var/lib/elasticsearch1	auto    rw,user,auto    0       0
+#
+#
+################################################
+
+- Create and attach two disks to implement RAID0 for elasticsearch data dir
+
+No volume source,
+No volume type,
+60GB
+
+Attach to created instance
 
 - Reboot instance
 
 Action, Soft Reboot Instance
+
+- Configure software RAID0 for the elasticsearch data dir
+
+$ sudo apt-get install mdadm
+
+# check whether the attached drives are already using any existing raid
+
+$ sudo mdadm --examine /dev/vd[b-c]
+mdadm: No md superblock detected on /dev/vdb. 
+mdadm: No md superblock detected on /dev/vdc.
+
+# creating partitions for RAID
+
+$ sudo fdisk /dev/vdb
+
+Create primary partition with type "Linux raid autodetect" (fd)
+
+repeat for /dev/vdc
+
+$ sudo mdadm --examine /dev/vd[b-c]
+/dev/vdb: 
+   MBR Magic : aa55 
+Partition[0] :    125827072 sectors at         2048 (type fd)
+/dev/vdc:
+   MBR Magic : aa55
+Partition[0] :    125827072 sectors at         2048 (type fd)
+
+$ sudo mdadm --examine /dev/vd[b-c]1
+mdadm: No md superblock detected on /dev/vdb1. 
+mdadm: No md superblock detected on /dev/vdc1.
+
+# creating RAID md devices and apply raid level
+
+$ sudo mdadm -C /dev/md0 -l raid0 -n 2 /dev/vd[b-c]1
+mdadm: Defaulting to version 1.2 metadata
+mdadm: array /dev/md0 started.
+
+# verify the status of RAID Level, Devices and Array used,
+
+$ cat /proc/mdstat
+Personalities : [raid0]
+md0 : active raid0 vdc1[1] vdb1[0]
+125826048 blocks super 1.2 512k chunks
+
+$ sudo mdadm -E /dev/vd[b-c]1
+
+# CHECK:
+# Raid Level: raid0
+# Raid Devices: 2
+# Available Dev Size: 125827056 (60.00 GiB 64.42 GB)
+# State: clean
+# Chunk Size : 512K
+# 
+
+$ sudo mdadm --detail /dev/md0
+# CHECK:
+# Array size
+# Raid, Total Devices
+# State etc.
+# and dev list (active)
+
+# Assiging RAID Devices to Filesystem
+
+$ sudo mkfs.ext4 /dev/md0
+
+# create a mount point elasticsearch directory
+
+$ sudo mkdir /var/lib/elasticsearch
+$ sudo mount /dev/md0 /var/lib/elasticsearch
+$ df -h
+...
+/dev/md0        118G   60M  112G   1% /var/lib/elasticsearch
+
+$ sudo nano /etc/fstab
+...
+/dev/md/thregistry-cluster-0:0       /var/lib/elasticsearch  ext4    defaults        0 0
+
+$ sudo mount -av
+
+# Saving RAID configuration
+
+sudo mdadm -E -s -v >> /etc/mdadm/mdadm.conf
+
 
 - Install latest java
 
@@ -58,6 +173,18 @@ $ sudo apt-get install oracle-java8-installer # should say yes to questions
 $ sudo nano .bashrc
 
 export JAVA_HOME=/usr/lib/jvm/java-8-oracle
+
+$ . .bashrc
+$ java -version
+java version "1.8.0_66" 
+...
+
+- Install later Elasticsearch version
+
+$ mkdir Downloads; mkdir Downloads/elasticsearch; cd Downloads/elasticsearch
+$ wget https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-1.7.3.deb
+$ sudo dpkg -i elasticsearch-1.7.3.deb
+$ sudo chown -R elasticsearch.elasticsearch /var/lib/elasticsearch
 
 - Configure Elasticsearch init service
 
@@ -77,5 +204,7 @@ $ sudo nano /etc/elasticsearch/elasticsearch.yml
 
 cluster.name: thregistry
 node.name: "Node [node number]"
-path.data: /var/lib/elasticsearch0,/var/lib/elasticsearch1
+# path.data: /var/lib/elasticsearch0,/var/lib/elasticsearch1
 bootstrap.mlockall: true
+
+$ sudo service elasticsearch start

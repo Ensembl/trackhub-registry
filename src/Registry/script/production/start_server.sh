@@ -54,7 +54,7 @@ export TDP_HOME
 ERROR_LOG="$HOME/$APP.error.log"
 ACCESS_LOG="$HOME/$APP.access.log"
 
-export REGISTRY_CONFIG=$APP_HOME/conf/production/registry.conf.openstack
+export REGISTRY_CONFIG=$APP_HOME/conf/production/registry.conf
 STARMAN="starman --backlog $BACKLOG --max-requests $MAXREQUESTS --workers $WORKERS --access-log $ACCESS_LOG --error-log $ERROR_LOG $APP_HOME/conf/production/registry.psgi"
 DAEMON="$HOME/perl5/perlbrew/perls/perl-5.16.0/bin/start_server"
 DAEMON_OPTS="--pid-file=$PIDFILE --interval=$RESTART_INTERVAL --status-file=$STATUS --port 0.0.0.0:$PORT -- $STARMAN"

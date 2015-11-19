@@ -179,7 +179,7 @@
                     <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">View in Genome Browser <span class="caret"></span></button>
                     <ul class="dropdown-menu" role="menu">
 		      [% IF urls.ensembl %]
-                      <li><a target="_blank" href="[% urls.ensembl %]">EnsEMBL</a></li>
+                      <li><a target="_blank" href="[% urls.ensembl %]">Ensembl</a></li>
 		      [% END %]
 		      [% IF urls.ucsc %]
                       <li><a target="_blank" href="[% urls.ucsc %]">UCSC</a></li>
@@ -221,7 +221,7 @@
                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">View in Genome Browser <span class="caret"></span></button>
                     <ul class="dropdown-menu" role="menu">
 		      [% IF urls.ensembl %]
-                      <li><a target="_blank" href="[% urls.ensembl %]">EnsEMBL</a></li>
+                      <li><a target="_blank" href="[% urls.ensembl %]">Ensembl</a></li>
 		      [% END %]
 		      [% IF urls.ucsc %]
                       <li><a target="_blank" href="[% urls.ucsc %]">UCSC</a></li>

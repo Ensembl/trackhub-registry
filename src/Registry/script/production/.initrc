@@ -1,8 +1,8 @@
 [cluster]
 name : thregistry
-nodes: 192.168.0.87:9200
+nodes: 192.168.0.96:9200
 # add other nodes here, will be assigned to the same nodes arrayref
-nodes: 192.168.0.88:9200
+nodes: 192.168.0.97:9200
 
 [trackhubs]
 index   : trackhubs_v1

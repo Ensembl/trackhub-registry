@@ -25,7 +25,7 @@ service_name = TrackHub Registry
       type    report
     </report>
     max_requests   10000
-    nodes   192.168.0.87:9200
+    nodes   192.168.0.96:9200
     request_timeout   30
 </Model::Search>
 
@@ -50,7 +50,7 @@ service_name = TrackHub Registry
             <store>
                 index   users
                 store_user_class   Catalyst::Authentication::Store::ElasticSearch::User
-                nodes   192.168.0.87:9200
+                nodes   192.168.0.96:9200
                 class   ElasticSearch
                 type   user
             </store>
@@ -65,7 +65,7 @@ service_name = TrackHub Registry
             <store>
                 index   users
                 store_user_class   Catalyst::Authentication::Store::ElasticSearch::User
-                nodes   192.168.0.87:9200
+                nodes   192.168.0.96:9200
                 class   ElasticSearch
                 type   user
             </store>
@@ -81,7 +81,7 @@ service_name = TrackHub Registry
             <store>
                 index   users
                 store_user_class   Catalyst::Authentication::Store::ElasticSearch::User
-                nodes   192.168.0.87:9200
+                nodes   192.168.0.96:9200
                 class   ElasticSearch
                 type   user
             </store>

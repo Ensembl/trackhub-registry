@@ -4,7 +4,7 @@
     <ul class="breadcrumb">
       <li><a href="/">Home</a></li>
       <li><a>Docs</a></li>
-      <li class="active">TrackHub Management</li>
+      <li class="active">Track Hub Management</li>
     </ul>
   </div>
 </div>
@@ -13,16 +13,16 @@
   <div class="col-sm-3" style="margin-top: 25px;">
     <div id="search-sidebar-left">
         <div class="panel panel-primary">
-	  <div class="panel-heading">TrackHub Management Docs</div>
+	  <div class="panel-heading">Track Hub Management Docs</div>
           <div class="panel-body">
 	    <ul class="nav nav-list">
 	      <li><a href="[% c.uri_for('/docs/management/overview') %]">Overview</a></li>
 	      <li><a style="font-weight: bold;">Supported Genome Assemblies</a>
 	        <ul>
-		  <li><a href="#mapping">Mapping TrackHub Assembly Names to INSDC Accessions</a></li>
+		  <li><a href="#mapping">Mapping Track Hub Assembly Names to INSDC Accessions</a></li>
 		</ul>
 	      </li>
-	      <li><a href="[% c.uri_for('/docs/management/modelling') %]">Modelling TrackHubs</a></li>
+	      <li><a href="[% c.uri_for('/docs/management/modelling') %]">Modelling Track Hubs</a></li>
 	      <li><a href="[% c.uri_for('/docs/api/registration') %]">REST API</a></li>
 	      <li><a href="[% c.uri_for('/docs/management/dashboard') %]">Dashboard</a></li>
 	    </ul>
@@ -36,7 +36,7 @@
     <h2>Genome Assembly Support</h2>
     
     <p>
-      The TrackHub Registry provides automatic and rapid integration of searched track hubs into two of the most popular genome browsers, <a href="https://genome.ucsc.edu/" target="_blank">UCSC</a> and <a href="http://www.ensembl.org" target="_blank">EnsEMBL</a>. In order to avoid committing to one specific browser, the registry has been designed in a way that takes into account common features and differences between them.
+      The Trackhub Registry provides automatic and rapid integration of searched track hubs into two of the most popular genome browsers, <a href="https://genome.ucsc.edu/" target="_blank">UCSC</a> and <a href="http://www.ensembl.org" target="_blank">EnsEMBL</a>. In order to avoid committing to one specific browser, the registry has been designed in a way that takes into account common features and differences between them.
     </p>
 
     <p>
@@ -44,15 +44,15 @@
     </p>
 
     <p>
-      The TrackHub Registry follows a policy compatible with the <a target="_blank" href="http://ensemblgenomes.org/info/about/legal/browser_agreement">Browser Genome Release Agreement</a>, in that it <u>only allows the registration of track hubs with data for assemblies that have been submitted to the <a target="_blank" href="http://www.insdc.org/">INSDC</a> archives</u> (<a target="_blank" href="http://www.ebi.ac.uk/ena">ENA</a>, <a target="_blank" href="http://www.ncbi.nlm.nih.gov/genbank/">GenBank</a> and <a target="_blank" href="http://www.ddbj.nig.ac.jp/">DDBJ</a>). These assemblies have an accession number (e.g. <a target="_blank" href="http://www.ebi.ac.uk/ena/data/view/GCA_000001405.15">GCA_000001405.15</a>) from the INSDC <a target="_blank" href="http://www.ebi.ac.uk/ena/about/genome_assembly_database">Genome Assembly Database</a>, which is used as an authoritative source of assemblies. These include a large subset of assemblies hosted natively both by UCSC and EnsEMBL; therefore, the Registry can provide reliable assembly identification to the user and guarantee integration of search results into either one or both browsers most of the time.
+      The Trackhub Registry follows a policy compatible with the <a target="_blank" href="http://ensemblgenomes.org/info/about/legal/browser_agreement">Browser Genome Release Agreement</a>, in that it <u>only allows the registration of track hubs with data for assemblies that have been submitted to the <a target="_blank" href="http://www.insdc.org/">INSDC</a> archives</u> (<a target="_blank" href="http://www.ebi.ac.uk/ena">ENA</a>, <a target="_blank" href="http://www.ncbi.nlm.nih.gov/genbank/">GenBank</a> and <a target="_blank" href="http://www.ddbj.nig.ac.jp/">DDBJ</a>). These assemblies have an accession number (e.g. <a target="_blank" href="http://www.ebi.ac.uk/ena/data/view/GCA_000001405.15">GCA_000001405.15</a>) from the INSDC <a target="_blank" href="http://www.ebi.ac.uk/ena/about/genome_assembly_database">Genome Assembly Database</a>, which is used as an authoritative source of assemblies. These include a large subset of assemblies hosted natively both by UCSC and EnsEMBL; therefore, the Registry can provide reliable assembly identification to the user and guarantee integration of search results into either one or both browsers most of the time.
     </p>
 
-    <h4 id="mapping">Mapping TrackHub Assembly Names to INSDC Accessions</h4>
+    <h4 id="mapping">Mapping Track Hub Assembly Names to INSDC Accessions</h4>
     <p>
       <!--
         The above policy allows to automatically detect the assembly accession from the genome assembly tag in the genomes.txt file. When submitting your track hubs, 
       -->
-      In a TrackHub, assembly data is declared in a genomes.txt file within the track hub directory that contains a two-line stanza for each genome assembly that is supported by the hub data:
+      In a track hub, assembly data is declared in a genomes.txt file within the track hub directory that contains a two-line stanza for each genome assembly that is supported by the hub data:
       <pre>
         <strong>genome</strong> assembly_database_1
 	<strong>trackDb</strong> assembly_1_path/trackDb.txt
@@ -60,11 +60,11 @@
 	<strong>genome</strong> assembly_database_2
 	<strong>trackDb</strong> assembly_2_path/trackDb.txt
       </pre>
-      According to the <a target="_blank" href="http://genome.ucsc.edu/goldenPath/help/hgTrackHubHelp.html#Setup">TrackHub specification</a>, the value associated to each <em>genome</em> tag must correspond to a valid <a target="_blank" href="https://genome.ucsc.edu/FAQ/FAQreleases.html#release1">UCSC database name</a>, unless referring to an assembly not natively supported by UCSC (assembly hubs). Based on the discussion above, the Registry adopts a different point of view: <u>a genome tag value can be anything that can be mapped to an INSDC accession</u>.
+      According to the <a target="_blank" href="http://genome.ucsc.edu/goldenPath/help/hgTrackHubHelp.html#Setup">track hub specification</a>, the value associated to each <em>genome</em> tag must correspond to a valid <a target="_blank" href="https://genome.ucsc.edu/FAQ/FAQreleases.html#release1">UCSC database name</a>, unless referring to an assembly not natively supported by UCSC (assembly hubs). Based on the discussion above, the Registry adopts a different point of view: <u>a genome tag value can be anything that can be mapped to an INSDC accession</u>.
     </p>
 
     <p>
-      When one submits a TrackHub URL for registration, two possible scenarios apply:
+      When one submits a track hub URL for registration, two possible scenarios apply:
       <ul>
         <li>if a genome tag value refers to a valid UCSC database name, the Registry automatically determines the corresponding INSDC accession using an internal table. Coverage it's not 100%, since not all UCSC assemblies have been submitted to the INSDC archives. If a mapping can be found, registration can proceed;</li>
 	<li>if the hub contains one or more genome tag values which are not UCSC database names, the submitter must provide a map between these values and the corresponding INSDC accession numbers. It is responsibility of the submitter to provide valid data in this case. See the <a href="[% c.uri_for('/docs/api/registration/reference#post_trackhub_msg_format') %]">API reference</a>.</li>
@@ -77,7 +77,7 @@
     </p>
 
     <p>
-      However an assembly is mapped to an INSDC accession number, this is used to consult the Genome Assembly Database to find and present the user with <a href="[% c.uri_for('/docs/search/results#view') %]">information about the assembly and the corresponding species</a> in a specific TrackHub, and to give him the ability to <a href="[% c.uri_for('/docs/search/results#load') %]">load the data</a> in either UCSC, EnsEMBL or both.
+      However an assembly is mapped to an INSDC accession number, this is used to consult the Genome Assembly Database to find and present the user with <a href="[% c.uri_for('/docs/search/results#view') %]">information about the assembly and the corresponding species</a> in a specific track hub, and to give him the ability to <a href="[% c.uri_for('/docs/search/results#load') %]">load the data</a> in either UCSC, EnsEMBL or both.
     </p>
 
   </div>

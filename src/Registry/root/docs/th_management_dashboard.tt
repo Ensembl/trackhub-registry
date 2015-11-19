@@ -4,7 +4,7 @@
     <ul class="breadcrumb">
       <li><a href="/">Home</a></li>
       <li><a>Docs</a></li>
-      <li class="active">TrackHub Management</li>
+      <li class="active">Track Hub Management</li>
     </ul>
   </div>
 </div>
@@ -13,12 +13,12 @@
   <div class="col-sm-3" style="margin-top: 25px;">
     <div id="search-sidebar-left">
         <div class="panel panel-primary">
-	  <div class="panel-heading">TrackHub Management Docs</div>
+	  <div class="panel-heading">Track Hub Management Docs</div>
           <div class="panel-body">
 	    <ul class="nav nav-list">
 	      <li><a href="[% c.uri_for('/docs/management/overview') %]">Overview</a></li>
 	      <li><a href="[% c.uri_for('/docs/management/assembly_support') %]">Supported Genome Assemblies</a></li>
-	      <li><a href="[% c.uri_for('/docs/management/modelling') %]">Modelling TrackHubs</a></li>
+	      <li><a href="[% c.uri_for('/docs/management/modelling') %]">Modelling Track Hubs</a></li>
 	      <li><a href="[% c.uri_for('/docs/api/registration') %]">REST API</a></li>
 	      <li><a style="font-weight: bold;">Dashboard</a>
 	        <ul>
@@ -35,16 +35,16 @@
 
   <div class="col-sm-9" style="text-align: justify; text-justify: inter-word;">
 
-    <h2>Managing TrackHubs with the Registry - The Dashboard</h2>
+    <h2>Managing Track Hubs with the Registry - The Dashboard</h2>
 
     <p>
-      When you register, you're immediately logged in into the system and presented the so called dashboard, a web interface which allows to explore and edit the track data hubs that you submit to the Registry. The interface is divided into three tabbed panels: <a href="#profile">"Profile"</a>, <a href="#status">"My track collections"</a> and "Submit/Update". The last one is intended to support trackhub submission from the web. This functionality is not yet available, but will be in the near future. At the moment, the panel contains a reminder of the possibility of using the REST API.
+      When you register, you're immediately logged in into the system and presented the so called dashboard, a web interface which allows to explore and edit the track data hubs that you submit to the Registry. The interface is divided into three tabbed panels: <a href="#profile">"Profile"</a>, <a href="#status">"My track collections"</a> and "Submit/Update". The last one is intended to support track hub submission from the web. This functionality is not yet available, but will be in the near future. At the moment, the panel contains a reminder of the possibility of using the REST API.
     </p>
 
-    <h3 id="status">Viewing and Editing TrackHubs</h3>
+    <h3 id="status">Viewing and Editing Track Hubs</h3>
 
     <p>
-      When you login into the registry using the web interface, the default panel which is shown is named "My track collections". It provides a quick overview of the data hubs you've submitted to the TrackHub registry. An imaginary example is shown below:
+      When you login into the registry using the web interface, the default panel which is shown is named "My track collections". It provides a quick overview of the data hubs you've submitted to the Trackhub registry. An imaginary example is shown below:
     </p>
 
     <img src="/static/img/dashboard_collection.png"/>
@@ -66,7 +66,7 @@
     </p>
 
     <p>
-      Independently of the status, there's an icon showing a trash bin which can be clicked to delete the corresponding track database from the Registry. As discussed in <a href="[% c.uri_for('/doc/management/modelling') %]">Modelling Trackhubs</a>, a track data hub is implicitly represented by the set of trackDb documents which refer to it. Similarly to the <a href="/docs/api/registration/workflow/thdelete">REST API</a>, <u>in order to completely remove a TrackHub from the Registry, it is necessary to delete all track databases belonging to the same hub</u>.
+      Independently of the status, there's an icon showing a trash bin which can be clicked to delete the corresponding track database from the Registry. As discussed in <a href="[% c.uri_for('/doc/management/modelling') %]">Modelling Track Hubs</a>, a track data hub is implicitly represented by the set of trackDb documents which refer to it. Similarly to the <a href="/docs/api/registration/workflow/thdelete">REST API</a>, <u>in order to completely remove a track hub from the Registry, it is necessary to delete all track databases belonging to the same hub</u>.
     </p>
 
     <h3 id="profile">Updating Your Profile</h3>
@@ -81,10 +81,10 @@
       You cannot change your username, but you can edit your first/last name and affiliation (optional), the email used for communication from the Registry and the password to authenticate with the website and the REST API.
     </p>
 
-    <h3 id="monitoring">Automatic TrackHub Monitoring</h3>
+    <h3 id="monitoring">Automatic Track Hub Monitoring</h3>
 
     <p>
-      You may have noticed a section "Trackhub monitoring configuration" when you signed up in the registration form. The same appears in the profile update form. The Registry performs periodic checks on the status of the tracks data files referred to in the submitted TrackHubs and, based on these, it updates the status of the corresponding track databases appearing on the <a href="[% c.uri_for('/docs/search/results#status') %]">search result page</a> and on the <a href="#status">track collection tab</a> in the dashboard.
+      You may have noticed a section "Trackhub monitoring configuration" when you signed up in the registration form. The same appears in the profile update form. The Registry performs periodic checks on the status of the tracks data files referred to in the submitted track hubs and, based on these, it updates the status of the corresponding track databases appearing on the <a href="[% c.uri_for('/docs/search/results#status') %]">search result page</a> and on the <a href="#status">track collection tab</a> in the dashboard.
     </p>
     <p>
       You can control two parameters related to these periodic inspections:

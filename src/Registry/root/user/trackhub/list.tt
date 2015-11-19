@@ -10,7 +10,6 @@
       <thead>
         <tr>
 	  <th>#</th>
-	  <th>Id</th>
           <th>Hub</th>
           <th>Assembly</th>
 	  <th>Schema</th>
@@ -25,7 +24,6 @@
       [% FOR trackdb IN trackdbs %]
       <tr>
         <td style="word-wrap: break-word;">[% i = i + 1; i %]</td>
-        <td style="word-wrap: break-word;">[% trackdb.id %]</td>
 	<td style="word-wrap: break-word;">[% trackdb.doc.hub.name %]</td>
 	<td style="word-wrap: break-word;">[% trackdb.doc.assembly.name %]</td>
 	<td style="word-wrap: break-word;">[% trackdb.doc.version %]</td>

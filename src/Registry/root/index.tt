@@ -1,32 +1,10 @@
-<!--<div class="page-header">
-  <h1>TrackHub Registry &amp; Catalyst Example</h1>
-  <p class="lead bg-info">This a centralised, global collection of publicly accessible TrackHubs.</p>
-  <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p>
-</div>-->
-
-<!--
-<header class="header-sezione">
- <h2>The Home for TrackHubs</h2>
-</header>
-<section id="presentazione">
-<div class="row">
-  <div class="col-sm-12">
-    <div class="box-lavoro-evidenza">
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec velit nec velit blandit imperdiet. Duis metus enim, fringilla at auctor tincidunt, euismod eget massa. Nulla hendrerit, velit sed suscipit pellentesque, ipsum massa fringilla ex, quis vestibulum purus arcu sed dolor. Mauris a pulvinar metus, et molestie lorem. Quisque sit amet magna vestibulum, pulvinar ligula in, tristique nibh. Aliquam vitae sodales nunc. Integer at lacinia risus. Integer consectetur eu lorem eget maximus. Mauris eget nisl magna. In non lectus orci. Sed vehicula metus felis, non pellentesque justo feugiat ullamcorper. Duis scelerisque risus urna, ac porta elit rhoncus et. Nam nec ex non massa fermentum ultrices.</p>
-     <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p>
-    </div>
-  </div>
-</div>
-</section>
--->
-
 <div class="jumbotron background-color-primary-accent">
   <div class="container content">
     <div>
-      <h1>The TrackHub Registry</h1>
+      <h1>The Trackhub Registry</h1>
       <h3>A global centralised collection of publicly accessible TrackHubs</h3>
       <div class="underline"></div>
-      <p><small>The goal of the TrackHub Registry is to allow third parties to advertise <a href="http://genome.ucsc.edu/goldenPath/help/hgTrackHubHelp.html#Intro" target="_blank">TrackHubs</a>, and to make it easier for researchers around the world to discover and use TrackHubs containing different types of genomic research data.</small></p>
+      <p><small>The goal of the Trackhub Registry is to allow third parties to advertise <a href="http://genome.ucsc.edu/goldenPath/help/hgTrackHubHelp.html#Intro" target="_blank">track hubs</a>, and to make it easier for researchers around the world to discover and use track hubs containing different types of genomic research data.</small></p>
 
       <form role="search" method="post" action="[% c.uri_for('/search') %]">
         <div class="input-group">
@@ -52,7 +30,7 @@
         <p><em>I want maximum visibility for my track hubs.</em></p>
       </blockquote>
 
-      <p>External TrackHub providers can register and submit their track databases to the registry. <a href="[% c.uri_for('/user/register') %]">Registration</a> is web-based and done on this site; submission happens programatically via our RESTful API. Once submitted and successfully validated, the track dbs become available for search by other users worldwide, allowing for automatic and rapid integration into a genome browser.</p>
+      <p>External track hub providers can register and submit their track databases to the registry. <a href="[% c.uri_for('/user/register') %]">Registration</a> is web-based and done on this site; submission happens programatically via our RESTful API. Once submitted and successfully validated, the track dbs become available for search by other users worldwide, allowing for automatic and rapid integration into a genome browser.</p>
       <a href="[% c.uri_for('/docs/management/overview') %]" class="btn btn-primary">How to Submit</a>
     </div>
   </div><!-- /.col-sm-6 -->
@@ -64,7 +42,7 @@
         <p><em>How do I find omics tracks for an assembly of my favourite organism?</em></p>
       </blockquote>
 
-      <p>TrackHubs can be searched based on metadata information. Free text search is provided from the search box in the header of all TrackHub Registry web pages. Advanced search options are available for more specific and customised searches.</p>
+      <p>Track hubs can be searched based on metadata information. Free text search is provided from the search box in the header of all track hub Registry web pages. Advanced search options are available for more specific and customised searches.</p>
       <!-- <a href="[% c.uri_for('/search/advanced') %]" class="btn btn-primary">Advanced track search</a> -->
       <a href="[% c.uri_for('/docs/search/advanced') %]" class="btn btn-primary">Advanced track search</a>
     </div>

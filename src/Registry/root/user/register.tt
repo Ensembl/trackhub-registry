@@ -1,4 +1,4 @@
-[% META title = 'TrackHub Registry: User Registration' %]
+[% META title = 'Trackhub Registry: User Registration' %]
 
 <div>
   [% FOR field IN form.error_fields %]
@@ -16,7 +16,7 @@
   <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
   <p>
     You need to have an account before submitting data.
-    Sign up and start using the REST API to manage your trackhubs with the registry.
+    Sign up and start using the REST API to manage your track hubs with the registry.
   </p>
   <p>
     If you do have an account, use the REST API to authenticate and submit/update your track collections.
@@ -24,7 +24,7 @@
 </div>
 
 <div class="page-header">
-  <h2>Register as TrackHub Provider</h2>
+  <h2>Register as track hub provider</h2>
 </div>
 <div class="row">
   <div class="col-sm-6">
@@ -35,7 +35,7 @@
 
         <!-- First name -->
         <div class="form-group">
-          <label class="col-sm-3 control-label" for="first_name">First Name <a href="#" data-toggle="tooltip" title="TrackHub author's first name, optional."><span class="glyphicon glyphicon-info-sign" /></a></label>
+          <label class="col-sm-3 control-label" for="first_name">First Name <a href="#" data-toggle="tooltip" title="Track hub author's first name, optional."><span class="glyphicon glyphicon-info-sign" /></a></label>
           <div class="col-sm-8">
             <input id="first_name" name="first_name" placeholder="Enter the contact first name" class="form-control input-md" type="text">
           </div>
@@ -43,7 +43,7 @@
 
         <!-- Last name -->
         <div class="form-group">
-          <label class="col-sm-3 control-label" for="last_name">Last Name <a href="#" data-toggle="tooltip" title="TrackHub author's last name, optional."><span class="glyphicon glyphicon-info-sign" /></a></label>
+          <label class="col-sm-3 control-label" for="last_name">Last Name <a href="#" data-toggle="tooltip" title="Track hub author's last name, optional."><span class="glyphicon glyphicon-info-sign" /></a></label>
           <div class="col-sm-8">
             <input id="last_name" name="last_name" placeholder="Enter the contact last name" class="form-control input-md" type="text">
           </div>
@@ -51,7 +51,7 @@
 
         <!-- Affiliation -->
         <div class="form-group">
-          <label class="col-sm-3 control-label" for="affiliation">Affiliation <a href="#" data-toggle="tooltip" title="TrackHub author's affiliation, optional."><span class="glyphicon glyphicon-info-sign" /></a></label>
+          <label class="col-sm-3 control-label" for="affiliation">Affiliation <a href="#" data-toggle="tooltip" title="Track hub author's affiliation, optional."><span class="glyphicon glyphicon-info-sign" /></a></label>
           <div class="col-sm-8">
             <input id="affiliation" name="affiliation" placeholder="Enter the affiliation" class="form-control input-md" type="text">
           </div>
@@ -89,7 +89,7 @@
           </div>
         </div>
 
-        <legend>Trackhub monitoring configuration</legend>
+        <legend>Track hub monitoring configuration</legend>
 	
         <div class="form-group">
 	  <label class="col-sm-3 control-label" for="check_interval">Check Interval <a href="#" data-toggle="tooltip" title="The frequency with which the Registry checks the availability of your remote track data files."><span class="glyphicon glyphicon-info-sign" /></a></label>

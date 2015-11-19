@@ -59,10 +59,13 @@ sub _parse_file_content {
  
   ## Some hubs don't set the track type, so...
   my %format_lookup = (
-		       'bb'     => 'bigbed',
-		       'bw'     => 'bigwig',
+		       'bed'    => 'bed',
+		       'bb'     => 'bigBed',
+		       'bigBed' => 'bigBed',
+		       'bw'     => 'bigWig',
+		       'bigWig' => 'bigWig',
 		       'bam'    => 'bam',
-		       'gz'     => 'vcftabix', # should be 'vcf.gz', but the parser will have taken the token after last '.',
+		       'gz'     => 'vcfTabix',
 		       'cram'   => 'cram'
                       );
  

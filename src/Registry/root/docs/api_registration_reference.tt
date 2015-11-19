@@ -116,9 +116,9 @@
     Returns the set of registered track data hubs for the given user.
   </p>
   <p>
-    If the request is successful, the response body is an array of JSON objects representing trackhubs registered by the user. A trackhub object has the following attributes:
+    If the request is successful, the response body is an array of JSON objects representing track hubs registered by the user. A track hub object has the following attributes:
     <ul>
-      <li><mark>name</mark>: the single-word trackhub name;</li>
+      <li><mark>name</mark>: the single-word track hub name;</li>
       <li><mark>url</mark>: the track hub remote URL;</li>
       <li><mark>shortLabel</mark>: the short name for the track hub;</li>
       <li><mark>longLabel</mark>: the longer descriptive label for the track hub;</li>
@@ -282,9 +282,9 @@
         <th>Code</th><th>Description</th><th>Reason</th>
       </tr>
       <tr><td>200</td><td>OK</td><td>Request successful</td></tr>
-      <tr><td>400</td><td>Bad Request</td><td>there are no trackDbs for the specified trackhub which belong to (i.e. has been registered by) the user</td></tr
+      <tr><td>400</td><td>Bad Request</td><td>there are no trackDbs for the specified track hub which belong to (i.e. has been registered by) the user</td></tr
       <tr><td>401</td><td>Unauthorized</td><td>The request requires user authentication</td></tr>
-      <tr><td>404</td><td>Not Found</td><td>Couldn't find trackDbs for the trackhub with the given name</td></tr>
+      <tr><td>404</td><td>Not Found</td><td>Couldn't find trackDbs for the track hub with the given name</td></tr>
       <tr><td>500</td><td>Internal Server Error</td><td>Request cannot be fulfilled due to unexpected condition</td></tr>
       <tr><td>503</td><td>Service Unavailable</td><td>Request cannot be fulfilled due to temporary overloading or maintenance of the server</td></tr>
       <tr>
@@ -298,13 +298,13 @@
 
   <h3 id="post_trackhub">POST /api/trackhub</h3>
   <p>
-    Register/Update a remote public TrackHub with the Registry. The message body specifies the track hub remote URL (can be either the directory or hub.txt file URL), a map from assembly names as specified in the hub to INSDC accessions (in case of assemblies not supported by UCSC, see <a href="[% c.uri_for('/docs/management/assembly_support') %]">genome assembly support</a>), and, optionally, the hub assemblies data type (default: <mark>genomics</mark>). See <a href="#post_trackhub_msg_format">Message Format</a> for a list of possible types.
+    Register/Update a remote public track hub with the Registry. The message body specifies the track hub remote URL (can be either the directory or hub.txt file URL), a map from assembly names as specified in the hub to INSDC accessions (in case of assemblies not supported by UCSC, see <a href="[% c.uri_for('/docs/management/assembly_support') %]">genome assembly support</a>), and, optionally, the hub assemblies data type (default: <mark>genomics</mark>). See <a href="#post_trackhub_msg_format">Message Format</a> for a list of possible types.
   </p>
   <p>
-    If the trackhub at the specified URL has not been previously submitted, the Registry will register it by translating its trackDb files into JSON documents adhering to a particular <a href="[% c.uri_for('/docs/management/modelling') %]">JSON schema version</a>. If the trackhub has already been submitted, the request is interpreted as a request to update the details of the registered trackhub (e.g. the remote trackhub has been updated and you want to keep its details in the Registry up to date). In this case, the Registry will delete the relevant trackDb documents and replace them with translations of their most up-to-date versions.
+    If the track hub at the specified URL has not been previously submitted, the Registry will register it by translating its trackDb files into JSON documents adhering to a particular <a href="[% c.uri_for('/docs/management/modelling') %]">JSON schema version</a>. If the track hub has already been submitted, the request is interpreted as a request to update the details of the registered track hub (e.g. the remote track hub has been updated and you want to keep its details in the Registry up to date). In this case, the Registry will delete the relevant trackDb documents and replace them with translations of their most up-to-date versions.
   </p>
   <p>
-    If the request is successful, the response body is formatted as an array of JSON objects, where each object is a translation of a trackDb document belonging to the trackhub. The response contains the header Location which specifies the URIs of the trackDb documents in their same respective order in the response body. 
+    If the request is successful, the response body is formatted as an array of JSON objects, where each object is a translation of a trackDb document belonging to the track hub. The response contains the header Location which specifies the URIs of the trackDb documents in their same respective order in the response body. 
   </p>
 
   <h4>Resource Information</h4>
@@ -328,7 +328,7 @@
   <h4>Parameters</h4>
   <p>
     <ul>
-      <li><mark>version</mark> (optional): JSON schema version of the registered trackDb documents for this hub (default: v1.0, see <a href="[% c.uri_for('/docs/management/modelling') %]">Modelling TrackHubs</a> for a discussion)</li>
+      <li><mark>version</mark> (optional): JSON schema version of the registered trackDb documents for this hub (default: v1.0, see <a href="[% c.uri_for('/docs/management/modelling') %]">Modelling Track Hubs</a> for a discussion)</li>
     </ul>
   </p>
 
@@ -608,7 +608,7 @@
   <h4>Parameters</h4>
   <p>
     <ul>
-      <li><mark>version</mark> (optional): JSON schema version of the trackDb documents (default: v1.0, see <a href="[% c.uri_for('/management/modelling') %]">Modelling TrackHubs</a> for a discussion)</li>
+      <li><mark>version</mark> (optional): JSON schema version of the trackDb documents (default: v1.0, see <a href="[% c.uri_for('/management/modelling') %]">Modelling Track Hubs</a> for a discussion)</li>
     </ul>
   </p>
 
@@ -728,7 +728,7 @@
 
   <h4>Message</h4>
   <p>
-    A JSON object representing the trackDb in the corresponding schema, see <a href="[% c.uri_for('/docs/management/modelling') %]">Modelling TrackHubs</a> for a discussion.
+    A JSON object representing the trackDb in the corresponding schema, see <a href="[% c.uri_for('/docs/management/modelling') %]">Modelling Track Hubs</a> for a discussion.
   </p>
 
   <h4>Example Request</h4>

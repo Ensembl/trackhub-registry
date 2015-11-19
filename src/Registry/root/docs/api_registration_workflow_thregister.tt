@@ -26,10 +26,10 @@
 		    <a href="[% c.uri_for('/docs/api/registration#workflow') %]">A simplified RESTful workflow</a>
 		    <ul>
 		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/login') %]">Logging in</a></li>
-		      <li><a style="font-weight: bold;">Registering TrackHubs</a></li>
-		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thlist') %]">Retrieve list of TrackHubs</a></li>
-		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thupdate') %]">Updating TrackHubs</a></li>
-		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thdelete') %]">Deleting TrackHubs</a></li>
+		      <li><a style="font-weight: bold;">Registering Track Hubs</a></li>
+		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thlist') %]">Retrieve list of Track Hubs</a></li>
+		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thupdate') %]">Updating Track Hubs</a></li>
+		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thdelete') %]">Deleting Track Hubs</a></li>
 		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/logout') %]">Log out</a></li>
 		    </ul>
 		  </li>
@@ -46,9 +46,9 @@
   <div class="col-sm-9" style="text-align: justify; text-justify: inter-word;">
   <h2>A Simplified RESTful workflow</h2>
 
-  <h3 id="login">Registering TrackHubs</h3>
+  <h3 id="login">Registering Track Hubs</h3>
   <p>
-    Suppose you've just <a href="[% c.uri_for('/user/register') %]">signed up</a> with the TrackHub Registry. You've also got some remote public track hubs that you want to register with and make available for search on the Registry itself.
+    Suppose you've just <a href="[% c.uri_for('/user/register') %]">signed up</a> with the Trackhub Registry. You've also got some remote public track hubs that you want to register with and make available for search on the Registry itself.
   </p>
   <p>
     After you log in, you can simply register one of your publicly accessible track hubs by POSTing its URL at <a href="[% c.uri_for('/docs/api/registration/reference#post_trackhub') %]">/api/trackhub</a>. At present, only one hub can be registered at a time. There's a plan to provide bulk request support the registration of multiple data hubs at a time.
@@ -68,7 +68,7 @@
     <ol>
       <li>Make a POST request to the <a href="[% c.uri_for('/docs/api/registration/reference#post_trackhub') %]">/api/trackhub</a> endpoint that includes a <mark>User</mark> header with your username and an <mark>Auth-Token</mark> header with the given authentication token;</li>
       <li>Examine the response. The response code indicates whether the request succeeded, or how it failed;</li>
-      <li>A successful request returns an array of JSON objects, where each object is a translation of the configuration of a trackDb belonging to the trackhub.</li>
+      <li>A successful request returns an array of JSON objects, where each object is a translation of the configuration of a trackDb belonging to the track hub.</li>
     </ol>
   </p>
 

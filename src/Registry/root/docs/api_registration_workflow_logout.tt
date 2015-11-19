@@ -26,10 +26,10 @@
 		    <a href="[% c.uri_for('/docs/api/registration#workflow') %]">A simplified RESTful workflow</a>
 		    <ul>
 		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/login') %]">Logging in</a></li>
-		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thregister') %]">Registering TrackHubs</a></li>
-		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thlist') %]">Retrieve list of TrackHubs</a></li>
-		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thupdate') %]">Updating TrackHubs</a></li>
-		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thdelete') %]">Deleting TrackHubs</a></li>
+		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thregister') %]">Registering Track Hubs</a></li>
+		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thlist') %]">Retrieve list of Track Hubs</a></li>
+		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thupdate') %]">Updating Track Hubs</a></li>
+		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thdelete') %]">Deleting Track Hubs</a></li>
 		      <li><a style="font-weight: bold;">Log out</a></li>
 		    </ul>
 		  </li>

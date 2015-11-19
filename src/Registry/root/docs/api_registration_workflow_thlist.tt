@@ -26,10 +26,10 @@
 		    <a href="[% c.uri_for('/docs/api/registration#workflow') %]">A simplified RESTful workflow</a>
 		    <ul>
 		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/login') %]">Logging in</a></li>
-		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thregister') %]">Registering TrackHubs</a></li>
-		      <li><a style="font-weight: bold;">Retrieve list of TrackHubs</a></li>
-		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thupdate') %]">Updating TrackHubs</a></li>
-		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thdelete') %]">Deleting TrackHubs</a></li>
+		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thregister') %]">Registering Track Hubs</a></li>
+		      <li><a style="font-weight: bold;">Retrieve list of track hubs</a></li>
+		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thupdate') %]">Updating Track Hubs</a></li>
+		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thdelete') %]">Deleting Track Hubs</a></li>
 		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/logout') %]">Log out</a></li>
 		    </ul>
 		  </li>
@@ -46,7 +46,7 @@
   <div class="col-sm-9" style="text-align: justify; text-justify: inter-word;">
   <h2>A Simplified RESTful workflow</h2>
 
-  <h3 id="login">Retrieving the list of registered TrackHubs</h3>
+  <h3 id="login">Retrieve the list of registered track hubs</h3>
   <p>
     Suppose you've already submitted some of your public track hubs. At some point, you want to know which ones by retrieving the list of registered track hubs from the Registry, perhaps because you want to update or delete some of them.
   </p>
@@ -129,7 +129,7 @@
         }
       ]
     </pre>
-    In our example, the client had previously registered one single hub, the <a target="_blank" href="http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt">CSHL Biology of Genomes meeting 2013 demonstration assembly hub</a>, so the response body is an array with one component representing this hub. The trackhub object has some string attributes derived from parsing the remote hub URL specified in the url attribute.
+    In our example, the client had previously registered one single hub, the <a target="_blank" href="http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt">CSHL Biology of Genomes meeting 2013 demonstration assembly hub</a>, so the response body is an array with one component representing this hub. The track hub object has some string attributes derived from parsing the remote hub URL specified in the url attribute.
   </p>
   <p>
     As can be seen from the response output, the track hub object contains an array, trackdbs, which is a list of objects containing information for each trackDb (i.e. assembly specific data files) associated with the track hub: the species NCBI tax id and assembly accession, and the URI of the JSON representation of the stored trackDb entity which can be retrieved from the Registry by making a GET request to the <a href="[% c.uri_for('/docs/api/registration/reference#get_trackdb') %]">/api/trackdb/:id</a> endpoint.

@@ -26,10 +26,10 @@
 		    <a href="[% c.uri_for('/docs/api/registration#workflow') %]">A simplified RESTful workflow</a>
 		    <ul>
 		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/login') %]">Logging in</a></li>
-		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thdelete') %]">Registering TrackHubs</a></li>
-		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thlist') %]">Retrieve list of TrackHubs</a></li>
-		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thupdate') %]">Updating TrackHubs</a></li>
-		      <li><a style="font-weight: bold;">Deleting TrackHubs</a></li>
+		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thdelete') %]">Registering Track Hubs</a></li>
+		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thlist') %]">Retrieve list of Track Hubs</a></li>
+		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thupdate') %]">Updating Track Hubs</a></li>
+		      <li><a style="font-weight: bold;">Deleting Track Hubs</a></li>
 		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/logout') %]">Log out</a></li>
 		    </ul>
 		  </li>
@@ -46,9 +46,9 @@
   <div class="col-sm-9" style="text-align: justify; text-justify: inter-word;">
   <h2>A Simplified RESTful workflow</h2>
 
-  <h3 id="delete">Deleting Registered TrackHubs</h3>
+  <h3 id="delete">Deleting Registered Track Hubs</h3>
   <p>
-    Suppose one of your remote public hubs does not exist or it's not public any more, or you simply don't want to make it available for search in the TrackHub Registry. Since a track hub in not directly stored in the Registry, to remove it you have to delete its corresponding records, i.e. <u>all</u> the trackDb entities stored in the Registry which are associated to the hub. For this, you need their URIs which you can get by making a request to the <a href="">GET /api/trackhub</a> endpoint and examining the <mark>trackdbs</mark> array of the object representing the track hub under consideration, as explained in <a href="[% c.uri_for('/docs/api/registration/workflow/thlist') %]">Retrieve the list of registered TrackHubs</a>.
+    Suppose one of your remote public hubs does not exist or it's not public any more, or you simply don't want to make it available for search in the Trackhub Registry. Since a track hub in not directly stored in the Registry, to remove it you have to delete its corresponding records, i.e. <u>all</u> the trackDb entities stored in the Registry which are associated to the hub. For this, you need their URIs which you can get by making a request to the <a href="">GET /api/trackhub</a> endpoint and examining the <mark>trackdbs</mark> array of the object representing the track hub under consideration, as explained in <a href="[% c.uri_for('/docs/api/registration/workflow/thlist') %]">Retrieve the list of registered track hubs</a>.
   </p>
   
   <h4>Notes</h4>

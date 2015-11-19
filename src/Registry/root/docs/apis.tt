@@ -38,23 +38,23 @@
   </div>
 
   <div class="col-sm-9" style="text-align: justify; text-justify: inter-word;">
-  <h2>TrackHub Registry APIs</h2>
+  <h2>Trackhub Registry APIs</h2>
   <p>
-    The TrackHub Registry implements various APIs which allow a client to interact with the Registry using a RESTful application development style:
+    The Trackhub Registry implements various APIs which allow a client to interact with the Registry using a RESTful application development style:
     <ul>
       <li><a href="[% c.uri_for('/docs/api/info') %]">Info API</a>: provides basic information about the service from the Registry;
       <li><a href="[% c.uri_for('/docs/api/registration') %]">Registration API</a>: provides support for hub providers who want to register and manage their track data hubs with the registry;
-      <li><a href="[% c.uri_for('/docs/api/search') %]">Search API</a>: provides support for genome browsers who are building interfaces to display and search publicly available TrackHubs.</li>
+      <li><a href="[% c.uri_for('/docs/api/search') %]">Search API</a>: provides support for genome browsers who are building interfaces to display and search publicly available track hubs.</li>
     </ul>
     The Registry communicates via an API client over HTTP, exchanging representations of objects in the form of JSON document elements. You use HTTP GET requests to retrieve the current representation of an object, HTTP POST and PUT requests to create or modify an object, and HTTP DELETE requests to delete an object.
   </p>
   <p>
-    TrackHub Registry clients implement a RESTful workflow, making HTTP requests to the server and retrieving the information they need from the server's responses. REST, an acronym for Representational State Transfer, describes an architectural style characteristic of programs that rely on the inherent properties of hypermedia to create and modify the state of an object whose serialized representation is accessible via an URL. If the URL of such an object is known to a client, the client can use an HTTP GET request to retrieve the representation of the object. In the Registry APIs, this representation is a JSON document. In a RESTful workflow, documents that represent an object state are passed back and forth between a client and a service with the explicit assumption that neither party need to know anything about an object other than what is presented in a single request or response. The URLs at which these documents are available often persist beyond the lifetime of the request or response that includes them.
+    Trackhub Registry clients implement a RESTful workflow, making HTTP requests to the server and retrieving the information they need from the server's responses. REST, an acronym for Representational State Transfer, describes an architectural style characteristic of programs that rely on the inherent properties of hypermedia to create and modify the state of an object whose serialized representation is accessible via an URL. If the URL of such an object is known to a client, the client can use an HTTP GET request to retrieve the representation of the object. In the Registry APIs, this representation is a JSON document. In a RESTful workflow, documents that represent an object state are passed back and forth between a client and a service with the explicit assumption that neither party need to know anything about an object other than what is presented in a single request or response. The URLs at which these documents are available often persist beyond the lifetime of the request or response that includes them.
   </p>
   <p>
     Application programs written to a REST API use HTTP requests that are often executed by a script or other programmatic access to make remote procedure calls that create, retrieve, update, or delete objects that the API defines. The operations themselves are HTTP requests and are generic to all HTTP clients. All RESTful workflows follow a common pattern:
     <ul>
-      <li>Make an HTTP request, typically GET, PUT, POST, or DELETE. The target of this request is either a well-known URL  or a URL obtained from the response to a previous request. For example, a GET request to a TrackHub URL returns links to trackDb objects that the organization contains;</li>
+      <li>Make an HTTP request, typically GET, PUT, POST, or DELETE. The target of this request is either a well-known URL  or a URL obtained from the response to a previous request. For example, a GET request to a track hub URL returns links to trackDb objects that the organization contains;</li>
       <li>Examine the response, which always includes an HTTP response code and usually includes a body. In the Registry APIs, a response body is a JSON representation of an object, including elements and attributes that represent object properties, links that implement operations on the object or provide references to contained or containing objects. The response also includes an HTTP response code, which indicates whether the request succeeded or failed.</li>
     </ul>
   </p>
@@ -96,7 +96,7 @@
 
   <h4 id="auth">Authentication/Authorisation</h4>
   <p>
-    HTTP communications between a TrackHub Registry API client and the server are secured with SSL. The Registration API implements Basic HTTP Authentication, as defined by RFC 2617, to allow clients to login and obtain an authentication token. Access tokens allow clients to send individual authorised HTTP requests by including an auth-token header in the request.
+    HTTP communications between an API client and the server are secured with SSL. The Registration API implements Basic HTTP Authentication, as defined by RFC 2617, to allow clients to login and obtain an authentication token. Access tokens allow clients to send individual authorised HTTP requests by including an auth-token header in the request.
   </p>
 
   <h4 id="requestheaders">Request Headers</h4>
@@ -140,7 +140,7 @@
 
   <h4>HTTP Response Codes</h4>
   <p>
-    A TrackHub Registry API client expects a subset of HTTP status codes in a response.
+    An API client expects a subset of HTTP status codes in a response.
 
     <table class="table">
       <tbody>

@@ -43,13 +43,13 @@
 
   <h3 id="workflow">A Simplified RESTful workflow</h3>
   <p>
-    Registration API clients and the Registry communicates over HTTPS, exchanging JSON representations of trackhub registry API objects.
+    API clients and the Registry communicates over HTTPS, exchanging JSON representations of API objects.
   </p>
   <p>
     This simplified example of a RESTful workflow includes requests to register remote track hubs, list registered track data hubs with the Registry and update a registered track hub.
   </p>
   <p>
-    These examples assume the trackhub data provider using the API has signed up and created an account with the Registry. To create an account, go to <a href="[% c.uri_for('/user/register') %]" target="_blank">registration</a>.
+    These examples assume the track hub data provider using the API has signed up and created an account with the Registry. To create an account, go to <a href="[% c.uri_for('/user/register') %]" target="_blank">registration</a>.
   </p>
 
   <h4 id="login"><a href="[% c.uri_for('/docs/api/registration/workflow/login') %]">Logging in</a></h4>
@@ -57,24 +57,24 @@
     All requests to the service must be authenticated. The first step in any Registration API RESTful workflow is to obtain an authentication token. 
   </p>
 
-  <h4 id=""><a href="[% c.uri_for('/docs/api/registration/workflow/thregister') %]">Registering TrackHubs</a></h4>
+  <h4 id=""><a href="[% c.uri_for('/docs/api/registration/workflow/thregister') %]">Registering track hubs</a></h4>
   <p>
-    You've just signed up and you've got some remote public track hubs that you want to register with and make available for search on the TrackHub Registry.
+    You've just signed up and you've got some remote public track hubs that you want to register with and make available for search on the Trackhub Registry.
   </p>
 
-  <h4 id=""><a href="[% c.uri_for('/docs/api/registration/workflow/thlist') %]">Retrieve the list of registered TrackHubs</a></h4>
+  <h4 id=""><a href="[% c.uri_for('/docs/api/registration/workflow/thlist') %]">Retrieve the list of registered track hubs</a></h4>
   <p>
     You've submitted some of your public track hubs to the Registry. You want to know which ones by retrieving the list of registered track hubs from the Registry.
   </p>
 
-  <h4 id=""><a href="[% c.uri_for('/docs/api/registration/workflow/thupdate') %]">Update registered TrackHubs</a></h4>
+  <h4 id=""><a href="[% c.uri_for('/docs/api/registration/workflow/thupdate') %]">Update registered track hubs</a></h4>
   <p>
     You've updated the structure or content of one of your remote public hubs registered with us. You obviously want the changes to appear on the Registry as well.
   </p>
 
-  <h4 id=""><a href="[% c.uri_for('/docs/api/registration/workflow/thdelete') %]">Delete registered TrackHubs</a></h4>
+  <h4 id=""><a href="[% c.uri_for('/docs/api/registration/workflow/thdelete') %]">Delete registered track hubs</a></h4>
   <p>
-    One of your remote public hubs does not exist any more. Or you simply don't want to make it available for search in the TrackHub Registry.
+    One of your remote public hubs does not exist any more. Or you simply don't want to make it available for search in the Trackhub Registry.
   </p>
 
   <h4 id="logout"><a href="[% c.uri_for('/docs/api/registration/workflow/logout') %]">Log out</a></h4>

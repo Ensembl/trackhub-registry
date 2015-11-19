@@ -149,7 +149,7 @@
 
   <h3 id="species">GET /api/info/species</h3>
   <p>
-    Returns the set of species the TrackHubs registered in the Registry contain data for.
+    Returns the set of species the track hubs registered in the Registry contain data for.
   </p>
   <p>
     If the request is successful, the response is an array containing the scientific names of the species.

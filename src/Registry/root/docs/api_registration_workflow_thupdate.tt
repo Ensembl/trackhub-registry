@@ -26,10 +26,10 @@
 		    <a href="[% c.uri_for('/docs/api/registration#workflow') %]">A simplified RESTful workflow</a>
 		    <ul>
 		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/login') %]">Logging in</a></li>
-		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thregister') %]">Registering TrackHubs</a></li>
-		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thlist') %]">Retrieve list of TrackHubs</a></li>
-		      <li><a style="font-weight: bold;">Updating TrackHubs</a></li>
-		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thdelete') %]">Deleting TrackHubs</a></li>
+		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thregister') %]">Registering Track Hubs</a></li>
+		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thlist') %]">Retrieve list of Track Hubs</a></li>
+		      <li><a style="font-weight: bold;">Updating Track Hubs</a></li>
+		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thdelete') %]">Deleting Track Hubs</a></li>
 		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/logout') %]">Log out</a></li>
 		    </ul>
 		  </li>
@@ -46,12 +46,12 @@
   <div class="col-sm-9" style="text-align: justify; text-justify: inter-word;">
   <h2>A Simplified RESTful workflow</h2>
 
-  <h3>Updating TrackHubs</h3>
+  <h3>Updating Track Hubs</h3>
   <p>
     Suppose you've updated the structure or content of one of your remote public hubs registered with us. You obviously want the changes to appear on the Registry as well.
   </p>
   <p>
-    The procedure is simple and has been already explored in <a href="[% c.uri_for('/docs/api/registration/workflow/thregister') %]">Registering TrackHubs</a>: simply POST the hub URL at <a href="[% c.uri_for('/docs/api/registration/reference#post_trackhub') %]">/api/trackhub</a> again. In case the trackhub has already been submitted, the request is interpreted as a request to update the details of the registered trackhub. The Registry will delete the existing stored trackDb entities and replace them with the most up-to-date versions obtained by parsing the hub again.
+    The procedure is simple and has been already explored in <a href="[% c.uri_for('/docs/api/registration/workflow/thregister') %]">Registering Track Hubs</a>: simply POST the hub URL at <a href="[% c.uri_for('/docs/api/registration/reference#post_trackhub') %]">/api/trackhub</a> again. In case the track hub has already been submitted, the request is interpreted as a request to update the details of the registered track hub. The Registry will delete the existing stored trackDb entities and replace them with the most up-to-date versions obtained by parsing the hub again.
   </p>
 
   <h4>Prerequisites</h4>
@@ -66,11 +66,11 @@
     <ol>
       <li>Make a POST request to the <a href="[% c.uri_for('/docs/api/registration/reference#post_trackhub') %]">/api/trackhub</a> endpoint that includes a <mark>User</mark> header with your username and an <mark>Auth-Token</mark> header with the given authentication token;</li>
       <li>Examine the response. The response code indicates whether the request succeeded, or how it failed;</li>
-      <li>A successful request returns an array of JSON objects, where each object is a translation of the configuration of a trackDb belonging to the trackhub.</li>
+      <li>A successful request returns an array of JSON objects, where each object is a translation of the configuration of a trackDb belonging to the track hub.</li>
     </ol>
   </p>
 
-  <h4>Example: trackhub update</h4>
+  <h4>Example: track hub update</h4>
   <p>
     This example updates the registration of the <a target="_blank" href="http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt">CSHL Biology of Genomes meeting 2013 demonstration assembly hub</a>. This time we don't specify a data type, hence it will default to "genomics":
   </p>
@@ -84,7 +84,7 @@
         "url": "http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt"
       }
     </pre>
-    The response is similar to that already seen in <a href="[% c.uri_for('/docs/api/registration/workflow/thregister') %]">Registering TrackHubs</a> which we don't report here.
+    The response is similar to that already seen in <a href="[% c.uri_for('/docs/api/registration/workflow/thregister') %]">Registering Track Hubs</a> which we don't report here.
   </p>
 
   <h4 id="errors">What can possibly go wrong</h4>

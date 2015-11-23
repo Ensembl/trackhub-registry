@@ -101,5 +101,12 @@
       <li>if the Registry is currently unable to handle the request due to a temporary overloading or maintenance, it returns HTTP response code 503</li>
     </ul>
   </p>
+
+  <h4>Example clients</h4>
+  
+  <p>
+    As already explained, the procedure is equivalent to the registration of a track hub for the first time. You can refer to the workflow section <a href="[% c.uri_for('/docs/api/registration/workflow/thregister') %]">Registering Track Hubs</a> for examples clients in different programming languages.
+  </p>
+
   </div>
 </div>

@@ -305,7 +305,7 @@ headers = { 'user': user, 'auth_token': auth_token }
 payload = { 'url': hub_url, 'assemblies': { 'araTha1': 'GCA_000001735.1', 'ricCom1': 'GCA_000151685.2', 'braRap1': 'GCA_000309985.1' } }
 r = requests.post(server+'/api/trackhub', headers=headers, json=payload, verify=False)
 if not r.ok:
-   print "Couldn't logout, reason: %s [%d]" % (r.text, r.status_code)
+   print "Couldn't register track hub at %s, reason: %s [%d]" % (hub_url, r.text, r.status_code)
    sys.exit
 print "I have registered hub at %s" % hub_url
 

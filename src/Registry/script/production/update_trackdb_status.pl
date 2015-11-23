@@ -9,14 +9,20 @@ BEGIN {
 }
 
 use Try::Tiny;
-use JSON;
+use Log::Log4perl qw(get_logger :levels);
 use Getopt::Long;
 use Pod::Usage;
-# use Config::Std;
+use Config::Std;
+
 use File::Temp qw/ tempfile /;
 use Email::MIME;
 use Email::Sender::Simple qw(sendmail);
+
+use JSON;
 use Data::Dumper;
+
+use HTTP::Tiny;
+use Search::Elasticsearch;
 
 use Registry::Model::Search;
 use Registry::TrackHub::TrackDB;
@@ -45,7 +51,6 @@ unless(-d $log_dir) {
     $logger->logdie("cannot create directory: $!");
 }
 
-use Log::Log4perl qw(get_logger :levels);
 my $date = `date '+%F'`; chomp($date);
 my $log_file = sprintf "$log_dir/trackhub_check_%s.log", $date;
 
@@ -72,9 +77,22 @@ eval {
 };
 $logger->logdie("Error reading configuration file $config_file: $@") if $@;
 
-$logger->info("Instantiating document store client");
-my $es = Registry::Model::Search->new();
+$logger->info("Checking the cluster is up and running");
+my $esurl;
+if (ref $config{cluster}{nodes} eq 'ARRAY') {
+  $esurl = sprintf "http://%s", $config{cluster}{nodes}[0];
+} else {
+  $esurl = sprintf "http://%s", $config{cluster}{nodes};
+}
+$logger->logdie(sprintf "Cluster %s is not up", $config{cluster}{name})
+  unless HTTP::Tiny->new()->request('GET', $esurl)->{status} eq '200';
+
+$logger->info("Instantiating ES client");
+my $es = Search::Elasticsearch->new(cxn_pool => 'Sniff',
+				    nodes => $config{cluster}{nodes});
+
 my$config = Registry->config()->{'Model::Search'};
+
 #
 # fetch from ES stats about last run report
 # --> store different type: check,
@@ -99,7 +117,7 @@ try {
   $last_report = $last_report->{_source};
 
   $users = $es->get_all_users;
-  map { $_->{username} =~ /admin/ and $admin = $_ } @{$users};
+  map { $_->{username} =~ /$config{users}{admin_name}/ and $admin = $_ } @{$users};
 } catch {
   $logger->logdie($_);
 };
@@ -120,7 +138,7 @@ my $current_report = {};
 #   notify
 foreach my $user (@{$users}) {
   my $username = $user->{username};
-  if ($username =~ /admin/) {
+  if ($username =~ /$config{users}{admin_name}/) {
     $logger->info("User admin. SKIP.");
     next;
   }
@@ -152,7 +170,7 @@ foreach my $user (@{$users}) {
     my $current_time = time;
     my $last_check_time = $last_user_report->{end_time};
     defined $last_check_time or 
-      $logger->logdie("Undefined last_check_time for user $username");
+      $logger->logdie("Undefined last_check_time in last report for user $username");
     # check_interval == 1 -> week, 2 -> month
     my $time_interval =  $check_interval==1?604800:2592000;
 

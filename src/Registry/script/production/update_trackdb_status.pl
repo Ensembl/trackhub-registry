@@ -28,34 +28,26 @@ my $logger = get_logger();
 
 # default option values
 my $help = 0;
-# my $log_conf = '.logrc';
-my $log_dir = 'trackdb_check';
-my $conf_file = '.configrc'; # expect file in current directory
+my $log_dir = '.logs';
+my $conf_file = '.initrc'; # expect file in current directory
 
 # parse command-line arguments
 my $options_ok =
-  GetOptions(# "config|c=s" => \$conf_file,
+  GetOptions("config|c=s" => \$conf_file,
 	     "logdir|l=s" => \$log_dir,
 	     "help|h"     => \$help) or pod2usage(2);
 pod2usage() if $help;
 
-# set up logging
+# set up logging, use inline configuration
 unless(-d $log_dir) {
   $logger->info("Creating log directory $log_dir");
   mkdir $log_dir or
     $logger->logdie("cannot create directory: $!");
 }
 
-# use Log::Log4perl qw(:easy);
-# Log::Log4perl->easy_init($FATAL);
-#
 use Log::Log4perl qw(get_logger :levels);
-# my $log_conf = $config{update}{log};
-# Log::Log4perl->init($log_conf);
-#
-# use inline configuration
 my $date = `date '+%F'`; chomp($date);
-my $log_file = sprintf "$log_dir/%s.log", $date;
+my $log_file = sprintf "$log_dir/trackhub_check_%s.log", $date;
 
 my $log_conf = <<"LOGCONF";
 log4perl.logger=DEBUG, Screen, File
@@ -73,14 +65,12 @@ LOGCONF
 
 Log::Log4perl->init(\$log_conf);
 
-# # parse configuration file
-# my %config;
-# try {
-#   read_config $conf_file => %config
-# } catch {
-#   FATAL "Error reading configuration file $conf_file";
-#   FATAL "$@" if $@;
-# };
+$logger->info("Reading configuration file $config_file");
+my %config;
+eval {
+  read_config $config_file => %config
+};
+$logger->logdie("Error reading configuration file $config_file: $@") if $@;
 
 $logger->info("Instantiating document store client");
 my $es = Registry::Model::Search->new();
@@ -411,7 +401,8 @@ update_trackdb_status.pl - Check trackdb tracks and notify its owners
 
 update_trackdb_status.pl [options]
 
-   -l --logdir          log directory [default: ./trackdb_check_notify]
+   -c --config          configuration file [default: .initrc]
+   -l --logdir          log directory [default: ./.logs]
    -h --help            display this help and exits
 
 =cut

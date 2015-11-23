@@ -112,7 +112,6 @@ if ($response->is_success) {
 sub login {
   my ($server, $user, $pass) = @_;
 
-  my $ua = LWP::UserAgent->new;
   my $request = GET("$server/api/login");
   $request->headers->authorization_basic($user, $pass);
   

@@ -85,8 +85,9 @@
   </p>
 
   <p>
-    The <a href="[% c.uri_for('/docs/api/registration/reference#post_trackhub_msg_format') %]">POST /api/trackhub</a> message must contain the URL of remote public hub (can specify the URL of the hub.txt as well), a map from assembly names as specified in the hub to INSDC accessions (in case of assemblies not supported by UCSC, see <a href="[% c.uri_for('/docs/management/assembly_support') %]">genome assembly support</a>), and, optionally, the type of the assembly data contained in the hub, which can be one of "genomics", "epigenomics", "transcriptomics", "proteomics" (default: "genomics"). By specifying the type you allow the user to search for track hubs based on particular types. The hub in this example is an assembly hub so we're also posting a map of hub assembly names to their respective accessions. Also, we implicitly specify that the hub contains genomics data:
+    The <a href="[% c.uri_for('/docs/api/registration/reference#post_trackhub_msg_format') %]">POST /api/trackhub</a> message must contain the URL of remote public hub (can specify the URL of the hub.txt as well), a map from assembly names as specified in the hub to INSDC accessions (in case of assemblies not supported by UCSC, see <a href="[% c.uri_for('/docs/management/assembly_support') %]">genome assembly support</a>), and, optionally, the type of the assembly data contained in the hub, which can be one of "genomics", "epigenomics", "transcriptomics", "proteomics" (default: "genomics"). By specifying the type you allow the user to search for track hubs based on particular types. The hub in this example is an assembly hub so we're also posting a map of hub assembly names to their respective INSDC accessions. Also, we implicitly specify that the hub contains genomics data.
   </p>
+
   <p>
     Request:
     <pre>
@@ -189,12 +190,196 @@
       <li>if the credentials supplied in the authentication header are invalid, the server returns HTTP response code 401</li>
       <li>if your hub is not compliant with the UCSC hub specs, the server returns HTTP response code 400. The body contains the message: "hubCheck report: ..."</li>
       <li>if the hub is not available or cannot be correctly parsed, the server returns HTTP response code 400. The response body message contains the error</li>
-      <li>your hub genome subdirectory names must be <a target="_blank" href="https://genome.ucsc.edu/FAQ/FAQreleases.html#release1">valid UCSC DB names</a> (assembly synonyms, e.g. hg38) which can be mapped to an existing entry in the <a target="_blank" href="http://www.ncbi.nlm.nih.gov/assembly">NCBI assembly database</a> with a corresponding identifier (i.e. assembly accession + version, e.g. <a target="_blank" href="http://www.ncbi.nlm.nih.gov/assembly/GCF_000001405.13">GCA_000001405.1</a>). If a mapping cannot be found, the server returns HTTP response code 400 with the message "Unable to find an NCBI assembly id..."</li>
+      <li>your hub genome subdirectory names must be <a target="_blank" href="https://genome.ucsc.edu/FAQ/FAQreleases.html#release1">valid UCSC DB names</a> (assembly synonyms, e.g. hg38) or you must provide a map from these names to their corresponding INSDC accessions (i.e. assembly accession + version, e.g. <a target="_blank" href="http://www.ncbi.nlm.nih.gov/assembly/GCF_000001405.13">GCA_000001405.1</a>). If neither of the two conditions are met, the server returns HTTP response code 400 with the message "Unable to find a valid INSDC accession for genome assembly [..]"</li>
       <li>if one of the hub trackDb configurations cannot be translated to <a href="[% c.uri_for('/docs/api/modelling') %]">valid JSON</a>, the server returns HTTP response code 400. The body contains the message "Failed: ..." with an output describing the reasons why validation failed</li>
       <li>if the Registry encountered an unexpected condition which prevented it from fulfilling the request, it returns HTTP response code 500</li>
       <li>if the Registry is currently unable to handle the request due to a temporary overloading or maintenance, it returns HTTP response code 503</li>
     </ul>
   </p>
   
+  <h4>Example Clients</h4>
+  
+  <ul class="nav nav-pills">
+    <li class="active"><a href="#perl" data-toggle="tab">Perl</a></li>
+    <li><a href="#python" data-toggle="tab">Python</a></li>
+    <li><a href="#ruby" data-toggle="tab">Ruby</a></li>
+  </ul>
+  <div class='tab-content'>
+    <div class='tab-pane active' id='perl'>
+      <pre class="pre-scrollable prettyprint linenums">
+use strict;
+use warnings;
+
+use JSON;
+use HTTP::Request::Common;
+use LWP::UserAgent;
+
+my $ua = LWP::UserAgent->new(ssl_opts => { verify_hostname => 0 });
+my $server = 'https://www.trackhubregistry.org';
+my $HUB_URL = 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt';
+my ($user, $pass, $auth_token) = ('exampleuser', 'examplepass');
+
+$auth_token = login($server, $user, $pass);
+
+my $request = POST("$server/api/trackhub",
+		   'Content-type' => 'application/json',
+		   'Content'      => to_json({ url => $HUB_URL,
+		                               assemblies => {
+		                                 araTha1 => 'GCA_000001735.1',
+		                                 ricCom1 => 'GCA_000151685.2',
+		 			         braRap1 => 'GCA_000309985.1'}}));
+$request->headers->header(user       => $user);
+$request->headers->header(auth_token => $auth_token);
+my $response = $ua->request($request);
+if ($response->is_success) {
+  print "I have registered hub at $HUB_URL\n";
+} else {
+  die sprintf "Couldn't register hub at $HUB_URL: %s [%d]", $response->content, $response->code;
+} 
+
+logout($server, $user, $auth_token);
+
+sub login {
+  my ($server, $user, $pass) = @_;
+
+  my $request = GET("$server/api/login");
+  $request->headers->authorization_basic($user, $pass);
+  
+  my $response = $ua->request($request);
+  my $auth_token;
+  if ($response->is_success) {
+    $auth_token = from_json($response->content)->{auth_token};
+    print "Logged in [$auth_token]\n" if $auth_token;
+  } else {
+    die sprintf "Couldn't login: %s [%d]", $response->content, $response->code;
+  }
+
+  return $auth_token;
+}
+
+sub logout {
+  my ($server, $user, $auth_token) = @_;
+
+  my $request = GET("$server/api/logout");
+  $request->headers->header(user       => $user);
+  $request->headers->header(auth_token => $auth_token);
+
+  my $response = $ua->request($request);
+  if ($response->is_success) {
+    print "Logged out\n";
+  } else {
+    die sprintf "Unable to logout: %s [%d]", $response->content, $response->code;
+  } 
+}
+      </pre> 
+    </div>
+
+    <div class='tab-pane' id='python'>
+      <pre class="pre-scrollable prettyprint linenums">
+import requests, sys
+
+server = 'https://www.trackhubregistry.org'
+hub_url = 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt'
+user = 'exampleuser'
+password = 'examplepass'
+
+def login(server, user, password):
+    r = requests.get(server+'/api/login', auth=(user, password), verify=False)
+    if not r.ok:
+        print "Couldn't login, reason: %s [%d]" % (r.text, r.status_code)
+        sys.exit
+
+    auth_token = r.json()[u'auth_token']
+    print 'Logged in [%s]' % auth_token
+    return auth_token
+
+def logout(server, user, auth_token):
+    r = requests.get(server+'/api/logout', headers={ 'user': user, 'auth_token': auth_token })    
+    if not r.ok:
+       print "Couldn't logout, reason: %s [%d]" % (r.text, r.status_code)
+       sys.exit
+    print 'Logged out'
+
+auth_token = login(server, user, password)
+headers = { 'user': user, 'auth_token': auth_token }
+payload = { 'url': hub_url, 'assemblies': { 'araTha1': 'GCA_000001735.1', 'ricCom1': 'GCA_000151685.2', 'braRap1': 'GCA_000309985.1' } }
+r = requests.post(server+'/api/trackhub', headers=headers, json=payload, verify=False)
+if not r.ok:
+   print "Couldn't logout, reason: %s [%d]" % (r.text, r.status_code)
+   sys.exit
+print "I have registered hub at %s" % hub_url
+
+logout(server, user, auth_token)
+      </pre>
+    </div>
+
+<!-- RUBY EXAMPLE -->
+    <div class='tab-pane' id='ruby'>
+      <pre class="pre-scrollable prettyprint linenums">
+require 'net/https'
+require 'uri'
+
+require 'rubygems'
+require 'json'
+
+server = 'https://www.trackhubregistry.org'
+hub_url = 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt'
+user = 'exampleuser'
+pass = 'examplepass'
+
+def login(user, pass)
+  request = Net::HTTP::Get.new('/api/login')
+  request.basic_auth(user, pass)
+  response = $http.request(request)
+  
+  if response.code != "200"
+    puts "Couldn't login, reason: #{response.body} [#{response.code}]"
+    exit
+  end
+
+  result = JSON.parse(response.body)
+  puts "Logged in [#{result["auth_token"]}]"
+  
+  return result["auth_token"]
+end
+
+def logout(user, auth_token)
+  request = Net::HTTP::Get.new('/api/logout', { 'User' => user, 'Auth-Token' => auth_token })
+  response = $http.request(request)
+ 
+  if response.code != "200"
+    puts "Invalid response: #{response.code}"
+    puts response.body
+    exit
+  end
+
+  puts 'Logged out'
+end
+      
+url = URI.parse(server)
+$http = Net::HTTP.new(url.host, url.port)
+$http.use_ssl = true
+$http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+auth_token = login(user, pass)
+
+request = Net::HTTP::Post.new('/api/trackhub', { 'Content-Type' => 'application/json', 'User' => user, 'Auth-Token' => auth_token })
+request.body = { 'url' => hub_url, 'assemblies' => { 'araTha1' => 'GCA_000001735.1', 'ricCom1' => 'GCA_000151685.2', 'braRap1' => 'GCA_000309985.1' } }.to_json
+response = $http.request(request)
+if response.code != "201"
+  puts "Invalid response: #{response.code} #{response.body}"
+  exit
+end
+
+puts "I have registered hub at #{hub_url}" 
+
+logout(user, auth_token)
+
+      </pre>
+    </div>
+
+  </div>
+
+
   </div>
 </div>

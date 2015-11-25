@@ -46,7 +46,60 @@
   <div class="col-sm-9" style="text-align: justify; text-justify: inter-word;">
   <h2>A Simplified RESTful workflow</h2>
 
-  <h3 id="delete">Deleting Registered Track Hubs</h3>
+  <h3>Deleting Registered Track Hubs</h3>
+
+  <p>
+    Suppose one of your registered remote public hubs does not exist or it's not public any more, or you simply don't want to make it available for search in the Trackhub Registry. You can delete a track hub from the Registry (i.e. remove all its associated trackDBs) by making a request to the <a href="[% c.uri_for('/docs/api/registration/reference#delete_trackhub_id') %]">DELETE /api/trackhub/:id</a> where you specify the name of track hub (i.e. the hub attribute value in the hub.txt file).
+  </p>
+  
+  <h4>Prerequisites</h4>
+  <p>
+    Verify that:
+    <ul>
+      <li>your client has successfully <a href="[% c.uri_for('/docs/api/registration/workflow/login') %]">logged in</a>  and have, as such, obtained a valid authentication token;</li>
+      <li>the Registry contains trackDBs which are registered as belonging to the hub with the given name</li>
+    </ul>
+  </p>
+
+  <h4>Procedure</h4>
+  <p>
+    <ol>
+      <li>Make a request to the <a href="[% c.uri_for('/docs/api/registration/reference#delete_trackhub_id') %]">DELETE /api/trackhub/:id</a> endpoint that includes a User header with your username, and an Auth-Token header with the given authentication token; the :id parameter must be replaced with the name of the hub as it is known by the Registry;</li>
+      <li>Examine the response. The response code indicates whether the request succeeded, or how it failed;</li>
+    </ol>
+  </p>
+
+  <h4>Example: track hub deletion request and response</h4>
+  <p>
+    In this example, we follow the pattern of the previous steps where we have registered and updated the <a target="_blank" href="http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt">CSHL Biology of Genomes meeting 2013 demonstration assembly hub</a>. We now want to delete its records in the Registry, corresponding to three trackDbs associated to the an equivalent number of plant assemblies. 
+  </p>
+
+  <p>
+    <pre>
+      DELETE https://www.trackhubregistry.org/api/trackhub/cshl2013
+      User: exampleuser
+      Auth-Token: 6l5/GuIiOSCywuSI9HF1VU97clwb/CXPDFS0MyAB/HCZuxtjQBj4uORZL8NY3Yhi
+    </pre>
+    Response:
+    <pre>
+      HTTP/1.0 200 OK
+      { 'message': 'Deleted trackDBs from track hub cshl2013' }
+    </pre>
+  </p>
+
+  <h4 id="errors">What can possibly go wrong</h4>
+  <p>
+    Remember: <u>always check the response code</u> since it indicates whether the request succeeded, or how it failed.
+    <ul>
+      <li>if the request is successful, the server returns HTTP response code 200 (OK)</li>
+      <li>if the credentials supplied in the authentication header are invalid, the server returns HTTP response code 401</li>
+      <li>if the Registry cannot find any trackDB associated to a hub with the supplied name, it returns HTTP response code 404, with the message "Could not find ..."</li>
+      <li>if the Registry encountered an unexpected condition which prevented it from fulfilling the request, it returns HTTP response code 500</li>
+      <li>if the Registry is currently unable to handle the request due to a temporary overloading or maintenance, it returns HTTP response code 503</li>
+    </ul>
+  </p>
+
+  <!--
   <p>
     Suppose one of your remote public hubs does not exist or it's not public any more, or you simply don't want to make it available for search in the Trackhub Registry. Since a track hub in not directly stored in the Registry, to remove it you have to delete its corresponding records, i.e. <u>all</u> the trackDb entities stored in the Registry which are associated to the hub. For this, you need their URIs which you can get by making a request to the <a href="">GET /api/trackhub</a> endpoint and examining the <mark>trackdbs</mark> array of the object representing the track hub under consideration, as explained in <a href="[% c.uri_for('/docs/api/registration/workflow/thlist') %]">Retrieve the list of registered track hubs</a>.
   </p>
@@ -142,6 +195,178 @@
       <li>if the Registry is currently unable to handle the request due to a temporary overloading or maintenance, it returns HTTP response code 503</li>
     </ul>
   </p>
+  -->
+
+  <h4>Example Clients</h4>
+  
+  <ul class="nav nav-pills">
+    <li class="active"><a href="#perl" data-toggle="tab">Perl</a></li>
+    <li><a href="#python" data-toggle="tab">Python</a></li>
+    <li><a href="#ruby" data-toggle="tab">Ruby</a></li>
+  </ul>
+  <div class='tab-content'>
+    <div class='tab-pane active' id='perl'>
+      <pre class="pre-scrollable prettyprint linenums">
+use strict;
+use warnings;
+
+use JSON;
+use HTTP::Request::Common;
+use LWP::UserAgent;
+
+my $ua = LWP::UserAgent->new(ssl_opts => { verify_hostname => 0 });
+my $server = 'https://www.trackhubregistry.org';
+my ($user, $pass, $auth_token) = ('exampleuser', 'examplepass');
+
+$auth_token = login($server, $user, $pass);
+
+my $request = DELETE("$server/api/trackhub/cshl2013");
+$request->headers->header(user       => $user);
+$request->headers->header(auth_token => $auth_token);
+my $response = $ua->request($request);
+if ($response->is_success) {
+  print "I have deleted the trackDBs associated to the cshl2013 hub\n";
+} else {
+  die sprintf "Couldn't delete trackDBs: %s [%d]", $response->content, $response->code;
+} 
+
+logout($server, $user, $auth_token);
+
+sub login {
+  my ($server, $user, $pass) = @_;
+
+  my $request = GET("$server/api/login");
+  $request->headers->authorization_basic($user, $pass);
+  
+  my $response = $ua->request($request);
+  my $auth_token;
+  if ($response->is_success) {
+    $auth_token = from_json($response->content)->{auth_token};
+    print "Logged in [$auth_token]\n" if $auth_token;
+  } else {
+    die sprintf "Couldn't login: %s [%d]", $response->content, $response->code;
+  }
+
+  return $auth_token;
+}
+
+sub logout {
+  my ($server, $user, $auth_token) = @_;
+
+  my $request = GET("$server/api/logout");
+  $request->headers->header(user       => $user);
+  $request->headers->header(auth_token => $auth_token);
+
+  my $response = $ua->request($request);
+  if ($response->is_success) {
+    print "Logged out\n";
+  } else {
+    die sprintf "Unable to logout: %s [%d]", $response->content, $response->code;
+  } 
+}
+      </pre> 
+    </div>
+
+    <div class='tab-pane' id='python'>
+      <pre class="pre-scrollable prettyprint linenums">
+import requests, sys
+
+server = 'https://www.trackhubregistry.org'
+user = 'exampleuser'
+password = 'examplepass'
+
+def login(server, user, password):
+    r = requests.get(server+'/api/login', auth=(user, password), verify=False)
+    if not r.ok:
+        print "Couldn't login, reason: %s [%d]" % (r.text, r.status_code)
+        sys.exit
+
+    auth_token = r.json()[u'auth_token']
+    print 'Logged in [%s]' % auth_token
+    return auth_token
+
+def logout(server, user, auth_token):
+    r = requests.get(server+'/api/logout', headers={ 'user': user, 'auth_token': auth_token })    
+    if not r.ok:
+       print "Couldn't logout, reason: %s [%d]" % (r.text, r.status_code)
+       sys.exit
+    print 'Logged out'
+
+auth_token = login(server, user, password)
+r = requests.delete(server+'/api/trackhub/cshl2013', headers={ 'user': user, 'auth_token': auth_token }, verify=False)
+if not r.ok:
+   print "Couldn't not delete cshl2013 hub trackDBs, reason: %s [%d]" % (r.text, r.status_code)
+   sys.exit
+print "I have deleted the cshl2013 hub trackDBs from the Registry"
+
+logout(server, user, auth_token)
+      </pre>
+    </div>
+
+<!-- RUBY EXAMPLE -->
+    <div class='tab-pane' id='ruby'>
+      <pre class="pre-scrollable prettyprint linenums">
+require 'net/https'
+require 'uri'
+
+require 'rubygems'
+require 'json'
+
+server = 'https://www.trackhubregistry.org'
+user = 'exampleuser'
+pass = 'examplepass'
+
+def login(user, pass)
+  request = Net::HTTP::Get.new('/api/login')
+  request.basic_auth(user, pass)
+  response = $http.request(request)
+  
+  if response.code != "200"
+    puts "Couldn't login, reason: #{response.body} [#{response.code}]"
+    exit
+  end
+
+  result = JSON.parse(response.body)
+  puts "Logged in [#{result["auth_token"]}]"
+  
+  return result["auth_token"]
+end
+
+def logout(user, auth_token)
+  request = Net::HTTP::Get.new('/api/logout', { 'User' => user, 'Auth-Token' => auth_token })
+  response = $http.request(request)
+ 
+  if response.code != "200"
+    puts "Invalid response: #{response.code}"
+    puts response.body
+    exit
+  end
+
+  puts 'Logged out'
+end
+      
+url = URI.parse(server)
+$http = Net::HTTP.new(url.host, url.port)
+$http.use_ssl = true
+$http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+auth_token = login(user, pass)
+
+request = Net::HTTP::Delete.new('/api/trackhub/cshl2013', { 'Content-Type' => 'application/json', 'User' => user, 'Auth-Token' => auth_token })
+response = $http.request(request)
+if response.code != "200"
+  puts "Couldn't delete cshl2013 hub trackDBs: #{response.code} #{response.body}"
+  exit
+end
+
+puts "I have delete the cshl2013 hub trackDBs #{response.body}"
+
+logout(user, auth_token)
+
+      </pre>
+    </div>
+  </div>
+
   
   </div>
 </div>

@@ -406,13 +406,11 @@ sub trackhub_POST {
 
 =head2 trackhub_by_name
 
-Action for /api/trackhub/:id (GET)
+Actions for /api/trackhub/:id (GET, DELETE)
 
 =cut 
 
-sub trackhub_by_name :Path('/api/trackhub') Args(1) ActionClass('REST') { }
-
-sub trackhub_by_name_GET {
+sub trackhub_by_name :Path('/api/trackhub') Args(1) ActionClass('REST') { 
   my ($self, $c, $hubid) = @_;
 
   my $query = {
@@ -427,9 +425,28 @@ sub trackhub_by_name_GET {
 				      }
 			   }
 	      };
+
+  my $trackdbs;
+  try {
+    $trackdbs = $c->model('Search')->get_trackdbs(query => $query);
+  } catch {
+    $c->go('ReturnError', 'custom', [qq{$_}]);
+  };
+
+  $c->stash(trackdbs => $trackdbs);
   
+}
+
+sub trackhub_by_name_GET {
+  my ($self, $c, $hubid) = @_;
+  my $trackdbs = $c->stash->{trackdbs};
+
+  # this doesn't work if we put the following in the parent method
+  return $self->status_not_found($c, message => "Could not find trackDBs attached to hub $hubid")
+    unless scalar @{$trackdbs};
+
   my $trackhub;
-  foreach my $trackdb (@{$c->model('Search')->get_trackdbs(query => $query)}) {
+  foreach my $trackdb (@{$trackdbs}) {
     # record trackhub attributes
     map { $trackhub->{$_} = $trackdb->{hub}{$_} } qw / name shortLabel longLabel url /
       unless defined $trackhub;
@@ -443,6 +460,34 @@ sub trackhub_by_name_GET {
   }
 
   $self->status_ok($c, entity => $trackhub);
+}
+
+sub trackhub_by_name_DELETE {
+  my ($self, $c, $hubid) = @_;
+  my $trackdbs = $c->stash->{trackdbs};
+
+  # this doesn't work if we put the following in the parent method
+  return $self->status_not_found($c, message => "Could not find trackDBs attached to hub $hubid")
+    unless scalar @{$trackdbs};
+
+  my $config = Registry->config()->{'Model::Search'};
+  my ($index, $type) = ($config->{trackhub}{index}, $config->{trackhub}{type});
+
+  #
+  # TODO: could forward to DELETE /api/trackdb instead
+  #
+  try {
+    foreach my $trackdb (@{$trackdbs}) {
+      $c->model('Search')->delete(index   => $index,
+				  type    => $type,
+				  id      => $trackdb->{_id});
+    }
+  } catch {
+    $c->go('ReturnError', 'custom', [qq{$_}]);
+  };
+
+  $c->model('Search')->indices->refresh(index => $index);
+  $self->status_ok($c, entity => { message => "Deleted trackDBs from track hub $hubid" });
 }
 
 sub _validate: Private {

@@ -22,7 +22,7 @@ use Registry::Indexer; # index a couple of sample documents
 
 SKIP: {
   skip "Launch an elasticsearch instance for the tests to run fully",
-    258 unless &Registry::Utils::es_running();
+    268 unless &Registry::Utils::es_running();
 
   # index test data
   note 'Preparing data for test (indexing sample documents)';
@@ -453,7 +453,7 @@ SKIP: {
   ok($response->is_success, 'Request successful 2xx');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
-  ok($content, "Docs created");
+  ok($content, "Docs updated");
   #
   # Submission of the same hub by another user should fail
   #
@@ -522,7 +522,7 @@ SKIP: {
   }
 
   #
-  # Test /api/trackhub
+  # Test /api/trackhub (GET)
   #
   $request = GET('/api/trackhub');
   $request->headers->header(user       => 'trackhub1');
@@ -565,7 +565,7 @@ SKIP: {
   $request = GET('/api/trackhub/cshl2013');
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'GET request to /api/trackhub');
+  ok($response = request($request), 'GET request to /api/trackhub/:id');
   ok($response->is_success, 'Request successful 2xx');
   is($response->content_type, 'application/json', 'JSON content type');
   my $hub = from_json($response->content);
@@ -578,6 +578,37 @@ SKIP: {
     like($trackdb->{uri}, qr/api\/trackdb/, 'trackDb uri');
   }
 
+  #
+  # Test /api/trackhub/:id (DELETE)
+  #
+  # request incorrect hub (does not exist)
+  $request = DELETE('/api/trackhub/xxxxxx');
+  $request->headers->header(user       => 'trackhub1');
+  $request->headers->header(auth_token => $auth_token);
+  ok($response = request($request), 'DELETE request to /api/trackhub/:id');
+  is($response->code, 404, 'Request unsuccessful 404');
+  $content = from_json($response->content);
+  like($content->{error}, qr/Could not find/, 'Correct error response');
+  #
+  # request to delete existing hub
+  $request = DELETE('/api/trackhub/Blueprint_Hub');
+  $request->headers->header(user       => 'trackhub1');
+  $request->headers->header(auth_token => $auth_token);
+  ok($response = request($request), 'DELETE request to /api/trackhub/:id');
+  ok($response->is_success, 'Request successful 2xx');
+  is($response->content_type, 'application/json', 'JSON content type');
+  $content = from_json($response->content);
+  like($content->{message}, qr/deleted/i, 'Track hub delete message');
+  #
+  # if we request the hub we shouldn't get content
+  $request = GET('/api/trackhub/Blueprint_Hub');
+  $request->headers->header(user       => 'trackhub1');
+  $request->headers->header(auth_token => $auth_token);
+  ok($response = request($request), 'GET request to /api/trackhub/:id');
+  is($response->code, 404, 'Request unsuccessful 404');
+  $content = from_json($response->content);
+  like($content->{error}, qr/Could not find/, 'Correct error response');
+  
   # Logout 
   $request = GET('/api/logout');
   $request->headers->header(user       => 'trackhub1');

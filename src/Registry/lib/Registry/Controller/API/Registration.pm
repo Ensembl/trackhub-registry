@@ -688,9 +688,14 @@ sub trackdb_DELETE {
     # index, type and id, or will throw a Missing error.
     #
     my $config = Registry->config()->{'Model::Search'};
-    $c->model('Search')->delete(index   => $config->{trackhub}{index},
-				type    => $config->{trackhub}{type},
-				id      => $doc_id);
+    try {
+      $c->model('Search')->delete(index   => $config->{trackhub}{index},
+				  type    => $config->{trackhub}{type},
+				  id      => $doc_id);
+      $c->model('Search')->indices->refresh(index => $config->{trackhub}{index});
+    } catch {
+      $c->go('ReturnError', 'custom', [qq{$_}]);
+    };
 
     $self->status_ok($c, entity => $trackhub) if $trackhub;
   } else {

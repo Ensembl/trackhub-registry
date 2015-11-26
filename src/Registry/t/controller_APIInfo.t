@@ -91,7 +91,7 @@ SKIP: {
   my %species_assemblies = 
     ( 'Homo sapiens'         => ['GCA_000001405.1', 'GCA_000001405.15'],
       'Danio rerio'          => ['GCA_000002035.2', 'GCA_000002035.3'],
-      'Mus musculus'         => ['GCA_000001635.1', 'GCA_000001635.2'], 
+      'Mus musculus'         => ['GCA_000001635.2', 'GCA_000001635.1'], 
       'Arabidopsis thaliana' => ['GCA_000001735.1'],
       'Brassica rapa'        => ['GCA_000309985.1'],
       'Drosophila simulans'  => ['GCA_000754195.2'], 
@@ -128,12 +128,10 @@ SKIP: {
   my $hub = first { $_->{name} eq 'EnsemblRegulatoryBuild' } @{$content};
   ok($hub, 'Ensembl regulatory build hub');
   is($hub->{longLabel}, 'Evidence summaries and provisional results for the new Ensembl Regulatory Build', 'Hub longLabel');
-  is(scalar @{$hub->{trackdbs}}, 2, 'Number of trackDbs');
+  is(scalar @{$hub->{trackdbs}}, 3, 'Number of trackDbs');
   is($hub->{trackdbs}[0]{species} && $hub->{trackdbs}[1]{species}, 9606, 'trackDb species');
-  like($hub->{trackdbs}[0]{assembly}, qr/GCA_000001405/, 'trackDb assembly');
-  like($hub->{trackdbs}[1]{assembly}, qr/GCA_000001405/, 'trackDb assembly');
-  like($hub->{trackdbs}[0]{uri}, qr/api\/search\/trackdb/, 'trackDb uri');
-  like($hub->{trackdbs}[1]{uri}, qr/api\/search\/trackdb/, 'trackDb uri');
+  map { like($_->{assembly}, qr/GCA_000001405|GCA_000001635/, 'trackDb assembly') } @{$hub->{trackdbs}};
+  map { like($_->{uri}, qr/api\/search\/trackdb/, 'trackDb uri') } @{$hub->{trackdbs}};
 
   $hub = first { $_->{name} eq 'NHGRI-1' } @{$content};
   ok($hub, 'Zebrafish hub');

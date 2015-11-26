@@ -13,6 +13,7 @@ use LWP;
 use JSON;
 use Data::Dumper;
 
+use Registry;
 use Registry::Utils; # slurp_file, es_running
 use Registry::Indexer;
 

@@ -15,8 +15,6 @@ use Moose;
 use namespace::autoclean;
 extends 'Catalyst::Model::ElasticSearch';
 
-use Registry;
-
 #
 # Get documents according to a given query
 #

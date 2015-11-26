@@ -22,7 +22,7 @@ use Registry::Indexer; # index a couple of sample documents
 
 SKIP: {
   skip "Launch an elasticsearch instance for the tests to run fully",
-    268 unless &Registry::Utils::es_running();
+    273 unless &Registry::Utils::es_running();
 
   # index test data
   note 'Preparing data for test (indexing sample documents)';
@@ -506,7 +506,7 @@ SKIP: {
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
   ok($content, "Docs created");
-  is(scalar @{$content}, 10, "Ten trackdb docs created");
+  is(scalar @{$content}, 11, "Ten trackdb docs created");
   foreach my $trackdb (@{$content}) {
     is($trackdb->{type}, 'epigenomics', 'Correct hub type');
     is($trackdb->{hub}{name}, 'Smith Lab Public Hub', 'Correct trackdb hub name');
@@ -555,7 +555,7 @@ SKIP: {
       }
     } elsif ($hub->{name} eq 'Smith Lab Public Hub') {
       is($hub->{shortLabel}, 'DNA Methylation', 'Hub short label');
-      is(scalar @{$hub->{trackdbs}}, 10, 'Number of trackDbs');
+      is(scalar @{$hub->{trackdbs}}, 11, 'Number of trackDbs');
     }
   }
 

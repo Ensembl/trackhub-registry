@@ -97,7 +97,7 @@ $logger->info("Instantiating ES client");
 my $es = Search::Elasticsearch->new(cxn_pool => 'Sniff',
 				    nodes => $config{cluster}{nodes});
 
-my$config = Registry->config()->{'Model::Search'};
+# my$config = Registry->config()->{'Model::Search'};
 
 #
 # fetch from ES stats about last run report
@@ -382,11 +382,11 @@ if ($current_report) {
   my $current_report_id = $last_report_id?++$last_report_id:1;
 
   try {
-    $es->index(index   => $config->{report}{index},
-	       type    => $config->{report}{type},
+    $es->index(index   => $config{report}{alias},
+	       type    => $config{report}{type},
 	       id      => $current_report_id,
 	       body    => $current_report);
-    $es->indices->refresh(index => $config->{report}{index});
+    $es->indices->refresh(index => $config{report}{alias});
   } catch {
     $logger->logdie($_);
   };

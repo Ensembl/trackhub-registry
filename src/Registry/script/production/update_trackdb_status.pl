@@ -122,7 +122,7 @@ try {
   $last_report_id = $last_report->{_id};
   $last_report = $last_report->{_source};
 
-  $users = $es->get_all_users;
+  $users = get_all_users();
   map { $_->{username} =~ /$config{users}{admin_name}/ and $admin = $_ } @{$users};
 } catch {
   $logger->logdie("Couldn't get latest report/user list:\n$_");
@@ -420,6 +420,64 @@ try {
 };
 
 $logger->info("DONE.");
+
+sub get_all_users {
+  my ($index, $type) = ($config{users}{alias}, $config{users}{type});
+  my $nodes = $config{cluster}{nodes};
+  defined $index or die "Couldn't find index for users in configuration file";
+  defined $type or die "Couldn't find type for users in configuration file";
+  defined $nodes or die "Couldn't find ES nodes in configuration file";
+
+  my $es = Search::Elasticsearch->new(cxn_pool => 'Sniff', nodes => $nodes);
+
+  # use scan & scroll API
+  # see https://metacpan.org/pod/Search::Elasticsearch::Scroll
+  my $scroll = $es->scroll_helper(index => $index, type  => $type);
+  my @users;
+  while (my $user = $scroll->next) {
+    push @users, $user->{_source};
+  }
+
+  return \@users;
+}
+
+sub get_latest_report {
+  my ($index, $type) = ($config{reports}{alias}, $config{reports}{type});
+  my $nodes = $config{cluster}{nodes};
+  defined $index or die "Couldn't find index for reports in configuration file";
+  defined $type or die "Couldn't find type for reports in configuration file";
+  defined $nodes or die "Couldn't find ES nodes in configuration file";
+
+  my %args = 
+    (
+     index => $index,
+     type  => $type,
+     size  => 1,
+     body  => 
+     {
+      sort => [ 
+	       { 
+		created => {
+			    order => 'desc',
+			    # would otherwise throw exception if there
+			    # are documents missing the field,
+			    # see http://stackoverflow.com/questions/17051709/no-mapping-found-for-field-in-order-to-sort-on-in-elasticsearch
+			    # TODO:
+			    # Before 1.4.0 there was the ignore_unmapped boolean parameter, which was not enough information to 
+			    # decide on the sort values to emit, and didn’t work for cross-index search. It is still supported 
+			    # but users are encouraged to migrate to the new unmapped_type instead.
+			    # https://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-sort.html
+			    ignore_unmapped => 'true' 
+			   }
+	       }
+	      ]
+     }
+    );
+
+  my $es = Search::Elasticsearch->new(cxn_pool => 'Sniff', nodes => $nodes);
+  
+  return $es->search(%args)->{hits}{hits}[0];
+}
 
 # sub submit_trackhub {
 #   my ($user, $pass, $url) = @_;

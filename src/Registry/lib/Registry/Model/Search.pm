@@ -168,54 +168,5 @@ sub get_trackdbs {
   return \@trackdbs;
 }
 
-
-sub get_all_users {
-  my $self = shift;
-
-  my $config = Registry->config()->{'Model::Search'};
-  
-  # use scan & scroll API
-  # see https://metacpan.org/pod/Search::Elasticsearch::Scroll
-  my $scroll = $self->_es->scroll_helper(index => $config->{user}{index},
-					 type  => $config->{user}{type});
-					 # body  => { query => {... some query ... }});
-  my @users;
-  while (my $user = $scroll->next) {
-    push @users, $user->{_source};
-  }
-  return \@users;
-}
-
-sub get_latest_report {
-  my $self = shift;
-
-  my $config = Registry->config()->{'Model::Search'};
-  my %args;
-  $args{index} = $config->{report}{index};
-  $args{type}  = $config->{report}{type};
-  $args{size} = 1;
-  $args{body} = 
-    {
-     sort => [ 
-	      { 
-	       created => {
-			   order => 'desc',
-			   # would otherwise throw exception if there
-			   # are documents missing the field,
-			   # see http://stackoverflow.com/questions/17051709/no-mapping-found-for-field-in-order-to-sort-on-in-elasticsearch
-			   # TODO:
-			   # Before 1.4.0 there was the ignore_unmapped boolean parameter, which was not enough information to 
-			   # decide on the sort values to emit, and didn’t work for cross-index search. It is still supported 
-			   # but users are encouraged to migrate to the new unmapped_type instead.
-			   # https://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-sort.html
-			   ignore_unmapped => 'true' 
-			  }
-	      }
-	     ]
-    };
-  
-  return $self->search(%args)->{hits}{hits}[0];
-}
-
 __PACKAGE__->meta->make_immutable;
 1;

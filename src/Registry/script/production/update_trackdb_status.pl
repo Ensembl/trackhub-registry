@@ -9,6 +9,8 @@ BEGIN {
   $ENV{CATALYST_CONFIG} = "$Bin/../../conf/production/registry.conf"
 }
 
+use Registry;
+
 use Try::Tiny;
 use Log::Log4perl qw(get_logger :levels);
 use Getopt::Long;
@@ -29,7 +31,6 @@ use LWP::UserAgent;
 
 use Search::Elasticsearch;
 
-use Registry;
 use Registry::Model::Search;
 use Registry::TrackHub::TrackDB;
 # use Registry::TrackHub::Translator;

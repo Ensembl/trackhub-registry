@@ -115,11 +115,15 @@ try {
   $last_report = get_latest_report();
   $last_report_id = $last_report->{_id};
   $last_report = $last_report->{_source};
+} catch {
+  $logger->logdie("Couldn't get latest report:\n$_");
+};
 
+try {
   $users = get_all_users();
   map { $_->{username} =~ /$config{users}{admin_name}/ and $admin = $_ } @{$users};
 } catch {
-  $logger->logdie("Couldn't get latest report/user list:\n$_");
+  $logger->logdie("Couldn't get latest user list:\n$_");
 };
 
 $admin or $logger->logdie("Unable to find admin user.");

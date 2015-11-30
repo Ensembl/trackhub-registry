@@ -196,7 +196,7 @@ foreach my $user (@{$users}) {
     $logger->logdie("Unable to get trackDBs for user $username:\n$_");
   };
   
-  $logger->info("User has no trackdbs. SKIP") and next unless scalar @{$trackdbs};
+  $logger->info("User has no trackdbs. SKIP") and next unless $trackdbs and scalar @{$trackdbs};
 
   # create user specific report
   my $current_user_report = { start_time => time };
@@ -482,12 +482,13 @@ sub get_user_trackdbs {
   my $user = shift;
   defined $user or die "Undefined username";
 
-  my ($index, $type) = ($config{users}{alias}, $config{users}{type});
+  my ($index, $type) = ($config{trackhubs}{alias}, $config{trackhubs}{type});
   my $nodes = $config{cluster}{nodes};
   defined $index or die "Couldn't find index for users in configuration file";
   defined $type or die "Couldn't find type for users in configuration file";
   defined $nodes or die "Couldn't find ES nodes in configuration file";
 
+  
   my $es = Search::Elasticsearch->new(cxn_pool => 'Sniff', nodes => $nodes);
   my $scroll = $es->scroll_helper(index => $index,
 				  type  => $type,

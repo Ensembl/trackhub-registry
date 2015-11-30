@@ -497,7 +497,7 @@ sub get_user_trackdbs {
 
   my $trackdbs;
   while (my $trackdb = $scroll->next) {
-    push @{$trackdbs}, Registry::TrackHub::TrackDB->new($trackdb->{_id});
+    push @{$trackdbs}, Registry::TrackHub::TrackDB->new($trackdb->{_id}, $nodes);
   }
 
   return $trackdbs;

@@ -93,12 +93,6 @@ if (ref $config{cluster}{nodes} eq 'ARRAY') {
 $logger->logdie(sprintf "Cluster %s is not up", $config{cluster}{name})
   unless HTTP::Tiny->new()->request('GET', $esurl)->{status} eq '200';
 
-$logger->info("Instantiating ES client");
-my $es = Search::Elasticsearch->new(cxn_pool => 'Sniff',
-				    nodes => $config{cluster}{nodes});
-
-# my$config = Registry->config()->{'Model::Search'};
-
 #
 # fetch from ES stats about last run report
 # --> store different type: check,
@@ -118,7 +112,7 @@ my ($users, $admin);
 
 $logger->info("Getting latest report and user lists");
 try {
-  $last_report = $es->get_latest_report;
+  $last_report = get_latest_report();
   $last_report_id = $last_report->{_id};
   $last_report = $last_report->{_source};
 
@@ -193,7 +187,8 @@ foreach my $user (@{$users}) {
   my @trackdbs;
   try {
     map { push @trackdbs, Registry::TrackHub::TrackDB->new($_->{_id}) }
-      @{$es->get_trackdbs(query => { term => { owner => $username } })};
+      @{get_user_trackdbs($username)};
+      # @{$es->get_trackdbs(query => { term => { owner => $username } })};
   } catch {
     $logger->logdie("Unable to get trackDBs for user $username:\n$_");
   };
@@ -477,6 +472,31 @@ sub get_latest_report {
   my $es = Search::Elasticsearch->new(cxn_pool => 'Sniff', nodes => $nodes);
   
   return $es->search(%args)->{hits}{hits}[0];
+}
+
+sub get_user_trackdbs {
+  my $user = shift;
+  defined $user or die "Undefined username";
+
+  my ($index, $type) = ($config{users}{alias}, $config{users}{type});
+  my $nodes = $config{cluster}{nodes};
+  defined $index or die "Couldn't find index for users in configuration file";
+  defined $type or die "Couldn't find type for users in configuration file";
+  defined $nodes or die "Couldn't find ES nodes in configuration file";
+
+  my $es = Search::Elasticsearch->new(cxn_pool => 'Sniff', nodes => $nodes);
+  my $scroll = $es->scroll_helper(index => $index,
+				  type  => $type,
+				  search_type => 'scan',
+				  body  => { query => { term => { owner => $user } } });
+  
+  my @trackdbs;
+  while (my $trackdb = $scroll->next) {
+    $trackdb->{_source}{_id} = $trackdb->{_id};
+    push @trackdbs, $trackdb->{_source};
+  }
+
+  return \@trackdbs;
 }
 
 # sub submit_trackhub {

@@ -26,22 +26,21 @@ my %format_lookup = (
 		    );
 
 sub new {
-  my ($class, $id, $nodes) = @_; # arg is the ID of an ES doc
+  my ($class, $id, $config) = @_; # arg is the ID of an ES doc
   defined $id or die "Undefined ID";
   
-  # the nodes parameter mu st be passed passed when we invoke the 
+  # the nodes parameter must be passed passed when we invoke the 
   # constructor outside the Catalyst loop, since we cannot access
   # the Registry configuration object
-  $nodes = Registry->config()->{'Model::Search'}{nodes}
-    unless defined $nodes;
+  $config = Registry->config()->{'Model::Search'}
+    unless $config;
 
-  my $search_config = Registry->config()->{'Model::Search'};
   my $self = { 
 	      _id  => $id,
 	      _es  => {
-		       client => Registry::Model::Search->new(nodes => $nodes),
-		       index  => $search_config->{trackhub}{index},
-		       type   => $search_config->{trackhub}{type}
+		       client => Registry::Model::Search->new(nodes => $config->{nodes}),
+		       index  => $config->{index},
+		       type   => $config->{type}
 		      }
 	     };
   $self->{_doc} = $self->{_es}{client}->get_trackhub_by_id($id);

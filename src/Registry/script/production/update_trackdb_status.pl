@@ -6,6 +6,7 @@ use warnings;
 BEGIN {
   use FindBin qw/$Bin/;
   use lib "$Bin/../../lib";
+  $ENV{CATALYST_CONFIG} = "$Bin/../../conf/production/registry.conf"
 }
 
 use Try::Tiny;
@@ -497,9 +498,7 @@ sub get_user_trackdbs {
 
   my $trackdbs;
   while (my $trackdb = $scroll->next) {
-    push @{$trackdbs}, Registry::TrackHub::TrackDB->new($trackdb->{_id}, { index => $index,
-									   type  => $type,
-									   nodex => $nodes});
+    push @{$trackdbs}, Registry::TrackHub::TrackDB->new($trackdb->{_id});
   }
 
   return $trackdbs;

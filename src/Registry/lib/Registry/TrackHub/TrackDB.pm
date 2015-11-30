@@ -10,6 +10,7 @@ use strict;
 use warnings;
 
 use POSIX qw(strftime);
+use Registry;
 use Registry::Model::Search;
 use Registry::Utils;
 use Registry::Utils::URL qw(file_exists);
@@ -26,21 +27,20 @@ my %format_lookup = (
 		    );
 
 sub new {
-  my ($class, $id, $config) = @_; # arg is the ID of an ES doc
+  my ($class, $id) = @_; # arg is the ID of an ES doc
   defined $id or die "Undefined ID";
   
   # the nodes parameter must be passed passed when we invoke the 
   # constructor outside the Catalyst loop, since we cannot access
   # the Registry configuration object
-  $config = Registry->config()->{'Model::Search'}
-    unless $config;
+  my $config = Registry->config()->{'Model::Search'};
 
   my $self = { 
 	      _id  => $id,
 	      _es  => {
 		       client => Registry::Model::Search->new(nodes => $config->{nodes}),
-		       index  => $config->{index},
-		       type   => $config->{type}
+		       index  => $config->{trackhub}{index},
+		       type   => $config->{trackhub}{type}
 		      }
 	     };
   $self->{_doc} = $self->{_es}{client}->get_trackhub_by_id($id);

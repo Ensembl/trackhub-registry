@@ -130,6 +130,7 @@ $admin or $logger->logdie("Unable to find admin user.");
 
 # create new run global report
 my $current_report = {};
+my $message_body;
 
 #
 # TODO
@@ -188,16 +189,14 @@ foreach my $user (@{$users}) {
   }
 
   $logger->info("Getting the set of trackDbs for $username");
-  my @trackdbs;
+  my $trackdbs;
   try {
-    map { push @trackdbs, Registry::TrackHub::TrackDB->new($_->{_id}) }
-      @{get_user_trackdbs($username)};
-      # @{$es->get_trackdbs(query => { term => { owner => $username } })};
+    $trackdbs = get_user_trackdbs($username);
   } catch {
     $logger->logdie("Unable to get trackDBs for user $username:\n$_");
   };
   
-  $logger->info("User has no trackdbs. SKIP") and next unless scalar @trackdbs;
+  $logger->info("User has no trackdbs. SKIP") and next unless scalar @{$trackdbs};
 
   # create user specific report
   my $current_user_report = { start_time => time };
@@ -210,7 +209,7 @@ foreach my $user (@{$users}) {
   my $trackdb_update = 0;
   my %updated_trackhubs; # record hubs which have been updated
 
-  foreach my $trackdb (@trackdbs) {
+  foreach my $trackdb (@{$trackdbs}) {
     #
     # WARNING: 
     #   - Can check if trackDB has changed but cannot resubmit as I should know the mapping 
@@ -282,7 +281,7 @@ foreach my $user (@{$users}) {
     # }
 
     my ($id, $hub, $assembly) = ($trackdb->id, $trackdb->hub->{name}, $trackdb->assembly->{name});
-    $logger->info(sprintf "Checking trackDb [%s] (hub: %s, assembly: %s)", $id, $hub, $assembly);    
+    $logger->info(sprintf "Checking trackDB [%s] (hub: %s, assembly: %s)", $id, $hub, $assembly);    
     my $status;
     try {
       $status = $trackdb->update_status();
@@ -311,14 +310,14 @@ foreach my $user (@{$users}) {
     }
   }
   $current_user_report->{end_time} = time;
-  $logger->info("Finished with $username trackDbs.");
+  $logger->info("Finished with $username trackDBs.");
 
   $logger->info("Checking alert report status.");  
   if ($trackdb_update or scalar keys %{$current_user_report->{ko}}) { # user trackdbs have problems
     # format complete message body
-    my $message_body = "This alert report has been automatically generated during the last update of the TrackHub Registry.\n\n";
-    $message_body .= $message_body_update . "\n\n" if $message_body_update;
-    $message_body .= $message_body_problem;
+    my $user_message_body = "This alert report has been automatically generated during the last update of the TrackHub Registry.\n\n";
+    # $user_message_body .= $message_body_update . "\n\n" if $message_body_update;
+    $user_message_body .= $message_body_problem;
     
     my $message = 
       Email::MIME->create(
@@ -333,7 +332,7 @@ foreach my $user (@{$users}) {
 			   encoding => 'quoted-printable',
 			   charset  => 'ISO-8859-1',
 			  },
-			  body_str => $message_body,
+			  body_str => $user_message_body,
 			 );
 
     # check whether we have to send an alert to the user and send it, eventually
@@ -356,7 +355,7 @@ foreach my $user (@{$users}) {
 	    $logger->info("Detected difference. Sending alert report anyway.");
 	    sendmail($message);
 	  } else {
-	    $logger->info("No difference. Not sending the alert report.");
+	    $logger->info("No differences. Not sending the alert report.");
 	  }
 	}
       } else {
@@ -375,11 +374,12 @@ foreach my $user (@{$users}) {
    
 $logger->info("Done with users. Storing global report");
 
-my $message_body;
 if ($current_report) {
   $current_report->{created} = time;
   my $current_report_id = $last_report_id?++$last_report_id:1;
 
+  my $es = Search::Elasticsearch->new(cxn_pool => 'Sniff', 
+				      nodes => $config{cluster}{nodes});
   try {
     $es->index(index   => $config{report}{alias},
 	       type    => $config{report}{type},
@@ -400,7 +400,7 @@ my $message =
   Email::MIME->create(
 		      header_str => 
 		      [
-		       From    => 'admin@trackhubregistry.org',
+		       From    => 'avullo@ebi.ac.uk',
 		       To      => $admin->{email},
 		       Subject => sprintf("Alert report from TrackHub Registry: %s", localtime),
 		      ],
@@ -493,14 +493,13 @@ sub get_user_trackdbs {
 				  type  => $type,
 				  search_type => 'scan',
 				  body  => { query => { term => { owner => $user } } });
-  
-  my @trackdbs;
+
+  my $trackdbs;
   while (my $trackdb = $scroll->next) {
-    $trackdb->{_source}{_id} = $trackdb->{_id};
-    push @trackdbs, $trackdb->{_source};
+    push @{$trackdbs}, Registry::TrackHub::TrackDB->new($trackdb->{_id});
   }
 
-  return \@trackdbs;
+  return $trackdbs;
 }
 
 # sub submit_trackhub {

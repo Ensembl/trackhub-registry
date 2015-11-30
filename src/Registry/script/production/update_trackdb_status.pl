@@ -29,6 +29,7 @@ use LWP::UserAgent;
 
 use Search::Elasticsearch;
 
+use Registry;
 use Registry::Model::Search;
 use Registry::TrackHub::TrackDB;
 # use Registry::TrackHub::Translator;

@@ -113,7 +113,7 @@ my $last_report;
 my $last_report_id;
 my ($users, $admin);
 
-$logger->info("Getting latest report and user lists");
+$logger->info("Getting latest report");
 try {
   $last_report = get_latest_report();
   $last_report_id = $last_report->{_id};
@@ -122,13 +122,13 @@ try {
   $logger->logdie("Couldn't get latest report:\n$_");
 };
 
+$logger->info("Retrieving user lists");
 try {
   $users = get_all_users();
   map { $_->{username} =~ /$config{users}{admin_name}/ and $admin = $_ } @{$users};
 } catch {
   $logger->logdie("Couldn't get latest user list:\n$_");
 };
-
 $admin or $logger->logdie("Unable to find admin user.");
 
 # create new run global report
@@ -384,8 +384,8 @@ if ($current_report) {
   my $es = Search::Elasticsearch->new(cxn_pool => 'Sniff', 
 				      nodes => $config{cluster}{nodes});
   try {
-    $es->index(index   => $config{report}{alias},
-	       type    => $config{report}{type},
+    $es->index(index   => $config{reports}{alias},
+	       type    => $config{reports}{type},
 	       id      => $current_report_id,
 	       body    => $current_report);
     $es->indices->refresh(index => $config{report}{alias});
@@ -505,24 +505,6 @@ sub get_user_trackdbs {
 
   return $trackdbs;
 }
-
-# sub submit_trackhub {
-#   my ($user, $pass, $url) = @_;
-#   defined $user or die "Undefined user";
-#   defined $pass or die "Undefined password for user $user";
-#   defined $url or die "Undefined hub URL";
-
-#   my $ua = LWP::UserAgent->new;
-#   my $request = GET("$server/api/login");
-#   $request->headers->authorization_basic($user, $pass);
-#   my $response = $ua->request($request);
-#   my $token = from_json($response->content)->{auth_token}
-#     if $response->is_success;
-#   defined $token or die "User unable to login";
-
-#   $request = POST("$server/api/trackhub"); 
-# }
-
 
 __END__
 

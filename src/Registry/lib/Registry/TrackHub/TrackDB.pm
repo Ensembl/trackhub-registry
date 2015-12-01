@@ -167,10 +167,12 @@ sub update_status {
   # TODO? abandon also if doc has been recently checked
   #
   exists $doc->{status} or die "Unable to read status";
-  if ($doc->{status}{message} eq 'Pending') {
-    die sprintf "TrackDB document [%s] is already being checked by another process.", $self->{_id};
-  }
 
+  # should not do this as now there's only one process 
+  # checking the trackDBs
+  die sprintf "TrackDB document [%s] is already being checked by another process.", $self->{_id}
+    if $doc->{status}{message} eq 'Pending';
+    
   # initialise status to pending
   my $last_update = $doc->{status}{last_update};
   $doc->{status}{message} = 'Pending';

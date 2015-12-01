@@ -136,22 +136,38 @@ my $current_report = {};
 my $message_body;
 
 #
-# TODO
-# - spawn a separate process for each user or 
-#   batch of users if their number becomes huge
-# - log all steps
+# check tracks for every user (except admin)
+# spawning a separate process for each user
 #
-# for each user
-#   update/check its trackdbs
-#   notify
+my @children;
 foreach my $user (@{$users}) {
-  my $username = $user->{username};
-  my $password = $user->{password};
-  if ($username eq $config{users}{admin_name}) {
-    $logger->info("User admin. SKIP.");
-    next;
-  }
+  # obviously skip admin user
+  next if $user->{username} eq $config{users}{admin_name};
 
+  my $pid = fork();
+  if ($pid) { # parent
+    push(@children, $pid);
+  } elsif ($pid == 0) { # child
+    check_user_tracks($user);
+    exit 0;
+  } else {
+    $logger->logdie("Couldn't fork: $!");
+  }
+}
+
+foreach my $i (0 .. $#children) {
+  my $tmp = waitpid($children[$i], 0);
+  usleep(100000);
+
+  $logger->info("Done with pid $tmp");
+}
+
+sub check_user_tracks {
+  my $user = shift;
+  defined $user or $logger->logdie("Undefined user");
+
+  my $username = $user->{username};
+  defined $username or $logger->logdie("Undefined username");
   $logger->info("Working on user $username");
 
   # get monitoring configuration
@@ -159,16 +175,6 @@ foreach my $user (@{$users}) {
   my $continuous_alert = $user->{continuous_alert};
 
   # get last report for user
-  #   {
-  #     start_time: ...,
-  #     end_time: ...,
-  #     trackdb_id1: {
-  #                   status: ...,
-  #                   alert_sent: true/false
-  #                  },
-  #     ...,
-  #     trackdb_idn: { ... }
-  #   }
   my $last_user_report = $last_report->{$username};
 
   # if check_option is weekly|monthly and (current_time-last_check_time) < week|month
@@ -178,28 +184,31 @@ foreach my $user (@{$users}) {
     $logger->info(sprintf "%s opts for %s checks. Checking report time interval", $username, $check_interval==1?'weekly':'monthly');
     my $current_time = time;
     my $last_check_time = $last_user_report->{end_time};
-    defined $last_check_time or 
-      $logger->logdie("Undefined last check time in last report for user $username");
+    defined $last_check_time and $logger->error("Undefined last check time in last report for user $username. SKIP")
+      and return;
     # check_interval == 1 -> week, 2 -> month
-    my $time_interval =  $check_interval==1?604800:2592000;
+    my $time_interval = $check_interval==1?604800:2592000;
 
     if ($current_time - $last_check_time < $time_interval) {
       $current_report->{$username} = $last_user_report;
 
-      $logger->info(sprintf "Less than a %s has passed. SKIP", $check_interval==1?'week':'month');
+      $logger->info(sprintf "Less than a %s has passed since last check for %s. SKIP", 
+		    $check_interval==1?'week':'month', $username);
       next;
     }
   }
 
-  $logger->info("Getting the set of trackDbs for $username");
+  $logger->info("Getting the set of trackDBs for $username");
   my $trackdbs;
   try {
     $trackdbs = get_user_trackdbs($username);
   } catch {
-    $logger->logdie("Unable to get trackDBs for user $username:\n$_");
+    $logger->error("Unable to get trackDBs for user $username:\n$_");
+    return;
   };
   
-  $logger->info("User has no trackdbs. SKIP") and next unless $trackdbs and scalar @{$trackdbs};
+  $logger->info("User $username has no trackDBs. SKIP") and next 
+    unless $trackdbs and scalar @{$trackdbs};
 
   # create user specific report
   my $current_user_report = { start_time => time };
@@ -216,7 +225,7 @@ foreach my $user (@{$users}) {
     #
     # WARNING: 
     #   - Can check if trackDB has changed but cannot resubmit as I should know the mapping 
-    #     from assembly name to INSDC accession, eventually. This is information which provided 
+    #     from assembly name to INSDC accession, eventually. This is information which is provided 
     #     by the submitter.
     #   - Also, we should be able to detect a case where the entire structure of the hub might have
     #     changed, with some trackDBs which do not exist any more.
@@ -289,12 +298,12 @@ foreach my $user (@{$users}) {
     try {
       $status = $trackdb->update_status();
     } catch {
-      $logger->warn($_);
+      $logger->error("Could not update status for trackDB [$id]:\n$_");
 
       $message_body_problem .= 
 	sprintf "Problem updating status for trackDB [%s] (hub: %s, assembly: %s)\n$@\n\n", 
 	  $id, $hub, $assembly;
-      next;
+      return;
     };
    
     # if problem add trackdb to user report
@@ -316,7 +325,7 @@ foreach my $user (@{$users}) {
   $logger->info("Finished with $username trackDBs.");
 
   $logger->info("Checking alert report status.");  
-  if ($trackdb_update or scalar keys %{$current_user_report->{ko}}) { # user trackdbs have problems
+  if (scalar keys %{$current_user_report->{ko}}) { # user trackdbs have problems
     # format complete message body
     my $user_message_body = "This alert report has been automatically generated during the last update of the TrackHub Registry.\n\n";
     # $user_message_body .= $message_body_update . "\n\n" if $message_body_update;
@@ -342,12 +351,12 @@ foreach my $user (@{$users}) {
     try {
       if ($continuous_alert) {
 	# user wants to be continuously alerted: send message anyway 
-	$logger->info("$username opts for continuous alerts. Sending.");
+	$logger->info("$username opts for continuous alerts. Sending report.");
 	sendmail($message);
       } elsif ($last_user_report) {
 	# user doesn't want to be bothered more than once with the same problems
 	# send alert only if current report != last report
-	$logger->info("$username does not opt for continuous alerts. Checking differences with last report.");
+	$logger->info("$username does not opt for continuous alerts. Checking differences with last report");
 	if ($last_user_report->{ko}) {
 	  my @last_report_ko_trackdbs = keys %{$last_user_report->{ko}};
 	  my @current_report_ko_trackdbs = keys %{$current_user_report->{ko}};
@@ -355,23 +364,27 @@ foreach my $user (@{$users}) {
 	    union_intersection_difference(\@current_report_ko_trackdbs, \@last_report_ko_trackdbs);
 	  
 	  if (scalar @{$diff}) {
-	    $logger->info("Detected difference. Sending alert report anyway.");
+	    $logger->info("[$username]. Detected difference: sending alert report anyway.");
 	    sendmail($message);
 	  } else {
-	    $logger->info("No differences. Not sending the alert report.");
+	    $logger->info("[$username]. No differences: not sending the alert report.");
 	  }
+	} else {
+	  # should send since we have problems in the new run
+	  $logger->info("[$username]. Last run there wasn't any problem, but now there is. Sending alert report");
+	  sendmail($message);
 	}
       } else {
 	# send alert since this is the first check for this user
-	$logger->info("First $username user check. Sending alert report anyway.");
+	$logger->info("First $username user check. Sending alert report anyway");
 	sendmail($message);
       }
     } catch {
-      $logger->logdie($_);
+      $logger->error($_);
     };
   }
 
-  $logger->info("Adding user report to global report.");
+  $logger->info("Adding user report to global report");
   $current_report->{$username} = $current_user_report;
 }
    
@@ -398,7 +411,7 @@ if ($current_report) {
   $message_body .= "Report has not been generated.\nReason: no users.\n";
 }
 
-$logger->info("Sending alert report to admin.");
+$logger->info("Sending alert report to admin");
 my $message = 
   Email::MIME->create(
 		      header_str => 

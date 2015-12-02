@@ -146,9 +146,13 @@ foreach my $user (@{$users}) {
 
   my $pid = fork();
   if ($pid) { # parent
-    push(@children, $pid);
+    push(@children, { user => $user->{username}, pid => $pid });
   } elsif ($pid == 0) { # child
-    check_user_tracks($user);
+    try {
+      check_user_tracks($user);
+    } catch {
+      $logger->fatal($_);
+    };
     exit 0;
   } else {
     $logger->logdie("Couldn't fork: $!");
@@ -156,18 +160,66 @@ foreach my $user (@{$users}) {
 }
 
 foreach my $i (0 .. $#children) {
-  my $tmp = waitpid($children[$i], 0);
+  my $tmp = waitpid($children[$i]->{pid}, 0);
   usleep(100000);
 
-  $logger->info("Done with pid $tmp");
+  $logger->info(sprintf "Done with user %s [pid %d]", $children[$i]->{user}, $tmp);
 }
+
+$logger->info("Storing global report");
+
+if ($current_report) {
+  $current_report->{created} = time;
+  my $current_report_id = $last_report_id?++$last_report_id:1;
+
+  my $es = Search::Elasticsearch->new(cxn_pool => 'Sniff', 
+				      nodes => $config{cluster}{nodes});
+  try {
+    $es->index(index   => $config{reports}{alias},
+	       type    => $config{reports}{type},
+	       id      => $current_report_id,
+	       body    => $current_report);
+    $es->indices->refresh(index => $config{report}{alias});
+  } catch {
+    $logger->logdie($_);
+  };
+  $message_body .= sprintf "Report [%d] has been generated.\n\n", $current_report_id;
+  
+} else {
+  $message_body .= "Report has not been generated.\nReason: no users.\n";
+}
+
+$logger->info("Sending alert report to admin");
+my $message = 
+  Email::MIME->create(
+		      header_str => 
+		      [
+		       From    => 'avullo@ebi.ac.uk',
+		       To      => $admin->{email},
+		       Subject => sprintf("Alert report from TrackHub Registry: %s", localtime),
+		      ],
+		      attributes => 
+		      {
+		       encoding => 'quoted-printable',
+		       charset  => 'ISO-8859-1',
+		      },
+		      body_str => $message_body,
+		     );
+
+try {
+  sendmail($message);
+} catch {
+  $logger->logdie($_);
+};
+
+$logger->info("DONE.");
 
 sub check_user_tracks {
   my $user = shift;
-  defined $user or $logger->logdie("Undefined user");
+  defined $user or die "Undefined user";
 
   my $username = $user->{username};
-  defined $username or $logger->logdie("Undefined username");
+  defined $username or die "Undefined username";
   $logger->info("Working on user $username");
 
   # get monitoring configuration
@@ -387,55 +439,7 @@ sub check_user_tracks {
   $logger->info("Adding user report to global report");
   $current_report->{$username} = $current_user_report;
 }
-   
-$logger->info("Done with users. Storing global report");
-
-if ($current_report) {
-  $current_report->{created} = time;
-  my $current_report_id = $last_report_id?++$last_report_id:1;
-
-  my $es = Search::Elasticsearch->new(cxn_pool => 'Sniff', 
-				      nodes => $config{cluster}{nodes});
-  try {
-    $es->index(index   => $config{reports}{alias},
-	       type    => $config{reports}{type},
-	       id      => $current_report_id,
-	       body    => $current_report);
-    $es->indices->refresh(index => $config{report}{alias});
-  } catch {
-    $logger->logdie($_);
-  };
-  $message_body .= sprintf "Report [%d] has been generated.\n\n", $current_report_id;
   
-} else {
-  $message_body .= "Report has not been generated.\nReason: no users.\n";
-}
-
-$logger->info("Sending alert report to admin");
-my $message = 
-  Email::MIME->create(
-		      header_str => 
-		      [
-		       From    => 'avullo@ebi.ac.uk',
-		       To      => $admin->{email},
-		       Subject => sprintf("Alert report from TrackHub Registry: %s", localtime),
-		      ],
-		      attributes => 
-		      {
-		       encoding => 'quoted-printable',
-		       charset  => 'ISO-8859-1',
-		      },
-		      body_str => $message_body,
-		     );
-
-try {
-  sendmail($message);
-} catch {
-  $logger->logdie($_);
-};
-
-$logger->info("DONE.");
-
 sub get_all_users {
   my ($index, $type) = ($config{users}{alias}, $config{users}{type});
   my $nodes = $config{cluster}{nodes};

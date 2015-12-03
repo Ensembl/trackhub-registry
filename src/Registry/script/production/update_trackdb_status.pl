@@ -508,17 +508,23 @@ sub get_user_trackdbs {
   defined $type or die "Couldn't find type for users in configuration file";
   defined $nodes or die "Couldn't find ES nodes in configuration file";
 
-  
   my $es = Search::Elasticsearch->new(cxn_pool => 'Sniff', nodes => $nodes);
-  my $scroll = $es->scroll_helper(index => $index,
-				  type  => $type,
-				  search_type => 'scan',
-				  body  => { query => { term => { owner => $user } } });
+  
+  # my $scroll = $es->scroll_helper(index => $index,
+  # 				  type  => $type,
+  # 				  search_type => 'scan',
+  # 				  body  => { query => { term => { owner => $user } } });
 
-  my $trackdbs;
-  while (my $trackdb = $scroll->next) {
-    push @{$trackdbs}, Registry::TrackHub::TrackDB->new($trackdb->{_id});
-  }
+  # my $trackdbs;
+  # while (my $trackdb = $scroll->next) {
+  #   push @{$trackdbs}, Registry::TrackHub::TrackDB->new($trackdb->{_id});
+  # }
+
+  map { push @{$trackdbs}, Registry::TrackHub::TrackDB->new($_->{_id}) }
+    @{$es->search(index => $index,
+		  type  => $type,
+		  size  => 100000,
+		  body  => { query => { term => { owner => $user } }, fields => [] })->{hits}{hits}};
 
   return $trackdbs;
 }

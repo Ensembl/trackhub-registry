@@ -143,14 +143,15 @@ my $message_body;
 my @children;
 foreach my $user (@{$users}) {
   # obviously skip admin user
-  next if $user->{username} eq $config{users}{admin_name};
+  my $username = $user->{username};
+  next if $username eq $config{users}{admin_name} or $username =~ /tapanari/;
 
   my $pid = fork();
   if ($pid) { # parent
     push(@children, { user => $user->{username}, pid => $pid });
   } elsif ($pid == 0) { # child
     try {
-      check_user_tracks($user); #, $last_report, $current_report);
+      $current_report->{$username} = check_user_tracks($user, $last_report);
     } catch {
       $logger->fatal($_);
     };
@@ -217,7 +218,7 @@ try {
 $logger->info("DONE.");
 
 sub check_user_tracks {
-  my $user = shift;
+  my ($user, $last_report) = @_;
   defined $user or die "Undefined user";
 
   my $username = $user->{username};
@@ -230,6 +231,7 @@ sub check_user_tracks {
 
   # get last report for user
   my $last_user_report = $last_report->{$username};
+  my $current_user_report;
 
   # if check_option is weekly|monthly and (current_time-last_check_time) < week|month
   #   copy last user report to new global report
@@ -244,11 +246,12 @@ sub check_user_tracks {
     my $time_interval = $check_interval==1?604800:2592000;
 
     if ($current_time - $last_check_time < $time_interval) {
-      $current_report->{$username} = $last_user_report;
+      $current_user_report = $last_user_report;
 
       $logger->info(sprintf "Less than a %s has passed since last check for %s. SKIP", 
 		    $check_interval==1?'week':'month', $username);
-      next;
+
+      return $current_user_report;
     }
   }
 
@@ -258,14 +261,16 @@ sub check_user_tracks {
     $trackdbs = get_user_trackdbs($username);
   } catch {
     $logger->error("Unable to get trackDBs for user $username:\n$_");
+
     return;
   };
   
-  $logger->info("User $username has no trackDBs. SKIP") and next 
+  $logger->info("User $username has no trackDBs. SKIP") and return
     unless $trackdbs and scalar @{$trackdbs};
 
   # create user specific report
-  my $current_user_report = { start_time => time };
+  $current_user_report = { start_time => time };
+
   # loop over trackdbs
   #   update doc if the source has changed
   #   check status
@@ -437,8 +442,7 @@ sub check_user_tracks {
     };
   }
 
-  $logger->info("Adding user report to global report");
-  $current_report->{$username} = $current_user_report;
+  return $current_user_report;
 }
   
 sub get_all_users {

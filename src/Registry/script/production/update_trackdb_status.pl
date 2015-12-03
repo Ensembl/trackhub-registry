@@ -133,7 +133,7 @@ try {
 $admin or $logger->logdie("Unable to find admin user.");
 
 # create new run global report
-my $current_report = {};
+my $current_report;
 my $message_body;
 
 #
@@ -150,7 +150,7 @@ foreach my $user (@{$users}) {
     push(@children, { user => $user->{username}, pid => $pid });
   } elsif ($pid == 0) { # child
     try {
-      check_user_tracks($user);
+      check_user_tracks($user); #, $last_report, $current_report);
     } catch {
       $logger->fatal($_);
     };
@@ -266,7 +266,6 @@ sub check_user_tracks {
 
   # create user specific report
   my $current_user_report = { start_time => time };
-
   # loop over trackdbs
   #   update doc if the source has changed
   #   check status

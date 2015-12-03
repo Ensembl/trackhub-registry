@@ -190,13 +190,14 @@ if ($current_report) {
 }
 
 $logger->info("Sending alert report to admin");
+my $localtime = localtime;
 my $message = 
   Email::MIME->create(
 		      header_str => 
 		      [
 		       From    => 'avullo@ebi.ac.uk',
 		       To      => $admin->{email},
-		       Subject => sprintf("Alert report from TrackHub Registry: %s", localtime),
+		       Subject => sprintf("Alert report from TrackHub Registry: %s", $localtime),
 		      ],
 		      attributes => 
 		      {

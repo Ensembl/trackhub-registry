@@ -38,20 +38,7 @@ around BUILDARGS => sub {
   #     unless $config->{transport};
     
   my $es = 
-    Search::Elasticsearch->new(nodes     => $config->{nodes}); # transport => $config->{transport});
- 
-  # test connection
-  #
-  # TODO
-  # should consider nodes can be an array
-  #
-  my $url = $config->{nodes};
-  $url = "http://$url" unless $url =~ /^http/;
-  my $req = HTTP::Request->new( GET => $url );
-  my $ua = LWP::UserAgent->new;
-  my $response = $ua->request($req);
-  Catalyst::Exception->throw("Elasticsearch instance not available")
-      unless $response->is_success;
+    Search::Elasticsearch->new(nodes => $config->{nodes}); # transport => $config->{transport});
 
   # test the index exists
   Catalyst::Exception->throw("index name required in configuration")

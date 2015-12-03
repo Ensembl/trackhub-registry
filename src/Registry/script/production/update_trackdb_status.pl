@@ -364,7 +364,7 @@ sub check_user_tracks {
       $current_user_report->{ko}{$id} =
 	$status->{tracks}{with_data}{ko};
 
-      $message_body_problem .= sprintf "trackDB [%d] (hub: %s, assembly: %s)\n", $id, $hub, $assembly;
+      $message_body_problem .= sprintf "trackDB [%s] (hub: %s, assembly: %s)\n", $id, $hub, $assembly;
       foreach my $track (keys %{$current_user_report->{ko}{$id}}) {
 	$message_body_problem .= sprintf "\t%s\t%s\t%s\n", $track, $current_user_report->{ko}{$id}{$track}[0], $current_user_report->{ko}{$id}{$track}[1];
       }

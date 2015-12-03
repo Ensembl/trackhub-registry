@@ -20,6 +20,7 @@ use Config::Std;
 use File::Temp qw/ tempfile /;
 use Email::MIME;
 use Email::Sender::Simple qw(sendmail);
+use Time::HiRes qw(usleep);
 
 use JSON;
 use Data::Dumper;

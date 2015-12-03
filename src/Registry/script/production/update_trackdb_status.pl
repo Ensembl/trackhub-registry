@@ -520,6 +520,7 @@ sub get_user_trackdbs {
   #   push @{$trackdbs}, Registry::TrackHub::TrackDB->new($trackdb->{_id});
   # }
 
+  my $trackdbs;
   map { push @{$trackdbs}, Registry::TrackHub::TrackDB->new($_->{_id}) }
     @{$es->search(index => $index,
 		  type  => $type,

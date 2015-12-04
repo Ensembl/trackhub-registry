@@ -18,6 +18,7 @@ use Pod::Usage;
 use Config::Std;
 
 use File::Temp qw/ tempfile /;
+use DBM::Deep;
 use Email::MIME;
 use Email::Sender::Simple qw(sendmail);
 use Time::HiRes qw(usleep);
@@ -132,8 +133,10 @@ try {
 };
 $admin or $logger->logdie("Unable to find admin user.");
 
-# create new run global report
-my $current_report;
+$logger->info("Crearing new run global report");
+unlink "current_report.db";
+my $current_report = DBM::Deep->new( "current_report.db" );
+
 my $message_body;
 
 #

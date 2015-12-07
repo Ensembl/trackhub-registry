@@ -174,10 +174,6 @@ foreach my $i (0 .. $#children) {
 
 $logger->info("Storing global report");
 
-# need to recursively unbless the report (DBM::Deep nested structure),
-# we cannot store the corresponding JSON in ES otherwise
-unbless $current_report;
-
 if ($current_report) {
   $current_report->{created} = time;
   my $current_report_id = $last_report_id?++$last_report_id:1;
@@ -188,7 +184,7 @@ if ($current_report) {
     $es->index(index   => $config{reports}{alias},
 	       type    => $config{reports}{type},
 	       id      => $current_report_id,
-	       body    => $current_report);
+	       body    => $current_report->export);
     $es->indices->refresh(index => $config{report}{alias});
   } catch {
     $logger->logdie($_);

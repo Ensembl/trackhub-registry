@@ -17,8 +17,9 @@ use Getopt::Long;
 use Pod::Usage;
 use Config::Std;
 
-use File::Temp qw/ tempfile /;
+# use File::Temp qw/ tempfile /;
 use DBM::Deep;
+use Data::Structure::Util qw( unbless );
 use Email::MIME;
 use Email::Sender::Simple qw(sendmail);
 use Time::HiRes qw(usleep);
@@ -172,6 +173,10 @@ foreach my $i (0 .. $#children) {
 }
 
 $logger->info("Storing global report");
+
+# need to recursively unbless the report (DBM::Deep nested structure),
+# we cannot store the corresponding JSON in ES otherwise
+unbless $current_report;
 
 if ($current_report) {
   $current_report->{created} = time;

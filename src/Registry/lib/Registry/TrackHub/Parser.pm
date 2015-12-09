@@ -215,7 +215,7 @@ sub _parse_file_content {
       $tracks->{$id}{'track'}           = $id;
       $tracks->{$id}{'description_url'} = "$url/$id.html" unless $tracks->{$id}{'parent'};
       
-      unless ($tracks->{$id}{'type'}) {
+      if ($tracks->{$id}{'bigDataUrl'} and not $tracks->{$id}{'type'}) {
         ## Set type based on file extension
         my @path = split(/\./, $tracks->{$id}{'bigDataUrl'});
         $tracks->{$id}{'type'} = $format_lookup{$path[-1]};

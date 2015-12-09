@@ -89,7 +89,7 @@ sub search_POST {
 
   # do the search
   my $results;
-  my $se = Data::SearchEngine::ElasticSearch->new();
+  my $se = Data::SearchEngine::ElasticSearch->new(nodes => $config->{nodes});
   
   try {
     $results = $se->search(Data::SearchEngine::ElasticSearch::Query->new($query_args));

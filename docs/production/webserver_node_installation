@@ -118,3 +118,15 @@ $ cd jsonschema-2.5.1
 $ sudo python setup.py install
 
 - Install postfix
+
+$ sudo apt-get install postfix
+
+- Increase User Level FD Limits 
+
+Note: this is for the update script which otherwise complains with "Too many open files"
+
+$ sudo nano /etc/security/limits.conf
+
+...
+ubuntu          soft    nofile          4096
+ubuntu          hard    nofile          10240

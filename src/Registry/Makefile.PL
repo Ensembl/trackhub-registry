@@ -70,6 +70,7 @@ recommends 'Pod::Usage';
 recommends 'DBM::Deep';
 recommends 'Email::MIME';
 recommends 'Email::Sender::Simple';
+recommends 'Email::Date';
 recommends 'DateTime';
 recommends 'Server::Starter';
 recommends 'Net::CIDR::Lite';

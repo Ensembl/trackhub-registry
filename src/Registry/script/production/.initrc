@@ -1,4 +1,4 @@
-[cluster]
+[cluster_prod]
 name : thregistry
 nodes: 192.168.0.96:9200
 # add other nodes here, will be assigned to the same nodes arrayref

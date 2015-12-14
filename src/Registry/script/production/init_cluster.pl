@@ -16,11 +16,13 @@ use Search::Elasticsearch;
 
 # default option values
 my $help = 0;  # print usage and exit
+my $type = 'production';
 my $config_file = '.initrc'; # expect file in current directory
 
 # parse command-line arguments
 my $options_ok = 
   GetOptions("config|c=s" => \$config_file,
+	     "type|t=s"   => \$type,
 	     "help|h"     => \$help) or pod2usage(2);
 pod2usage() if $help;
 
@@ -52,19 +54,29 @@ eval {
 };
 $logger->logdie("Error reading configuration file $config_file: $@") if $@;
 
+my $cluster;
+if ($type =~ /prod/) {
+  $cluster = 'cluster_prod';
+} elsif ($type =~ /stag/) {
+  $cluster = 'cluster_staging';
+} else {
+  $logger->logdie("Unknown type of cluster, should be either 'production' or 'staging'");
+}
+my $nodes = $config{$cluster}{nodes};
+
 $logger->info("Checking the cluster is up and running");
 my $esurl;
-if (ref $config{cluster}{nodes} eq 'ARRAY') {
-  $esurl = sprintf "http://%s", $config{cluster}{nodes}[0];
+if (ref $nodes eq 'ARRAY') {
+  $esurl = sprintf "http://%s", $nodes->[0];
 } else {
-  $esurl = sprintf "http://%s", $config{cluster}{nodes};
+  $esurl = sprintf "http://%s", $nodes;
 }
-$logger->logdie(sprintf "Cluster %s is not up", $config{cluster}{name})
+$logger->logdie(sprintf "Cluster %s is not up", $config{$cluster}{name})
   unless HTTP::Tiny->new()->request('GET', $esurl)->{status} eq '200';
 
 $logger->info("Instantiating ES client");
 my $es = Search::Elasticsearch->new(cxn_pool => 'Sniff',
-				    nodes => $config{cluster}{nodes});
+				    nodes => $nodes);
 
 $logger->info("Deleting existing indices/aliases");
 my $response = $es->indices->get(index => '_all', feature => '_aliases');
@@ -134,13 +146,12 @@ foreach my $index_type (qw/trackhubs users reports/) {
   };
 }
 
-# set up a shared file system repository
+# set up a shared file system repository on the production cluster
 # the target nodes must have mounted the /mnt/es_snapshots location
 # which must also be accessible (777)
 # TODO: location could be a parameter
-my $hostname = `hostname`;
-if ($hostname !~ /staging/) {
-  $logger->info("Creating repository");
+if ($type !~ /staging/) {
+  $logger->info("Creating repository on production cluster");
   try {
     $es->snapshot->create_repository(
 				     repository => $config{repository}{name},
@@ -208,6 +219,7 @@ init_cluster.pl - Set up Elasticsearch cluster, make it ready for production
 init_cluster.pl [options]
 
    -c --config          configuration file [default: .initrc]
+   -t --type            cluster type (production, staging) [default: production]
    -h --help            display this help and exits
 
 =cut

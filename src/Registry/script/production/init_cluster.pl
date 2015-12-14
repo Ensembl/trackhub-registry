@@ -110,8 +110,11 @@ foreach my $index_type (qw/trackhubs users reports/) {
   my $settings;
   $settings->{number_of_shards} = $config{$index_type}{number_of_shards}
     if exists $config{$index_type}{number_of_shards};
+
+  # replicas on the staging server do not make sense, i.e. 1 node
+  $settings->{number_of_replicas} = 0;
   $settings->{number_of_replicas} = $config{$index_type}{number_of_replicas}
-    if exists $config{$index_type}{number_of_replicas};
+    if exists $config{$index_type}{number_of_replicas} and $type !~ /stag/;
 
   try {
     if ($settings) {

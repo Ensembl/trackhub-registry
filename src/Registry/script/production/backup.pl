@@ -95,11 +95,11 @@ __END__
 
 =head1 NAME
 
-take_snapshot.pl - Take a snapshot of the data
+backup.pl - Take a snapshot of the data
 
 =head1 SYNOPSIS
 
-take_snapshot.pl [options]
+backup.pl [options]
 
    -c --config          configuration file [default: .initrc]
    -h --help            display this help and exits

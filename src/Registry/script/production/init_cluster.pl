@@ -134,6 +134,22 @@ foreach my $index_type (qw/trackhubs users reports/) {
   };
 }
 
+# set up a shared file system repository
+# the target nodes must have mounted the /mnt/es_snapshots location
+# which must also be accessible (777)
+# TODO: location could be a parameter
+$logger->info("Creating repository");
+try {
+  $es->snapshot->create_repository(
+				   repository => 'backup',
+				   body       => {
+						  type => 'fs',
+						  settings => { location => '/mnt/es_snapshots' }
+						 });				   
+} catch {
+  $logger->logdie("Couldn't create repository 'backup: $_");
+};
+
 $logger->info("Creating admin user");
 # conf file in the repo does not specify admin pass,
 # should check it is set in the file it's being used

@@ -138,17 +138,20 @@ foreach my $index_type (qw/trackhubs users reports/) {
 # the target nodes must have mounted the /mnt/es_snapshots location
 # which must also be accessible (777)
 # TODO: location could be a parameter
-$logger->info("Creating repository");
-try {
-  $es->snapshot->create_repository(
-				   repository => $config{repository}{name},
-				   body       => {
-						  type => $config{repository}{type},
-						  settings => { location => $config{repository}{location} }
-						 });				   
-} catch {
-  $logger->logdie(sprintf "Couldn't create repository '%s': %s", $config{repository}{name}, $_);
-};
+my $hostname = `hostname`;
+if ($hostname !~ /staging/) {
+  $logger->info("Creating repository");
+  try {
+    $es->snapshot->create_repository(
+				     repository => $config{repository}{name},
+				     body       => {
+						    type => $config{repository}{type},
+						    settings => { location => $config{repository}{location} }
+						   });				   
+  } catch {
+    $logger->logdie(sprintf "Couldn't create repository '%s': %s", $config{repository}{name}, $_);
+  };
+}
 
 $logger->info("Creating admin user");
 # conf file in the repo does not specify admin pass,

@@ -52,13 +52,13 @@ sub ping :Local Args(0) ActionClass('REST') { }
 sub ping_GET {
   my ($self, $c) = @_;
 
-  my $nodes = sprintf "http://%s", Registry->config()->{'Model::Search'}{nodes};
+  my $nodes = Registry->config()->{'Model::Search'}{nodes};
   my $es_url;
   # can have multiple nodes specified in the configuration
   if (ref $nodes eq 'ARRAY') {
-    $es_url = $nodes->[0]; # take the first node as URL to ping
+    $es_url = sprintf "http://%s", $nodes->[0]; # take the first node as URL to ping
   } else {
-    $es_url = $nodes;
+    $es_url = sprintf "http://%s", $nodes;
   }
   my $ping = (HTTP::Tiny->new()->request('GET', $es_url)->{status} eq '200')?1:0;
 

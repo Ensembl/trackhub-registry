@@ -146,7 +146,7 @@ if ($hostname !~ /staging/) {
 				     repository => $config{repository}{name},
 				     body       => {
 						    type => $config{repository}{type},
-						    settings => { location => $config{repository}{location} }
+						    settings => { location => $config{repository}{remote_location} }
 						   });				   
   } catch {
     $logger->logdie(sprintf "Couldn't create repository '%s': %s", $config{repository}{name}, $_);

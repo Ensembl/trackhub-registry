@@ -4,6 +4,10 @@ nodes: 192.168.0.96:9200
 # add other nodes here, will be assigned to the same nodes arrayref
 nodes: 192.168.0.97:9200
 
+[cluster_staging]
+name : thregistry_staging
+nodes : 192.168.0.100:9200
+
 [trackhubs]
 index   : trackhubs_v1
 alias   : trackhubs
@@ -34,4 +38,5 @@ number_of_replicas: 1
 [repository]
 name       : backup
 type       : fs
-location   : /mnt/es_snapshots
+location   : /mnt/backup
+remote_location : /mnt/es_snapshots

@@ -141,13 +141,13 @@ foreach my $index_type (qw/trackhubs users reports/) {
 $logger->info("Creating repository");
 try {
   $es->snapshot->create_repository(
-				   repository => 'backup',
+				   repository => $config{repository}{name},
 				   body       => {
-						  type => 'fs',
-						  settings => { location => '/mnt/es_snapshots' }
+						  type => $config{repository}{type},
+						  settings => { location => $config{repository}{location} }
 						 });				   
 } catch {
-  $logger->logdie("Couldn't create repository 'backup: $_");
+  $logger->logdie(sprintf "Couldn't create repository '%s': %s", $config{repository}{name}, $_);
 };
 
 $logger->info("Creating admin user");

@@ -30,3 +30,8 @@ alias      : reports
 type       : report
 number_of_shards  : 1
 number_of_replicas: 1
+
+[repository]
+name       : backup
+type       : fs
+location   : /mnt/es_snapshots

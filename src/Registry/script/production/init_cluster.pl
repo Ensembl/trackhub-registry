@@ -149,10 +149,10 @@ foreach my $index_type (qw/trackhubs users reports/) {
   };
 }
 
-# set up a shared file system repository on the production cluster
-# the target nodes must have mounted the /mnt/es_snapshots location
-# which must also be accessible (777)
-# TODO: location could be a parameter
+# set up a shared file system repository 
+# the location of the repo is on a disk of the staging server
+# on the production cluster, the target nodes must have mounted 
+# the remote location which must also be accessible (777)
 my $repo_location = $config{repository}{remote_location};
 $repo_location = $config{repository}{location} if $type =~ /stag/;
 

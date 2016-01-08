@@ -1011,6 +1011,17 @@ sub _add_genome_browser_links {
 
   my $division;
 
+  # 
+  # First the special cases:
+  # - human (grch38.* -> www, grch37.* -> grch37)
+  # - mouse (only grcm38.* supported -> www)
+  # - fruitfly (Release 6 up-to-date, Release 5 from Dec 2014 backward)
+  # - rat (Rnor_6.0 up-to-date, Rnor_5.0 from Mar 2015 backward)
+  # - zebrafish (GRCz10 up-to-date, Zv9 from Mar 2015 backward)
+  #
+  # The division for other assemblies is determined by looking up
+  # in the ensembl genomes info DB by assembly ID or tax ID (name?)
+  #
   if ($species =~ /homo_sapiens/i) { # if it's human assembly
     # only GRCh38.* and GRCh37.* assemblies are supported,
     # domain is different in the two cases
@@ -1023,6 +1034,27 @@ sub _add_genome_browser_links {
   } elsif ($species =~ /mus_musculus/i) { # if it's mouse assembly
     # any GRCm38 patch is supported, other assemblies are not
     $division = 'www' if $assembly_name =~ /grcm38/i;
+  } elsif ($species =~ /rattus_norvegicus/i) { 
+    # if it's rat assembly must take archive into account
+    if ($assembly_name =~ /Rnor_6/i) {
+      $division = 'www';
+    } elsif ($assembly_name =~ /Rnor_5/i) {
+      $division = 'mar2015';
+    }
+  } elsif ($species =~ /danio_rerio/i) { 
+    # if it's zebrafish assembly must take archive into account
+    if ($assembly_name =~ /GRCz10/i) {
+      $division = 'www';
+    } elsif ($assembly_name =~ /Zv9/i) {
+      $division = 'mar2015';
+    }
+  } elsif ($species =~ /drosophila_melanogaster/i) { 
+    # if it's fruitfly assembly must take archive into account
+    if ($assembly_name =~ /Release 6/i) {
+      $division = 'www';
+    } elsif ($assembly_name =~ /Release 5/i) {
+      $division = 'dec2014';
+    }
   } else {
     # Look up division in shared genome DB, by using assembly accession,
     # when provided, or assembly name

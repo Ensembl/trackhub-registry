@@ -32,7 +32,7 @@ unless(-d $log_dir) {
     die("cannot create directory: $!");
 }
 my $date = `date '+%F'`; chomp($date);
-my $log_file = "${log_dir}/snapshot.log";
+my $log_file = "${log_dir}/snapshots.log";
 
 my $log_conf = <<"LOGCONF";
 log4perl.logger=DEBUG, Screen, File
@@ -58,27 +58,28 @@ eval {
 };
 $logger->logdie("Error reading configuration file $config_file: $@") if $@;
 
-$logger->info("Checking the cluster is up and running");
+$logger->info("Checking the production cluster is up and running");
 my $esurl;
-if (ref $config{cluster}{nodes} eq 'ARRAY') {
-  $esurl = sprintf "http://%s", $config{cluster}{nodes}[0];
+if (ref $config{cluster_prod}{nodes} eq 'ARRAY') {
+  $esurl = sprintf "http://%s", $config{cluster_prod}{nodes}[0];
 } else {
-  $esurl = sprintf "http://%s", $config{cluster}{nodes};
+  $esurl = sprintf "http://%s", $config{cluster_prod}{nodes};
 }
-$logger->logdie(sprintf "Cluster %s is not up", $config{cluster}{name})
+$logger->logdie(sprintf "Cluster %s is not up", $config{cluster_prod}{name})
   unless HTTP::Tiny->new()->request('GET', $esurl)->{status} eq '200';
 
-$logger->info("Instantiating ES client");
+$logger->info("Instantiating production ES client");
 my $es = Search::Elasticsearch->new(cxn_pool => 'Sniff',
-				    nodes => $config{cluster}{nodes});
-
+				    nodes => $config{cluster_prod}{nodes});
 
 
 my $snapshot_name = sprintf "snapshot_%s", $date;
+# we backup only relevant indices 
 my $indices = join(',', qw/trackhubs users reports/);
 $logger->info("Creating snapshot ${snapshot_name} of indices $indices");
 # TODO
 # - monitor progress
+# - email in case of problem
 try {
   $es->snapshot->create(repository  => $config{repository}{name},
 			snapshot    => $snapshot_name,
@@ -89,19 +90,48 @@ try {
   $logger->logdie("Couldn't take snapshot ${snapshot_name}: $!");
 };
 
+
+$logger->info("Checking the staging cluster is up and running");
+if (ref $config{cluster_staging}{nodes} eq 'ARRAY') {
+  $esurl = sprintf "http://%s", $config{cluster_staging}{nodes}[0];
+} else {
+  $esurl = sprintf "http://%s", $config{cluster_staging}{nodes};
+}
+$logger->logdie(sprintf "Cluster %s is not up", $config{cluster_staging}{name})
+  unless HTTP::Tiny->new()->request('GET', $esurl)->{status} eq '200';
+
+$logger->info("Instantiating staging ES client");
+$es = Search::Elasticsearch->new(cxn_pool => 'Sniff',
+				 nodes => $config{cluster_staging}{nodes});
+
+$logger->info("Restoring from snapshot ${snapshot_name}");
+# TODO
+# - monitor progress
+# - email in case of problem
+try {
+  $es->snapshot->restore(repository  => $config{repository}{name},
+			 snapshot    => $snapshot_name,
+			 body        => {
+					 indices => $indices
+					});
+} catch {
+  $logger->logdie("Couldn't take snapshot ${snapshot_name}: $!");
+};
+
 $logger->info("DONE.");
 
 __END__
 
 =head1 NAME
 
-backup.pl - Take a snapshot of the data
+snapshot_and_restore.pl - Take a snapshot of the data and test the recovery
 
 =head1 SYNOPSIS
 
 backup.pl [options]
 
    -c --config          configuration file [default: .initrc]
+   -l --logdir          logdir [default: logs]
    -h --help            display this help and exits
 
 =cut

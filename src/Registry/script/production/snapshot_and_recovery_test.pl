@@ -124,11 +124,11 @@ __END__
 
 =head1 NAME
 
-snapshot_and_restore.pl - Take a snapshot of the data and test the recovery
+snapshot_and_recovery_test.pl - Take a snapshot of the data and test the recovery
 
 =head1 SYNOPSIS
 
-backup.pl [options]
+snapshot_and_recovery_test.pl [options]
 
    -c --config          configuration file [default: .initrc]
    -l --logdir          logdir [default: logs]

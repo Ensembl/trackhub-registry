@@ -75,7 +75,7 @@ recommends 'DateTime';
 recommends 'Server::Starter';
 recommends 'Net::CIDR::Lite';
 recommends 'Net::Server::SS::PreFork';
-recommends 'Cache::Memcached'
+recommends 'Cache::Memcached';
 recommends 'Plack::Middleware::ReverseProxy';
 recommends 'Plack::Middleware::DetectExtension';
 recommends 'Plack::Middleware::CrossOrigin';

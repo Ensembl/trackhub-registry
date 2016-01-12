@@ -23,7 +23,8 @@ builder {
   #------ Set appropriate headers when we detect REST is being used as a ReverseProxy
   enable "Plack::Middleware::ReverseProxy";
   #------ Set Content-type headers when we detect a valid extension
-  enable "DetectExtension";
+  # this is not available any more
+  # enable "DetectExtension";
   #------ Allow CrossOrigin requests from any host
   enable 'CrossOrigin', origins => '*', headers => '*', methods => ['GET','POST','DELETE','OPTIONS'];
   

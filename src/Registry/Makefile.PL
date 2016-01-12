@@ -77,7 +77,7 @@ recommends 'Net::CIDR::Lite';
 recommends 'Net::Server::SS::PreFork';
 recommends 'Cache::Memcached';
 recommends 'Plack::Middleware::ReverseProxy';
-recommends 'Plack::Middleware::DetectExtension';
+# recommends 'Plack::Middleware::DetectExtension';
 recommends 'Plack::Middleware::CrossOrigin';
 recommends 'Plack::Middleware::SizeLimit';
 recommends 'Plack::Middleware::StackTrace';

@@ -327,7 +327,10 @@ sub trackhub_POST {
 				   }
 			}
 	   };
-  $registered_trackdbs = $c->model('Search')->search_trackhubs(query => $query);
+  # TODO
+  # pay attention here to the size parameter, certain hubs contain more than 10 trackDbs
+  # using the scan & scroll API would definitively solve the problem
+  $registered_trackdbs = $c->model('Search')->search_trackhubs(query => $query, size => 1000);
   my $updated = 0;
   my $created;
   if ($registered_trackdbs->{hits}{total}) {
@@ -383,7 +386,7 @@ sub trackhub_POST {
       # refresh the index
       $c->model('Search')->indices->refresh(index => $config->{trackhub}{index});
 
-      $c->log->info("Created trackDb [$id]");
+      $c->log->info(sprintf "Created trackDb [%s] (%s)", $id, $doc->{assembly}{name});
 
       push @{$location}, $c->uri_for( '/api/trackdb/' . $id )->as_string;
       push @{$entity}, $c->model('Search')->get_trackhub_by_id($id);

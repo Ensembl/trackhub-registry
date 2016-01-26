@@ -15,7 +15,9 @@ use Data::Dumper;
 my $ua = LWP::UserAgent->new;
 my $server = 'http://beta.trackhubregistry.org';
 
-my ($user, $pass) = ('avullo', 'ALcsK32EX'); 
+@ARGV == 2 or die "Usage: load_ensembl_public_hubs.pl <user> <password>\n";
+
+my ($user, $pass) = ($ARGV[0], $ARGV[1]); 
 my $request = GET("$server/api/login");
 $request->headers->authorization_basic($user, $pass);
 my $response = $ua->request($request);

@@ -1,0 +1,128 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use Data::Dumper;
+
+local $SIG{__WARN__} = sub {};
+
+use JSON;
+use HTTP::Headers;
+use HTTP::Request::Common;
+use LWP::UserAgent;
+use Data::Dumper;
+
+my $ua = LWP::UserAgent->new;
+my $server = 'http://beta.trackhubregistry.org';
+
+my ($user, $pass) = ('avullo', 'ALcsK32EX'); 
+my $request = GET("$server/api/login");
+$request->headers->authorization_basic($user, $pass);
+my $response = $ua->request($request);
+my $auth_token;
+if ($response->is_success) {
+  $auth_token = from_json($response->content)->{auth_token};
+  print "Logged in [$auth_token]\n" if $auth_token;
+} else {
+  die sprintf "Couldn't login: %s [%d]", $response->content, $response->code;
+}
+
+my $hubs = 
+  [
+   # DONE
+   # { # Blueprint GRCh38 Hub
+   #  url => "ftp://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub"
+   # },
+   { # Blueprint GRCh37 Hub
+    url => 'http://ftp.ebi.ac.uk/pub/databases/blueprint/releases/20150128/homo_sapiens/hub/hub.txt'
+   },
+   { # ENCODE Analysis Hub (2011)
+     url => 'http://ftp.ebi.ac.uk/pub/databases/ensembl/encode/integration_data_jan2011/hub.txt'
+   },
+   { # Broad Improved Canine Annotation v1
+    url => 'https://www.broadinstitute.org/ftp/pub/vgb/dog/trackHub/hub.txt'
+   },
+   { # Cancer genome polyA site & usage
+    url => 'http://johnlab.org/xpad/Hub/UCSC.txt'
+   },
+   { # CEMT (CEEHRC) Epigenomic Data tracks from BCGSC, Vancouver
+    url => 'http://www.bcgsc.ca/downloads/edcc/data/CEMT/hub/bcgsc_datahub.txt'
+   },
+   { # CREST IHEC Epigenome Project Hub
+    url => 'http://epigenome.cbrc.jp/files/jst/hub/hub.txt'
+   },
+   # Not Found
+   # { # Deutsches Epigenome Programm (DEEP)
+   #  url => 'https://otpfiles.dkfz.de/DEEP-trackhubs/hub.txt'
+   # },
+   # contains tair10 which is assembly hub not directly supported by UCSC
+   # but we still have manual mapping for it since it indicates the
+   # assembly accession ID in the hub description file
+   { # DNA Methylation Hundreds of analyzed methylomes from bisulfite sequencing data
+    url => 'http://smithlab.usc.edu/trackdata/methylation/hub.txt'
+   },
+   { # EDACC hosted Roadmap Epigenomics Hub
+    url => 'http://genboree.org/EdaccData/trackHub/hub.txt'
+   },
+   # DONE
+   # { # Sanger Genome Reference Informatics Team: Genome issues and other features
+   #  url => 'http://ngs.sanger.ac.uk/production/grit/track_hub/hub.txt'
+   # },
+   { # McGill Epigenomics Mapping Centre, Montreal, Quebec, Canada
+    url => 'http://epigenomesportal.ca/hub/hub.txt'
+   },
+   { # Predicted microRNA target sites in GENCODE transcripts
+    url => 'http://www.mircode.org/ucscHub/hub.txt'
+   },
+   { # Protein-coding potential as determined by PhyloCSF
+    url => 'http://www.broadinstitute.org/compbio1/PhyloCSFtracks/trackHub/hub.txt'
+   },
+   { # Porcine DNA methylation and gene transcription
+    url => 'http://faang.abgc.asg.wur.nl/TJ_Tabasco/hub.txt'
+   },
+   # MASSIVE, HOLD ON
+   # { # Roadmap Epigenomics Integrative Analysis Hub
+   #  url => 'http://vizhub.wustl.edu/VizHub/RoadmapIntegrative.txt'
+   # },
+   # TIMED OUT
+   # { # Sense/antisense gene/exon expression using Affymetrix exon array from South Dakota State University, USA
+   #  url => 'http://bioinformatics.sdstate.edu/datasets/2012-NAT/hub.txt'
+   # },
+   { # Translation Initiation Sites (TIS)
+    url => 'http://gengastro.1med.uni-kiel.de/suppl/footprint/Hub/tisHub.txt'
+   },
+   { # Ultra conserved Elements in the Human Genome Science 304(5675) pp.1321-1325 (2004)
+    url => 'http://genome-test.cse.ucsc.edu/~hiram/hubs/GillBejerano/hub.txt'
+   },
+   # NOT FOUND
+   # { # UMassMed H3K4me3 ChIP-seq data for Autistic brains
+   #  url => 'https://zlab.umassmed.edu/zlab/publications/UMassMedZHub/hub.txt'
+   # },
+   { # Variant information for the NHGRI-1 zebrafish line
+    url => 'http://research.nhgri.nih.gov/manuscripts/Burgess/zebrafish/downloads/NHGRI-1/hub.txt'
+   },
+  ];
+
+foreach my $hub (@{$hubs}) {
+  $request = POST("$server/api/trackhub",
+		  'Content-type' => 'application/json',
+		  'Content'      => to_json($hub));
+  $request->headers->header(user       => $user);
+  $request->headers->header(auth_token => $auth_token);
+  $response = $ua->request($request);
+  if ($response->is_success) {
+    printf "I have registered hub at %s\n", $hub->{url};
+  } else {
+    warn sprintf "Couldn't register hub at %s: %s [%d]", $hub->{url}, $response->content, $response->code;
+  } 
+}
+
+# Logout 
+$request = GET("$server/api/logout");
+$request->headers->header(user       => $user);
+$request->headers->header(auth_token => $auth_token);
+if ($response->is_success) {
+  print "Logged out\n";
+} else {
+  print "Unable to logout\n";
+} 

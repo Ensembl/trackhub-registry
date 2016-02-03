@@ -378,7 +378,7 @@ $ucscdb2insdc =
    susscr2 => 'GCA_000003025.2', # 'Sscrofa9.2', # no syn on NCBI
    # pika
    ochpri3 => 'GCA_000292845.1', # 'OchPri3.0', # no syn on NCBI
-   # ochpri2 => 'OchPri2', # NCBI reports instead
+   ochpri2 => 'GCA_000164825.1', # 'OchPri2'
    ochpri2 => 'GCA_000164825.1', # 'ASM16482v1', 
    # platypus
    ornana1 => 'GCF_000002275.2', # 'Ornithorhynchus_anatinus-5.0.1', # no syn on NCBI
@@ -447,7 +447,7 @@ $ucscdb2insdc =
    petmar2 => 'GCA_000148955.1', # 'Petromyzon_marinus-7.0',
    # petmar1 => '', # not found
    # lizard (Anolis carolinensis)
-   anocar2 => 'GCA_000090745.2', # 'AnoCar2.0', E
+   anocar2 => 'GCA_000090745.1', # 'AnoCar2.0', E
    # anocar1 => 'AnoCar1', # not found
    # medaka
    # orylat2 => '', # not found
@@ -1081,7 +1081,7 @@ sub _add_genome_browser_links {
       die "Couldn't close connection to ensemblgenomes info DB";
 
     $genome_division = $genome->division if $genome;
-    if ($genome_division =~ /^Ensembl/) {
+    if (defined $genome_division && $genome_division =~ /^Ensembl/) {
       if ($genome_division eq 'Ensembl') {
 	$division = 'www';
       } else {

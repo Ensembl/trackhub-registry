@@ -1039,21 +1039,21 @@ sub _add_genome_browser_links {
     if ($assembly_name =~ /Rnor_6/i) {
       $division = 'www';
     } elsif ($assembly_name =~ /Rnor_5/i) {
-      $division = 'mar2015';
+      $division = 'mar2015.archive';
     }
   } elsif ($species =~ /danio_rerio/i) { 
     # if it's zebrafish assembly must take archive into account
     if ($assembly_name =~ /GRCz10/i) {
       $division = 'www';
     } elsif ($assembly_name =~ /Zv9/i) {
-      $division = 'mar2015';
+      $division = 'mar2015.archive';
     }
   } elsif ($species =~ /drosophila_melanogaster/i) { 
     # if it's fruitfly assembly must take archive into account
     if ($assembly_name =~ /Release 6/i) {
       $division = 'www';
     } elsif ($assembly_name =~ /Release 5/i) {
-      $division = 'dec2014';
+      $division = 'dec2014.archive';
     }
   } else {
     # Look up division in shared genome DB, by using assembly accession,

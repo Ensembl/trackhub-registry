@@ -124,7 +124,9 @@ my $response = HTTP::Tiny->new()->request('POST',
 eval {
   my ($response, $restore_status);
   do {
-    $response = HTTP::Tiny->new()->request('GET', sprintf "http://%s/_cat/recovery?v", $config{cluster_staging}{nodes});
+    # $response = HTTP::Tiny->new()->request('GET', sprintf "http://%s/_cat/recovery?v", $config{cluster_staging}{nodes});
+    $response = HTTP::Tiny->new()->request('GET', sprintf "http://%s/_recovery?pretty&human", $config{cluster_staging}{nodes});
+    print Dumper $response->{content}; exit;
   } while (not restore_complete($response->{content}));
 };
 $logger->logdie($@) if $@;
@@ -141,6 +143,7 @@ sub restore_complete {
   <$FH>; # first line is header
   while (my $line = <$FH>) {
     chomp ($line);
+    next if $line =~ /^\s/;
     my ($index, $shard, $time, $type, $stage, $source_host, $target_host, $repository, $snapshot, $files, $files_percent, $bytes, $bytes_percent, $total_files, $total_bytes, $translog, $translog_percent, $total_translog) =
       split /\s+/, $line;
     $info->{$index}{$shard} = $stage;

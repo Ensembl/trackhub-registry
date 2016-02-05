@@ -107,24 +107,27 @@ $logger->info("Restoring from snapshot ${snapshot_name}");
 # NOTE
 # the restore API with Search::Elasticsearch client doesn't work
 # revert to a simply HTTP call
-# eval {
-#   $es->snapshot->restore(repository  => $config{repository}{name},
-# 			 snapshot    => $snapshot_name,
-# 			 body        => {
-# 					 indices => $indices
-# 					});
-# };# catch {
-# $logger->logdie("Failed restoration from snapshot ${snapshot_name}: $@") if $@;
-# #};
-my $response = HTTP::Tiny->new()->request('POST', 
-					  sprintf "http://%s/_snapshot/backup/%s/_restore", $config{cluster_staging}{nodes}, $snapshot_name, 
-					  { content => { indices => $indices } });
-print Dumper $response;
+eval {
+  $es->snapshot->restore(repository  => $config{repository}{name},
+			 snapshot    => $snapshot_name,
+			 body        => {
+					 indices => $indices
+					});
+};# catch {
+$logger->logdie("Failed restoration from snapshot ${snapshot_name}: $@") if $@;
+#};
+# my $response = HTTP::Tiny->new()->request('POST', 
+# 					  sprintf "http://%s/_snapshot/backup/%s/_restore", $config{cluster_staging}{nodes}, $snapshot_name, 
+# 					  { content => { indices => $indices } });
+# print Dumper $response;
 
 # monitor restoring process
 my $restore_status;
-$response = HTTP::Tiny->new()->request('GET', sprintf "http://%s/_cat/recovery?v", $config{cluster_staging}{nodes});
-print Dumper $response;
+my $i = 0;
+do {
+  $response = HTTP::Tiny->new()->request('GET', sprintf "http://%s/_cat/recovery?v", $config{cluster_staging}{nodes});
+  print Dumper $response->{content};
+} while ($i++ < 1000);
 
 # $logger->info("Reopening indices");
 # $es->indices->open(index => [ split /,/, $indices ]);

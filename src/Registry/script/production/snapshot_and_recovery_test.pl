@@ -58,6 +58,10 @@ eval {
 };
 $logger->logdie("Error reading configuration file $config_file: $@") if $@;
 
+#######################################################
+#
+# Take snapshot on production cluster
+#
 my $es = connect_to_es_cluster($config{cluster_prod});
 
 my $snapshot_name = sprintf "snapshot_%s", $date;
@@ -83,9 +87,14 @@ my $snapshot_status;
 do {
   $snapshot_status = $es->snapshot->status(repository  => $config{repository}{name},
 					   snapshot    => $snapshot_name)->{snapshots}[0]{state};
-  print $snapshot_status, "\n";
 } while ($snapshot_status eq 'IN_PROGRESS' or $snapshot_status eq 'STARTED');
 
+$logger->logdie("Taking Snapshot $snapshot_name failed") unless $snapshot_status eq 'SUCCESS';
+
+#######################################################
+#
+# Restore from snapshot on staging cluster
+#
 $es = connect_to_es_cluster($config{cluster_staging});
 
 $logger->info("Closing indices on staging cluster");
@@ -106,7 +115,11 @@ eval {
 $logger->logdie("Failed restoration from snapshot ${snapshot_name}: $@") if $@;
 #};
 
-# should wait untile restoration completes
+# monitor restoring process
+my $restore_status;
+my $response = HTTP::Tiny->new()->request('GET', sprintf "http://%s/_cat/recovery?v", $config{cluster_staging}{nodes});
+print Dumper $response;
+
 # $logger->info("Reopening indices");
 # $es->indices->open(index => [ split /,/, $indices ]);
 

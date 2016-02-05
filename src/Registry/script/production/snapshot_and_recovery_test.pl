@@ -106,33 +106,60 @@ $logger->info("Restoring from snapshot ${snapshot_name}");
 # - email in case of problem
 # NOTE
 # the restore API with Search::Elasticsearch client doesn't work
-# revert to a simply HTTP call
-eval {
-  $es->snapshot->restore(repository  => $config{repository}{name},
-			 snapshot    => $snapshot_name,
-			 body        => {
-					 indices => $indices
-					});
-};# catch {
-$logger->logdie("Failed restoration from snapshot ${snapshot_name}: $@") if $@;
+# revert to a simple HTTP call
+# eval {
+#   $es->snapshot->restore(repository  => $config{repository}{name},
+# 			 snapshot    => $snapshot_name,
+# 			 body        => {
+# 					 indices => $indices
+# 					});
+# };# catch {
+# $logger->logdie("Failed restoration from snapshot ${snapshot_name}: $@") if $@;
 #};
-# my $response = HTTP::Tiny->new()->request('POST', 
-# 					  sprintf "http://%s/_snapshot/backup/%s/_restore", $config{cluster_staging}{nodes}, $snapshot_name, 
-# 					  { content => { indices => $indices } });
-# print Dumper $response;
+my $response = HTTP::Tiny->new()->request('POST', 
+					  sprintf "http://%s/_snapshot/backup/%s/_restore", $config{cluster_staging}{nodes}, $snapshot_name, 
+					  { content => { indices => $indices } });
 
 # monitor restoring process
-my $restore_status;
-my $i = 0;
-do {
-  $response = HTTP::Tiny->new()->request('GET', sprintf "http://%s/_cat/recovery?v", $config{cluster_staging}{nodes});
-  print Dumper $response->{content};
-} while ($i++ < 1000);
+eval {
+  my ($response, $restore_status);
+  do {
+    $response = HTTP::Tiny->new()->request('GET', sprintf "http://%s/_cat/recovery?v", $config{cluster_staging}{nodes});
+  } while (not restore_complete($response->{content}));
+};
+$logger->logdie($@) if $@;
 
 # $logger->info("Reopening indices");
 # $es->indices->open(index => [ split /,/, $indices ]);
 
 $logger->info("DONE.");
+
+sub restore_complete {
+  my $response = shift;
+  my $info;
+  open my $FH, '<', \$response or die "Cannot read response: $!\n";
+  <$FH>; # first line is header
+  while (my $line = <$FH>) {
+    chomp ($line);
+    my ($index, $shard, $time, $type, $stage, $source_host, $target_host, $repository, $snapshot, $files, $files_percent, $bytes, $bytes_percent, $total_files, $total_bytes, $translog, $translog_percent, $total_translog) =
+      split /\s+/, $line;
+    $info->{$index}{$shard} = $stage;
+    print "$index\t$shard\t$stage\n";
+  }
+  close $FH;
+
+  foreach my $index (keys %{$info}) {
+    foreach my $shard (keys %{$info->{$index}}) {
+      # we die if we get unexpected stage so that we
+      # can interrupt the monitoring process
+      my $stage = $info->{$index}{$shard};
+      die "Something unexpected happened during recovery, stage: $stage"
+	unless ($stage eq 'done' or $stage eq 'index' or $stage eq 'init');
+      return 0 if $info->{$index}{$shard} ne 'done';
+    }
+  }
+  return 1;
+}
 
 sub connect_to_es_cluster {
   my $cluster_conf = shift;

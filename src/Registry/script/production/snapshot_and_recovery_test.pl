@@ -12,6 +12,7 @@ use Pod::Usage;
 use Data::Dumper;
 use JSON;
 use HTTP::Tiny;
+use LWP::UserAgent;
 use HTTP::Request::Common qw/GET POST/;
 use Search::Elasticsearch;
 
@@ -128,8 +129,9 @@ eval {
     # $response = HTTP::Tiny->new()->request('GET', sprintf "http://%s/_cat/recovery?v", $config{cluster_staging}{nodes});
     
     # $response = HTTP::Tiny->new()->request('GET', sprintf "http://%s/_recovery?pretty&human", $config{cluster_staging}{nodes});
+    my $ua = LWP::UserAgent->new;
     my $request = GET(sprintf "http://%s/_recovery?pretty&human", $config{cluster_staging}{nodes});
-    my $response = request($request);
+    my $response = $ua->request($request);
     print Dumper $response->{content}; exit;
   } while (not restore_complete($response->{content}));
 };

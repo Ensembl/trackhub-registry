@@ -82,9 +82,9 @@ $logger->logdie("Couldn't take snapshot ${snapshot_name}: $@") if $@;
 my $snapshot_status;
 do {
   $snapshot_status = $es->snapshot->status(repository  => $config{repository}{name},
-					   snapshot    => $snapshot_name);
-  print $snapshot_status, "\n", Dumper $snapshot_status;
-} while ($snapshot_status eq 'IN_PROGRESS');
+					   snapshot    => $snapshot_name)->{snapshots}[0]{state};
+  print $snapshot_status, "\n";
+} while ($snapshot_status eq 'IN_PROGRESS' or $snapshot_status eq 'STARTED');
 
 $es = connect_to_es_cluster($config{cluster_staging});
 

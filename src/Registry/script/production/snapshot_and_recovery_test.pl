@@ -127,11 +127,12 @@ eval {
   my ($response, $restore_status);
   do {
     # $response = HTTP::Tiny->new()->request('GET', sprintf "http://%s/_cat/recovery?v", $config{cluster_staging}{nodes});
-    
-    # $response = HTTP::Tiny->new()->request('GET', sprintf "http://%s/_recovery?pretty&human", $config{cluster_staging}{nodes});
-    my $ua = LWP::UserAgent->new;
-    my $request = GET(sprintf "http://%s/_recovery?pretty&human", $config{cluster_staging}{nodes});
-    my $response = $ua->request($request);
+    $response = HTTP::Tiny->new()->request('GET', sprintf "http://%s/_recovery?pretty&human", $config{cluster_staging}{nodes});
+    print Dumper $response; exit;
+
+    # my $ua = LWP::UserAgent->new;
+    # my $request = GET(sprintf "http://%s/_recovery?pretty&human", $config{cluster_staging}{nodes});
+    # $response = $ua->request($request);
   } while (not restore_complete($response->content));
 };
 $logger->logdie($@) if $@;

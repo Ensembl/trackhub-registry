@@ -67,15 +67,24 @@ $logger->info("Creating snapshot ${snapshot_name} of indices $indices");
 # TODO
 # - monitor progress
 # - email in case of problem
-try {
+eval {
   $es->snapshot->create(repository  => $config{repository}{name},
 			snapshot    => $snapshot_name,
 			body        => {
 					indices => $indices
 				       });
-} catch {
-  $logger->logdie("Couldn't take snapshot ${snapshot_name}: $!");
-};
+}; # catch {
+$logger->logdie("Couldn't take snapshot ${snapshot_name}: $@") if $@;
+#};
+
+# monitor snapshot status, cannot proceed to restore
+# before it is completed
+my $snapshot_status;
+do {
+  $snapshot_status = $es->snapshot->status(repository  => $config{repository}{name},
+					   snapshot    => $snapshot_name);
+  print $snapshot_status, "\n", Dumper $snapshot_status;
+} while ($snapshot_status eq 'IN_PROGRESS');
 
 $es = connect_to_es_cluster($config{cluster_staging});
 

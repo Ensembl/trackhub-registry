@@ -80,23 +80,26 @@ try {
 $es = connect_to_es_cluster($config{cluster_staging});
 
 $logger->info("Closing indices on staging cluster");
-$es->indices->close(index => [ split /,/, $indices ]);
+eval {$es->indices->close(index => [ split /,/, $indices ]); };
+$logger->logdie("Failed closing indices on staging server: $@") if $@;
+
 $logger->info("Restoring from snapshot ${snapshot_name}");
 # TODO
 # - monitor progress
 # - email in case of problem
-try {
+eval {
   $es->snapshot->restore(repository  => $config{repository}{name},
 			 snapshot    => $snapshot_name,
 			 body        => {
 					 indices => $indices
 					});
-} catch {
-  $logger->logdie("Failed restoration from snapshot ${snapshot_name}: $!");
-};
+};# catch {
+$logger->logdie("Failed restoration from snapshot ${snapshot_name}: $@") if $@;
+#};
 
-$logger->info("Reopening indices");
-$es->indices->open(index => [ split /,/, $indices ]);
+# should wait untile restoration completes
+# $logger->info("Reopening indices");
+# $es->indices->open(index => [ split /,/, $indices ]);
 
 $logger->info("DONE.");
 

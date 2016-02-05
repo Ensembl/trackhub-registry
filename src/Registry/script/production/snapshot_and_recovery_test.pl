@@ -59,7 +59,6 @@ eval {
 $logger->logdie("Error reading configuration file $config_file: $@") if $@;
 
 my $es = connect_to_es_cluster($config{cluster_prod});
-exit;
 
 my $snapshot_name = sprintf "snapshot_%s", $date;
 # we backup only relevant indices 
@@ -97,11 +96,9 @@ try {
 $logger->info("DONE.");
 
 sub connect_to_es_cluster {
-  my %cluster_conf = shift;
-  my $cluster_name = $cluster_conf{name};
-  my $nodes = $cluster_conf{nodes};
-
-  print $cluster_name, "\n";
+  my $cluster_conf = shift;
+  my $cluster_name = $cluster_conf->{name};
+  my $nodes = $cluster_conf->{nodes};
 
   $logger->info("Checking the cluster ${cluster_name} is up and running");
   my $esurl;

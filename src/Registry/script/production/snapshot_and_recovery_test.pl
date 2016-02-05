@@ -79,6 +79,8 @@ try {
 
 $es = connect_to_es_cluster($config{cluster_staging});
 
+$logger->info("Closing indices on staging cluster");
+$es->indices->close(index => [ split /,/, $indices ]);
 $logger->info("Restoring from snapshot ${snapshot_name}");
 # TODO
 # - monitor progress
@@ -92,6 +94,9 @@ try {
 } catch {
   $logger->logdie("Failed restoration from snapshot ${snapshot_name}: $!");
 };
+
+$logger->info("Reopening indices");
+$es->indices->open(index => [ split /,/, $indices ]);
 
 $logger->info("DONE.");
 

@@ -12,6 +12,7 @@ use Pod::Usage;
 use Data::Dumper;
 use JSON;
 use HTTP::Tiny;
+use HTTP::Request::Common qw/GET POST/;
 use Search::Elasticsearch;
 
 # default option values
@@ -125,7 +126,10 @@ eval {
   my ($response, $restore_status);
   do {
     # $response = HTTP::Tiny->new()->request('GET', sprintf "http://%s/_cat/recovery?v", $config{cluster_staging}{nodes});
-    $response = HTTP::Tiny->new()->request('GET', sprintf "http://%s/_recovery?pretty&human", $config{cluster_staging}{nodes});
+    
+    # $response = HTTP::Tiny->new()->request('GET', sprintf "http://%s/_recovery?pretty&human", $config{cluster_staging}{nodes});
+    my $request = GET(sprintf "http://%s/_recovery?pretty&human", $config{cluster_staging}{nodes});
+    my $response = request($request);
     print Dumper $response->{content}; exit;
   } while (not restore_complete($response->{content}));
 };

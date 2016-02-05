@@ -132,8 +132,7 @@ eval {
     my $ua = LWP::UserAgent->new;
     my $request = GET(sprintf "http://%s/_recovery?pretty&human", $config{cluster_staging}{nodes});
     my $response = $ua->request($request);
-    print Dumper $response->{content}; exit;
-  } while (not restore_complete($response->{content}));
+  } while (not restore_complete($response->content));
 };
 $logger->logdie($@) if $@;
 
@@ -145,28 +144,46 @@ $logger->info("DONE.");
 sub restore_complete {
   my $response = shift;
   my $info;
-  open my $FH, '<', \$response or die "Cannot read response: $!\n";
-  <$FH>; # first line is header
-  while (my $line = <$FH>) {
-    chomp ($line);
-    next if $line =~ /^\s/;
-    my ($index, $shard, $time, $type, $stage, $source_host, $target_host, $repository, $snapshot, $files, $files_percent, $bytes, $bytes_percent, $total_files, $total_bytes, $translog, $translog_percent, $total_translog) =
-      split /\s+/, $line;
-    $info->{$index}{$shard} = $stage;
-    print "$index\t$shard\t$stage\n";
-  }
-  close $FH;
 
-  foreach my $index (keys %{$info}) {
-    foreach my $shard (keys %{$info->{$index}}) {
+  #
+  # this is to parse the response to the cat API call
+  #
+  # open my $FH, '<', \$response or die "Cannot read response: $!\n";
+  # <$FH>; # first line is header
+  # while (my $line = <$FH>) {
+  #   chomp ($line);
+  #   next if $line =~ /^\s/;
+  #   my ($index, $shard, $time, $type, $stage, $source_host, $target_host, $repository, $snapshot, $files, $files_percent, $bytes, $bytes_percent, $total_files, $total_bytes, $translog, $translog_percent, $total_translog) =
+  #     split /\s+/, $line;
+  #   $info->{$index}{$shard} = $stage;
+  #   print "$index\t$shard\t$stage\n";
+  # }
+  # close $FH;
+
+  # foreach my $index (keys %{$info}) {
+  #   foreach my $shard (keys %{$info->{$index}}) {
+  #     # we die if we get unexpected stage so that we
+  #     # can interrupt the monitoring process
+  #     my $stage = $info->{$index}{$shard};
+  #     die "Something unexpected happened during recovery, stage: $stage"
+  # 	unless ($stage eq 'done' or $stage eq 'index' or $stage eq 'init');
+  #     return 0 if $info->{$index}{$shard} ne 'done';
+  #   }
+  # }
+
+  my $content = from_json($response);
+  foreach my $index (keys %{$content}) {
+    foreach my $shard (@{$content->{shards}}) {
       # we die if we get unexpected stage so that we
       # can interrupt the monitoring process
-      my $stage = $info->{$index}{$shard};
+      my $stage = $shard->{stage};
+      print "$index\t", $shard->{id}, "\t$stage\n"; 
       die "Something unexpected happened during recovery, stage: $stage"
-	unless ($stage eq 'done' or $stage eq 'index' or $stage eq 'init');
-      return 0 if $info->{$index}{$shard} ne 'done';
+  	unless ($stage eq 'DONE' or $stage eq 'INDEX' or $stage eq 'INIT');
+      return 0 if $stage ne 'DONE';
     }
   }
+
   return 1;
 }
 

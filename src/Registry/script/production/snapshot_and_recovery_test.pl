@@ -58,20 +58,8 @@ eval {
 };
 $logger->logdie("Error reading configuration file $config_file: $@") if $@;
 
-$logger->info("Checking the production cluster is up and running");
-my $esurl;
-if (ref $config{cluster_prod}{nodes} eq 'ARRAY') {
-  $esurl = sprintf "http://%s", $config{cluster_prod}{nodes}[0];
-} else {
-  $esurl = sprintf "http://%s", $config{cluster_prod}{nodes};
-}
-$logger->logdie(sprintf "Cluster %s is not up", $config{cluster_prod}{name})
-  unless HTTP::Tiny->new()->request('GET', $esurl)->{status} eq '200';
-
-$logger->info("Instantiating production ES client");
-my $es = Search::Elasticsearch->new(cxn_pool => 'Sniff',
-				    nodes => $config{cluster_prod}{nodes});
-
+my $es = connect_to_es_cluster($config{cluster_prod});
+exit;
 
 my $snapshot_name = sprintf "snapshot_%s", $date;
 # we backup only relevant indices 
@@ -90,19 +78,7 @@ try {
   $logger->logdie("Couldn't take snapshot ${snapshot_name}: $!");
 };
 
-
-$logger->info("Checking the staging cluster is up and running");
-if (ref $config{cluster_staging}{nodes} eq 'ARRAY') {
-  $esurl = sprintf "http://%s", $config{cluster_staging}{nodes}[0];
-} else {
-  $esurl = sprintf "http://%s", $config{cluster_staging}{nodes};
-}
-$logger->logdie(sprintf "Cluster %s is not up", $config{cluster_staging}{name})
-  unless HTTP::Tiny->new()->request('GET', $esurl)->{status} eq '200';
-
-$logger->info("Instantiating staging ES client");
-$es = Search::Elasticsearch->new(cxn_pool => 'Sniff',
-				 nodes => $config{cluster_staging}{nodes});
+$es = connect_to_es_cluster($config{cluster_staging});
 
 $logger->info("Restoring from snapshot ${snapshot_name}");
 # TODO
@@ -115,10 +91,32 @@ try {
 					 indices => $indices
 					});
 } catch {
-  $logger->logdie("Couldn't take snapshot ${snapshot_name}: $!");
+  $logger->logdie("Failed restoration from snapshot ${snapshot_name}: $!");
 };
 
 $logger->info("DONE.");
+
+sub connect_to_es_cluster {
+  my %cluster_conf = shift;
+  my $cluster_name = $cluster_conf{name};
+  my $nodes = $cluster_conf{nodes};
+
+  print $cluster_name, "\n";
+
+  $logger->info("Checking the cluster ${cluster_name} is up and running");
+  my $esurl;
+  if (ref $nodes eq 'ARRAY') {
+    $esurl = sprintf "http://%s", $nodes->[0];
+  } else {
+    $esurl = sprintf "http://%s", $nodes;
+  }
+  $logger->logdie(sprintf "Cluster %s is not up", $cluster_name)
+    unless HTTP::Tiny->new()->request('GET', $esurl)->{status} eq '200';
+
+  $logger->info("Instantiating ES client");
+  return Search::Elasticsearch->new(cxn_pool => 'Sniff',
+				    nodes => $nodes);
+}
 
 __END__
 

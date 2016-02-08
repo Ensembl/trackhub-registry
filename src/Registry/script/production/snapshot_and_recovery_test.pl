@@ -200,7 +200,6 @@ eval {
 	# we die if we get unexpected stage so that we
 	# can interrupt the monitoring process
 	my $stage = $shard->{stage};
-	print "$index\t", $shard->{id}, "\t$stage\n"; 
 	die "Something unexpected happened during recovery, stage: $stage"
 	  unless ($stage eq 'DONE' or $stage eq 'INDEX' or $stage eq 'INIT');
 	if ($stage ne 'DONE') {
@@ -210,8 +209,6 @@ eval {
 
       }
     }
-    
-    print "\n$complete -- "; <STDIN>;
   } while (not $complete); # not restore_complete($response->content));
 };
 if ($@) {

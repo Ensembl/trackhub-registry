@@ -146,7 +146,7 @@ if ($response->code != 200) {
 # 			     sprintf "http://%s/_snapshot/backup/%s/_restore", $config{cluster_staging}{nodes}, $snapshot_name, 
 # 			     { content => { indices => $indices } });
 
-# monitor restoring process
+$logger->info("Monitor restoring process");
 sleep 5;
 eval {
   my ($response, $restore_status);

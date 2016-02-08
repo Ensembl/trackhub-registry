@@ -196,7 +196,7 @@ eval {
 
   OUTER:
     foreach my $index (keys %{$content}) {
-      foreach my $shard (@{$content->{index}{shards}}) {
+      foreach my $shard (@{$content->{$index}{shards}}) {
 	# we die if we get unexpected stage so that we
 	# can interrupt the monitoring process
 	my $stage = $shard->{stage};

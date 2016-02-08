@@ -147,6 +147,7 @@ if ($response->code != 200) {
 # 			     { content => { indices => $indices } });
 
 # monitor restoring process
+sleep 5;
 eval {
   my ($response, $restore_status);
   my $complete = 1;
@@ -158,7 +159,7 @@ eval {
     my $request = GET(sprintf "http://%s/_recovery?pretty&human", $config{cluster_staging}{nodes});
     $response = $ua->request($request);
     die "Couldn't query the recovery endpoint for status"
-      unless $response->code != 200;
+      unless $response->code == 200;
 
     my $info;
 

@@ -192,11 +192,11 @@ eval {
     my $content = eval { from_json($response->content); };
     die "Could't parse recovery endpoint status response: $@" if $@;
     
-    print Dumper $content; 
+    # print Dumper $content; 
 
   OUTER:
     foreach my $index (keys %{$content}) {
-      foreach my $shard (@{$content->{shards}}) {
+      foreach my $shard (@{$content->{index}{shards}}) {
 	# we die if we get unexpected stage so that we
 	# can interrupt the monitoring process
 	my $stage = $shard->{stage};

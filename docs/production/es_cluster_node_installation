@@ -162,6 +162,14 @@ $ sudo mount -av
 
 sudo mdadm -E -s -v >> /etc/mdadm/mdadm.conf
 
+#############
+# IMPORTANT #
+#############
+
+The addition of a new disk to the array doesn't seem straightforward, see 
+http://superuser.com/questions/808391/mdadm-raid-0-does-not-increased-size-after-grow-on-aws-linux-with-ebs
+
+the answer recommends, after issuing the necessary commands, to run "resize2fs /dev/md0"
 
 - Install latest java
 
@@ -192,7 +200,7 @@ $ sudo nano /etc/default/elasticsearch
 
 ES_HEAP_SIZE=8g
 ES_GC_LOG_FILE=/var/log/elasticsearch/gc.log
-MAX_OPEN_FILES=65535
+MAX_OPEN_FILES=65535	
 MAX_LOCKED_MEMORY=unlimited
 
 $ sudo nano /usr/lib/systemd/system/elasticsearch.service
@@ -204,7 +212,68 @@ $ sudo nano /etc/elasticsearch/elasticsearch.yml
 
 cluster.name: thregistry
 node.name: "Node [node number]"
-# path.data: /var/lib/elasticsearch0,/var/lib/elasticsearch1
+path.repo: /mnt/es_snapshots
 bootstrap.mlockall: true
 
 $ sudo service elasticsearch start
+
+- Remotely mount backup directory
+
+$ sudo apt-get install rpcbind nfs-common
+$ sudo nano /etc/hosts.deny
+...
+rpcbind : ALL
+
+$ sudo nano /etc/hosts.allow
+...
+rpcbind : 192.168.0.100
+
+$ sudo nano /etc/fstab
+...
+192.168.0.100:/mnt/backup       /mnt/es_snapshots       nfs     defaults        0 2
+
+$ sudo mount -av
+
+- Create the repository in the ES for the snapshots
+
+$ curl -XPUT 'http://localhost:9200/_snapshot/backup' -d '
+"type": "fs",
+"settings": { "location": "/mnt/es_snapshots" }
+}'
+{"acknowledged":true}
+
+######################
+
+trackhub backup server
+
+$ sudo mkdir /mnt/backup
+$ sudo chmod 777 /mnt/backup
+$ sudo chown -R ubuntu.ubuntu /mnt/backup
+
+$ sudo nano /etc/hosts.deny
+...
+rpcbind mountd nfsd statd lockd rquotad : ALL
+
+$ sudo /etc/hosts.allow
+...
+rpcbind mountd nfsd statd lockd rquotad : 192.168.0.100 192.168.0.96 192.168.0.97
+
+$ sudo apt-get install rpcbind nfs-kernel-server
+
+$ sudo nano /etc/exports
+...
+/mnt/backup 192.168.0.96(rw,sync,no_subtree_check) 192.168.0.97(rw,sync,no_subtree_check)
+
+$ sudo exportfs -ra
+$ sudo service nfs-kernel-server restart
+
+# Elasticsearch setup
+
+- repeat the same steps done for a production cluster node but with the following differences:
+
+$ sudo nano /etc/elasticsearch/elasticsearch.yml
+
+cluster.name: thregistry_staging
+node.name: "Node 0"
+path.repo: /mnt/backup
+bootstrap.mlockall: true

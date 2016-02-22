@@ -26,7 +26,7 @@ $ sudo unzip ~/Downloads/oracle/sqlplus-11.1.0.6.0-linux-x86_64.zip
 
 $ cd instantclient_11_1
 $ sudo ln -s libclntsh.so.11.1 libclntsh.so
-$ sudo tar zxvf ~/Downloads/oracle/network.tgz 
+$ sudo tar zxvf ~/Downloads/oracle/network.tgz
 $ cd
 $ nano .bashrc
 
@@ -112,7 +112,7 @@ $ mkdir ~/bin
 $ cp ../../docs/trackhub-schema/validate.py ~/bin # ~/bin should be already in PATH
 
 $ sudo apt-get install -y python-pip
-$ cd Downloads/python # assume we've got Downloads/python/jsonschema-2.5.1.tar.gz
+$ cd ~/Downloads/python # assume we've got Downloads/python/jsonschema-2.5.1.tar.gz
 $ tar zxvf jsonschema-2.5.1.tar.gz
 $ cd jsonschema-2.5.1
 $ sudo python setup.py install

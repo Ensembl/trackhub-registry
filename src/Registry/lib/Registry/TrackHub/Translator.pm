@@ -1093,7 +1093,7 @@ sub _add_genome_browser_links {
   if ($division) {
     $domain =~ s/### DIVISION ###/$division/;
     my $shortLabel = $hub->{shortLabel};
-    $shortLabel =~ s/\s/_/;
+    $shortLabel =~ s/\s/_/g;
     if ($division =~ /archive/) {
       $doc->{hub}{browser_links}{ensembl} =
 	sprintf "%s/%s/Location/View?contigviewbottom=url:%s;name=%s;format=TRACKHUB;#modal_user_data", $domain, $species, $hub->{url}, $shortLabel;

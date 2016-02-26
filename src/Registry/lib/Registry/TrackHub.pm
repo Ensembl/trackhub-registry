@@ -112,7 +112,7 @@ sub _get_hub_info {
   my $content;
  
   if ($response->{error}) {
-    push @{$response->{error}}, "Please the check the source URL in a web browser.";
+    push @{$response->{error}}, "Please check the source URL in a web browser.";
     die join("\n", @{$response->{error}});
   }
   $content = Encode::decode_utf8($response->{'content'}, Encode::FB_CROAK);

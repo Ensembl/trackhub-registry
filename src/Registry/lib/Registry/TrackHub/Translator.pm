@@ -1094,10 +1094,10 @@ sub _add_genome_browser_links {
     $domain =~ s/### DIVISION ###/$division/;
     if ($division =~ /archive/) {
       $doc->{hub}{browser_links}{ensembl} =
-	sprintf "%s/%s/Location/View?contigviewbottom=url:%s;format=TRACKHUB;#modal_user_data", $domain, $species, $hub->{url};
+	sprintf "%s/%s/Location/View?contigviewbottom=url:%s;name=%s;format=TRACKHUB;#modal_user_data", $domain, $species, $hub->{url}, $hub->{shortLabel};
     } else {
       $doc->{hub}{browser_links}{ensembl} =
-	sprintf "%s/TrackHub?url=%s;species=%s", $domain, $hub->{url}, $species;      
+	sprintf "%s/TrackHub?url=%s;species=%s;name=%s", $domain, $hub->{url}, $species, $hub->{shortLabel};      
     }
   }
   

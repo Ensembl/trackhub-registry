@@ -575,8 +575,8 @@ $ucscdb2insdc =
    # http://smithlab.usc.edu/trackdata/methylation/hub.txt
    #
    # Arabidopsis thaliana
-   tair10 => 'GCA_000001735.1', # TAIR10
-   tair9  => 'GCA_000001735.1', # TAIR9
+   # tair10 => 'GCA_000001735.1', # TAIR10
+   # tair9  => 'GCA_000001735.1', # TAIR9
    #
    # http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt
    #

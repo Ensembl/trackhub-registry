@@ -105,25 +105,25 @@
       ...
       [
         {
-          'name' => 'cshl2013',
-          'shortLabel' => 'Plants',
-          'longLabel' => 'CSHL Biology of Genomes meeting 2013 demonstration assembly hub',
-          'url' => 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt',
-          'trackdbs' => [
+          'name': 'cshl2013',
+          'shortLabel': 'Plants',
+          'longLabel': 'CSHL Biology of Genomes meeting 2013 demonstration assembly hub',
+          'url': 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt',
+          'trackdbs': [
                             {
-                              'species' => '3988',
-                              'assembly' => 'GCA_000151685.2',
-                              'uri' => 'https://www.trackhubregistry.org/api/trackdb/KRBr5PS7RmapaFr7ofpTBA'
+                              'species': '3988',
+                              'assembly': 'GCA_000151685.2',
+                              'uri': 'https://www.trackhubregistry.org/api/trackdb/KRBr5PS7RmapaFr7ofpTBA'
                             },
                             {
-                              'species' => '3711',
-                              'assembly' => 'GCA_000309985.1',
-                              'uri' => 'https://www.trackhubregistry.org/api/trackdb/FOEM87nETMOCOglmm0sSsg'
+                              'species': '3711',
+                              'assembly': 'GCA_000309985.1',
+                              'uri': 'https://www.trackhubregistry.org/api/trackdb/FOEM87nETMOCOglmm0sSsg'
                             },
                             {
-                              'species' => '3702',
-                              'assembly' => 'GCA_000001735.1',
-                              'uri' => 'https://www.trackhubregistry.org/api/trackdb/hB8Npdm1ST2gBwkbQThkVg'
+                              'species': '3702',
+                              'assembly': 'GCA_000001735.1',
+                              'uri': 'https://www.trackhubregistry.org/api/trackdb/hB8Npdm1ST2gBwkbQThkVg'
                             }
                         ]
         }

@@ -97,9 +97,9 @@
       {
         "url": "http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt",
         "assemblies": {
-	  araTha1 => 'GCA_000001735.1',
-	  ricCom1 => 'GCA_000151685.2',
-	  braRap1 => 'GCA_000309985.1'
+	  "araTha1": 'GCA_000001735.1',
+	  "ricCom1": 'GCA_000151685.2',
+	  "braRap1": 'GCA_000309985.1'
 	}
       }
     </pre>
@@ -124,56 +124,56 @@
       [
         {
           // ricCom1 trackDb configuration
-	  'owner' => 'exampleuser',
-          'source' => {
-                        'checksum' => 'f9561ae6f7883add3698fad7abab7e13',
-                        'url' => 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/ricCom1/trackDb.txt'
+	  'owner': 'exampleuser',
+          'source': {
+                        'checksum': 'f9561ae6f7883add3698fad7abab7e13',
+                        'url': 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/ricCom1/trackDb.txt'
                       },
-          'hub' => {
-                     'shortLabel' => 'Plants',
-                     'name' => 'cshl2013',
-                     'url' => 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt',
-                     'longLabel' => 'CSHL Biology of Genomes meeting 2013 demonstration assembly hub'
+          'hub': {
+                     'shortLabel': 'Plants',
+                     'name': 'cshl2013',
+                     'url': 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt',
+                     'longLabel': 'CSHL Biology of Genomes meeting 2013 demonstration assembly hub'
                    },
-          'species' => {
-                         'scientific_name' => 'Ricinus communis',
-                         'common_name' => 'castor bean',
-                         'tax_id' => '3988'
+          'species': {
+                         'scientific_name': 'Ricinus communis',
+                         'common_name': 'castor bean',
+                         'tax_id': '3988'
                        },
-	  'assembly' => {
-                          'synonyms' => 'ricCom1',
-                          'name' => 'JCVI_RCG_1.1',
-                          'accession' => 'GCA_000151685.2'
+	  'assembly': {
+                          'synonyms': 'ricCom1',
+                          'name': 'JCVI_RCG_1.1',
+                          'accession': 'GCA_000151685.2'
                         },
-	  'configuration' => {
-                               'repeatMasker_' => {
-                                                    'priority' => '149.1',
-                                                    'visibility' => 'dense',
-                                                    'compositeTrack' => 'on',
-                                                    'track' => 'repeatMasker_',
-                                                    'shortLabel' => 'RepeatMasker',
+	  'configuration': {
+                               'repeatMasker_': {
+                                                    'priority': '149.1',
+                                                    'visibility': 'dense',
+                                                    'compositeTrack': 'on',
+                                                    'track': 'repeatMasker_',
+                                                    'shortLabel': 'RepeatMasker',
 	  ...
 	  ... 
 	},
         {
           // araTha1 trackDb configuration 
 	  ...
-	  'hub' => {
-                     'shortLabel' => 'Plants',
-                     'name' => 'cshl2013',
-                     'url' => 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt',
-                     'longLabel' => 'CSHL Biology of Genomes meeting 2013 demonstration assembly hub'
+	  'hub': {
+                     'shortLabel': 'Plants',
+                     'name': 'cshl2013',
+                     'url': 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt',
+                     'longLabel': 'CSHL Biology of Genomes meeting 2013 demonstration assembly hub'
                    },
 	  ...
         },
         {
 	  // braRap1 trackDb configuration
 	  ...
-	  'hub' => {
-                     'shortLabel' => 'Plants',
-                     'name' => 'cshl2013',
-                     'url' => 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt',
-                     'longLabel' => 'CSHL Biology of Genomes meeting 2013 demonstration assembly hub'
+	  'hub': {
+                     'shortLabel': 'Plants',
+                     'name': 'cshl2013',
+                     'url': 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt',
+                     'longLabel': 'CSHL Biology of Genomes meeting 2013 demonstration assembly hub'
                    },
 	  ...
         }

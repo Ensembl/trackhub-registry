@@ -162,45 +162,45 @@
     ...
     [
       {
-        'trackdbs' => [
+        'trackdbs': [
                             {
-                              'species' => '3988',
-                              'assembly' => 'GCA_000151685.2',
-                              'uri' => 'https://www.trackhubregistry.org/api/trackdb/knB1GHPYSdmeypb-R8sxhA'
+                              'species': '3988',
+                              'assembly': 'GCA_000151685.2',
+                              'uri': 'https://www.trackhubregistry.org/api/trackdb/knB1GHPYSdmeypb-R8sxhA'
                             },
                             {
-                              'species' => '3711',
-                              'assembly' => 'GCA_000309985.1',
-                              'uri' => 'https://www.trackhubregistry.org/api/trackdb/JFF3OqH1QJmIJSlLfICyQg'
+                              'species': '3711',
+                              'assembly': 'GCA_000309985.1',
+                              'uri': 'https://www.trackhubregistry.org/api/trackdb/JFF3OqH1QJmIJSlLfICyQg'
                             },
                             {
-                              'species' => '3702',
-                              'assembly' => 'GCA_000001735.1',
-                              'uri' => 'https://www.trackhubregistry.org/api/trackdb/We3M8-1RQnaUYpTspYQpCQ'
+                              'species': '3702',
+                              'assembly': 'GCA_000001735.1',
+                              'uri': 'https://www.trackhubregistry.org/api/trackdb/We3M8-1RQnaUYpTspYQpCQ'
                             }
                           ],
-        'shortLabel' => 'Plants',
-        'name' => 'cshl2013',
-        'url' => 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt',
-        'longLabel' => 'CSHL Biology of Genomes meeting 2013 demonstration assembly hub'
+        'shortLabel': 'Plants',
+        'name': 'cshl2013',
+        'url': 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt',
+        'longLabel': 'CSHL Biology of Genomes meeting 2013 demonstration assembly hub'
       },
       {
-        'trackdbs' => [
+        'trackdbs': [
                             {
-                              'species' => '9606',
-                              'assembly' => 'GCA_000001405.15',
-                              'uri' => 'https://www.trackhubregistry.org/api/trackdb/rkaQgGf_TxW5xKElGkYQAA'
+                              'species': '9606',
+                              'assembly': 'GCA_000001405.15',
+                              'uri': 'https://www.trackhubregistry.org/api/trackdb/rkaQgGf_TxW5xKElGkYQAA'
                             },
                             {
-                              'species' => '9606',
-                              'assembly' => 'GCA_000001405.1',
-                              'uri' => 'https://www.trackhubregistry.org/api/trackdb/-IT64jDKRXiQN_Blhjy4Uw'
+                              'species': '9606',
+                              'assembly': 'GCA_000001405.1',
+                              'uri': 'https://www.trackhubregistry.org/api/trackdb/-IT64jDKRXiQN_Blhjy4Uw'
                             }
                           ],
-        'shortLabel' => 'Ensembl Regulatory Build',
-        'name' => 'EnsemblRegulatoryBuild',
-        'url' => 'http://ngs.sanger.ac.uk/production/ensembl/regulation/hub.txt',
-        'longLabel' => 'Evidence summaries and provisional results for the new Ensembl Regulatory Build'
+        'shortLabel': 'Ensembl Regulatory Build',
+        'name': 'EnsemblRegulatoryBuild',
+        'url': 'http://ngs.sanger.ac.uk/production/ensembl/regulation/hub.txt',
+        'longLabel': 'Evidence summaries and provisional results for the new Ensembl Regulatory Build'
       },
     ]
   </pre>
@@ -309,9 +309,9 @@
 	    { 
 	      "url" : "http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt", 
 	      "assemblies": {
-	        araTha1 => 'GCA_000001735.1',
-		ricCom1 => 'GCA_000151685.2',
-		braRap1 => 'GCA_000309985.1'
+	        "araTha1": 'GCA_000001735.1',
+		"ricCom1": 'GCA_000151685.2',
+		"braRap1": 'GCA_000309985.1'
 	      }
 	    }
 	  </pre>
@@ -337,9 +337,9 @@
     {
       "url": "http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt",
       "assemblies": {
-        araTha1 => 'GCA_000001735.1',
-	ricCom1 => 'GCA_000151685.2',
-	braRap1 => 'GCA_000309985.1'
+        "araTha1": 'GCA_000001735.1',
+	"ricCom1": 'GCA_000151685.2',
+	"braRap1": 'GCA_000309985.1'
       }
     }
   </pre>
@@ -583,36 +583,36 @@
     Content-type: application/json
     ...
     {
-          'owner' => 'exampleuser',
-          'created' => 1440778576,
-          'version' => 'v1.0',
-          'type' => 'genomics',
-          'source' => {
-                        'checksum' => 'f9561ae6f7883add3698fad7abab7e13',
-                        'url' => 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/ricCom1/trackDb.txt'
+          'owner': 'exampleuser',
+          'created': 1440778576,
+          'version': 'v1.0',
+          'type': 'genomics',
+          'source': {
+                        'checksum': 'f9561ae6f7883add3698fad7abab7e13',
+                        'url': 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/ricCom1/trackDb.txt'
                       },
-          'hub' => {
-                     'shortLabel' => 'Plants',
-                     'name' => 'cshl2013',
-                     'url' => 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt',
-                     'longLabel' => 'CSHL Biology of Genomes meeting 2013 demonstration assembly hub'
+          'hub': {
+                     'shortLabel': 'Plants',
+                     'name': 'cshl2013',
+                     'url': 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt',
+                     'longLabel': 'CSHL Biology of Genomes meeting 2013 demonstration assembly hub'
                    },
-          'species' => {
-                         'scientific_name' => 'Ricinus communis',
-                         'common_name' => 'castor bean',
-                         'tax_id' => '3988'
+          'species': {
+                         'scientific_name': 'Ricinus communis',
+                         'common_name': 'castor bean',
+                         'tax_id': '3988'
                        },
-          'assembly' => {
-                          'synonyms' => 'ricCom1',
-                          'name' => 'JCVI_RCG_1.1',
-                          'accession' => 'GCA_000151685.2'
+          'assembly': {
+                          'synonyms': 'ricCom1',
+                          'name': 'JCVI_RCG_1.1',
+                          'accession': 'GCA_000151685.2'
                         },
 
-          'configuration' => {
-                               'repeatMasker_' => {
-                                                    'priority' => '149.1',
-                                                    'visibility' => 'dense',
-                                                    'compositeTrack' => 'on',
+          'configuration': {
+                               'repeatMasker_': {
+                                                    'priority': '149.1',
+                                                    'visibility': 'dense',
+                                                    'compositeTrack': 'on',
 	  ...
     }
   </pre>
@@ -699,13 +699,13 @@
     User: exampleuser
     Auth-Token: 6l5/GuIiOSCywuSI9HF1VU97clwb/CXPDFS0MyAB/HCZuxtjQBj4uORZL8NY3Yhi
     {
-      type    => 'epigenomics',
-      hub     => { name => 'Test', shortLabel => 'Test Hub', longLabel => 'Test Hub' },
-      version => 'v1.0',
-      species => { tax_id => 9606, scientific_name => 'Homo sapiens' },
-      assembly => { accession => 'GCA_000001405.15' },
-      data => [ { id => 'test', molecule => 'genomic_DNA' } ],
-      configuration => { test => { shortLabel => 'test' } } 
+      "type":    'epigenomics',
+      "hub": { "name": 'Test', "shortLabel": 'Test Hub', "longLabel": 'Test Hub' },
+      "version": 'v1.0',
+      "species": { "tax_id": 9606, "scientific_name": 'Homo sapiens' },
+      "assembly": { "accession": 'GCA_000001405.15' },
+      "data": [ { "id": 'test', "molecule": 'genomic_DNA' } ],
+      "configuration": { "test": { "shortLabel": 'test' } } 
     }
   </pre>
 
@@ -797,13 +797,13 @@
     User: exampleuser
     Auth-Token: 6l5/GuIiOSCywuSI9HF1VU97clwb/CXPDFS0MyAB/HCZuxtjQBj4uORZL8NY3Yhi
     {
-      type    => 'epigenomics',
-      hub     => { name => 'Test', shortLabel => 'Test Hub', longLabel => 'Test Hub' },
-      version => 'v1.0',
-      species => { tax_id => 9606, scientific_name => 'Homo sapiens' },
-      assembly => { accession => 'GCA_000001405.15' },
-      data => [ { id => 'test', molecule => 'genomic_DNA' } ],
-      configuration => { test => { shortLabel => 'test' } } 
+      "type": 'epigenomics',
+      "hub": { "name": 'Test', "shortLabel": 'Test Hub', "longLabel": 'Test Hub' },
+      "version": 'v1.0',
+      "species": { "tax_id": 9606, "scientific_name": 'Homo sapiens' },
+      "assembly": { "accession": 'GCA_000001405.15' },
+      "data": [ { "id": 'test', "molecule": 'genomic_DNA' } ],
+      "configuration": { "test": { "shortLabel": 'test' } } 
     }
   </pre>
 
@@ -813,10 +813,10 @@
     Content-type: application/json
     ...
     {
-          'owner' => 'exampleuser',
-          'created' => 1440778576,
-          'version' => 'v1.0',
-          'type' => 'epigenomics',
+          'owner': 'exampleuser',
+          'created': 1440778576,
+          'version': 'v1.0',
+          'type': 'epigenomics',
 	  ...
 	  ...
     }
@@ -911,10 +911,10 @@
     HTTP/1.0 200 OK
     ...
     {
-          'owner' => 'exampleuser',
-          'created' => 1440778576,
-          'version' => 'v1.0',
-          'type' => 'epigenomics',
+          'owner': 'exampleuser',
+          'created': 1440778576,
+          'version': 'v1.0',
+          'type': 'epigenomics',
 	  ...
 	  ...
     }    

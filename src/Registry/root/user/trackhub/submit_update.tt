@@ -6,8 +6,10 @@
 </div>
 <div class="row">
   <div class="col-sm-12">
+<!--
     <div class="alert alert-info alert-dismissible" role="alert">
       <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+-->
       <p>
         As you are registered with the system, you can start using the <a href="[% c.uri_for('/docs/api/registration') %]">Registration API</a>, which allows you to use <a href="[% c.uri_for('/docs/api/registration#workflow') %]">RESTful workflows</a> to manage your track data hubs with the Registry.
       </p>
@@ -19,7 +21,8 @@
 	  <li><a href="[% c.uri_for('/docs/api/registration/reference') %]">get/update/delete</a> a given track hub in the registry</li>
         </ul>
       </p>
+<!--
     </div>
-
+-->
   </div>
 </div>

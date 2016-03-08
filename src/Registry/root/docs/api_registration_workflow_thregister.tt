@@ -117,7 +117,7 @@
   <p>
     Response:
     <pre>
-      200 OK
+      201 Created
       Content-type: application/json; charset=utf-8
       Location: [ 'https://www.trackhubregistry.org/api/trackdb/KRBr5PS7RmapaFr7ofpTBA, 'https://www.trackhubregistry.org/api/trackdb/hB8Npdm1ST2gBwkbQThkVg', 'https://www.trackhubregistry.org/api/trackdb/FOEM87nETMOCOglmm0sSsg' ]
       ...
@@ -186,7 +186,7 @@
   <p>
     Remember: <u>always check the response code</u> since it indicates whether the request succeeded, or how it failed.
     <ul>
-      <li>if the request is successful, the server returns HTTP response code 200 (OK)</li>
+      <li>if the request is successful, the server returns HTTP response code 201 (Created)</li>
       <li>if the credentials supplied in the authentication header are invalid, the server returns HTTP response code 401</li>
       <li>if your hub is not compliant with the UCSC hub specs, the server returns HTTP response code 400. The body contains the message: "hubCheck report: ..."</li>
       <li>if the hub is not available or cannot be correctly parsed, the server returns HTTP response code 400. The response body message contains the error</li>

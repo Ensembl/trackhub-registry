@@ -164,11 +164,9 @@
 	    [% status = item.get_value('status').message %]
 	    [% h = item.get_value('hub'); %]
 	    [% urls = h.browser_links %]
-	    <!--
-	    [%# IF h.ok == 0 %]
+	    [% IF h.ok == 0 %]
 	      [% status = 'Hub Unavailable' %]
 	    [% END %]
-	    -->
 	    [% s = item.get_value('species'); %]
 	    [% a = item.get_value('assembly'); %]
 	    [% IF status == 'All is Well' %]

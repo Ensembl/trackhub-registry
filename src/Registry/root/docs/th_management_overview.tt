@@ -69,9 +69,9 @@
     <p>
       Using this API, you can:
       <ul>
-        <li>register a track data hub with the registry;</li>
-	<li>list the all your registered track hubs or data bases;</li>
-	<li>get/update/delete a particular track data base in the registry</li>
+          <li><a href="[% c.uri_for('/docs/api/registration/workflow/thregister') %]">register track data hubs</a> with the registry;</li>
+	  <li><a href="[% c.uri_for('/docs/api/registration/workflow/thlist') %]">list</a> the all your registered track hubs or data bases;</li>
+	  <li><a href="[% c.uri_for('/docs/api/registration/reference') %]">get/update/delete</a> a given track hub in the registry</li>
       </ul>
     </p>
 

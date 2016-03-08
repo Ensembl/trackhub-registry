@@ -8,7 +8,17 @@
   <div class="col-sm-12">
     <div class="alert alert-info alert-dismissible" role="alert">
       <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-      Introducing the REST API...
+      <p>
+        As you are registered with the system, you can start using the <a href="[% c.uri_for('/docs/api/registration') %]">Registration API</a>, which allows you to use <a href="[% c.uri_for('/docs/api/registration#workflow') %]">RESTful workflows</a> to manage your track data hubs with the Registry.
+      </p>
+      <p>
+        Using this API, you can:
+        <ul>
+          <li><a href="[% c.uri_for('/docs/api/registration/workflow/thregister') %]">register track data hubs</a> with the registry;</li>
+	  <li><a href="[% c.uri_for('/docs/api/registration/workflow/thlist') %]">list</a> the all your registered track hubs or data bases;</li>
+	  <li><a href="[% c.uri_for('/docs/api/registration/reference') %]">get/update/delete</a> a given track hub in the registry</li>
+        </ul>
+      </p>
     </div>
 
   </div>

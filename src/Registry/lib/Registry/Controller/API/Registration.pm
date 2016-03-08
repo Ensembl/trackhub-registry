@@ -267,7 +267,7 @@ sub trackhub_POST {
 
   # read parameters, remote hub URL/type/assembly maps
   my $url = $c->req->data->{url};
-  my $trackdb_type = $c->req->data->{type} || 'genomics'; # default to genomics type
+  my $trackdb_type = lc $c->req->data->{type} || 'genomics'; # default to genomics type
   my $assembly_map = $c->req->data->{assemblies}; # might have submitted name -> accession map in case of non-UCSC assemblies
   my $public = # whether the trackDbs are available for search or not, default: yes
     defined $c->req->data->{public}?$c->req->data->{public}:1; 

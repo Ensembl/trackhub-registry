@@ -201,15 +201,22 @@ sub index :Path :Args(0) {
   };
   
   # check hub is available for each search result
-  foreach my $item (@{$results->items}) {
-    my $hub = $item->get_value('hub');
+  #
+  # NOTE:
+  # this is introducing a delay in the showing of the search
+  # results. Moreover, need to pass the ok status to the view_trackhub
+  # action otherwise it will rely on the actual content of the document
+  # to show the trackDB status
+  #
+  # foreach my $item (@{$results->items}) {
+  #   my $hub = $item->get_value('hub');
 
-    $hub->{ok} = 1;
-    my $response = file_exists($hub->{url}, { nice => 1 });
-    $hub->{ok} = 0 if $response->{error};
+  #   $hub->{ok} = 1;
+  #   my $response = file_exists($hub->{url}, { nice => 1 });
+  #   $hub->{ok} = 0 if $response->{error};
     
-    $item->set_value('hub', $hub);
-  }
+  #   $item->set_value('hub', $hub);
+  # }
 
   $c->stash(query_string    => $params->{q},
 	    filters         => $params,

@@ -101,7 +101,8 @@
 	        "query":    { "type": "string" },
 		"species":  { "type": "string" },
 		"assembly": { "type": "string" },
-		"hub":      { "type": "string" }
+		"hub":      { "type": "string" },
+		"type":     { "type": "string", "enum": [ "genomics", "epigenomics", "transcriptomics", "proteomics" ] }
 	      }
 	    }
 	  </pre>

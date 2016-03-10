@@ -85,6 +85,8 @@ sub search_POST {
     if $data->{assembly};
   $filters->{'hub.name'} = $data->{hub}
     if $data->{hub};
+  $filters->{type} = $data->{type}
+    if $data->{type};
   $query_args->{filters} = $filters if $filters;
 
   # do the search

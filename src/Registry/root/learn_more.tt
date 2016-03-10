@@ -21,7 +21,8 @@
     <p>Both UCSC and Ensembl have developed initial support for this technology, but there are still limitations for many users, and Ensembl's support has remained incomplete so far. Integration of track hubs into the Ensembl and UCSC genome browsers involved the copy-paste of a known URL. Discovery is based on word of mouth or the provision of <a href="http://genome.ucsc.edu/cgi-bin/hgHubConnect" target="_blank">manually curated portal pages</a> hosted by the genome browsers. We believe this system is unmaintainable, as the current growth in data volume in bioinformatics applies not only to the size and density of datasets, but also to their number. The number of public track hubs is increasing, largely because of the explosion of next generation sequencing data. Better interfaces are thus required for users to effectively explore available data sources and find those relevant for their research.</p>
 
     <p>The Trackhub Registry is designed to overcome these challenges. It is conceived as a centralised repository for registering and discovering publicly accessible track data hubs, to allow third parties willing to share their data to advertise their services, and to make it easier for researchers around the workd to discover and use hubs containing different types of genomic research data. The Registry provides an intuitive and easy to use search interface, and RESTful APIs for registering and searching track hubs, checking if a track hub is still available and obtain information which can be used by genome browsers to build convenient interfaces.</p>
-  
+
+<!--  
     <h3>Funding</h3>
     <p>
     Lorem ipsum dolor sit amet, consectetur adipiscing elit. In aliquam augue libero, a malesuada magna bibendum in. Aliquam ante diam, mollis a pellentesque vitae, pretium eu metus. Curabitur auctor venenatis luctus. Etiam lorem nunc, feugiat nec tincidunt at, lacinia vel libero. Nulla tincidunt ex quis nisi imperdiet, a vulputate libero vulputate. Nulla malesuada, ipsum eu molestie viverra, felis eros dapibus elit, in aliquam elit mauris consectetur nulla. In at suscipit lacus. Suspendisse tincidunt ipsum id venenatis sagittis. In at libero vehicula, lacinia velit in, feugiat nulla. Curabitur at dignissim massa, vitae finibus lectus. Fusce vel augue suscipit, fringilla leo eu, molestie mauris. Suspendisse varius vulputate consectetur. Curabitur eget magna felis. Quisque congue odio sem, eu dignissim lectus condimentum quis. Vivamus ac rhoncus ipsum. Pellentesque sit amet odio in sem luctus placerat et eget augue.
@@ -42,6 +43,6 @@
     <p>
     Morbi aliquam nisl id velit fermentum bibendum. Aliquam gravida condimentum nisi. Ut sit amet dui nibh. Donec sit amet enim ex. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Morbi sollicitudin accumsan leo ut varius. Phasellus tempus luctus nisi. Cras hendrerit condimentum semper. Aliquam at lacus malesuada, efficitur purus ac, egestas tellus. Aenean sed lectus placerat, malesuada nibh vel, consequat erat. Pellentesque ac leo et leo mollis bibendum. Ut ut ipsum non nulla euismod fermentum. Proin sagittis nulla vel urna sagittis, quis auctor nulla tincidunt. Vivamus luctus dolor mauris, non pretium eros tempor id.
     </p>
-
+-->
   </div>
 </div>

@@ -104,6 +104,34 @@ sub delete : Chained('base') Path('delete') Args(1) Does('ACL') RequiresRole('ad
       unless defined $id;
 
   my $config = Registry->config()->{'Model::Search'};
+
+  #
+  # delete all trackDBs which belong to the user
+  #
+  # find username
+  my $username = $c->model('Search')->search(index => $config->{user}{index},
+					     type  => $config->{user}{type},
+					     body  => {
+						       query => { filtered => { filter => { bool => { must => [ { term => { id => $id } } ] } } } }
+						      }
+					    )->{hits}{hits}[0]{_source}{username};
+  Catalyst::Exception->throw("Unable to find user information")
+      unless defined $username;
+
+  # find trackDBs which belong to user
+  my $query = { filtered => { filter => { bool => { must => [ { term => { owner => $username } } ] } } } };
+  my $user_trackdbs = $c->model('Search')->search_trackhubs(query => $query, size => 10000);
+  $c->log->debug(sprintf "Found %d trackDBs for user %s (%s)", scalar @{$user_trackdbs->{hits}{hits}}, $id, $username);
+  # delete user trackDBs
+  foreach my $trackdb (@{$user_trackdbs->{hits}{hits}}) {
+    $c->model('Search')->delete(index   => $config->{trackhub}{index},
+				type    => $config->{trackhub}{type},
+				id      => $trackdb->{_id});
+    $c->log->debug(sprintf "Document %s deleted", $trackdb->{_id});
+  }
+  $c->model('Search')->indices->refresh(index => $config->{trackhub}{index});
+
+  # delete the user
   $c->model('Search')->delete(index   => $config->{user}{index},
 			      type    => $config->{user}{type},
 			      id      => $id);

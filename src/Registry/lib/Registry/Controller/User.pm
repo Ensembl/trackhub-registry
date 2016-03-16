@@ -112,10 +112,10 @@ sub delete : Chained('base') Path('delete') Args(1) Does('ACL') RequiresRole('ad
   my $username = $c->model('Search')->search(index => $config->{user}{index},
 					     type  => $config->{user}{type},
 					     body  => {
-						       query => { filtered => { filter => { bool => { must => [ { term => { id => $id } } ] } } } }
+						       query => { filtered => { filter => { bool => { must => [ { term => { _id => $id } } ] } } } }
 						      }
 					    )->{hits}{hits}[0]{_source}{username};
-  Catalyst::Exception->throw("Unable to find user information")
+  Catalyst::Exception->throw("Unable to find user $id information")
       unless defined $username;
 
   # find trackDBs which belong to user

@@ -259,8 +259,13 @@ sub register :Path('register') Args(0) {
 
   # user input is validated
   # look if there's already a user with the provided username
+  # WARNING:
+  #   Do not make a distinction between lc/uc to take into account
+  #   the way that filtered queries work (they filter everthing to lc)
+  #   Here we're simply preventing problems by avoiding registering a
+  #   user with the same name, lower or upper case
   my $username = $self->registration_form->value->{username};
-  my $query = { term => { username => $username } };
+  my $query = { term => { username => lc $username } };
   my $user_exists = 
     $c->model('Search')->count( body => { query => $query } )->{count};
   

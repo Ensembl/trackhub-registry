@@ -119,8 +119,8 @@ sub delete : Chained('base') Path('delete') Args(1) Does('ACL') RequiresRole('ad
       unless defined $username;
 
   # find trackDBs which belong to user
-  my $query = { filtered => { filter => { bool => { must => [ { term => { owner => $username } } ] } } } };
-  my $user_trackdbs = $c->model('Search')->search_trackhubs(query => $query, size => 10000);
+  my $query = { filtered => { filter => { bool => { must => [ { term => { owner => lc $username } } ] } } } };
+  my $user_trackdbs = $c->model('Search')->search_trackhubs(query => $query, size => 100000);
   $c->log->debug(sprintf "Found %d trackDBs for user %s (%s)", scalar @{$user_trackdbs->{hits}{hits}}, $id, $username);
   # delete user trackDBs
   foreach my $trackdb (@{$user_trackdbs->{hits}{hits}}) {
@@ -149,7 +149,7 @@ sub list_trackhubs : Chained('base') :Path('trackhubs') Args(0) {
   my ($self, $c) = @_;
 
   my $trackdbs;
-  foreach my $trackdb (@{$c->model('Search')->get_trackdbs(query => { term => { owner => $c->user->username } })}) {
+  foreach my $trackdb (@{$c->model('Search')->get_trackdbs(query => { term => { owner => lc $c->user->username } })}) {
     push @{$trackdbs}, Registry::TrackHub::TrackDB->new($trackdb->{_id});
   }
 

@@ -107,7 +107,7 @@ sub trackdb_list_GET {
   my ($self, $c) = @_;
 
   # get all docs for the given user
-  my $query = { term => { owner => $c->stash->{user} } };
+  my $query = { term => { owner => lc $c->stash->{user} } };
   # TODO: use scan and scroll to retrieve large number of results efficiently
   # See: https://www.elastic.co/guide/en/elasticsearch/guide/current/scan-scroll.html#scan-scroll
   my $docs = $c->model('Search')->search_trackhubs(query => $query);

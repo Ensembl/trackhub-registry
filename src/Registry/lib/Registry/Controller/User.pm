@@ -119,8 +119,11 @@ sub delete : Chained('base') Path('delete') Args(1) Does('ACL') RequiresRole('ad
       unless defined $username;
 
   # find trackDBs which belong to user
-  my $query = { filtered => { filter => { bool => { must => [ { term => { owner => lc $username } } ] } } } };
+  my $query = { term => { owner => $username } };
+  # my $query = { filtered => { filter => { bool => { must => [ { term => { owner => lc $username } } ] } } } };
   my $user_trackdbs = $c->model('Search')->search_trackhubs(query => $query, size => 100000);
+  # my $user_trackdbs = grep { $_->{_source}{owner} eq $username } @{$c->model('Search')->search_trackhubs(query => $query, size => 100000)};
+
   $c->log->debug(sprintf "Found %d trackDBs for user %s (%s)", scalar @{$user_trackdbs->{hits}{hits}}, $id, $username);
   # delete user trackDBs
   foreach my $trackdb (@{$user_trackdbs->{hits}{hits}}) {
@@ -149,7 +152,7 @@ sub list_trackhubs : Chained('base') :Path('trackhubs') Args(0) {
   my ($self, $c) = @_;
 
   my $trackdbs;
-  foreach my $trackdb (@{$c->model('Search')->get_trackdbs(query => { term => { owner => lc $c->user->username } })}) {
+  foreach my $trackdb (@{$c->model('Search')->get_trackdbs(query => { term => { owner => $c->user->username } })}) {
     push @{$trackdbs}, Registry::TrackHub::TrackDB->new($trackdb->{_id});
   }
 
@@ -259,55 +262,58 @@ sub register :Path('register') Args(0) {
 
   # user input is validated
   # look if there's already a user with the provided username
-  # WARNING:
-  #   Do not make a distinction between lc/uc to take into account
-  #   the way that filtered queries work (they filter everthing to lc)
-  #   Here we're simply preventing problems by avoiding registering a
-  #   user with the same name, lower or upper case
   my $username = $self->registration_form->value->{username};
-  my $config = Registry->config()->{'Model::Search'};
-
-  my $query = { term => { username => $username } };
-  my $user_exists = 
-    $c->model('Search')->count(index    => $config->{user}{index},
-			       type     => $config->{user}{type},
-			       body => { query => $query } )->{count};
-  
-  unless ($user_exists) {
-    # user with the provided username does not exist, proceed with registration
-    
-    # get the max user ID to assign the ID to the new user
-    my $users = $c->model('Search')->search(index => $config->{user}{index}, type => $config->{user}{type}, size => 100000);
-    my $current_max_id = max( map { $_->{_id} } @{$users->{hits}{hits}} );
-
-    # add default user role to user 
-    my $user_data = $self->registration_form->value;
-    $user_data->{roles} = [ 'user' ];
-
-    $c->model('Search')->index(index => $config->{user}{index},
-			       type  => $config->{user}{type},
-			       id      => $current_max_id?$current_max_id + 1:1,
-			       body    => $user_data);
-
-    # refresh the index
-    $c->model('Search')->indices->refresh(index => $config->{user}{index});
-
-    # authenticate and redirect to the user profile page
-    if ($c->authenticate({ username => $username,
-			   password => $self->registration_form->value->{password} } )) {
-      $c->stash(status_msg => sprintf "Welcome user %s", $username);
-      $c->res->redirect($c->uri_for($c->controller('User')->action_for('profile'), [$username]));
-      $c->detach;
-    } else {
-      # Set an error message
-      $c->stash(error_msg => "Bad username or password.");
-    }
-
+  # NOTE:
+  # there are problems at the moment with with usernames containing
+  # upper case characters. Deny registration in this case.
+  if ($username =~ /[A-Z]/) {
+    $c->stash(error_msg => "Username should not contain upper case characters.");
   } else {
-    # user with the provided username already exists
-    # present the registration form again with the error message
-    $c->stash(error_msg => "User $username already exists. Please choose a different username.");
+    my $config = Registry->config()->{'Model::Search'};
+
+    my $query = { term => { username => $username } };
+    my $user_exists = 
+      $c->model('Search')->count(index    => $config->{user}{index},
+				 type     => $config->{user}{type},
+				 body => { query => $query } )->{count};
+  
+    unless ($user_exists) {
+      # user with the provided username does not exist, proceed with registration
+    
+      # get the max user ID to assign the ID to the new user
+      my $users = $c->model('Search')->search(index => $config->{user}{index}, type => $config->{user}{type}, size => 100000);
+      my $current_max_id = max( map { $_->{_id} } @{$users->{hits}{hits}} );
+
+      # add default user role to user 
+      my $user_data = $self->registration_form->value;
+      $user_data->{roles} = [ 'user' ];
+
+      $c->model('Search')->index(index => $config->{user}{index},
+				 type  => $config->{user}{type},
+				 id      => $current_max_id?$current_max_id + 1:1,
+				 body    => $user_data);
+
+      # refresh the index
+      $c->model('Search')->indices->refresh(index => $config->{user}{index});
+
+      # authenticate and redirect to the user profile page
+      if ($c->authenticate({ username => $username,
+			     password => $self->registration_form->value->{password} } )) {
+	$c->stash(status_msg => sprintf "Welcome user %s", $username);
+	$c->res->redirect($c->uri_for($c->controller('User')->action_for('profile'), [$username]));
+	$c->detach;
+      } else {
+	# Set an error message
+	$c->stash(error_msg => "Bad username or password.");
+      }
+
+    } else {
+      # user with the provided username already exists
+      # present the registration form again with the error message
+      $c->stash(error_msg => "User $username already exists. Please choose a different username.");
+    }    
   }
+
 }
 
 # sub admin : Chained('base') PathPart('') CaptureArgs(0) Does('ACL') RequiresRole('admin') ACLDetachTo('denied') {}

@@ -265,16 +265,18 @@ sub register :Path('register') Args(0) {
   #   Here we're simply preventing problems by avoiding registering a
   #   user with the same name, lower or upper case
   my $username = $self->registration_form->value->{username};
-  my $query = { term => { username => lc $username } };
+  my $config = Registry->config()->{'Model::Search'};
+
+  my $query = { term => { username => $username } };
   my $user_exists = 
-    $c->model('Search')->count( body => { query => $query } )->{count};
+    $c->model('Search')->count(index    => $config->{user}{index},
+			       type     => $config->{user}{type},
+			       body => { query => $query } )->{count};
   
   unless ($user_exists) {
-    # user with the provided username does not exist
-    # proceed with registration
+    # user with the provided username does not exist, proceed with registration
     
     # get the max user ID to assign the ID to the new user
-    my $config = Registry->config()->{'Model::Search'};
     my $users = $c->model('Search')->search(index => $config->{user}{index}, type => $config->{user}{type}, size => 100000);
     my $current_max_id = max( map { $_->{_id} } @{$users->{hits}{hits}} );
 

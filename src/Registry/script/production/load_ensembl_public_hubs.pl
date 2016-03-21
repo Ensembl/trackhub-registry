@@ -12,8 +12,9 @@ use HTTP::Request::Common;
 use LWP::UserAgent;
 use Data::Dumper;
 
+$| = 1;
 my $ua = LWP::UserAgent->new;
-my $server = 'http://beta.trackhubregistry.org';
+my $server = 'https://beta.trackhubregistry.org';
 
 @ARGV == 2 or die "Usage: load_ensembl_public_hubs.pl <user> <password>\n";
 
@@ -31,25 +32,26 @@ if ($response->is_success) {
 
 my $hubs = 
   [
-   # DONE
-   # { # Blueprint GRCh38 Hub
-   #  url => "ftp://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub"
-   # },
+   { # Blueprint GRCh38 Hub
+    url => "ftp://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub"
+   },
    { # Blueprint GRCh37 Hub
     url => 'http://ftp.ebi.ac.uk/pub/databases/blueprint/releases/20150128/homo_sapiens/hub/hub.txt'
    },
    { # ENCODE Analysis Hub (2011)
      url => 'http://ftp.ebi.ac.uk/pub/databases/ensembl/encode/integration_data_jan2011/hub.txt'
    },
-   { # Broad Improved Canine Annotation v1
-    url => 'https://www.broadinstitute.org/ftp/pub/vgb/dog/trackHub/hub.txt'
-   },
+   # Error: parent track miRNA_expression is missing
+   # { # Broad Improved Canine Annotation v1
+   #  url => 'https://www.broadinstitute.org/ftp/pub/vgb/dog/trackHub/hub.txt'
+   # },
    { # Cancer genome polyA site & usage
     url => 'http://johnlab.org/xpad/Hub/UCSC.txt'
    },
    { # CEMT (CEEHRC) Epigenomic Data tracks from BCGSC, Vancouver
     url => 'http://www.bcgsc.ca/downloads/edcc/data/CEMT/hub/bcgsc_datahub.txt'
    },
+   # Error 503: service temporarily unavailable
    { # CREST IHEC Epigenome Project Hub
     url => 'http://epigenome.cbrc.jp/files/jst/hub/hub.txt'
    },
@@ -60,16 +62,21 @@ my $hubs =
    # contains tair10 which is assembly hub not directly supported by UCSC
    # but we still have manual mapping for it since it indicates the
    # assembly accession ID in the hub description file
+   # Error 504: gateway time out
+   # Error: "error":"Unable to find GC assembly set entry for GCF_000001515.3 at Translator.pm line 946
    { # DNA Methylation Hundreds of analyzed methylomes from bisulfite sequencing data
-    url => 'http://smithlab.usc.edu/trackdata/methylation/hub.txt'
+    url => 'http://smithlab.usc.edu/trackdata/methylation/hub.txt',
+    assemblies => { tair10 => 'GCA_000001735.1' }
    },
-   { # EDACC hosted Roadmap Epigenomics Hub
-    url => 'http://genboree.org/EdaccData/trackHub/hub.txt'
-   },
-   # DONE
-   # { # Sanger Genome Reference Informatics Team: Genome issues and other features
-   #  url => 'http://ngs.sanger.ac.uk/production/grit/track_hub/hub.txt'
+   # Error: utf8 \"\\xA2\" does not map to Unicode
+   # Run isutf8 (from moreutils package) on trackDb.txt which confirms:
+   # trackDb.txt: line 2654, char 1, byte offset 429: invalid UTF-8 code
+   # { # EDACC hosted Roadmap Epigenomics Hub
+   #  url => 'http://genboree.org/EdaccData/trackHub/hub.txt'
    # },
+   { # Sanger Genome Reference Informatics Team: Genome issues and other features
+    url => 'http://ngs.sanger.ac.uk/production/grit/track_hub/hub.txt'
+   },
    { # McGill Epigenomics Mapping Centre, Montreal, Quebec, Canada
     url => 'http://epigenomesportal.ca/hub/hub.txt'
    },
@@ -87,9 +94,9 @@ my $hubs =
    #  url => 'http://vizhub.wustl.edu/VizHub/RoadmapIntegrative.txt'
    # },
    # TIMED OUT
-   # { # Sense/antisense gene/exon expression using Affymetrix exon array from South Dakota State University, USA
-   #  url => 'http://bioinformatics.sdstate.edu/datasets/2012-NAT/hub.txt'
-   # },
+   { # Sense/antisense gene/exon expression using Affymetrix exon array from South Dakota State University, USA
+    url => 'http://bioinformatics.sdstate.edu/datasets/2012-NAT/hub.txt'
+   },
    { # Translation Initiation Sites (TIS)
     url => 'http://gengastro.1med.uni-kiel.de/suppl/footprint/Hub/tisHub.txt'
    },
@@ -106,16 +113,17 @@ my $hubs =
   ];
 
 foreach my $hub (@{$hubs}) {
+  printf "Submitting hub at %s...", $hub->{url}; 
   $request = POST("$server/api/trackhub",
 		  'Content-type' => 'application/json',
 		  'Content'      => to_json($hub));
   $request->headers->header(user       => $user);
   $request->headers->header(auth_token => $auth_token);
   $response = $ua->request($request);
-  if ($response->is_success) {
-    printf "I have registered hub at %s\n", $hub->{url};
+  if ($response->code == 201) {
+    print " Done.\n";
   } else {
-    warn sprintf "Couldn't register hub at %s: %s [%d]", $hub->{url}, $response->content, $response->code;
+    printf "\nCouldn't register hub at %s: %s [%d]", $hub->{url}, $response->content, $response->code;
   } 
 }
 

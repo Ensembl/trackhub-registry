@@ -495,31 +495,31 @@ SKIP: {
 
   #
   # test with other public hubs
-  $URL = 'http://smithlab.usc.edu/trackdata/methylation';
-  $request = POST('/api/trackhub?permissive=1',
-  		  'Content-type' => 'application/json',
-  		  'Content'      => to_json({ url => $URL, type => 'epigenomics' }));
-  $request->headers->header(user       => 'trackhub1');
-  $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), "POST request to /api/trackhub?version=v1.0 (Methylation Hub)");
-  ok($response->is_success, 'Request successful 2xx');
-  is($response->content_type, 'application/json', 'JSON content type');
-  $content = from_json($response->content);
-  ok($content, "Docs created");
-  is(scalar @{$content}, 11, "Ten trackdb docs created");
-  foreach my $trackdb (@{$content}) {
-    is($trackdb->{type}, 'epigenomics', 'Correct hub type');
-    is($trackdb->{hub}{name}, 'Smith Lab Public Hub', 'Correct trackdb hub name');
-    is($trackdb->{hub}{shortLabel}, 'DNA Methylation', 'Correct trackdb hub shortLabel');
-    is($trackdb->{hub}{longLabel}, 'Hundreds of analyzed methylomes from bisulfite sequencing data', 'Correct trackdb hub longLabel');
-    is($trackdb->{version}, 'v1.0', 'Correct version');
-    if ($trackdb->{species}{tax_id} == 9615) {
-      is($trackdb->{assembly}{synonyms}, 'canFam3', 'Correct assembly synonym');
-      is($trackdb->{configuration}{Carmona_Dog_2014}{longLabel}, 'A Comprehensive DNA Methylation Profile of Epithelial-to-Mesenchymal Transition', 'Correct composite long label');
-      is(scalar keys %{$trackdb->{configuration}{Carmona_Dog_2014}{members}}, 7, 'Correct number of views');
-      is($trackdb->{configuration}{Carmona_Dog_2014}{members}{AMRCarmona_Dog_2014}{members}{CarmonaDog2014_DogMDCKAMR}{bigDataUrl}, 'http://smithlab.usc.edu/methbase/data/Carmona-Dog-2014/Dog_MDCK/tracks_canFam3/Dog_MDCK.amr.bb', 'Correct view member bigDataUrl');
-    }
-  }
+  # $URL = 'http://smithlab.usc.edu/trackdata/methylation';
+  # $request = POST('/api/trackhub?permissive=1',
+  # 		  'Content-type' => 'application/json',
+  # 		  'Content'      => to_json({ url => $URL, type => 'epigenomics' }));
+  # $request->headers->header(user       => 'trackhub1');
+  # $request->headers->header(auth_token => $auth_token);
+  # ok($response = request($request), "POST request to /api/trackhub?version=v1.0 (Methylation Hub)");
+  # ok($response->is_success, 'Request successful 2xx');
+  # is($response->content_type, 'application/json', 'JSON content type');
+  # $content = from_json($response->content);
+  # ok($content, "Docs created");
+  # is(scalar @{$content}, 11, "Ten trackdb docs created");
+  # foreach my $trackdb (@{$content}) {
+  #   is($trackdb->{type}, 'epigenomics', 'Correct hub type');
+  #   is($trackdb->{hub}{name}, 'Smith Lab Public Hub', 'Correct trackdb hub name');
+  #   is($trackdb->{hub}{shortLabel}, 'DNA Methylation', 'Correct trackdb hub shortLabel');
+  #   is($trackdb->{hub}{longLabel}, 'Hundreds of analyzed methylomes from bisulfite sequencing data', 'Correct trackdb hub longLabel');
+  #   is($trackdb->{version}, 'v1.0', 'Correct version');
+  #   if ($trackdb->{species}{tax_id} == 9615) {
+  #     is($trackdb->{assembly}{synonyms}, 'canFam3', 'Correct assembly synonym');
+  #     is($trackdb->{configuration}{Carmona_Dog_2014}{longLabel}, 'A Comprehensive DNA Methylation Profile of Epithelial-to-Mesenchymal Transition', 'Correct composite long label');
+  #     is(scalar keys %{$trackdb->{configuration}{Carmona_Dog_2014}{members}}, 7, 'Correct number of views');
+  #     is($trackdb->{configuration}{Carmona_Dog_2014}{members}{AMRCarmona_Dog_2014}{members}{CarmonaDog2014_DogMDCKAMR}{bigDataUrl}, 'http://smithlab.usc.edu/methbase/data/Carmona-Dog-2014/Dog_MDCK/tracks_canFam3/Dog_MDCK.amr.bb', 'Correct view member bigDataUrl');
+  #   }
+  # }
 
   #
   # Test /api/trackhub (GET)

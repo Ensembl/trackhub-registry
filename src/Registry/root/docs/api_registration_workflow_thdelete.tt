@@ -49,7 +49,7 @@
   <h3>Deleting Registered Track Hubs</h3>
 
   <p>
-    Suppose one of your registered remote public hubs does not exist or it's not public any more, or you simply don't want to make it available for search in the Trackhub Registry. You can delete a track hub from the Registry (i.e. remove all its associated trackDBs) by making a request to the <a href="[% c.uri_for('/docs/api/registration/reference#delete_trackhub_id') %]">DELETE /api/trackhub/:id</a> where you specify the name of track hub (i.e. the hub attribute value in the hub.txt file).
+    Suppose one of your registered remote public hubs does not exist or it's not public any more, or you simply don't want to make it available for search in the Track Hub Registry. You can delete a track hub from the Registry (i.e. remove all its associated trackDBs) by making a request to the <a href="[% c.uri_for('/docs/api/registration/reference#delete_trackhub_id') %]">DELETE /api/trackhub/:id</a> where you specify the name of track hub (i.e. the hub attribute value in the hub.txt file).
   </p>
   
   <h4>Prerequisites</h4>
@@ -101,7 +101,7 @@
 
   <!--
   <p>
-    Suppose one of your remote public hubs does not exist or it's not public any more, or you simply don't want to make it available for search in the Trackhub Registry. Since a track hub in not directly stored in the Registry, to remove it you have to delete its corresponding records, i.e. <u>all</u> the trackDb entities stored in the Registry which are associated to the hub. For this, you need their URIs which you can get by making a request to the <a href="">GET /api/trackhub</a> endpoint and examining the <mark>trackdbs</mark> array of the object representing the track hub under consideration, as explained in <a href="[% c.uri_for('/docs/api/registration/workflow/thlist') %]">Retrieve the list of registered track hubs</a>.
+    Suppose one of your remote public hubs does not exist or it's not public any more, or you simply don't want to make it available for search in the Track Hub Registry. Since a track hub in not directly stored in the Registry, to remove it you have to delete its corresponding records, i.e. <u>all</u> the trackDb entities stored in the Registry which are associated to the hub. For this, you need their URIs which you can get by making a request to the <a href="">GET /api/trackhub</a> endpoint and examining the <mark>trackdbs</mark> array of the object representing the track hub under consideration, as explained in <a href="[% c.uri_for('/docs/api/registration/workflow/thlist') %]">Retrieve the list of registered track hubs</a>.
   </p>
   
   <h4>Notes</h4>

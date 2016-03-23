@@ -13,11 +13,11 @@
   <div class="col-sm-3" style="margin-top: 25px;">
     <div id="search-sidebar-left">
         <div class="panel panel-primary">
-	  <div class="panel-heading">TrackHub Provider Docs</div>
+	  <div class="panel-heading">Track Hub Provider Docs</div>
           <div class="panel-body">
 	    <ul class="nav nav-list">
 	      <li><a style="font-weight: bold;">Registration</a></li>
-	      <li><a href="[% c.uri_for('/docs/management') %]">TrackHub Management</a></li>
+	      <li><a href="[% c.uri_for('/docs/management') %]">Track Hub Management</a></li>
 	      <li><a href="[% c.uri_for('/docs/dashboard') %]">Dashboard</a></li>
 	    </ul>
           </div> 
@@ -29,7 +29,7 @@
     <div class="alert alert-info alert-dismissible" role="alert">
       <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
       <p>
-        This section of the documentation is about creating Trackhubs and registering them with the Registry.
+        This section of the documentation is about creating track hubs and registering them with the Registry.
       </p>
       <p>
         Go to <a href="[% c.uri_for('/docs/search') %]">search documentation</a> if you only want to explore interesting data hubs.

@@ -59,7 +59,7 @@
 
   <h4 id=""><a href="[% c.uri_for('/docs/api/registration/workflow/thregister') %]">Registering track hubs</a></h4>
   <p>
-    You've just signed up and you've got some remote public track hubs that you want to register with and make available for search on the Trackhub Registry.
+    You've just signed up and you've got some remote public track hubs that you want to register with and make available for search on the Track Hub Registry.
   </p>
 
   <h4 id=""><a href="[% c.uri_for('/docs/api/registration/workflow/thlist') %]">Retrieve the list of registered track hubs</a></h4>
@@ -74,7 +74,7 @@
 
   <h4 id=""><a href="[% c.uri_for('/docs/api/registration/workflow/thdelete') %]">Delete registered track hubs</a></h4>
   <p>
-    One of your remote public hubs does not exist any more. Or you simply don't want to make it available for search in the Trackhub Registry.
+    One of your remote public hubs does not exist any more. Or you simply don't want to make it available for search in the Track Hub Registry.
   </p>
 
   <h4 id="logout"><a href="[% c.uri_for('/docs/api/registration/workflow/logout') %]">Log out</a></h4>

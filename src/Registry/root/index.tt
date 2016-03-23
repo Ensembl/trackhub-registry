@@ -1,10 +1,10 @@
 <div class="jumbotron background-color-primary-accent">
   <div class="container content">
     <div>
-      <h1>The Trackhub Registry</h1>
-      <h3>A global centralised collection of publicly accessible TrackHubs</h3>
+      <h1>The Track Hub Registry</h1>
+      <h3>A global centralised collection of publicly accessible track hubs</h3>
       <div class="underline"></div>
-      <p><small>The goal of the Trackhub Registry is to allow third parties to advertise <a href="http://genome.ucsc.edu/goldenPath/help/hgTrackHubHelp.html#Intro" target="_blank">track hubs</a>, and to make it easier for researchers around the world to discover and use track hubs containing different types of genomic research data.</small></p>
+      <p><small>The goal of the Track Hub Registry is to allow third parties to advertise <a href="http://genome.ucsc.edu/goldenPath/help/hgTrackHubHelp.html#Intro" target="_blank">track hubs</a>, and to make it easier for researchers around the world to discover and use track hubs containing different types of genomic research data.</small></p>
 
       <form role="search" method="post" action="[% c.uri_for('/search') %]">
         <div class="input-group">

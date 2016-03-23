@@ -44,7 +44,7 @@
     <h3 id="status">Viewing and Editing Track Hubs</h3>
 
     <p>
-      When you login into the registry using the web interface, the default panel which is shown is named "My track collections". It provides a quick overview of the data hubs you've submitted to the Trackhub registry. An imaginary example is shown below:
+      When you login into the registry using the web interface, the default panel which is shown is named "My track collections". It provides a quick overview of the data hubs you've submitted to the Track Hub registry. An imaginary example is shown below:
     </p>
 
     <img src="/static/img/dashboard_collection.png"/>
@@ -84,7 +84,7 @@
     <h3 id="monitoring">Automatic Track Hub Monitoring</h3>
 
     <p>
-      You may have noticed a section "Trackhub monitoring configuration" when you signed up in the registration form. The same appears in the profile update form. The Registry performs periodic checks on the status of the tracks data files referred to in the submitted track hubs and, based on these, it updates the status of the corresponding track databases appearing on the <a href="[% c.uri_for('/docs/search/results#status') %]">search result page</a> and on the <a href="#status">track collection tab</a> in the dashboard.
+      You may have noticed a section "Track Hub monitoring configuration" when you signed up in the registration form. The same appears in the profile update form. The Registry performs periodic checks on the status of the tracks data files referred to in the submitted track hubs and, based on these, it updates the status of the corresponding track databases appearing on the <a href="[% c.uri_for('/docs/search/results#status') %]">search result page</a> and on the <a href="#status">track collection tab</a> in the dashboard.
     </p>
     <p>
       You can control two parameters related to these periodic inspections:

@@ -38,9 +38,9 @@
   </div>
 
   <div class="col-sm-9" style="text-align: justify; text-justify: inter-word;">
-  <h2>Trackhub Registry APIs</h2>
+  <h2>Track Hub Registry APIs</h2>
   <p>
-    The Trackhub Registry implements various APIs which allow a client to interact with the Registry using a RESTful application development style:
+    The Track Hub Registry implements various APIs which allow a client to interact with the Registry using a RESTful application development style:
     <ul>
       <li><a href="[% c.uri_for('/docs/api/info') %]">Info API</a>: provides basic information about the service from the Registry;
       <li><a href="[% c.uri_for('/docs/api/registration') %]">Registration API</a>: provides support for hub providers who want to register and manage their track data hubs with the registry;
@@ -49,7 +49,7 @@
     The Registry communicates via an API client over HTTP, exchanging representations of objects in the form of JSON document elements. You use HTTP GET requests to retrieve the current representation of an object, HTTP POST and PUT requests to create or modify an object, and HTTP DELETE requests to delete an object.
   </p>
   <p>
-    Trackhub Registry clients implement a RESTful workflow, making HTTP requests to the server and retrieving the information they need from the server's responses. REST, an acronym for Representational State Transfer, describes an architectural style characteristic of programs that rely on the inherent properties of hypermedia to create and modify the state of an object whose serialized representation is accessible via an URL. If the URL of such an object is known to a client, the client can use an HTTP GET request to retrieve the representation of the object. In the Registry APIs, this representation is a JSON document. In a RESTful workflow, documents that represent an object state are passed back and forth between a client and a service with the explicit assumption that neither party need to know anything about an object other than what is presented in a single request or response. The URLs at which these documents are available often persist beyond the lifetime of the request or response that includes them.
+    Track Hub Registry clients implement a RESTful workflow, making HTTP requests to the server and retrieving the information they need from the server's responses. REST, an acronym for Representational State Transfer, describes an architectural style characteristic of programs that rely on the inherent properties of hypermedia to create and modify the state of an object whose serialized representation is accessible via an URL. If the URL of such an object is known to a client, the client can use an HTTP GET request to retrieve the representation of the object. In the Registry APIs, this representation is a JSON document. In a RESTful workflow, documents that represent an object state are passed back and forth between a client and a service with the explicit assumption that neither party need to know anything about an object other than what is presented in a single request or response. The URLs at which these documents are available often persist beyond the lifetime of the request or response that includes them.
   </p>
   <p>
     Application programs written to a REST API use HTTP requests that are often executed by a script or other programmatic access to make remote procedure calls that create, retrieve, update, or delete objects that the API defines. The operations themselves are HTTP requests and are generic to all HTTP clients. All RESTful workflows follow a common pattern:

@@ -1,4 +1,4 @@
-[% META title = 'TrackHub Registry: User Profile' %]
+[% META title = 'Track Hub Registry: User Profile' %]
 [% PROCESS user/user_nav.tt %]
 <div>
   [% FOR field IN form.error_fields %]
@@ -76,7 +76,7 @@
           </div>
         </div>
 
-        <legend>Trackhub monitoring configuration</legend>
+        <legend>Track hub monitoring configuration</legend>
 	
 	[% f = form.field('check_interval') %]
 	[% selected = 'selected'; %]

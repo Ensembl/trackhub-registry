@@ -36,7 +36,7 @@
     <h2>Genome Assembly Support</h2>
     
     <p>
-      The Trackhub Registry provides automatic and rapid integration of searched track hubs into two of the most popular genome browsers, <a href="https://genome.ucsc.edu/" target="_blank">UCSC</a> and <a href="http://www.ensembl.org" target="_blank">EnsEMBL</a>. In order to avoid committing to one specific browser, the registry has been designed in a way that takes into account common features and differences between them.
+      The Track Hub Registry provides automatic and rapid integration of searched track hubs into two of the most popular genome browsers, <a href="https://genome.ucsc.edu/" target="_blank">UCSC</a> and <a href="http://www.ensembl.org" target="_blank">EnsEMBL</a>. In order to avoid committing to one specific browser, the registry has been designed in a way that takes into account common features and differences between them.
     </p>
 
     <p>
@@ -44,7 +44,7 @@
     </p>
 
     <p>
-      The Trackhub Registry follows a policy compatible with the <a target="_blank" href="http://ensemblgenomes.org/info/about/legal/browser_agreement">Browser Genome Release Agreement</a>, in that it <u>only allows the registration of track hubs with data for assemblies that have been submitted to the <a target="_blank" href="http://www.insdc.org/">INSDC</a> archives</u> (<a target="_blank" href="http://www.ebi.ac.uk/ena">ENA</a>, <a target="_blank" href="http://www.ncbi.nlm.nih.gov/genbank/">GenBank</a> and <a target="_blank" href="http://www.ddbj.nig.ac.jp/">DDBJ</a>). These assemblies have an accession number (e.g. <a target="_blank" href="http://www.ebi.ac.uk/ena/data/view/GCA_000001405.15">GCA_000001405.15</a>) from the INSDC <a target="_blank" href="http://www.ebi.ac.uk/ena/about/genome_assembly_database">Genome Assembly Database</a>, which is used as an authoritative source of assemblies. These include a large subset of assemblies hosted natively both by UCSC and EnsEMBL; therefore, the Registry can provide reliable assembly identification to the user and guarantee integration of search results into either one or both browsers most of the time.
+      The Track Hub Registry follows a policy compatible with the <a target="_blank" href="http://ensemblgenomes.org/info/about/legal/browser_agreement">Browser Genome Release Agreement</a>, in that it <u>only allows the registration of track hubs with data for assemblies that have been submitted to the <a target="_blank" href="http://www.insdc.org/">INSDC</a> archives</u> (<a target="_blank" href="http://www.ebi.ac.uk/ena">ENA</a>, <a target="_blank" href="http://www.ncbi.nlm.nih.gov/genbank/">GenBank</a> and <a target="_blank" href="http://www.ddbj.nig.ac.jp/">DDBJ</a>). These assemblies have an accession number (e.g. <a target="_blank" href="http://www.ebi.ac.uk/ena/data/view/GCA_000001405.15">GCA_000001405.15</a>) from the INSDC <a target="_blank" href="http://www.ebi.ac.uk/ena/about/genome_assembly_database">Genome Assembly Database</a>, which is used as an authoritative source of assemblies. These include a large subset of assemblies hosted natively both by UCSC and EnsEMBL; therefore, the Registry can provide reliable assembly identification to the user and guarantee integration of search results into either one or both browsers most of the time.
     </p>
 
     <h4 id="mapping">Mapping Track Hub Assembly Names to INSDC Accessions</h4>

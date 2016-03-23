@@ -48,7 +48,7 @@
 
   <h3 id="login">Registering Track Hubs</h3>
   <p>
-    Suppose you've just <a href="[% c.uri_for('/user/register') %]">signed up</a> with the Trackhub Registry. You've also got some remote public track hubs that you want to register with and make available for search on the Registry itself.
+    Suppose you've just <a href="[% c.uri_for('/user/register') %]">signed up</a> with the Track Hub Registry. You've also got some remote public track hubs that you want to register with and make available for search on the Registry itself.
   </p>
   <p>
     After you log in, you can simply register one of your publicly accessible track hubs by POSTing its URL at <a href="[% c.uri_for('/docs/api/registration/reference#post_trackhub') %]">/api/trackhub</a>. At present, only one hub can be registered at a time. There's a plan to provide bulk request support the registration of multiple data hubs at a time.

@@ -8,7 +8,7 @@
 </div>
 
 <div class="page-header">
-  <h3>The Track Hub Registry</h3>
+  <h3>About the Track Hub Registry</h3>
 </div>
 <div class="row">
   <div class="col-sm-12" style="text-align: justify; text-justify: inter-word;">
@@ -22,12 +22,14 @@
 
     <p>The Track Hub Registry is designed to overcome these challenges. It is conceived as a centralised repository for registering and discovering publicly accessible track data hubs, to allow third parties willing to share their data to advertise their services, and to make it easier for researchers around the workd to discover and use hubs containing different types of genomic research data. The Registry provides an intuitive and easy to use search interface, and RESTful APIs for registering and searching track hubs, checking if a track hub is still available and obtain information which can be used by genome browsers to build convenient interfaces.</p>
 
-<!--  
     <h3>Funding</h3>
     <p>
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit. In aliquam augue libero, a malesuada magna bibendum in. Aliquam ante diam, mollis a pellentesque vitae, pretium eu metus. Curabitur auctor venenatis luctus. Etiam lorem nunc, feugiat nec tincidunt at, lacinia vel libero. Nulla tincidunt ex quis nisi imperdiet, a vulputate libero vulputate. Nulla malesuada, ipsum eu molestie viverra, felis eros dapibus elit, in aliquam elit mauris consectetur nulla. In at suscipit lacus. Suspendisse tincidunt ipsum id venenatis sagittis. In at libero vehicula, lacinia velit in, feugiat nulla. Curabitur at dignissim massa, vitae finibus lectus. Fusce vel augue suscipit, fringilla leo eu, molestie mauris. Suspendisse varius vulputate consectetur. Curabitur eget magna felis. Quisque congue odio sem, eu dignissim lectus condimentum quis. Vivamus ac rhoncus ipsum. Pellentesque sit amet odio in sem luctus placerat et eget augue.
+      The Track Hub Registry is supported by funding from the BBSRC (<a target="_blank" href="http://gtr.rcuk.ac.uk/project/EE7F1556-743E-4209-905D-84FAF566E3E7"><strong>ProteoGenomics: Dynamic Linkage of Genomes and Proteomes through Ensembl and ProteomeXchange</strong></a>; BB/L024225/1), the Wellcome Trust (WT095908 and WT098051) and the European Molecular Biology Laboratory.
     </p>
-
+    <img src="/static/img/bbsrc_logo.png"/>
+    <img src="/static/img/wt_logo.png"/>
+    <img src="/static/img/EMBL_logo.png"/>
+<!--
     <h3>Publications</h3>
      <p>
      Maecenas congue ornare facilisis. Cras sed venenatis sem. Praesent tincidunt lorem urna, at tincidunt lorem suscipit semper. Nulla vel quam ultricies, sodales magna eget, scelerisque sem. Donec finibus arcu ante, in volutpat ipsum vestibulum et. Ut eu condimentum massa. Sed interdum erat justo, ut consequat tortor bibendum sed.

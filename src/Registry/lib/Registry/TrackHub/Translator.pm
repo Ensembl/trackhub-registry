@@ -1111,9 +1111,9 @@ sub _handle_ensemblplants_exceptions {
 
   return 0 unless $assembly_name eq 'v0117-2013Aug' or # Oryza longistaminata 
     $assembly_name eq 'PRJEB4137' or # Oryza rufipogon
-      $assembly_name eq 'IWGSC1.0+popseq'; # Triticum aestivum
+      $assembly_name =~ 'IWGSC1'; # Triticum aestivum
 
-  if ($assembly_name eq 'IWGSC1.0+popseq') { # Triticum aestivum
+  if ($assembly_name =~ 'IWGSC1') { # Triticum aestivum
     $doc->{species}{tax_id} = 4565;
     $doc->{species}{scientific_name} = 'Triticum aestivum';
     $doc->{species}{common_name} = 'bread wheat';

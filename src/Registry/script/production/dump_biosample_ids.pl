@@ -71,14 +71,15 @@ my $es = connect_to_es_cluster($config{cluster_prod});
 # TODO
 # Correct metakey should be communicated
 #
+my $sample_id_key = 'tissue_type';
 my $results = eval {
   $es->search(index  => 'trackhubs',
 	      type   => 'trackdb',
 	      body   => {
-			 fields => [ 'accession' ],
+			 # fields => [ $sample_id_key ],
 			 query => {
 				   filtered => {
-						filter => { 'exists' => { field => 'accession' }}
+						filter => { 'exists' => { field => $sample_id_key }}
 					       }
 				  }
 			});
@@ -89,9 +90,12 @@ if ($@) {
   $logger->logdie($message);
 }
 
+my $biosample_ids;
 foreach my $doc (@{$results->{hits}{hits}}) {
-  print Dumper $doc, "\n";
-}
+  map { $biosample_ids->{$_->{$sample_id_key}}++ } @{$doc->{_source}{data}};
+} 
+
+print Dumper $biosample_ids;
 
 sub connect_to_es_cluster {
   my $cluster_conf = shift;

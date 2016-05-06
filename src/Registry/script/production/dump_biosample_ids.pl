@@ -92,7 +92,7 @@ if ($@) {
 
 my $biosample_ids;
 foreach my $doc (@{$results->{hits}{hits}}) {
-  map { $biosample_ids->{$_->{$sample_id_key}}++ } @{$doc->{_source}{data}};
+  map { $biosample_ids->{$_->{$sample_id_key}}++ if exists $_->{$sample_id_key} } @{$doc->{_source}{data}};
 } 
 
 print Dumper $biosample_ids;

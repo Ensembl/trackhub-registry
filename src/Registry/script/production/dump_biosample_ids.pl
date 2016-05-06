@@ -78,7 +78,7 @@ my $results = eval {
 			 fields => [ 'accession' ],
 			 query => {
 				   filtered => {
-						filter => { 'exists' => { fields => 'accession' }}
+						filter => { 'exists' => { field => 'accession' }}
 					       }
 				  }
 			});

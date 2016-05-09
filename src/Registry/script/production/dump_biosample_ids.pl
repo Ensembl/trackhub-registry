@@ -71,7 +71,7 @@ my $es = connect_to_es_cluster($config{cluster_prod});
 # TODO
 # Correct metakey should be communicated
 #
-my $sample_id_key = 'tissue_type';
+my $sample_id_key = 'biosample_id';
 my $results = eval {
   $es->search(index  => 'trackhubs',
 	      type   => 'trackdb',

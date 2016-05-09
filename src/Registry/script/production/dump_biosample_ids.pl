@@ -95,7 +95,14 @@ foreach my $doc (@{$results->{hits}{hits}}) {
   map { $biosample_ids->{$_->{$sample_id_key}}++ if exists $_->{$sample_id_key} } @{$doc->{_source}{data}};
 } 
 
-print Dumper $biosample_ids;
+if (scalar keys %{$biosample_ids}) {
+  $logger->info("Dumping biosample ID list");
+  open my $FH, ">", $config{dumps}->{biosample} or $logger->logdie("Cannot open file for output: $!");
+  print $FH join("\n", keys %{$biosample_ids});
+  close $FH;
+} else {
+  $logger->info("Empty biosample ID list, skip dumping");
+}
 
 sub connect_to_es_cluster {
   my $cluster_conf = shift;

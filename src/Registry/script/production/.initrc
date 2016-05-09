@@ -40,3 +40,6 @@ name       : backup
 type       : fs
 location   : /mnt/backup
 remote_location : /mnt/es_snapshots
+
+[dumps]
+biosample  : /home/ubuntu/src/trackhub-registry/root/static/data/biosample_ids.txt

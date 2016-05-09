@@ -42,4 +42,4 @@ location   : /mnt/backup
 remote_location : /mnt/es_snapshots
 
 [dumps]
-biosample  : /home/ubuntu/src/trackhub-registry/root/static/data/biosample_ids.txt
+biosample  : /home/ubuntu/src/trackhub-registry/src/Registry/root/static/data/biosample_ids.txt

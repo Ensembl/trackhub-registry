@@ -85,7 +85,26 @@ if ($response->is_success) {
 # 1. Parse UCSC public hub list to complement the list
 #    of hubs from the configuration file
 #
-# 2. Scan hub list and register them
+# 2. Scan list of hubs, and register/update/delete them
+#
+foreach my $hub_url (keys %config) {
+  # next unless $hub_url =~ /smith/;
+  my %hub_conf = %{$config{$hub_url}};
+  my $desc = $hub_conf{description};
+  my $enabled = $hub_conf{enable};
+
+  # delete configuration keys, only assembly name-accession mapping should be left
+  map { delete $hub_conf{$_} } qw/description enable error/;
+
+  if ($enabled) {
+    # hub enabled
+    $logger->info(sprintf "1: %s", $desc);
+  } else {
+    # hub is not enabled
+    # delete it if it's registered
+    $logger->info(sprintf "0: %s", $desc);
+  } 
+}
 #
 # 3. Update configuration file
 #

@@ -97,8 +97,27 @@ foreach my $hub_url (keys %config) {
   map { delete $hub_conf{$_} } qw/description enable error/;
 
   if ($enabled) {
-    # hub enabled
-    $logger->info(sprintf "1: %s", $desc);
+    # hub enabled, proceed with registration/update
+    $logger->info("Submitting hub at $hub_url");
+
+    my $content = { url => $hub_url };
+    $content->{assemblies} = { %hub_conf } # add assembly name->accession map if available
+      if scalar keys %hub_conf;
+
+    $request = POST("$server/api/trackhub",
+		    'Content-type' => 'application/json',
+		    'Content'      => to_json($content));
+    $request->headers->header(user       => $user);
+    $request->headers->header(auth_token => $auth_token);
+    $response = $ua->request($request);
+    if ($response->code == 201) {
+      $logger->info("Done");
+    } else {
+      $logger->logwarn(sprintf "Couldn't register hub at %s: %s [%d]", $hub_url, $response->content, $response->code);
+      # hub remains enabled?!
+      # $config{$hub_url}->{enable} = 0;
+      $config{$hub_url}->{error} = sprintf "[%d] - %s", $response->code, $response->content;
+    } 
   } else {
     # hub is not enabled
     # delete it if it's registered

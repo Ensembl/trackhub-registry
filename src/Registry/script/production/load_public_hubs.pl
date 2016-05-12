@@ -169,8 +169,9 @@ sub parse_ucsc_public_list {
   
     # take second column
     my $elem = $cells->item(1);
-    my $anchor = $elem->getElementsByTagName ('a')->[0];
-    # print $anchor->href, "\t", $anchor->text, "\n";
+    my $anchor = $elem->getElementsByTagName('a')->[0];
+    
+    my ($hub_url, $hub_description) = ($anchor->href, $anchor->content->[0]->data);
   }
 }
 

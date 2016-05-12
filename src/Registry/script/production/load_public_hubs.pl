@@ -103,6 +103,12 @@ my $ucsc_public_hubs = parse_ucsc_public_list();
 #
 # 2. update configuration with ucsc hubs
 # some might already been in conf from last run
+foreach my $ucsc_hub (@{$ucsc_public_hubs}) {
+  my $processed = exists $config{$ucsc_hub->[0]};
+  $logger->info(sprintf "%d\t%s", $processed, $ucsc_hub->[1])
+    if $processed;
+}
+exit;
 
 # 3. Scan list of hubs, and register/update/delete them
 #
@@ -180,7 +186,9 @@ sub parse_ucsc_public_list {
     my $elem = $cells->item(1);
     my $anchor = $elem->getElementsByTagName('a')->[0];
     # and grab hub url and brief description
-    push @{$hubs}, [ $anchor->href, $anchor->content->[0]->data ];
+    my ($hub_url, $hub_desc) = ($anchor->href, $anchor->content->[0]->data);
+    $hub_desc =~ s/^\n//g;
+    push @{$hubs}, [ $hub_url, $hub_desc ];
   }
 
   return $hubs;

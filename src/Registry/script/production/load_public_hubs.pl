@@ -153,7 +153,15 @@ if ($response->is_success) {
 
 sub parse_ucsc_public_list {
   my $hg_hub_connect_url = 'http://genome-euro.ucsc.edu/cgi-bin/hgHubConnect?redirect=manual&source=genome.ucsc.edu';
-  
+  my $response = read_file($hg_hub_connect_url, { nice => 1 });
+  $logger->logdie(sprintf "Unable to parse UCSC public hub list: %s", $response->{error}) if $response->{error};
+
+  my ($fh, $filename) = tempfile( DIR => '.', SUFFIX => '.html', UNLINK => 1 );
+  print $fh $response->{content};
+  close $fh;
+
+  my $dom = HTML::DOM->new();
+  $dom->parse_file($filename);
 }
 
 sub send_alert_message {

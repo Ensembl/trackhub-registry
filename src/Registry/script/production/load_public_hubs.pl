@@ -162,6 +162,16 @@ sub parse_ucsc_public_list {
 
   my $dom = HTML::DOM->new();
   $dom->parse_file($filename);
+
+  foreach my $hub_table_row (@{$dom->getElementById('publicHubsTable')->rows}) {
+    my $cells = $hub_table_row->cells;
+    next if $cells->item(0)->tagName eq 'TH';
+  
+    # take second column
+    my $elem = $cells->item(1);
+    my $anchor = $elem->getElementsByTagName ('a')->[0];
+    # print $anchor->href, "\t", $anchor->text, "\n";
+  }
 }
 
 sub send_alert_message {

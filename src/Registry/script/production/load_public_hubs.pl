@@ -3,6 +3,12 @@
 use strict;
 use warnings;
 
+# for Registry::Utils::URL methods
+BEGIN {
+  use FindBin qw/$Bin/;
+  use lib "$Bin/../../lib";
+}
+
 use Try::Tiny;
 use Log::Log4perl qw(get_logger :levels);
 use Config::Std;
@@ -17,6 +23,11 @@ use HTTP::Request::Common qw/GET POST/;
 use Email::MIME;
 use Email::Sender::Simple qw(sendmail);
 use Search::Elasticsearch;
+
+# to parse UCSC public list
+use HTML::DOM;
+use File::Temp qw/ tempfile /;
+use Registry::Utils::URL qw(read_file);
 
 # default option values
 my $help = 0;  # print usage and exit
@@ -85,6 +96,8 @@ if ($response->is_success) {
 # 1. Parse UCSC public hub list to complement the list
 #    of hubs from the configuration file
 #
+parse_ucsc_public_list();
+
 # 2. Scan list of hubs, and register/update/delete them
 #
 foreach my $hub_url (keys %config) {
@@ -137,6 +150,11 @@ if ($response->is_success) {
 } else {
   $logger->logdie("Unable to logout");
 } 
+
+sub parse_ucsc_public_list {
+  my $hg_hub_connect_url = 'http://genome-euro.ucsc.edu/cgi-bin/hgHubConnect?redirect=manual&source=genome.ucsc.edu';
+  
+}
 
 sub send_alert_message {
   my $body = shift;

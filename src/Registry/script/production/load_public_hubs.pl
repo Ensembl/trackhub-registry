@@ -96,9 +96,15 @@ if ($response->is_success) {
 # 1. Parse UCSC public hub list to complement the list
 #    of hubs from the configuration file
 #
-parse_ucsc_public_list();
+my $ucsc_public_hubs = parse_ucsc_public_list();
+# print Dumper $ucsc_public_hubs;
+# exit;
 
-# 2. Scan list of hubs, and register/update/delete them
+#
+# 2. update configuration with ucsc hubs
+# some might already been in conf from last run
+
+# 3. Scan list of hubs, and register/update/delete them
 #
 foreach my $hub_url (keys %config) {
   # next unless $hub_url =~ /smith/;
@@ -138,7 +144,7 @@ foreach my $hub_url (keys %config) {
   } 
 }
 #
-# 3. Update configuration file
+# 3. Update configuration file with new state
 #
 
 # Logout
@@ -152,6 +158,7 @@ if ($response->is_success) {
 } 
 
 sub parse_ucsc_public_list {
+  # parse UCSC public hub list
   my $hg_hub_connect_url = 'http://genome-euro.ucsc.edu/cgi-bin/hgHubConnect?redirect=manual&source=genome.ucsc.edu';
   my $response = read_file($hg_hub_connect_url, { nice => 1 });
   $logger->logdie(sprintf "Unable to parse UCSC public hub list: %s", $response->{error}) if $response->{error};
@@ -163,6 +170,8 @@ sub parse_ucsc_public_list {
   my $dom = HTML::DOM->new();
   $dom->parse_file($filename);
 
+  # register hub url and description
+  my $hubs;
   foreach my $hub_table_row (@{$dom->getElementById('publicHubsTable')->rows}) {
     my $cells = $hub_table_row->cells;
     next if $cells->item(0)->tagName eq 'TH';
@@ -170,9 +179,11 @@ sub parse_ucsc_public_list {
     # take second column
     my $elem = $cells->item(1);
     my $anchor = $elem->getElementsByTagName('a')->[0];
-    
-    my ($hub_url, $hub_description) = ($anchor->href, $anchor->content->[0]->data);
+    # and grab hub url and brief description
+    push @{$hubs}, [ $anchor->href, $anchor->content->[0]->data ];
   }
+
+  return $hubs;
 }
 
 sub send_alert_message {

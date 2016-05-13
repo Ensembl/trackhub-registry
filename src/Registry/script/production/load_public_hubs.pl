@@ -128,6 +128,11 @@ foreach my $hub_url (keys %config) {
   # delete configuration keys, only assembly name-accession mapping should be left
   map { delete $hub_conf{$_} } qw/description enable error/;
 
+  my $delete = 0;
+  my $registered = is_hub_registered($hub_url);
+  $logger->debug(sprintf "%d\t%s", $registered, $desc);
+  next;
+
   if ($enabled) {
     # hub enabled, proceed with registration/update
     $logger->info("Submitting hub at $hub_url");
@@ -151,15 +156,14 @@ foreach my $hub_url (keys %config) {
       $config{$hub_url}->{error} = sprintf "[%d] - %s", $response->code, $response->content;
     } 
   } else {
-    # hub is not enabled
-    # delete it if it's registered
-    $logger->info(sprintf "0: %s", $desc);
+    $logger->info(sprintf "Hub %s not enabled.", $desc);
   } 
 }
 
 #
 # 3. Update configuration file with new state
 #
+write_config(%config => 'test.conf');
 
 # Logout
 $request = GET("$server/api/logout");
@@ -172,7 +176,7 @@ if ($response->is_success) {
 } 
 
 sub parse_ucsc_public_list {
-  # parse UCSC public hub list
+  $logger->info("Parsing UCSC public hub list");
   my $hg_hub_connect_url = 'http://genome-euro.ucsc.edu/cgi-bin/hgHubConnect?redirect=manual&source=genome.ucsc.edu';
   my $response = read_file($hg_hub_connect_url, { nice => 1 });
   $logger->logdie(sprintf "Unable to parse UCSC public hub list: %s", $response->{error}) if $response->{error};
@@ -190,7 +194,7 @@ sub parse_ucsc_public_list {
     my $cells = $hub_table_row->cells;
     next if $cells->item(0)->tagName eq 'TH';
   
-    # take second column
+    # take link in second column
     my $elem = $cells->item(1);
     my $anchor = $elem->getElementsByTagName('a')->[0];
     # and grab hub url and brief description
@@ -200,6 +204,28 @@ sub parse_ucsc_public_list {
   }
 
   return $hubs;
+}
+
+sub is_hub_registered {
+  my $url = shift;
+  # $logger->logdie("is_hub_registered not implemented");
+
+  my $request = POST("$server/api/search",
+		     'Content-type' => 'application/json',
+		     'Content'      => to_json({ query => "hub.url:\"$url\"" }));
+  my $response = $ua->request($request);
+  if ($response->is_success) {
+    my $content = from_json($response->content);
+    my $num_search_results = scalar @{$content->{items}};
+
+    return 0 if $num_search_results == 0;
+    
+    $logger->logwarn("Ambiguous results while searching for registered hub") and return -1
+      if  $num_search_results > 1;
+    return 1;
+  }
+
+  return -1; # don't know at this stage if the hub is registered
 }
 
 sub send_alert_message {

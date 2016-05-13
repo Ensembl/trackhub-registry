@@ -91,25 +91,32 @@ if ($response->is_success) {
 }
 
 #
-# TODO
-#
 # 1. Parse UCSC public hub list to complement the list
 #    of hubs from the configuration file
 #
 my $ucsc_public_hubs = parse_ucsc_public_list();
-# print Dumper $ucsc_public_hubs;
-# exit;
 
-#
+# 
 # 2. update configuration with ucsc hubs
-# some might already been in conf from last run
+#
 foreach my $ucsc_hub (@{$ucsc_public_hubs}) {
   my $processed = exists $config{$ucsc_hub->[0]};
-  $logger->info(sprintf "%d\t%s", $processed, $ucsc_hub->[1])
+  # some might already been in conf from last run or
+  # because is in e! public list
+  $logger->info(sprintf "UCSC listed Hub \"%s\" already configured for registration", $ucsc_hub->[1]) and next
     if $processed;
-}
-exit;
 
+  $config{$ucsc_hub->[0]} = 
+    {
+     enable      => 1,
+     description => $ucsc_hub->[1],
+    } 
+}
+
+#
+# TODO
+#
+# HERE
 # 3. Scan list of hubs, and register/update/delete them
 #
 foreach my $hub_url (keys %config) {
@@ -149,6 +156,7 @@ foreach my $hub_url (keys %config) {
     $logger->info(sprintf "0: %s", $desc);
   } 
 }
+
 #
 # 3. Update configuration file with new state
 #

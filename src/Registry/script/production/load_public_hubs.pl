@@ -14,6 +14,7 @@ use Log::Log4perl qw(get_logger :levels);
 use Config::Std;
 use Getopt::Long;
 use Pod::Usage;
+use Scalar::Util qw/looks_like_number/;
 
 use Data::Dumper;
 use JSON;
@@ -129,8 +130,9 @@ foreach my $hub_url (keys %config) {
   map { delete $hub_conf{$_} } qw/description enable error/;
 
   my $delete = 0;
-  my $registered = is_hub_registered($hub_url);
-  # $logger->debug(sprintf "%s\t%s", $registered, $desc);
+  my $hub_name = search_hub_by_url($hub_url);
+  my $registered = looks_like_number($hub_name)?0:1;
+  $logger->debug(sprintf "%s\t%s", $registered, $desc);
   next;
 
   if ($enabled) {
@@ -152,11 +154,20 @@ foreach my $hub_url (keys %config) {
     } else {
       $logger->logwarn(sprintf "Couldn't register hub at %s: %s [%d]", $hub_url, $response->content, $response->code);
       # hub remains enabled?!
+      # Yes, we would like to inspect the reason of the error and eventually take action, e.g. manually disable
       # $config{$hub_url}->{enable} = 0;
       $config{$hub_url}->{error} = sprintf "[%d] - %s", $response->code, $response->content;
+
+      $delete = 1 if $registered; # mark for deletion
     } 
   } else {
-    $logger->info(sprintf "Hub %s not enabled.", $desc);
+    $logger->info(sprintf "Hub %s not enabled. Skip.", $desc);
+    $delete = 1 if $registered; # mark for deletion
+  }
+
+  # hub is registered but it's flagged for deletion
+  if ($delete) { 
+    
   }
 }
 
@@ -206,10 +217,8 @@ sub parse_ucsc_public_list {
   return $hubs;
 }
 
-sub is_hub_registered {
+sub search_hub_by_url {
   my $url = shift;
-  # $logger->logdie("is_hub_registered not implemented");
-
   my $request = POST("$server/api/search",
 		     'Content-type' => 'application/json',
 		     'Content'      => to_json({ query => "hub.url:\"$url\"" }));

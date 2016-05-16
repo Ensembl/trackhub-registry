@@ -115,9 +115,6 @@ foreach my $ucsc_hub (@{$ucsc_public_hubs}) {
 }
 
 #
-# TODO
-#
-# HERE
 # 3. Scan list of hubs, and register/update/delete them
 #
 foreach my $hub_url (keys %config) {
@@ -183,7 +180,7 @@ foreach my $hub_url (keys %config) {
 #
 # 3. Update configuration file with new state
 #
-write_config(%config => 'test.conf');
+write_config(%config);
 
 # Logout
 $request = GET("$server/api/logout");

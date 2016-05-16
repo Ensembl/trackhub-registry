@@ -121,18 +121,18 @@ foreach my $ucsc_hub (@{$ucsc_public_hubs}) {
 # 3. Scan list of hubs, and register/update/delete them
 #
 foreach my $hub_url (keys %config) {
-  # next unless $hub_url =~ /smith/;
   my %hub_conf = %{$config{$hub_url}};
   my $desc = $hub_conf{description};
   my $enabled = $hub_conf{enable};
 
-  # delete configuration keys, only assembly name-accession mapping should be left
+  # delete configuration keys to proper content for submission, 
+  # only assembly name-accession mapping should be left
   map { delete $hub_conf{$_} } qw/description enable error/;
 
   my $delete = 0;
   my $hub_name = search_hub_by_url($hub_url);
   my $registered = looks_like_number($hub_name)?0:1;
-  $logger->debug(sprintf "%s\t%s", $registered, $desc);
+  $logger->info(sprintf "Found hub \"%s\" [%s,%s]", $desc, $enabled?"enabled":"not enabled", $registered?"registered":"not registered");
   next;
 
   if ($enabled) {
@@ -165,9 +165,18 @@ foreach my $hub_url (keys %config) {
     $delete = 1 if $registered; # mark for deletion
   }
 
-  # hub is registered but it's flagged for deletion
+  # hub is registered but it's flagged for deletion, go ahead
   if ($delete) { 
-    
+    $logger->info("Deleting hub $hub_name");
+    $request = DELETE("$server/api/trackhub/$hub_name");
+    $request->headers->header(user       => $user);
+    $request->headers->header(auth_token => $auth_token);
+    $response = $ua->request($request);
+    if ($response->code == 200) {
+      $logger->info("Done");
+    } else {
+      $logger->logwarn(sprintf "Couldn't delete hub %s: %s [%d]", $hub_name, $response->content, $response->code);
+    }
   }
 }
 

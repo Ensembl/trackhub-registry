@@ -130,7 +130,7 @@ foreach my $hub_url (keys %config) {
 
   my $delete = 0;
   my $registered = is_hub_registered($hub_url);
-  $logger->debug(sprintf "%d\t%s", $registered, $desc);
+  # $logger->debug(sprintf "%s\t%s", $registered, $desc);
   next;
 
   if ($enabled) {
@@ -157,7 +157,7 @@ foreach my $hub_url (keys %config) {
     } 
   } else {
     $logger->info(sprintf "Hub %s not enabled.", $desc);
-  } 
+  }
 }
 
 #
@@ -220,9 +220,21 @@ sub is_hub_registered {
 
     return 0 if $num_search_results == 0;
     
-    $logger->logwarn("Ambiguous results while searching for registered hub") and return -1
-      if  $num_search_results > 1;
-    return 1;
+    # search might return multiple results
+    # - hub might be split across different trackDBs
+    # - error in data store, multiple hubs with same URL
+    my $hub;
+    foreach my $item (@{$content->{items}}) {
+      my $item_hub = $item->{hub};
+      $hub = $item_hub and next unless $hub;
+
+      if (exists $hub->{name} && $hub->{name} ne $item_hub->{name}) {
+	$logger->logwarn("Ambiguous results while searching for registered hub");
+	return -1;
+      }
+    }
+
+    return $hub->{name};
   }
 
   return -1; # don't know at this stage if the hub is registered

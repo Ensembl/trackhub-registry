@@ -48,6 +48,7 @@ requires 'String::Random';
 requires 'Search::Elasticsearch';
 requires 'Data::SearchEngine';
 requires 'Encode';
+requires 'Scalar::Util';
 
 # for file utils
 requires 'Compress::Zlib';

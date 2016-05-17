@@ -163,7 +163,11 @@ sub _get_hub_info {
   foreach my $genome (keys %{$genomes}) {
     $file = $genomes->{$genome}->trackDb;
  
-    $response = read_file("$url/$file", $file_args); 
+    if ($file =~ /^http|^ftp/) { # path to trackDB could be remote
+      $response = read_file("$file", $file_args);
+    } else {
+      $response = read_file("$url/$file", $file_args);  
+    }
     push @errors, "$genome ($url/$file): " . @{$response->{error}}
       if $response->{error};
     $content = $response->{content};
@@ -185,7 +189,11 @@ sub _get_hub_info {
       ## replace trackDb file location with list of track files
       $genomes->{$genome}->trackDb(\@track_list);
     } else {
-      $genomes->{$genome}->trackDb([ "$url/$file" ]);
+      if ($file =~ /^http|^ftp/) {
+	$genomes->{$genome}->trackDb([ "$file" ]);	
+      } else {
+	$genomes->{$genome}->trackDb([ "$url/$file" ]);	
+      }
     }
   }
 

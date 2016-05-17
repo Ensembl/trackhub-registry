@@ -150,6 +150,7 @@ foreach my $hub_url (keys %config) {
     $response = $ua->request($request);
     if ($response->code == 201) {
       $logger->info("Done");
+      delete $config{$hub_url}->{error} if exists $config{$hub_url}->{error};
     } else {
       $logger->logwarn(sprintf "Couldn't register hub at %s: %s [%d]", $hub_url, $response->content, $response->code);
       # hub remains enabled?!

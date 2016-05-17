@@ -78,7 +78,8 @@ $logger->logdie("Error reading configuration file $config_file: $@") if $@;
 
 # Login
 my $ua = LWP::UserAgent->new;
-my $server = 'https://beta.trackhubregistry.org';
+# my $server = 'https://beta.trackhubregistry.org';
+my $server = 'http://localhost:3000/';
 
 my $request = GET("$server/api/login");
 $request->headers->authorization_basic($user, $pass);
@@ -124,13 +125,12 @@ foreach my $hub_url (keys %config) {
 
   # delete configuration keys to proper content for submission, 
   # only assembly name-accession mapping should be left
-  map { delete $hub_conf{$_} } qw/description enable error/;
+  map { delete $hub_conf{$_} } qw/description enable permissive error/;
 
   my $delete = 0;
   my $hub_name = search_hub_by_url($hub_url);
   my $registered = looks_like_number($hub_name)?0:1;
   $logger->info(sprintf "Found hub \"%s\" [%s,%s]", $desc, $enabled?"enabled":"not enabled", $registered?"registered":"not registered");
-  next;
 
   if ($enabled) {
     # hub enabled, proceed with registration/update
@@ -140,7 +140,9 @@ foreach my $hub_url (keys %config) {
     $content->{assemblies} = { %hub_conf } # add assembly name->accession map if available
       if scalar keys %hub_conf;
 
-    $request = POST("$server/api/trackhub",
+    my $post_url = "$server/api/trackhub";
+    $post_url .= '?permissive=1' if $config{$hub_url}->{permissive};
+    $request = POST($post_url,
 		    'Content-type' => 'application/json',
 		    'Content'      => to_json($content));
     $request->headers->header(user       => $user);

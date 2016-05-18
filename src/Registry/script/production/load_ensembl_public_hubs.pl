@@ -15,6 +15,7 @@ use Data::Dumper;
 $| = 1;
 my $ua = LWP::UserAgent->new;
 my $server = 'https://beta.trackhubregistry.org';
+# my $server = 'http://localhost:3000';
 
 @ARGV == 2 or die "Usage: load_ensembl_public_hubs.pl <user> <password>\n";
 
@@ -33,7 +34,7 @@ if ($response->is_success) {
 my $hubs = 
   [
    { # Blueprint GRCh38 Hub
-    url => "ftp://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub"
+    url => "http://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub"
    },
    { # Blueprint GRCh37 Hub
     url => 'http://ftp.ebi.ac.uk/pub/databases/blueprint/releases/20150128/homo_sapiens/hub/hub.txt'

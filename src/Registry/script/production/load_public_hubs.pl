@@ -20,7 +20,7 @@ use Data::Dumper;
 use JSON;
 use HTTP::Tiny;
 use LWP::UserAgent;
-use HTTP::Request::Common qw/GET POST/;
+use HTTP::Request::Common qw/GET POST DELETE/;
 use Email::MIME;
 use Email::Sender::Simple qw(sendmail);
 use Search::Elasticsearch;

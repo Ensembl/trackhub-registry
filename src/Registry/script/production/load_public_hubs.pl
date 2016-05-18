@@ -78,8 +78,7 @@ $logger->logdie("Error reading configuration file $config_file: $@") if $@;
 
 # Login
 my $ua = LWP::UserAgent->new;
-# my $server = 'https://beta.trackhubregistry.org';
-my $server = 'http://localhost:3000/';
+my $server = 'https://beta.trackhubregistry.org';
 
 my $request = GET("$server/api/login");
 $request->headers->authorization_basic($user, $pass);

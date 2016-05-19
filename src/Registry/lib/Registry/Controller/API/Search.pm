@@ -163,8 +163,8 @@ sub biosample_search_POST {
 				       		 biosample_id => $biosample_ids
 				       		}
 				      }
-			    }
-	       };
+			   }
+	      };
   my $config = Registry->config()->{'Model::Search'};
   my %args =
     (
@@ -178,13 +178,24 @@ sub biosample_search_POST {
   try {
     my $scroll = $c->model('Search')->_es->scroll_helper(%args);
     while (my $result = $scroll->next) {
-      push @{$results}, $result;
+      # find which ID this trackdb refers to
+      my %match_ids;
+      foreach my $track_metadata (@{$result->{_source}{data}}) {
+	map { $match_ids{uc $_}++ if exists $track_metadata->{biosample_id} and $track_metadata->{biosample_id} eq uc $_ } @{$biosample_ids};
+      } 
+      # strip away various fields from each search result
+      # when a trackdb is chosen the client will request all the details by id
+      # remove also other fields the user is not interested in
+      map { delete $result->{_source}{$_} } qw ( owner source version status created file_type public updated type data configuration );
+      $result->{_source}{id} = $result->{_id};
+      
+      map { push @{$results->{$_}}, $result->{_source} } keys %match_ids;
     }
   } catch {
     $c->go('ReturnError', 'custom', [qq{$_}]);
   };
 
-  $self->status_ok($c, entity => $results?$results:[]);
+  $self->status_ok($c, entity => $results?$results:{});
 }
 
 =head2 trackdb

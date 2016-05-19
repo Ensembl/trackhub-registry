@@ -1,6 +1,14 @@
 use strict;
 use warnings;
+
+use Test::More;
 use Data::Dumper;
+
+BEGIN {
+  use FindBin qw/$Bin/;
+  use lib "$Bin/../lib";
+  $ENV{CATALYST_CONFIG} = "$Bin/../registry_testing.conf";
+}
 
 local $SIG{__WARN__} = sub {};
 
@@ -10,25 +18,122 @@ use HTTP::Request::Common;
 use LWP::UserAgent;
 
 my $ua = LWP::UserAgent->new;
-my $server = 'http://127.0.0.1:3000';
-my ($user, $pass) = ('trackhub1', 'trackhub1'); # ('etapanari', 'ensemblplants');
+# my $server = 'http://193.62.54.43:5000';
+my $server = 'http://localhost:3000';
+
+# use Search::Elasticsearch;
+# my $es = Search::Elasticsearch->new(cxn_pool => 'Sniff',
+# 				    nodes => 'localhost:9200');
+
+# my $query = 
+#   {
+#    filtered => {
+#   		filter => {
+#   			   # terms => { 
+#   			   # 		 biosample_id => $biosample_ids
+#   			   # 		}
+#   			   term  => { biosample_id => 'samn03268375' }
+#   			  }
+#   	       }
+#   };
+#   { match_all => {} };
+#   # {
+#   #  match => { biosample_id => 'SAMN04601058 SAMN04601063 SAMN03268375' }
+#   # };
+# my $results = $es->search(index => 'test',
+# 			  type  => 'trackdb',
+# 			  body  => { query => $query });
+# print Dumper $results;
+# exit;
+
+my ($user, $pass) = ('trackhub1', 'trackhub1'); 
 my $request = GET("$server/api/login");
 $request->headers->authorization_basic($user, $pass);
 my $response = $ua->request($request);
-my $content = from_json($response->content);
-my $auth_token = $content->{auth_token};
-print "Logged in\n" if $auth_token;
+my $auth_token;
+if ($response->is_success) {
+  $auth_token = from_json($response->content)->{auth_token};
+  print "Logged in [$auth_token]\n" if $auth_token;
+} else {
+  die sprintf "Couldn't login: %s [%d]", $response->content, $response->code;
+}
 
-$request = GET("$server/api/trackdb/AVCzG8pAaLx8j0yTm-ob");
+my $hubs = 
+  [
+   {
+    url => "ftp://ftp.ensemblgenomes.org/pub/misc_data/Track_Hubs/SRP072774/hub.txt",
+    assemblies => { 'TAIR10' => 'GCA_000001735.1' }
+   },
+   {
+    url => "ftp://ftp.ensemblgenomes.org/pub/misc_data/Track_Hubs/SRP065818/hub.txt",
+    assemblies => { 'AGPv3' => 'GCA_000005005.5' }
+   },
+   {
+    url => "ftp://ftp.ensemblgenomes.org/pub/misc_data/Track_Hubs/SRP051137/hub.txt",
+    assemblies => { 'O.barthii_v1' => 'GCA_000182155.2' }
+   },
+  ];
+
+foreach my $hub (@{$hubs}) {
+  $request = POST("$server/api/trackhub",
+		  'Content-type' => 'application/json',
+		  'Content'      => to_json($hub));
+  $request->headers->header(user       => $user);
+  $request->headers->header(auth_token => $auth_token);
+  $response = $ua->request($request);
+  if ($response->is_success) {
+    printf "I have registered hub at %s\n", $hub->{url};
+  } else {
+    die sprintf "Couldn't register hub at %s: %s [%d]", $hub->{url}, $response->content, $response->code;
+  } 
+}
+
+# Logout 
+$request = GET("$server/api/logout");
 $request->headers->header(user       => $user);
 $request->headers->header(auth_token => $auth_token);
-$response = $ua->request($request);
-my $doc;
 if ($response->is_success) {
-  $doc = from_json($response->content);
-} else {  
-  print "Couldn't get trackDB\n";
-}
+  print "Logged out\n";
+} else {
+  print "Unable to logout\n";
+} 
+
+$request = POST("$server/api/search/biosample",
+		'Content-type' => 'application/json');
+ok($response = $ua->request($request), 'POST request to /api/search/biosample');
+is($response->code, 400, 'Request unsuccessful 400');
+my $content = from_json($response->content);
+like($content->{error}, qr/Missing list/, 'Correct error response');
+
+$request = POST("$server/api/search/biosample",
+		'Content-type' => 'application/json',
+		'Content'      => to_json({ ids => [] }));
+ok($response = $ua->request($request), 'POST request to /api/search/biosample');
+is($response->code, 400, 'Request unsuccessful 400');
+$content = from_json($response->content);
+like($content->{error}, qr/Empty list/, 'Correct error response');
+
+# first two belongs to first hub, third to second
+my $biosample_ids = [ 'SAMN04601058', 'SAMN04601063', 'SAMN04235789' ];
+$request = POST("$server/api/search/biosample",
+		'Content-type' => 'application/json',
+		'Content'      => to_json({ ids => $biosample_ids }));
+ok($response = $ua->request($request), 'POST request to /api/search/biosample');
+ok($response->is_success, 'Request successful');
+is($response->content_type, 'application/json', 'JSON content type');
+$content = from_json($response->content);
+print Dumper $content;
+
+# $request = GET("$server/api/trackdb/AVCzG8pAaLx8j0yTm-ob");
+# $request->headers->header(user       => $user);
+# $request->headers->header(auth_token => $auth_token);
+# $response = $ua->request($request);
+# my $doc;
+# if ($response->is_success) {
+#   $doc = from_json($response->content);
+# } else {  
+#   print "Couldn't get trackDB\n";
+# }
 
   # $request = POST('/api/trackhub?permissive=1',
   # 		  'Content-type' => 'application/json',
@@ -76,12 +181,4 @@ if ($response->is_success) {
   # open my $FH, ">tmp.json" or die "Cannot open file: $!\n";
   # use Data::Dumper; print $FH Dumper $content;
   
-# Logout 
-$request = GET("$server/api/logout");
-$request->headers->header(user       => $user);
-$request->headers->header(auth_token => $auth_token);
-if ($response->is_success) {
-  print "Logged out\n";
-} else {
-  print "Unable to logout\n";
-} 
+done_testing();

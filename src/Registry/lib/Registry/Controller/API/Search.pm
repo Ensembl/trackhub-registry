@@ -130,6 +130,63 @@ sub search_POST {
   $self->status_ok($c, entity => $response);
 }
 
+=head2 biosample_search
+
+=cut
+
+sub biosample_search :Path('/api/search/biosample') Args(0) ActionClass('REST') { }
+
+sub biosample_search_POST {
+  my ($self, $c) = @_;
+
+  return $self->status_bad_request($c, message => "Missing list of biosample IDs")
+    unless defined $c->req->data;
+  my $biosample_ids = $c->req->data->{ids};
+  return $self->status_bad_request($c, message => "Empty list of biosample IDs")
+    unless scalar @{$biosample_ids};
+  
+  # prepare query,
+  # it's a simple filtered query with 'terms' filter to find the
+  # docs that have any of the listed values
+  my $query = {
+	       filtered => {
+			    filter => {
+				       terms => { 
+						 biosample_id => $biosample_ids
+						}
+				      }
+			    }
+	       };
+  my $config = Registry->config()->{'Model::Search'};
+  my %args =
+    (
+     index => $config->{trackhub}{index},
+     type  => $config->{trackhub}{type},
+     body  => { query => $query },
+     search_type => 'scan'
+    );
+
+  use Data::Dumper;
+  my $results;
+  try {
+    my $scroll = $c->model('Search')->_es->scroll_helper(%args);
+    while (my $result = $scroll->next) {
+      # strip away the metadata/configuration field from each search result
+      # when a trackdb is chosen the client will request all the details by id
+      # remove also other fields the user is not interested in
+      # map { delete $result->{$_} } qw ( _source _index owner _version created data configuration );
+      # $c->log->debug("***");
+      # $c->log->debug(Dumper $result);
+      # $c->log->debug("***");
+      push @{$results}, $result;
+    }
+  } catch {
+    $c->go('ReturnError', 'custom', [qq{$_}]);
+  };
+
+  $self->status_ok($c, entity => $results?$results:[]);
+}
+
 =head2 trackdb
 
 /api/search/trackdb/:id - return a trackDB document by ID

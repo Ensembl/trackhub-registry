@@ -48,7 +48,6 @@ requires 'String::Random';
 requires 'Search::Elasticsearch';
 requires 'Data::SearchEngine';
 requires 'Encode';
-requires 'Scalar::Util';
 
 # for file utils
 requires 'Compress::Zlib';
@@ -73,6 +72,9 @@ recommends 'Email::MIME';
 recommends 'Email::Sender::Simple';
 recommends 'Email::Date';
 recommends 'DateTime';
+recommends 'Scalar::Util';
+recommends 'HTML::DOM';
+recommends 'LWP::Protocol::https';
 recommends 'Server::Starter';
 recommends 'Net::CIDR::Lite';
 recommends 'Net::Server::SS::PreFork';

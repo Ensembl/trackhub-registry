@@ -186,7 +186,7 @@ sub biosample_search_POST {
       # strip away various fields from each search result
       # when a trackdb is chosen the client will request all the details by id
       # remove also other fields the user is not interested in
-      map { delete $result->{_source}{$_} } qw ( owner source version status created file_type public updated type data configuration );
+      map { delete $result->{_source}{$_} } qw ( owner source version status created file_type public updated data configuration );
       $result->{_source}{id} = $result->{_id};
       
       map { push @{$results->{$_}}, $result->{_source} } keys %match_ids;

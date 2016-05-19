@@ -132,6 +132,8 @@ sub search_POST {
 
 =head2 biosample_search
 
+Support querying by list of BioSample IDs
+
 =cut
 
 sub biosample_search :Path('/api/search/biosample') Args(0) ActionClass('REST') { }
@@ -147,12 +149,13 @@ sub biosample_search_POST {
   return $self->status_bad_request($c, message => "Empty list of biosample IDs")
     unless scalar @{$biosample_ids};
   
-  # prepare query,
+  # prepare query
   # it's a simple filtered query with 'terms' filter to find the
   # docs that have any of the listed values
   #
   # WARNING
   # the ids must be lowercased since the biosample id field is analysed
+  # i.e. reindexing the data would be more painful
   #
   $_ = lc for @{$biosample_ids};
 
@@ -176,16 +179,17 @@ sub biosample_search_POST {
 
   my $results;
   try {
+    # do not care about scoring, use scan&scroll for efficient querying
     my $scroll = $c->model('Search')->_es->scroll_helper(%args);
     while (my $result = $scroll->next) {
-      # find which ID this trackdb refers to
+      # find which IDs this trackdb refers to
       my %match_ids;
       foreach my $track_metadata (@{$result->{_source}{data}}) {
-	map { $match_ids{uc $_}++ if exists $track_metadata->{biosample_id} and $track_metadata->{biosample_id} eq uc $_ } @{$biosample_ids};
+	map { $match_ids{uc $_}++ if exists $track_metadata->{biosample_id} and $track_metadata->{biosample_id} eq uc $_ } 
+	  @{$biosample_ids};
       } 
       # strip away various fields from each search result
       # when a trackdb is chosen the client will request all the details by id
-      # remove also other fields the user is not interested in
       map { delete $result->{_source}{$_} } qw ( owner source version status created file_type public updated data configuration );
       $result->{_source}{id} = $result->{_id};
       

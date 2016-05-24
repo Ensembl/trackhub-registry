@@ -35,6 +35,25 @@ function toggle(b) {
 	[% IF status != 'Unchecked' %]
 	  <small>[% status_last_update %]</small><br/>
 	[% END %]
+	[% hub = trackdb.hub %]
+	[% urls = hub.browser_links %]
+	<br/>
+	[% IF status == 'All is Well' || status == 'Unchecked' %]
+	  [% IF urls %]
+	  <div class="btn-group btn-group-xs">
+            <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">View in Genome Browser <span class="caret"></span></button>
+            <ul class="dropdown-menu" role="menu">
+	      [% IF urls.ensembl %]
+              <li><a target="_blank" href="[% urls.ensembl %]">Ensembl</a></li>
+	      [% END %]
+	      [% IF urls.ucsc %]
+              <li><a target="_blank" href="[% urls.ucsc %]">UCSC</a></li>
+	      [% END %]
+            </ul>
+          </div>
+	  <br/>
+	  [% END %]
+	[% END %]
         [% IF trackdb.doc.public %]
 	  <br/><span class="label label-info" style="padding-bottom: 1px;">Searchable</span>
         [% ELSE %]

@@ -1099,7 +1099,7 @@ sub _add_genome_browser_links {
 	sprintf "%s/%s/Location/View?contigviewbottom=url:%s;name=%s;format=TRACKHUB;#modal_user_data", $domain, $species, $hub->{url}, $shortLabel;
     } else {
       $doc->{hub}{browser_links}{ensembl} =
-	sprintf "%s/TrackHub?url=%s;species=%s;name=%s", $domain, $hub->{url}, $species, $shortLabel;
+	sprintf "%s/TrackHub?url=%s;species=%s;name=%s;registry=1", $domain, $hub->{url}, $species, $shortLabel;
     }
   }
   

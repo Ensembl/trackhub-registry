@@ -165,13 +165,13 @@ SKIP: {
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
-  is(scalar @{$content->{items}}, 3, 'Number of search results');
+  is(scalar @{$content->{items}}, 4, 'Number of search results');
   is($content->{items}[0]{species}{tax_id}, '7955', 'Search result species');
   ok($content->{items}[0]{hub}{shortLabel} eq 'GRC Genome Issues under Review' ||
      $content->{items}[0]{hub}{shortLabel} eq 'ZebrafishGenomics', 'Search result hub');
   ok($content->{items}[1]{assembly}{name} eq 'GRCz10' || $content->{items}[1]{assembly}{name} eq 'Zv9', 'Search result assembly');
   ok($content->{items}[2]{hub}{longLabel} eq 'Burgess Lab Zebrafish Genomic Resources' ||
-     $content->{items}[2]{hub}{longLabel} eq 'Sanger Genome Reference Informatics Team: Genome issues and other features', 'Search result hub');
+     $content->{items}[2]{hub}{longLabel} eq 'Genome Reference Consortium: Genome issues and other features', 'Search result hub');
 
   $request = POST('/api/search',
 		  'Content-type' => 'application/json',
@@ -181,8 +181,8 @@ SKIP: {
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
-  is(scalar @{$content->{items}}, 1, 'Number of search results');
-  is($content->{items}[0]{hub}{shortLabel}, 'GRC Genome Issues under Review', 'Search result hub');
+  is(scalar @{$content->{items}}, 2, 'Number of search results');
+  ok($content->{items}[0]{hub}{shortLabel} eq 'GRC Genome Issues under Review' || $content->{items}[0]{hub}{shortLabel} eq 'ZebrafishGenomics', 'Search result hub');
   
   # incompatible filters should return no results
   $request = POST('/api/search',

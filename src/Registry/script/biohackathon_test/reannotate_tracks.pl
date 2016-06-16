@@ -88,7 +88,8 @@ my $results = eval {
   						filter => { 'exists' => { field => $term }}
   					       }
   				  }
-  			});
+  			},
+	     size    => 100000);
 }; 
 if ($@) {
   my $message = "Error querying for track hubs: $@";

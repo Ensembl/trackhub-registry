@@ -93,7 +93,6 @@ while (my $trackdb = $scroll->next) {
   foreach my $track_metadata (@{$trackdb->{_source}{data}}) {
     map { $values->{$_}++ } values %{$track_metadata};
   }
-  last;
 }
 
 open my $FH, ">", 'dump.txt' or $logger->logdie("Cannot open file for output: $!");

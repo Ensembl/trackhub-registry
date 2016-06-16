@@ -96,19 +96,26 @@ if ($@) {
 }
 
 # print $results->{hits}{total};
+my $total_reannotated = 0;
 foreach my $doc (@{$results->{hits}{hits}}) {
   # reannotate tracks with the terms found
+  my $reannotated = 0;
   foreach my $track_metadata (@{$doc->{_source}{data}}) {
     foreach my $metadata_value (keys %{$metadata2terms->{$term}}) {
       if (exists $track_metadata->{$term} and $track_metadata->{$term} eq $metadata_value) {
 	$track_metadata->{ontology_term} = $metadata2terms->{$term}{$metadata_value};
+	$reannotated = 1;
+	$total_reannotated++;
       }
     }
   }
-  delete $doc->{_source}{configuration};
-  print Dumper $doc;
-  exit;
+  if ($reannotated) {
+    delete $doc->{_source}{configuration};
+    print Dumper $doc->{_source}; <STDIN>;
+  }
 }
+
+print "\n$total_reannotated\n";
 
 sub connect_to_es_cluster {
   my $cluster_conf = shift;

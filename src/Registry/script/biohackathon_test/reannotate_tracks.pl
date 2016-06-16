@@ -105,13 +105,14 @@ foreach my $doc (@{$results->{hits}{hits}}) {
       if (exists $track_metadata->{$term} and $track_metadata->{$term} eq $metadata_value) {
 	$track_metadata->{ontology_term} = $metadata2terms->{$term}{$metadata_value};
 	$reannotated = 1;
-	$total_reannotated++;
       }
     }
   }
   if ($reannotated) {
+    $total_reannotated++;
     delete $doc->{_source}{configuration};
-    print Dumper $doc->{_source}; <STDIN>;
+    print Dumper $doc->{_source};
+
   }
 }
 

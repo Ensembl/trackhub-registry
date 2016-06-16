@@ -71,32 +71,30 @@ my $metadata2terms;
 while (my $line = <$FH>) {
   chomp($line);
   my ($key, $value, $term) = split /\t/, $line;
+  $value =~ s/\s//g;
   $metadata2terms->{$key}{$value} = $term;
 }
 
-print Dumper $metadata2terms;
-exit;
-
-my $scroll = eval {
-  # $es->search(index  => 'trackhubs',
-  # 	      type   => 'trackdb',
-  # 	      body   => {
-  # 			 # fields => [ $sample_id_key ],
-  # 			 query => {
-  # 				   filtered => {
-  # 						filter => { 'exists' => { field => $sample_id_key }}
-  # 					       }
-  # 				  }
-  # 			});
-  $es->scroll_helper(index => 'trackhubs',
-		     type  => 'trackdb',
-		     body  => { query => { match_all => {} } },
-		     search_type => 'scan');
+# select a bunch metadata terms, find the corresponding hubs and reannotate them
+my @terms = qw / tissue_type dev_stage antibody cell_type ecotype scientific_name CELL_TYPE donor_health_status disease /;
+my $results = eval {
+  $es->search(index  => 'trackhubs',
+  	      type   => 'trackdb',
+  	      body   => {
+  			 # fields => [ $sample_id_key ],
+  			 query => {
+  				   filtered => {
+  						filter => { 'exists' => { field => 'disease' }}
+  					       }
+  				  }
+  			});
 }; 
 if ($@) {
   my $message = "Error querying for track hubs: $@";
   $logger->logdie($message);
 }
+
+print $results->{hits}{total};
 
 sub connect_to_es_cluster {
   my $cluster_conf = shift;

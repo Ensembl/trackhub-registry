@@ -95,7 +95,6 @@ while (my $trackdb = $scroll->next) {
   foreach my $track_metadata (@{$trackdb->{_source}{data}}) {
     map { printf $FH "%s\t%s\n", $_, $track_metadata->{$_} } keys %{$track_metadata};
   }
-  last;
 }
 
 close $FH;

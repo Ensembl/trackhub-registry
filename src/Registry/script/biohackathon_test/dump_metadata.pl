@@ -67,11 +67,6 @@ $logger->logdie("Error reading configuration file $config_file: $@") if $@;
 #
 my $es = connect_to_es_cluster($config{cluster_prod});
 
-#
-# TODO
-# Correct metakey should be communicated
-#
-my $sample_id_key = 'biosample_id';
 my $scroll = eval {
   # $es->search(index  => 'trackhubs',
   # 	      type   => 'trackdb',
@@ -93,8 +88,17 @@ if ($@) {
   $logger->logdie($message);
 }
 
+# open my $FH, ">", 'dump.txt or $logger->logdie("Cannot open file for output: $!");
+# print $FH join("\n", keys %{$biosample_ids});
+# close $FH;
+
+my $values;
 while (my $trackdb = $scroll->next) {
-  print Dumper $trackdb->{_source}{data}; <STDIN>;
+  foreach my $track_metadata (@{$trackdb->{_source}{data}}) {
+    map { $values->{$_}++ } values %{$track_metadata};
+  }
+  # print Dumper $trackdb->{_source}{data}; <STDIN>;
+  print Dumper $values; <STDIN>;
   exit;
 }
 

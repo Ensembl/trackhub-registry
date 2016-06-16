@@ -75,10 +75,9 @@ while (my $line = <$FH>) {
   $metadata2terms->{$key}{$value} = $term;
 }
 
-print Dumper $metadata2terms;
-
 # select a bunch metadata terms, find the corresponding hubs and reannotate them
 my @terms = qw / tissue_type dev_stage antibody cell_type ecotype scientific_name CELL_TYPE donor_health_status disease /;
+my $term = 'cell_type';
 my $results = eval {
   $es->search(index  => 'trackhubs',
   	      type   => 'trackdb',
@@ -86,7 +85,7 @@ my $results = eval {
   			 # fields => [ $sample_id_key ],
   			 query => {
   				   filtered => {
-  						filter => { 'exists' => { field => 'disease' }}
+  						filter => { 'exists' => { field => $term }}
   					       }
   				  }
   			});
@@ -94,6 +93,21 @@ my $results = eval {
 if ($@) {
   my $message = "Error querying for track hubs: $@";
   $logger->logdie($message);
+}
+
+# print $results->{hits}{total};
+foreach my $doc (@{$results->{hits}{hits}}) {
+  # reannotate tracks with the terms found
+  foreach my $track_metadata (@{$doc->{_source}{data}}) {
+    foreach my $metadata_value (keys %{$metadata2terms->{$term}}) {
+      if (exists $track_metadata->{$term}) {
+	$track_metadata->{ontology_term} = $metadata2terms->{$term}{$metadata_value};
+      }
+    }
+  }
+  delete $doc->{_source}{configuration};
+  print Dumper $doc;
+  exit;
 }
 
 sub connect_to_es_cluster {

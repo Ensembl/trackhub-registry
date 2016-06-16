@@ -71,7 +71,7 @@ my $metadata2terms;
 while (my $line = <$FH>) {
   chomp($line);
   my ($key, $value, $term) = split /\t/, $line;
-  $value =~ s/\s//g;
+  $value =~ s/^\s//g;
   $metadata2terms->{$key}{$value} = $term;
 }
 

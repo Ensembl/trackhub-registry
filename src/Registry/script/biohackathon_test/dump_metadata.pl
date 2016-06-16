@@ -95,7 +95,7 @@ while (my $trackdb = $scroll->next) {
   }
 }
 
-open my $FH, ">", 'dump.txt' or $logger->logdie("Cannot open file for output: $!");
+open my $FH, ">:encoding(UTF-8)", 'dump.txt' or $logger->logdie("Cannot open file for output: $!");
 print $FH join("\n", keys %{$values});
 close $FH;
 

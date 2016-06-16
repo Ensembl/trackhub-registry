@@ -75,6 +75,8 @@ while (my $line = <$FH>) {
   $metadata2terms->{$key}{$value} = $term;
 }
 
+print Dumper $metadata2terms;
+
 # select a bunch metadata terms, find the corresponding hubs and reannotate them
 my @terms = qw / tissue_type dev_stage antibody cell_type ecotype scientific_name CELL_TYPE donor_health_status disease /;
 my $results = eval {
@@ -93,8 +95,6 @@ if ($@) {
   my $message = "Error querying for track hubs: $@";
   $logger->logdie($message);
 }
-
-print $results->{hits}{total};
 
 sub connect_to_es_cluster {
   my $cluster_conf = shift;

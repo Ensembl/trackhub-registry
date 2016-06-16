@@ -111,9 +111,12 @@ foreach my $doc (@{$results->{hits}{hits}}) {
   }
   if ($reannotated) {
     $total_reannotated++;
+    delete $doc->{_source}{owner};
+    delete $doc->{_source}{status};
     delete $doc->{_source}{configuration};
-    print Dumper $doc->{_source};
-
+    open my $FH, sprintf ">%s.json", $doc->{_source}{hub}{name} or die "Cannot open file: $!\n";
+    print $FH to_json($doc->{_source});
+    close $FH;
   }
 }
 

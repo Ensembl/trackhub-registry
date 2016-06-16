@@ -94,7 +94,7 @@ if ($@) {
 }
 
 while (my $trackdb = $scroll->next) {
-  print Dumper $trackdb; <STDIN>;
+  print Dumper $trackdb->{source}{data}; <STDIN>;
   exit;
 }
 

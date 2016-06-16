@@ -88,19 +88,17 @@ if ($@) {
   $logger->logdie($message);
 }
 
-# open my $FH, ">", 'dump.txt or $logger->logdie("Cannot open file for output: $!");
-# print $FH join("\n", keys %{$biosample_ids});
-# close $FH;
-
 my $values;
 while (my $trackdb = $scroll->next) {
   foreach my $track_metadata (@{$trackdb->{_source}{data}}) {
     map { $values->{$_}++ } values %{$track_metadata};
   }
-  # print Dumper $trackdb->{_source}{data}; <STDIN>;
-  print Dumper $values; <STDIN>;
-  exit;
+  last;
 }
+
+open my $FH, ">", 'dump.txt' or $logger->logdie("Cannot open file for output: $!");
+print $FH join("\n", keys %{$values});
+close $FH;
 
 # my $biosample_ids;
 # foreach my $doc (@{$results->{hits}{hits}}) {

@@ -88,15 +88,16 @@ if ($@) {
   $logger->logdie($message);
 }
 
-my $values;
+my $metadata;
+open my $FH, ">:encoding(UTF-8)", 'dump.txt' or $logger->logdie("Cannot open file for output: $!");
+
 while (my $trackdb = $scroll->next) {
   foreach my $track_metadata (@{$trackdb->{_source}{data}}) {
-    map { $values->{$_}++ } values %{$track_metadata};
+    map { printf $FH "%s\t%s\n", $_, $track_metadata->{$_} } keys %{$track_metadata};
   }
+  last;
 }
 
-open my $FH, ">:encoding(UTF-8)", 'dump.txt' or $logger->logdie("Cannot open file for output: $!");
-print $FH join("\n", keys %{$values});
 close $FH;
 
 # my $biosample_ids;

@@ -201,7 +201,7 @@
 	      <h3 class="panel-title">[% h.longLabel %]</h3>
               <div class="panel-body">
 	        <div style="float: right;">
-	          <span class="label label-danger">[% status %]</span>
+	          <span class="label label-danger"><a href="#" style="text-decoration: none; color: inherit;" data-toggle="tooltip" title="The registry has verified this hub is not reachable">[% status %]</a></span>
 		  <a role="button" class="btn btn-xs btn-default" data-toggle="popover" title="More info about this collection" data-content="" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [ item.id ]) %]">View Info</a>
 		</div>
 	        <p>
@@ -230,7 +230,7 @@
                   </div>
 		  [% END %]
 		  <a role="button" class="btn btn-lg btn-default" data-toggle="popover" title="More info about this collection" data-content="" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [ item.id ]) %]">View Info</a><br/><br/>
-	          <span class="label label-warning">[% status %]</span>
+	          <span class="label label-warning"><a href="#" style="text-decoration: none; color: inherit;" data-toggle="tooltip" title="The registry is not aware of whether this hub works or not">[% status %]</a></span>
 		</div>
 	        <p>
   		  <strong>Hub</strong>: [% h.shortLabel %]<br/>

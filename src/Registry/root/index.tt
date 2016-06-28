@@ -44,7 +44,7 @@
 
       <p>Track hubs can be searched based on metadata information. Free text search is provided from the search box in the header of all track hub Registry web pages. Advanced search options are available for more specific and customised searches.</p>
       <!-- <a href="[% c.uri_for('/search/advanced') %]" class="btn btn-primary">Advanced track search</a> -->
-      <a href="[% c.uri_for('/docs/search/advanced') %]" class="btn btn-primary">Advanced track search</a>
+      <a href="[% c.uri_for('/docs/search/advanced') %]" class="btn btn-primary">How to Make Complex Queries</a>
     </div>
   </div><!-- /.col-sm-6 -->
 </div>

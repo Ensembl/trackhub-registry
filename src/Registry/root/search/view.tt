@@ -63,7 +63,7 @@
 	  File type(s): <!--[% trackdb.file_type.join(', ') %]-->
 	    <ul>
 	    [% FOREACH file_type IN trackdb.file_type %]
-	      <li>[% file_type %] <span class="badge">[% trackdb.doc.file_type.$file_type %]</span></li>
+	      <li>[% file_type %] <span style="padding-left: 1em"><span class="badge">[% trackdb.doc.file_type.$file_type %]</span></span></li>
 	    [% END %]
 	    </ul>
 	  </li>

@@ -11,7 +11,7 @@ use Test::WWW::Mechanize;
 
 @ARGV == 2 or die "Usage: test_login.pl <user> <pass>\n";
 
-my $server = 'http://127.0,0.1:5000';
+my $server = 'http://127.0.0.1:5000';
 my ($user, $pass) = ($ARGV[0], $ARGV[1]);
 
 # my $mech = Test::WWW::Mechanize->new;

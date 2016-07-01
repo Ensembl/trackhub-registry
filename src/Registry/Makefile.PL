@@ -91,6 +91,7 @@ recommends 'Plack::Middleware::Assets';
 recommends 'Plack::Middleware::Static';
 recommends 'CHI::Driver::Memcached';
 recommends 'Term::Size::Any';
+recommends 'WWW::Mechanize';
 
 test_requires 'Test::More' => '0.88';
 catalyst;

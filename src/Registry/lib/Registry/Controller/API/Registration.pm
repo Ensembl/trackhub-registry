@@ -456,8 +456,8 @@ sub trackhub_by_name_GET {
 
     push @{$trackhub->{trackdbs}},
       {
-       species  => $trackdb->{species}{tax_id},
-       assembly => $trackdb->{assembly}{accession},
+       species  => $trackdb->{species},
+       assembly => $trackdb->{assembly},
        uri      => $c->uri_for('/api/trackdb/' . $trackdb->{_id})->as_string
       };
   }

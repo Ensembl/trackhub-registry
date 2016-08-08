@@ -1111,9 +1111,15 @@ sub _handle_ensemblplants_exceptions {
 
   return 0 unless $assembly_name eq 'v0117-2013Aug' or # Oryza longistaminata 
     $assembly_name eq 'PRJEB4137' or # Oryza rufipogon
-      $assembly_name =~ 'IWGSC1'; # Triticum aestivum
+      $assembly_name =~ 'IWGSC1|TGACv1' or # Triticum aestivum
+	  $assembly_name eq 'AGPv4'; # Zea mays
 
-  if ($assembly_name =~ 'IWGSC1') { # Triticum aestivum
+  if ($assembly_name eq 'AGPv4') { # Zea mays
+    $doc->{species}{tax_id} = 4577;
+    $doc->{species}{scientific_name} = 'Zea mays';
+    $doc->{species}{common_name} = 'maize';
+        
+  } elsif ($assembly_name =~ 'IWGSC1|TGACv1') { # Triticum aestivum
     $doc->{species}{tax_id} = 4565;
     $doc->{species}{scientific_name} = 'Triticum aestivum';
     $doc->{species}{common_name} = 'bread wheat';
@@ -1128,7 +1134,7 @@ sub _handle_ensemblplants_exceptions {
     $doc->{species}{scientific_name} = 'Oryza longistaminata';
     $doc->{species}{common_name} = 'long-staminate rice';
 
-  }
+  } 
 
   $doc->{assembly}{accession} = 'NA';
   $doc->{assembly}{name} = $assembly_name;

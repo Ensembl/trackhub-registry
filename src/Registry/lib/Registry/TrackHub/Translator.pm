@@ -1138,6 +1138,7 @@ sub _handle_ensemblplants_exceptions {
 
   $doc->{assembly}{accession} = 'NA';
   $doc->{assembly}{name} = $assembly_name;
+  $doc->{assembly}{synonyms} = $assembly_name;
 
   return 1;
 }

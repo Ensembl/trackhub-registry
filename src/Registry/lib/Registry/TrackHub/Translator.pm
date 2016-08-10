@@ -1036,6 +1036,8 @@ sub _add_genome_browser_links {
   # - fruitfly (Release 6 up-to-date, Release 5 from Dec 2014 backward)
   # - rat (Rnor_6.0 up-to-date, Rnor_5.0 from Mar 2015 backward)
   # - zebrafish (GRCz10 up-to-date, Zv9 from Mar 2015 backward)
+  # - Triticum aestivum (IWGSC1+popseq, archive plant)
+  # - Zea mays (AGPv3, archive plant)
   #
   # The division for other assemblies is determined by looking up
   # in the ensembl genomes info DB by assembly ID or tax ID (name?)
@@ -1073,6 +1075,12 @@ sub _add_genome_browser_links {
     } elsif ($assembly_name =~ /Release 5/i) {
       $division = 'dec2014.archive';
     }
+  } elsif ($species =~ /triticum_aestivum|zea_mays/i) { # Handle old wheat/maize assemblies
+    if ($assembly_name =~ /IWGSC1\+popseq|AGPv3/i) {
+      $division = 'archive.plants';
+    } elsif ($assembly_name eq 'TGACv1' or $assembly_name eq 'AGPv4') { 
+      $division = 'plants';
+    }    
   } else {
     # Look up division in shared genome DB, by using assembly accession,
     # when provided, or assembly name

@@ -1120,7 +1120,7 @@ sub _add_genome_browser_links {
     $domain =~ s/### DIVISION ###/$division/;
     my $shortLabel = $hub->{shortLabel};
     $shortLabel =~ s/\s/_/g;
-    if ($division =~ /archive(?!\.plants/) { # link to plant archive site should be the current one
+    if ($division =~ /archive(?!\.plants)/) { # link to plant archive site should be the current one
       $doc->{hub}{browser_links}{ensembl} =
 	sprintf "%s/%s/Location/View?contigviewbottom=url:%s;name=%s;format=TRACKHUB;#modal_user_data", $domain, $species, $hub->{url}, $shortLabel;
     } else {

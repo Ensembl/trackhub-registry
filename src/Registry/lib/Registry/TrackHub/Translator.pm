@@ -1138,9 +1138,9 @@ sub _handle_ensemblplants_exceptions {
   return 0 unless $assembly_name eq 'v0117-2013Aug' or # Oryza longistaminata 
     $assembly_name eq 'PRJEB4137' or # Oryza rufipogon
       $assembly_name =~ 'IWGSC1|TGACv1' or # Triticum aestivum
-	  $assembly_name =~ 'AGPv4|AGPv3'; # Zea mays
+	  $assembly_name =~ 'AGPv4'; # Zea mays
 
-  if ($assembly_name =~ 'AGPv4|AGPv3') { # Zea mays
+  if ($assembly_name =~ 'AGPv4') { # Zea mays
     $doc->{species}{tax_id} = 4577;
     $doc->{species}{scientific_name} = 'Zea mays';
     $doc->{species}{common_name} = 'maize';

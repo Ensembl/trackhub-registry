@@ -1026,7 +1026,7 @@ sub _add_genome_browser_links {
 
   $species = join('_', (split(/\s/, $species))[0 .. 1]);
   $species =~ /^\w+_\w+$/ or die "Couldn't get the required species name to build the Ensembl URL";
-
+  
   my $division;
 
   # 
@@ -1076,7 +1076,7 @@ sub _add_genome_browser_links {
       $division = 'dec2014.archive';
     }
   } elsif ($species =~ /triticum_aestivum|zea_mays/i) { # Handle old wheat/maize assemblies
-    if ($assembly_name =~ /IWGSC1\+popseq|AGPv3/i) {
+    if ($assembly_name =~ /IWGSC1\+popseq|B73\sRefGen_v3/i) { # AGPv3 is assembly synonym
       $division = 'archive.plants';
     } elsif ($assembly_name eq 'TGACv1' or $assembly_name eq 'AGPv4') { 
       $division = 'plants';

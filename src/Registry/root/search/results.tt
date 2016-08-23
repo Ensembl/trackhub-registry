@@ -171,7 +171,8 @@
 	    [% a = item.get_value('assembly'); %]
 	    [% IF status == 'All is Well' %]
             <div class="panel panel-info">
-	      <h3 class="panel-title">[% h.longLabel %]</h3>
+	      <h3 class="panel-title">[% h.shortLabel %]</h3>
+	      <h4 style="padding-left: 10px;">[% h.longLabel %]</h4>
               <div class="panel-body">
 	        <div class="btn-group  btn-group-xs" style="float: right;">
 		  [% IF urls %]
@@ -190,7 +191,7 @@
 		  <a role="button" class="btn btn-lg btn-default" data-toggle="popover" title="More info about this collection" data-content="" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [ item.id ]) %]">View Info</a>
 		</div>
 	        <p>
-		  <strong>Hub</strong>: [% h.shortLabel %]<br/>
+		  <!--<strong>Hub</strong>: [% h.shortLabel %]<br/>-->
 		  <strong>Species</strong>: [% s.tax_id %] - <em>[% s.scientific_name %]</em><br/>
 		  <strong>Assembly</strong>: [% a.accession %] - [% a.name %]
 		</p>
@@ -198,14 +199,15 @@
             </div>
 	    [% ELSIF status.match('Unavailable') %]
             <div class="panel panel-danger">
-	      <h3 class="panel-title">[% h.longLabel %]</h3>
+	      <h3 class="panel-title">[% h.shortLabel %]</h3>
+	      <h4 style="padding-left: 10px;">[% h.longLabel %]</h4>
               <div class="panel-body">
 	        <div style="float: right;">
 	          <span class="label label-danger"><a href="#" style="text-decoration: none; color: inherit;" data-toggle="tooltip" title="The registry has verified this hub is not reachable">[% status %]</a></span>
 		  <a role="button" class="btn btn-xs btn-default" data-toggle="popover" title="More info about this collection" data-content="" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [ item.id ]) %]">View Info</a>
 		</div>
 	        <p>
-  		  <strong>Hub</strong>: [% h.shortLabel %]<br/>
+  		  <!--<strong>Hub</strong>: [% h.shortLabel %]<br/>-->
 		  <strong>Species</strong>: [% s.tax_id %] - <em>[% s.scientific_name %]</em><br/>
 		  <strong>Assembly</strong>: [% a.accession %] - [% a.name %]
 		</p>
@@ -213,7 +215,8 @@
             </div>
 	    [% ELSE %]
             <div class="panel panel-warning">
-	      <h3 class="panel-title">[% h.longLabel %]</h3>
+	      <h3 class="panel-title">[% h.shortLabel %]</h3>
+	      <h4 style="padding-left: 10px;">[% h.longLabel %]</h4>
               <div class="panel-body">
 	        <div class="btn-group  btn-group-xs" style="float: right;">
 		  [% IF urls %]
@@ -233,7 +236,7 @@
 	          <span class="label label-warning"><a href="#" style="text-decoration: none; color: inherit;" data-toggle="tooltip" title="The registry is not aware of whether this hub works or not">[% status %]</a></span>
 		</div>
 	        <p>
-  		  <strong>Hub</strong>: [% h.shortLabel %]<br/>
+  		  <!--<strong>Hub</strong>: [% h.shortLabel %]<br/>-->
 		  <strong>Species</strong>: [% s.tax_id %] - <em>[% s.scientific_name %]</em><br/>
 		  <strong>Assembly</strong>: [% a.accession %] - [% a.name %]
 		</p>

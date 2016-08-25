@@ -47,6 +47,9 @@
 	      [% IF urls.ensembl %]
               <li><a target="_blank" href="[% urls.ensembl %]">Ensembl</a></li>
 	      [% END %]
+	      [% IF urls.vectorbase %]
+              <li><a target="_blank" href="[% urls.vectorbase %]">VectorBase</a></li>
+	      [% END %]
 	      [% IF urls.ucsc %]
               <li><a target="_blank" href="[% urls.ucsc %]">UCSC</a></li>
 	      [% END %]

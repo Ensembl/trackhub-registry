@@ -74,22 +74,46 @@ if ($response->is_success) {
 
 my $hubs = 
   [
+   # Ensembl Plants hubs
+   # {
+   #  url => "ftp://ftp.ensemblgenomes.org/pub/misc_data/Track_Hubs/SRP072774/hub.txt",
+   #  assemblies => { 'TAIR10' => 'GCA_000001735.1' }
+   # },
+   # {
+   #  url => "ftp://ftp.ensemblgenomes.org/pub/misc_data/.TrackHubs/SRP010680/hub.txt",
+   #  assemblies => { 'AGPv3' => 'GCA_000005005.5' },
+   # },
+   # {
+   #  url => "ftp://ftp.ensemblgenomes.org/pub/misc_data/Track_Hubs/SRP051137/hub.txt",
+   #  assemblies => { 'O.barthii_v1' => 'GCA_000182155.2' }
+   # },
+   #
+   # VectorBase hubs
+   # Hubs with some potential issues with species names
+   # Glossina fuscipes fuscipes (Glossina_fuscipes in VB) 
    {
-    url => "ftp://ftp.ensemblgenomes.org/pub/misc_data/Track_Hubs/SRP072774/hub.txt",
-    assemblies => { 'TAIR10' => 'GCA_000001735.1' }
+    url => "ftp://ftp.vectorbase.org/public_data/rnaseq_alignments/hubs/glossina_fuscipes/VBRNAseq_group_SRP017755/hub.txt",
+    assemblies => { 'GfusI1' => 'GCA_000671735.1' },
    },
+   # Glossina palpalis gambiensis (Glossina_palpalis in VB) 
    {
-    url => "ftp://ftp.ensemblgenomes.org/pub/misc_data/Track_Hubs/SRP065818/hub.txt",
-    assemblies => { 'AGPv3' => 'GCA_000005005.5' }
+    url => "ftp://ftp.vectorbase.org/public_data/rnaseq_alignments/hubs/glossina_palpalis/VBRNAseq_group_SRP015954/hub.txt",
+    assemblies => { 'GpapI1' => 'GCA_000818775.1' },
    },
+   # Anopheles stephensi strain Indian (Anopheles_stephensiI in VB) 
    {
-    url => "ftp://ftp.ensemblgenomes.org/pub/misc_data/Track_Hubs/SRP051137/hub.txt",
-    assemblies => { 'O.barthii_v1' => 'GCA_000182155.2' }
+    url => "ftp://ftp.vectorbase.org/public_data/rnaseq_alignments/hubs/anopheles_stephensiI/VBRNAseq_group_1252/hub.txt",
+    assemblies => { 'AsteI2' => 'GCA_000300775.2' },
+   },
+   # control
+   {
+    url => "ftp://ftp.vectorbase.org/public_data/rnaseq_alignments/hubs/anopheles_epiroticus/VBRNAseq_group_SRP043018/hub.txt",
+    assemblies => { 'AepiE1' => 'GCA_000349105.1' },
    },
   ];
 
 foreach my $hub (@{$hubs}) {
-  $request = POST("$server/api/trackhub",
+  $request = POST("$server/api/trackhub?permissive=1",
 		  'Content-type' => 'application/json',
 		  'Content'      => to_json($hub));
   $request->headers->header(user       => $user);
@@ -112,31 +136,31 @@ if ($response->is_success) {
   print "Unable to logout\n";
 } 
 
-$request = POST("$server/api/search/biosample",
-		'Content-type' => 'application/json');
-ok($response = $ua->request($request), 'POST request to /api/search/biosample');
-is($response->code, 400, 'Request unsuccessful 400');
-my $content = from_json($response->content);
-like($content->{error}, qr/Missing list/, 'Correct error response');
+# $request = POST("$server/api/search/biosample",
+# 		'Content-type' => 'application/json');
+# ok($response = $ua->request($request), 'POST request to /api/search/biosample');
+# is($response->code, 400, 'Request unsuccessful 400');
+# my $content = from_json($response->content);
+# like($content->{error}, qr/Missing list/, 'Correct error response');
 
-$request = POST("$server/api/search/biosample",
-		'Content-type' => 'application/json',
-		'Content'      => to_json({ ids => [] }));
-ok($response = $ua->request($request), 'POST request to /api/search/biosample');
-is($response->code, 400, 'Request unsuccessful 400');
-$content = from_json($response->content);
-like($content->{error}, qr/Empty list/, 'Correct error response');
+# $request = POST("$server/api/search/biosample",
+# 		'Content-type' => 'application/json',
+# 		'Content'      => to_json({ ids => [] }));
+# ok($response = $ua->request($request), 'POST request to /api/search/biosample');
+# is($response->code, 400, 'Request unsuccessful 400');
+# $content = from_json($response->content);
+# like($content->{error}, qr/Empty list/, 'Correct error response');
 
-# first two belongs to first hub, third to second
-my $biosample_ids = [ 'SAMN04601058', 'SAMN04601063', 'SAMN04235789' ];
-$request = POST("$server/api/search/biosample",
-		'Content-type' => 'application/json',
-		'Content'      => to_json({ ids => $biosample_ids }));
-ok($response = $ua->request($request), 'POST request to /api/search/biosample');
-ok($response->is_success, 'Request successful');
-is($response->content_type, 'application/json', 'JSON content type');
-$content = from_json($response->content);
-print Dumper $content;
+# # first two belongs to first hub, third to second
+# my $biosample_ids = [ 'SAMN04601058', 'SAMN04601063', 'SAMN04235789' ];
+# $request = POST("$server/api/search/biosample",
+# 		'Content-type' => 'application/json',
+# 		'Content'      => to_json({ ids => $biosample_ids }));
+# ok($response = $ua->request($request), 'POST request to /api/search/biosample');
+# ok($response->is_success, 'Request successful');
+# is($response->content_type, 'application/json', 'JSON content type');
+# $content = from_json($response->content);
+# print Dumper $content;
 
 # $request = GET("$server/api/trackdb/AVCzG8pAaLx8j0yTm-ob");
 # $request->headers->header(user       => $user);

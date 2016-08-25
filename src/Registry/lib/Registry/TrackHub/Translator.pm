@@ -980,6 +980,10 @@ sub _add_genome_info {
   return;
 }
 
+my @vector_base_assemblies = qw /AaegL3 AalbS1 AaloF1 AaraD1 AatrE1 AculA1 AdirW1 AepiE1 AfarF2 AfunF1 AgamP4 AmerM2 AminM1 AquaS1 AsinS2 AsteI2 AsteS1 BglaB1 CpipJ2 GausT1 GbreI1 GfusI1 GpalI1 GpapI1 IscaW1 LlonJ1 MdomA1 PpapI1 RproC3 ScalU1/;
+my %vector_base_assemblies;
+map { $vector_base_assemblies{$_}++ } @vector_base_assemblies;
+
 sub _add_genome_browser_links {
   my ($self, $genome, $doc) = @_;
   defined $genome and defined $doc or
@@ -1127,6 +1131,21 @@ sub _add_genome_browser_links {
       $doc->{hub}{browser_links}{ensembl} =
 	sprintf "%s/TrackHub?url=%s;species=%s;name=%s;registry=1", $domain, $hub->{url}, $species, $shortLabel;
     }
+  }
+
+  # VectorBase browser links
+  if (exists $vector_base_assemblies{$assemblysyn}) {
+    ($domain, $species) = 
+      ('http://www.vectorbase.org', $doc->{species}{scientific_name});
+
+    $species = join('_', (split(/\s/, $species))[0 .. 1]);
+    $species =~ /^\w+_\w+$/ or die "Couldn't get the required species name to build the Ensembl URL";
+
+    # handle special case: Anopheles stephensi strain Indian (Anopheles_stephensiI in VB) 
+    # cannot use species scientific name as it does not have strain
+    $species = 'Anopheles_stephensiI' if $assembly_accession eq 'GCA_000300775.2';
+    $doc->{hub}{browser_links}{vectorbase} =
+	sprintf "%s/TrackHub?url=%s;species=%s;name=%s;registry=1", $domain, $hub->{url}, $species, $hub->{shortLabel};
   }
   
   return;

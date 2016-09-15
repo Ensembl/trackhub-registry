@@ -151,7 +151,7 @@ sub assemblies_GET {
   $self->status_ok($c, entity => $assemblies);
 }
 
-=head2
+=head2 hubs_per_assembly
 
 Return the number of hubs per assembly, specified as name
 
@@ -178,6 +178,48 @@ sub hubs_per_assembly_GET {
   map { $hubs = $_->{doc_count} if $_->{key} eq $assembly_name } @{$results->{aggregations}{assembly}{buckets}};
 
   $self->status_ok($c, entity => { tot => $hubs });
+}
+
+=head2 tracks_per_assembly
+
+Return the number of tracks per assembly, specified as name
+
+=cut
+
+sub tracks_per_assembly :Local Args(1) ActionClass('REST') {}
+
+sub tracks_per_assembly_GET {
+  my ($self, $c, $assembly_name) = @_;
+
+  my $config = Registry->config()->{'Model::Search'};
+  my $query = {
+	       filtered => {
+			    filter => {
+				       term => { 
+				       		 'assembly.name' => $assembly_name
+					       }
+				      }
+			   }
+	      };
+  my %args =
+    (
+     index => $config->{trackhub}{index},
+     type  => $config->{trackhub}{type},
+     body  => { query => $query },
+     search_type => 'scan'
+    );
+  
+  my $tracks = 0;
+  try {
+    my $scroll = $c->model('Search')->_es->scroll_helper(%args);
+    while (my $result = $scroll->next) {
+      $tracks += scalar @{$result->{_source}{data}};
+    }
+  } catch {
+    $c->go('ReturnError', 'custom', [qq{$_}]);
+  };
+
+  $self->status_ok($c, entity => { tot => $tracks });
 }
 
 =head2 trackhubs

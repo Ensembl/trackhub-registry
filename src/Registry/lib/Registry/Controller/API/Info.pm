@@ -151,6 +151,35 @@ sub assemblies_GET {
   $self->status_ok($c, entity => $assemblies);
 }
 
+=head2
+
+Return the number of hubs per assembly, specified as name
+
+=cut
+
+sub hubs_per_assembly :Local Args(1) ActionClass('REST') {}
+
+sub hubs_per_assembly_GET {
+  my ($self, $c, $assembly_name) = @_;
+
+  my $config = Registry->config()->{'Model::Search'};
+  my $results = $c->model('Search')->search(index => $config->{trackhub}{index},
+					    type  => $config->{trackhub}{type},
+					    body => 
+					    {
+					     aggs => {
+						      assembly => { terms => { field => 'assembly.name', size  => 0 } },
+						     }
+					    });
+
+  # facets counts are the number of trackDBs per assembly, which is the same as the same
+  # as the number of hubs as each hub as one trackDB per assembly
+  my $hubs = 0;
+  map { $hubs = $_->{doc_count} if $_->{key} eq $assembly_name } @{$results->{aggregations}{assembly}{buckets}};
+
+  $self->status_ok($c, entity => { tot => $hubs });
+}
+
 =head2 trackhubs
 
 Return the list of available track data hubs.

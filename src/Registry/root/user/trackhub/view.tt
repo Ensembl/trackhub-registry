@@ -64,7 +64,7 @@ function toggle(b) {
           </form>
 	</div>
         <ul class="list-group col-sm-6">
-          <li class="list-group-item">Total number of tracks <span class="badge">[% tracks.total %]</span></li>
+          <!--<li class="list-group-item">Total number of tracks <span class="badge">[% tracks.total %]</span></li>-->
           <li class="list-group-item">Remote data tracks <span class="badge">[% tracks.with_data.total %]</span></li>
 	  <li class="list-group-item">Data type: <span class="label label-default">[% trackdb.type %]</span></li>
 	  <li class="list-group-item">File type(s): <span class="label label-default">[% trackdb.file_type.join(', ') %]</span></li>

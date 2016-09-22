@@ -175,7 +175,7 @@ sub hubs_per_assembly_GET {
   # facets counts are the number of trackDBs per assembly, which is the same as the same
   # as the number of hubs as each hub as one trackDB per assembly
   my $hubs = 0;
-  map { $hubs = $_->{doc_count} if $_->{key} eq $assembly_name } @{$results->{aggregations}{assembly}{buckets}};
+  map { $hubs = $_->{doc_count} if lc $_->{key} eq lc $assembly_name } @{$results->{aggregations}{assembly}{buckets}};
 
   $self->status_ok($c, entity => { tot => $hubs });
 }
@@ -192,32 +192,39 @@ sub tracks_per_assembly_GET {
   my ($self, $c, $assembly_name) = @_;
 
   my $config = Registry->config()->{'Model::Search'};
-  my $query = {
-	       filtered => {
-			    filter => {
-				       term => { 
-				       		 'assembly.name' => $assembly_name
-					       }
-				      }
-			   }
-	      };
-  my %args =
-    (
-     index => $config->{trackhub}{index},
-     type  => $config->{trackhub}{type},
-     body  => { query => $query },
-     search_type => 'scan'
-    );
+
+  # Can't do with simple term filter or query, as the endpoint 
+  # should support case insensitive search, but the assembly.name
+  # field is not analysed 
+  # my $query = {
+  # 	       filtered => {
+  # 	       		    filter => {
+  # 	       			       term => { 
+  # 	       			       		 'assembly.name' => $assembly_name
+  # 	       				       }
+  # 	       			      }
+  # 	       		   }
+  # 	      };
+  # my %args =
+  #   (
+  #    index => $config->{trackhub}{index},
+  #    type  => $config->{trackhub}{type},
+  #    body  => { query => $query },
+  #    search_type => 'scan'
+  #   );
   
+  # my $tracks = 0;
+  # try {
+  #   my $scroll = $c->model('Search')->_es->scroll_helper(%args);
+  #   while (my $result = $scroll->next) {
+  #     $tracks += scalar @{$result->{_source}{data}};
+  #   }
+  # } catch {
+  #   $c->go('ReturnError', 'custom', [qq{$_}]);
+  # };
+  my $trackdbs = $c->model('Search')->get_trackdbs();
   my $tracks = 0;
-  try {
-    my $scroll = $c->model('Search')->_es->scroll_helper(%args);
-    while (my $result = $scroll->next) {
-      $tracks += scalar @{$result->{_source}{data}};
-    }
-  } catch {
-    $c->go('ReturnError', 'custom', [qq{$_}]);
-  };
+  map { $tracks += scalar @{$_->{data}} if lc $_->{assembly}{name} eq lc $assembly_name } @{$trackdbs};
 
   $self->status_ok($c, entity => { tot => $tracks });
 }

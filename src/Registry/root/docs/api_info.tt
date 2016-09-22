@@ -24,6 +24,8 @@
 		  <li><a href="#ping">GET /api/info/ping</a></li>
 		  <li><a href="#species">GET /api/info/species</a></li>
 		  <li><a href="#assemblies">GET /api/info/assemblies</a></li>
+		  <li><a href="#hubassemblies">GET /api/info/hubs_per_assembly</a></li>
+		  <li><a href="#tracksassemblies">GET /api/info/tracks_per_assembly</a></li>
 		  <li><a href="#trackhubs">GET /api/info/trackhubs</a></li>
 		</ul>
 	      </li>
@@ -237,6 +239,110 @@
   <pre>
     HTTP/1.0 200 OK
     {"Brassica rapa":["GCA_000309985.1"],"Homo sapiens":["GCA_000001405.1","GCA_000001405.15"],"Arabidopsis thaliana":["GCA_000001735.1"],"Danio rerio":["GCA_000002035.2","GCA_000002035.3"],"Ricinus communis":["GCA_000151685.2"],"Drosophila simulans":["GCA_000754195.2"],"Mus musculus":["GCA_000001635.1","GCA_000001635.2"]}
+  </pre>
+
+  <h4>HTTP Status Codes</h4>
+  <table class="table" style="width: auto;">
+    <tbody>
+      <tr>
+        <th>Code</th><th>Description</th><th>Reason</th>
+      </tr>
+      <tr><td>200</td><td>OK</td><td>Request successful</td></tr>
+      <tr><td>500</td><td>Internal Server Error</td><td>Request cannot be fulfilled due to unexpected condition</td></tr>
+      <tr><td>503</td><td>Service Unavailable</td><td>Request cannot be fulfilled due to temporary overloading or maintenance of the server</td></tr>
+    </tbody>
+  </table>
+
+  <h3 id="hubassemblies">GET /api/info/hubs_per_assembly/:assembly</h3>
+  <p>
+    Returns the number of hubs for a given assembly, specified by name.
+  </p>
+  <p>
+    If the request is successful, the response is a hash with a key "tot", whose value is the total number of hubs which contains data for the specified assembly.
+  </p>
+
+  <h4>Resource Information</h4>
+  <table class="table" style="width: auto;">
+    <tbody>
+      <tr>
+        <th>Response formats</th>
+	<td>JSON</td>
+      </tr>
+      <tr>
+        <th>Authentication</th>
+	<td>No</td>
+      </tr>
+      <tr>
+        <th>Rate Limited</th>
+	<td>No</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Parameters</h4>
+  <p>The name of the assembly</p>
+
+  <h4>Example Request</h4>
+  <pre>
+    GET https://www.trackhubregistry.org/api/info/hubs_per_assembly/GRCz10
+  </pre>
+
+  <h4>Example Response</h4>
+  <pre>
+    HTTP/1.0 200 OK
+    { "tot": 2 }
+  </pre>
+
+  <h4>HTTP Status Codes</h4>
+  <table class="table" style="width: auto;">
+    <tbody>
+      <tr>
+        <th>Code</th><th>Description</th><th>Reason</th>
+      </tr>
+      <tr><td>200</td><td>OK</td><td>Request successful</td></tr>
+      <tr><td>500</td><td>Internal Server Error</td><td>Request cannot be fulfilled due to unexpected condition</td></tr>
+      <tr><td>503</td><td>Service Unavailable</td><td>Request cannot be fulfilled due to temporary overloading or maintenance of the server</td></tr>
+    </tbody>
+  </table>
+
+  <h3 id="tracksassemblies">GET /api/info/tracks_per_assembly/:assembly</h3>
+  <p>
+    Returns the number of tracks for a given assembly, specified by name.
+  </p>
+  <p>
+    If the request is successful, the response is a hash with a key "tot", whose value is the total number of tracks which contains data for the specified assembly.
+  </p>
+
+  <h4>Resource Information</h4>
+  <table class="table" style="width: auto;">
+    <tbody>
+      <tr>
+        <th>Response formats</th>
+	<td>JSON</td>
+      </tr>
+      <tr>
+        <th>Authentication</th>
+	<td>No</td>
+      </tr>
+      <tr>
+        <th>Rate Limited</th>
+	<td>No</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Parameters</h4>
+  <p>The name of the assembly</p>
+
+  <h4>Example Request</h4>
+  <pre>
+    GET https://www.trackhubregistry.org/api/info/tracks_per_assembly/GRCz10
+  </pre>
+
+  <h4>Example Response</h4>
+  <pre>
+    HTTP/1.0 200 OK
+    { "tot": 11 }
   </pre>
 
   <h4>HTTP Status Codes</h4>

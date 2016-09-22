@@ -201,7 +201,8 @@
   
   <ul class="nav nav-pills">
     <li class="active"><a href="#perl" data-toggle="tab">Perl</a></li>
-    <li><a href="#python" data-toggle="tab">Python</a></li>
+    <li><a href="#python2" data-toggle="tab">Python2</a></li>
+    <li><a href="#python3" data-toggle="tab">Python3</a></li>
     <li><a href="#ruby" data-toggle="tab">Ruby</a></li>
   </ul>
   <div class='tab-content'>
@@ -267,7 +268,7 @@ sub logout {
       </pre> 
     </div>
 
-    <div class='tab-pane' id='python'>
+    <div class='tab-pane' id='python2'>
       <pre class="pre-scrollable prettyprint linenums">
 import requests, sys
 
@@ -298,6 +299,42 @@ if not r.ok:
    print "Couldn't not delete cshl2013 hub trackDBs, reason: %s [%d]" % (r.text, r.status_code)
    sys.exit
 print "I have deleted the cshl2013 hub trackDBs from the Registry"
+
+logout(server, user, auth_token)
+      </pre>
+    </div>
+
+    <div class='tab-pane' id='python3'>
+      <pre class="pre-scrollable prettyprint linenums">
+import requests, sys
+
+server = 'https://www.trackhubregistry.org'
+user = 'exampleuser'
+password = 'examplepass'
+
+def login(server, user, password):
+    r = requests.get(server+'/api/login', auth=(user, password), verify=True)
+    if not r.ok:
+        print("Couldn't login, reason: %s [%d]" % (r.text, r.status_code))
+        sys.exit
+
+    auth_token = r.json()[u'auth_token']
+    print('Logged in [%s]' % auth_token)
+    return auth_token
+
+def logout(server, user, auth_token):
+    r = requests.get(server+'/api/logout', headers={ 'user': user, 'auth_token': auth_token })    
+    if not r.ok:
+       print("Couldn't logout, reason: %s [%d]" % (r.text, r.status_code))
+       sys.exit
+    print('Logged out')
+
+auth_token = login(server, user, password)
+r = requests.delete(server+'/api/trackhub/cshl2013', headers={ 'user': user, 'auth_token': auth_token }, verify=True)
+if not r.ok:
+   print("Couldn't not delete cshl2013 hub trackDBs, reason: %s [%d]" % (r.text, r.status_code))
+   sys.exit
+print("I have deleted the cshl2013 hub trackDBs from the Registry")
 
 logout(server, user, auth_token)
       </pre>

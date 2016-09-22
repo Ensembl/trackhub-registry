@@ -103,7 +103,8 @@
   
   <ul class="nav nav-pills">
     <li class="active"><a href="#perl" data-toggle="tab">Perl</a></li>
-    <li><a href="#python" data-toggle="tab">Python</a></li>
+    <li><a href="#python2" data-toggle="tab">Python2</a></li>
+    <li><a href="#python3" data-toggle="tab">Python3</a></li>
     <li><a href="#ruby" data-toggle="tab">Ruby</a></li>
   </ul>
   <div class='tab-content'>
@@ -133,7 +134,9 @@ if ($response->is_success) {
       </pre> 
     </div>
 
-    <div class='tab-pane' id='python'>
+<!-- PYTHON2/3 EXAMPLE -->
+
+    <div class='tab-pane' id='python2'>
       <pre class="pre-scrollable prettyprint linenums">
 import requests, sys
 
@@ -144,6 +147,20 @@ if not r.ok:
 
 auth_token = r.json()[u'auth_token']
 print 'Logged in [%s]' % auth_token
+      </pre>
+    </div>
+
+    <div class='tab-pane' id='python3'>
+      <pre class="pre-scrollable prettyprint linenums">
+import requests, sys
+
+r = requests.get('https://www.trackhubregistry.org/api/login', auth=('exampleuser', 'examplepass'), verify=True)
+if not r.ok:
+    print("Couldn't login, reason: %s [%d]" % (r.text, r.status_code))
+    sys.exit()
+
+auth_token = r.json()[u'auth_token']
+print('Logged in [%s]' % auth_token)
       </pre>
     </div>
 

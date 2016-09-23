@@ -24,17 +24,20 @@
 	[% status = trackdb.status_message; %]
 	[% hub = trackdb.hub %]
 	[% urls = hub.browser_links %]
+	[% tooltip = 'Hub is OK to load' %]
 	[% IF hub.ok == 0 %]
-	  [% status = 'Hub Unavailable' %]
+	  [% status = 'Remote Data Unavailable' %]
 	[% END %]
 	[% status_last_update = trackdb.status_last_update(1); %]
 	[% label_class = 'label-success' %]
 	[% IF status == 'Unchecked' %]
 	[%   label_class = 'label-warning' %]
+	[%   tooltip = 'The registry is not aware of whether this hub works or not' %]
 	[% ELSIF status.match('Unavailable') %]
 	[%   label_class = 'label-danger' %]
+	[%   tooltip = 'The registry has verified this hub is not reachable' %]
 	[% END %]
-	  <span class="label [% label_class %]" style="padding-bottom: 1px;">[% status %]</span><br/>
+	  <span class="label [% label_class %]" style="padding-bottom: 1px;"><a href="[% c.uri_for(c.controller('docs').action_for('results_page')) %]#status" style="text-decoration: none; color: inherit;" data-toggle="tooltip" title="[% tooltip %]">[% status %]</a></span><br/>
 	[% IF status != 'Unchecked' %]
 	  <small>[% status_last_update %]</small><br/>
 	[% END %]

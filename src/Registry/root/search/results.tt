@@ -165,7 +165,7 @@
 	    [% h = item.get_value('hub'); %]
 	    [% urls = h.browser_links %]
 	    [% IF h.ok == 0 %]
-	      [% status = 'Hub Unavailable' %]
+	      [% status = 'Remote Data Unavailable' %]
 	    [% END %]
 	    [% s = item.get_value('species'); %]
 	    [% a = item.get_value('assembly'); %]
@@ -206,7 +206,7 @@
 	      <h4 style="padding-left: 10px;">[% h.longLabel %]</h4>
               <div class="panel-body">
 	        <div style="float: right;">
-	          <span class="label label-danger"><a href="#" style="text-decoration: none; color: inherit;" data-toggle="tooltip" title="The registry has verified this hub is not reachable">[% status %]</a></span>
+	          <span class="label label-danger"><a href="[% c.uri_for(c.controller('docs').action_for('results_page')) %]#status" style="text-decoration: none; color: inherit;" data-toggle="tooltip" title="The registry has verified this hub is not reachable">[% status %]</a></span>
 		  <a role="button" class="btn btn-xs btn-default" data-toggle="popover" title="More info about this collection" data-content="" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [ item.id ]) %]">View Info</a>
 		</div>
 	        <p>
@@ -239,7 +239,7 @@
                   </div>
 		  [% END %]
 		  <a role="button" class="btn btn-lg btn-default" data-toggle="popover" title="More info about this collection" data-content="" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [ item.id ]) %]">View Info</a><br/><br/>
-	          <span class="label label-warning"><a href="#" style="text-decoration: none; color: inherit;" data-toggle="tooltip" title="The registry is not aware of whether this hub works or not">[% status %]</a></span>
+	          <span class="label label-warning"><a href="[% c.uri_for(c.controller('docs').action_for('results_page')) %]#status" style="text-decoration: none; color: inherit;" data-toggle="tooltip" title="The registry is not aware of whether this hub works or not">[% status %]</a></span>
 		</div>
 	        <p>
   		  <!--<strong>Hub</strong>: [% h.shortLabel %]<br/>-->

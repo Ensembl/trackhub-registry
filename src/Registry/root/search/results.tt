@@ -171,7 +171,7 @@
 	    [% a = item.get_value('assembly'); %]
 	    [% IF status == 'All is Well' %]
             <div class="panel panel-info">
-	      <h3 class="panel-title">[% h.shortLabel %]</h3>
+	      <h3 class="panel-title"><a target="_blank" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [ item.id ]) %]>[% h.shortLabel %]</a></h3>
 	      <h4 style="padding-left: 10px;">[% h.longLabel %]</h4>
               <div class="panel-body">
 	        <div class="btn-group  btn-group-xs" style="float: right;">
@@ -202,7 +202,7 @@
             </div>
 	    [% ELSIF status.match('Unavailable') %]
             <div class="panel panel-danger">
-	      <h3 class="panel-title">[% h.shortLabel %]</h3>
+	      <a target="_blank" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [ item.id ]) %]"><h3 class="panel-title">[% h.shortLabel %]</h3></a>
 	      <h4 style="padding-left: 10px;">[% h.longLabel %]</h4>
               <div class="panel-body">
 	        <div style="float: right;">
@@ -218,7 +218,7 @@
             </div>
 	    [% ELSE %]
             <div class="panel panel-warning">
-	      <h3 class="panel-title">[% h.shortLabel %]</h3>
+	      <a target="_blank" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [ item.id ]) %]"><h3 class="panel-title">[% h.shortLabel %]</h3></a>
 	      <h4 style="padding-left: 10px;">[% h.longLabel %]</h4>
               <div class="panel-body">
 	        <div class="btn-group  btn-group-xs" style="float: right;">

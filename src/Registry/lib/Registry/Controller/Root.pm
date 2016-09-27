@@ -22,6 +22,11 @@ use namespace::autoclean;
 
 BEGIN { extends 'Catalyst::Controller' }
 
+use Try::Tiny;
+use Email::MIME;
+use Email::Sender::Simple qw(sendmail);
+use Registry::Form::User::Help;
+
 #
 # Sets the actions in this controller to be registered with no prefix
 # so they function identically to actions created in MyApp.pm
@@ -82,6 +87,52 @@ The page linked by the "Learn More" button in the front page
 
 sub learn_more :Path('/about') {
   my ($self, $c) = @_;
+}
+
+=head2 help
+
+The help page with the contact form
+
+=cut 
+
+sub help :Path('/help') {
+  my ($self, $c) = @_;
+
+  my $help_form = Registry::Form::User::Help->new();
+
+  $c->stash(template => "help.tt",
+	    form     => $help_form);
+
+  return unless $help_form->process( params => $c->req->parameters );
+
+  my ($name, $subject, $email, $message) =
+    (
+     $help_form->value->{name},
+     $help_form->value->{subject},
+     $help_form->value->{email},
+     $help_form->value->{message}
+    );
+  my $email_message = 
+    Email::MIME->create(header_str => 
+  			[
+  			 From => $email,
+  			 To   => "trackhub-registry\@ebi.ac.uk",
+  			 Subject => $subject
+  			],
+  			attributes =>
+  			{
+  			 encoding => 'quoted-printable',
+  			 charset  => 'ISO-8859-1',
+  			},
+  			body_str => $message,
+  		       );
+  try {
+    sendmail($email_message);
+  } catch {
+    $c->stash(error_msg => "An unexpected error happened, couldn't send message to HelpDesk.<br/>Please contact it directly at helpdesk\@trackhubregistry.org using your email client.")
+  };
+
+  $c->stash(status_msg => sprintf "%sYour message has been sent to our HelpDesk.<br/>We'll contact you as soon as possible.", $name?"Thanks $name for contacting us. ":"");
 }
 
 =head2 submit

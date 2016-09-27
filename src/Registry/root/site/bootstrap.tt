@@ -81,8 +81,8 @@
 	      <li class="menu-item "><a href="[% c.uri_for('/docs/management/modelling') %]">TrackDB JSON specification</a></li>
             </ul>
           </li>
-
           <li><a href="[% c.uri_for('/about') %]">About</a></li>
+          <li><a href="[% c.uri_for('/help') %]">Help</a></li>
           <!--<li><a href="[% c.uri_for('/about#contacts') %]">Help</a></li>-->
         </ul>
 	<ul class="nav navbar-nav navbar-right">

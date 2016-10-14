@@ -200,7 +200,6 @@ SKIP: {
   # the validator raises an exception with the error message, check
   $content = from_json($response->content);
   like($content->{error}, qr/Failed/, 'Correct error response');
-
   # update doc1
   $request = PUT('/api/trackdb/1',
   		  'Content-type' => 'application/json',
@@ -548,7 +547,7 @@ SKIP: {
   # here we also test the update of the Plant TrackHub
   # did not alter the number of hubs by deleting the previously
   # existing trackDbs
-  is(scalar @{$content}, 3, 'Number of hubs');
+  is(scalar @{$content}, 2, 'Number of hubs'); #Comment: As Smithlab hub was commented out, we expect only 2
   foreach my $hub (@{$content}) {
     if ($hub->{name} eq 'Blueprint_Hub') {
       is($hub->{longLabel}, 'Blueprint Epigenomics Data Hub', 'Hub long label');
@@ -587,8 +586,8 @@ SKIP: {
   is($hub->{shortLabel}, 'Plants', 'Hub short label');
   is(scalar @{$hub->{trackdbs}}, 3, 'Number of trackDbs');
   foreach my $trackdb (@{$hub->{trackdbs}}) {
-    ok(($trackdb->{species} == 3702) || ($trackdb->{species} == 3711) || ($trackdb->{species} == 3988), 'trackDb species');
-    ok(($trackdb->{assembly} eq 'GCA_000151685.2') || ($trackdb->{assembly} eq 'GCA_000309985.1') || ($trackdb->{assembly} eq 'GCA_000001735.1'), 'trackDb assembly');
+  	ok(($trackdb->{species}->{tax_id} == 3702) || ($trackdb->{species}->{tax_id}  == 3711) || ($trackdb->{species}->{tax_id} == 3988), 'trackDb species');
+    ok(($trackdb->{assembly}->{accession} eq 'GCA_000151685.2') || ($trackdb->{assembly}->{accession} eq 'GCA_000309985.1') || ($trackdb->{assembly}->{accession} eq 'GCA_000001735.1'), 'trackDb assembly');
     like($trackdb->{uri}, qr/api\/trackdb/, 'trackDb uri');
   }
 

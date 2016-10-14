@@ -25,6 +25,7 @@ use warnings;
 
 use Capture::Tiny qw( capture );
 # use Registry::Utils;
+use File::Basename qw();
 
 use vars qw($AUTOLOAD);
 
@@ -56,7 +57,9 @@ sub new {
 sub validate {
   my ($self, $file) = @_;
 
-  my $cmd = sprintf("validate.py -s %s -f %s", $self->{schema}, $file);
+  my $cfile = __FILE__;
+  my ($name, $path, $suffix) = File::Basename::fileparse($cfile);
+  my $cmd = sprintf("$path/../../../../../docs/trackhub-schema/validate.py -s %s -f %s", $self->{schema}, $file);
   # my ($rc, $output) = Registry::Utils::run_cmd($cmd);
   my ($output, $err, $rc) = capture { system( $cmd ); };
   

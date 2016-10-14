@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import sys
 import getopt
@@ -39,7 +39,7 @@ def main(argv):
 
 
 def usage():
-    print "validate.py\n[options]\n\t-s <schema>\n\t-f <file>\n"
+    print("validate.py\n[options]\n\t-s <schema>\n\t-f <file>\n")
 
 if __name__ == "__main__":
     main(sys.argv[1:])

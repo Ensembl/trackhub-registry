@@ -27,6 +27,7 @@ local $SIG{__WARN__} = sub {};
 use JSON;
 use HTTP::Headers;
 use HTTP::Request::Common qw/GET POST PUT DELETE/;
+use LWP::Simple qw($ua head);
 
 use Catalyst::Test 'Registry';
 
@@ -85,7 +86,7 @@ SKIP: {
 		     polyA   => 'http://johnlab.org/xpad/Hub/UCSC.txt',
 		     encode  => 'http://ftp.ebi.ac.uk/pub/databases/ensembl/encode/integration_data_jan2011/hub.txt',
 		     mRNA    => 'http://www.mircode.org/ucscHub/hub.txt',
-		     dnameth => 'http://smithlab.usc.edu/trackdata/methylation/hub.txt',
+		     # dnameth => 'http://smithlab.usc.edu/trackdata/methylation/hub.txt', #Comment: Unable to find a valid INSDC accession for genome assembly name tair10
 		     tis     => 'http://gengastro.1med.uni-kiel.de/suppl/footprint/Hub/tisHub.txt',
 		     sdsu    => 'http://bioinformatics.sdstate.edu/datasets/2012-NAT/hub.txt', # empty type
 		     blueprint => 'ftp://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub',
@@ -109,16 +110,21 @@ SKIP: {
 		     libd      => 'https://s3.amazonaws.com/DLPFC_n36/humanDLPFC/hub.txt',
 		    );
 
+  $ua->timeout(10);
   foreach my $hub (keys %public_hubs) {
     note "Submitting hub $hub";
-    my $request = POST('/api/trackhub?permissive=1',
-		       'Content-type' => 'application/json',
-		       'Content'      => to_json({ url => $public_hubs{$hub} }));
-    $request->headers->header(user       => 'trackhub1');
-    $request->headers->header(auth_token => $auth_token);
-    ok($response = request($request), 'POST request to /api/trackhub/create');
-    ok($response->is_success, 'Request successful 2xx');
-    is($response->content_type, 'application/json', 'JSON content type');
+    if (head($public_hubs{$hub})) {
+      my $request = POST('/api/trackhub?permissive=1',
+		         'Content-type' => 'application/json',
+		         'Content'      => to_json({ url => $public_hubs{$hub} }));
+      $request->headers->header(user       => 'trackhub1');
+      $request->headers->header(auth_token => $auth_token);
+      ok($response = request($request), 'POST request to /api/trackhub/create');
+      ok($response->is_success, 'Request successful 2xx');
+      is($response->content_type, 'application/json', 'JSON content type');
+    }else{
+       note "Submitting hub $hub timed out. Please check the url $public_hubs{$hub})\n";
+    }
   }
 		     
 }

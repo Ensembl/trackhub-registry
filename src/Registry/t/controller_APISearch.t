@@ -19,6 +19,7 @@ use Test::More;
 use JSON;
 use HTTP::Request::Common qw/GET POST/;
 use Data::Dumper;
+use LWP::Simple;
 
 BEGIN {
   use FindBin qw/$Bin/;
@@ -73,15 +74,17 @@ SKIP: {
   my $auth_token = $content->{auth_token};
 
   foreach my $hub (@public_hubs) {
-    note sprintf "Submitting hub %s", $hub->{name};
-    $request = POST('/api/trackhub?permissive=1',
-		    'Content-type' => 'application/json',
-		    'Content'      => to_json({ url => $hub->{url} }));
-    $request->headers->header(user       => 'trackhub1');
-    $request->headers->header(auth_token => $auth_token);
-    ok($response = request($request), 'POST request to /api/trackhub');
-    ok($response->is_success, 'Request successful 2xx');
-    is($response->content_type, 'application/json', 'JSON content type');
+    if (head($hub->{url})) {
+      note sprintf "Submitting hub %s", $hub->{name};
+      $request = POST('/api/trackhub?permissive=1',
+		      'Content-type' => 'application/json',
+		      'Content'      => to_json({ url => $hub->{url} }));
+      $request->headers->header(user       => 'trackhub1');
+      $request->headers->header(auth_token => $auth_token);
+      ok($response = request($request), 'POST request to /api/trackhub');
+      ok($response->is_success, 'Request successful 2xx');
+      is($response->content_type, 'application/json', 'JSON content type');
+    }
   }
 
   # Now register another hub but do not make it available for search

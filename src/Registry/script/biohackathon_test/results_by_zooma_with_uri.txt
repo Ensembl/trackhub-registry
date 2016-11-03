@@ -1,0 +1,1097 @@
+antibody	 AP-2alpha	http://www.orpha.net/ORDO/Orphanet_159950
+antibody	 BAF155	http://www.orpha.net/ORDO/Orphanet_280581
+antibody	 BAF170	http://www.orpha.net/ORDO/Orphanet_280581
+antibody	 BCL11A	http://www.ebi.ac.uk/efo/EFO_0005027
+antibody	 BCL3	http://www.orpha.net/ORDO/Orphanet_119007
+antibody	 BDP1	http://www.orpha.net/ORDO/Orphanet_326069
+antibody	 Brg1	http://www.orpha.net/ORDO/Orphanet_225351
+antibody	 c-Fos	http://www.orpha.net/ORDO/Orphanet_364789
+antibody	 c-Myc	http://www.orpha.net/ORDO/Orphanet_159785
+antibody	 CtBP2	http://www.orpha.net/ORDO/Orphanet_292698
+antibody	 CTCF	http://www.ebi.ac.uk/efo/EFO_0005034
+antibody	 E2F1	http://www.orpha.net/ORDO/Orphanet_121303
+antibody	 E2F1	http://www.orpha.net/ORDO/Orphanet_293326
+antibody	 E2F1	http://www.orpha.net/ORDO/Orphanet_173154
+antibody	 E2F1	http://www.ebi.ac.uk/efo/EFO_1000937
+antibody	 E2F1	http://www.ebi.ac.uk/efo/EFO_0000474
+antibody	 E2F1	http://www.orpha.net/ORDO/Orphanet_267235
+antibody	 E2F4	http://www.orpha.net/ORDO/Orphanet_173154
+antibody	 E2F4	http://www.ebi.ac.uk/efo/EFO_1000937
+antibody	 E2F4	http://www.orpha.net/ORDO/Orphanet_121303
+antibody	 E2F4	http://www.orpha.net/ORDO/Orphanet_293326
+antibody	 E2F4	http://www.ebi.ac.uk/efo/EFO_0000474
+antibody	 E2F4	http://www.orpha.net/ORDO/Orphanet_267235
+antibody	 E2F6	http://www.orpha.net/ORDO/Orphanet_173154
+antibody	 E2F6	http://www.ebi.ac.uk/efo/EFO_1000937
+antibody	 E2F6	http://www.orpha.net/ORDO/Orphanet_121303
+antibody	 E2F6	http://www.orpha.net/ORDO/Orphanet_293326
+antibody	 E2F6	http://www.ebi.ac.uk/efo/EFO_0000474
+antibody	 E2F6	http://www.orpha.net/ORDO/Orphanet_267235
+antibody	 EBF	http://www.orpha.net/ORDO/Orphanet_313822
+antibody	 ELK4	http://www.orpha.net/ORDO/Orphanet_121583
+antibody	 ETS1	http://www.ebi.ac.uk/efo/EFO_0002862
+antibody	 GATA-1	http://www.orpha.net/ORDO/Orphanet_122028
+antibody	 GATA-2	http://www.orpha.net/ORDO/Orphanet_122028
+antibody	 GR	http://www.orpha.net/ORDO/Orphanet_123916
+antibody	 HNF4A	http://www.orpha.net/ORDO/Orphanet_263455
+antibody	 HSF1	http://www.orpha.net/ORDO/Orphanet_138462
+antibody	 Ini1	http://www.orpha.net/ORDO/Orphanet_119735
+antibody	 IRF1	http://www.orpha.net/ORDO/Orphanet_315478
+antibody	 IRF3	http://www.orpha.net/ORDO/Orphanet_315478
+antibody	 Max	http://purl.obolibrary.org/obo/NCBITaxon_3847
+antibody	 Max	http://www.ebi.ac.uk/efo/EFO_0004887
+antibody	 NELFe	http://www.orpha.net/ORDO/Orphanet_120525
+antibody	 NFKB	http://www.orpha.net/ORDO/Orphanet_438054
+antibody	 NRSF	http://www.orpha.net/ORDO/Orphanet_169957
+antibody	 p300	http://www.orpha.net/ORDO/Orphanet_121560
+antibody	 PGC1A	http://www.orpha.net/ORDO/Orphanet_363670
+antibody	 Pol2	http://www.orpha.net/ORDO/Orphanet_289494
+antibody	 Pol2	http://purl.obolibrary.org/obo/PO_0025121
+antibody	 Pol2	http://purl.obolibrary.org/obo/PO_0025195
+antibody	 Pol3	http://www.orpha.net/ORDO/Orphanet_289494
+antibody	 Pol3	http://purl.obolibrary.org/obo/PO_0025121
+antibody	 Pol3	http://purl.obolibrary.org/obo/PO_0025195
+antibody	 PU.1	http://www.orpha.net/ORDO/Orphanet_239862
+antibody	 Rad21	http://purl.obolibrary.org/obo/UO_0000135
+antibody	 RPC155	http://www.orpha.net/ORDO/Orphanet_285106
+antibody	 SIX5	http://purl.obolibrary.org/obo/PO_0007123
+antibody	 SP1	http://www.orpha.net/ORDO/Orphanet_1509
+antibody	 SP1	http://www.orpha.net/ORDO/Orphanet_179413
+antibody	 SP1	http://www.orpha.net/ORDO/Orphanet_3198
+antibody	 SP1	http://www.orpha.net/ORDO/Orphanet_138543
+antibody	 SRF	http://www.ebi.ac.uk/efo/EFO_0004154
+antibody	 STAT1	http://www.orpha.net/ORDO/Orphanet_326078
+antibody	 STAT2	http://www.orpha.net/ORDO/Orphanet_326078
+antibody	 STAT3	http://www.orpha.net/ORDO/Orphanet_326078
+antibody	 SUZ12	http://www.orpha.net/ORDO/Orphanet_431087
+antibody	 TAF1	http://www.orpha.net/ORDO/Orphanet_139199
+antibody	 TBP	http://www.ebi.ac.uk/efo/EFO_0004536
+antibody	 TCF12	http://www.orpha.net/ORDO/Orphanet_201589
+antibody	 TCF4	http://www.orpha.net/ORDO/Orphanet_201589
+antibody	 TR4	http://www.orpha.net/ORDO/Orphanet_983
+cell_type	 Aleurone	http://purl.obolibrary.org/obo/PO_0005360
+cell_type	 all	http://www.ebi.ac.uk/efo/EFO_0000209
+cell_type	 all	http://www.orpha.net/ORDO/Orphanet_513
+cell_type	 all	http://www.ebi.ac.uk/efo/EFO_0000220
+cell_type	 all	http://www.orpha.net/ORDO/Orphanet_119016
+cell_type	 Brain	http://purl.obolibrary.org/obo/UBERON_0000955
+cell_type	 Breast Myoepithelial	http://www.ebi.ac.uk/efo/EFO_0002609
+cell_type	 bundle sheath	http://purl.obolibrary.org/obo/PO_0006023
+cell_type	 CD19	http://www.ebi.ac.uk/efo/EFO_0005180
+cell_type	 CD19	http://purl.obolibrary.org/obo/CL_0000236
+cell_type	 CD3	http://www.ebi.ac.uk/efo/EFO_0003317
+cell_type	 CD3	http://www.orpha.net/ORDO/Orphanet_79172
+cell_type	 CD3	http://purl.obolibrary.org/obo/CHEBI_22977
+cell_type	 CD4 Memory	http://purl.obolibrary.org/obo/CL_0000904
+cell_type	 CD4 Memory	http://purl.obolibrary.org/obo/CL_0000905
+cell_type	 CD4 Memory	http://purl.obolibrary.org/obo/CL_0000084
+cell_type	 CD8 naive	http://purl.obolibrary.org/obo/CL_0000084
+cell_type	 CD8 Naive	http://purl.obolibrary.org/obo/CL_0000084
+CELL_TYPE	 erythroblast	http://purl.obolibrary.org/obo/CL_0000765
+cell_type	 Fibroblast	http://purl.obolibrary.org/obo/CL_0000057
+cell_type	 flower bud	http://purl.obolibrary.org/obo/PO_0000056
+cell_type	 Hematopoietic	http://purl.obolibrary.org/obo/CL_0000988
+cell_type	 Hematopoietic	http://purl.obolibrary.org/obo/CL_0000037
+cell_type	 Hematopoietic	http://www.ebi.ac.uk/efo/EFO_0000798
+cell_type	 hN (ES H9 derived Neurons)	http://www.ebi.ac.uk/efo/EFO_1000958
+cell_type	 Islet	http://purl.obolibrary.org/obo/UBERON_0000006
+cell_type	 Keratinocyte	http://purl.obolibrary.org/obo/CL_0000312
+cell_type	 leaf mesophyll	http://purl.obolibrary.org/obo/PO_0005645
+CELL_TYPE	 macrophage	http://purl.obolibrary.org/obo/CL_0000235
+cell_type	 Mammary epithelial cells	http://purl.obolibrary.org/obo/CL_0002327
+cell_type	 Melanocyte	http://purl.obolibrary.org/obo/CL_0000148
+cell_type	 Memory CD4	http://purl.obolibrary.org/obo/CL_0000904
+cell_type	 Memory CD4	http://purl.obolibrary.org/obo/CL_0000905
+cell_type	 Memory CD4	http://purl.obolibrary.org/obo/CL_0000084
+cell_type	 mesophyll	http://purl.obolibrary.org/obo/PO_0005645
+cell_type	 mesophyll	http://purl.obolibrary.org/obo/PO_0006070
+CELL_TYPE	 monocyte	http://purl.obolibrary.org/obo/CL_0000576
+cell_type	 Mononuclear Cell	http://purl.obolibrary.org/obo/CL_0000842
+cell_type	 MT-	http://www.orpha.net/ORDO/Orphanet_120107
+cell_type	 MT-	http://www.ebi.ac.uk/efo/EFO_0006962
+cell_type	 MT-	http://www.ebi.ac.uk/efo/EFO_0002241
+cell_type	 MT+	http://www.orpha.net/ORDO/Orphanet_120107
+cell_type	 Myoepithelial cells	http://purl.obolibrary.org/obo/MP_0013779
+cell_type	 Myoepithelial cells	http://purl.obolibrary.org/obo/MP_0014199
+cell_type	 Myoepithelial cells	http://purl.obolibrary.org/obo/MP_0013778
+cell_type	 Myoepithelial cells	http://purl.obolibrary.org/obo/MP_0013780
+cell_type	 Myoepithelial cells	http://purl.obolibrary.org/obo/MP_0014156
+cell_type	 Pancreatic Islets	http://purl.obolibrary.org/obo/UBERON_0000006
+cell_type	 PBMC	http://purl.obolibrary.org/obo/CL_0000765
+cell_type	 Peripheral Blood Mononuclear Cell	http://purl.obolibrary.org/obo/CL_2000001
+cell_type	 Peripheral Blood Mononuclear Primary Cell	http://purl.obolibrary.org/obo/CL_2000001
+cell_type	 plant cell	http://purl.obolibrary.org/obo/PO_0009002
+cell_type	 plant cell	http://purl.obolibrary.org/obo/PO_0025606
+cell_type	 Protoplast	http://purl.obolibrary.org/obo/CL_0000371
+cell_type	 Resistant	http://www.orpha.net/ORDO/Orphanet_123421
+cell_type	 Resistant	http://www.ebi.ac.uk/efo/EFO_0001349
+cell_type	 Resistant	http://www.ebi.ac.uk/efo/EFO_0002614
+cell_type	 shoot apices	http://purl.obolibrary.org/obo/PO_0000037
+cell_type	 Sperm Cell	http://www.ebi.ac.uk/efo/EFO_0001005
+cell_type	 Sperm Cell	http://purl.obolibrary.org/obo/PO_0025121
+cell_type	 Starchy endosperm	http://purl.obolibrary.org/obo/PO_0006220
+cell_type	 Stele	http://purl.obolibrary.org/obo/PO_0025197
+cell_type	 Stele	http://purl.obolibrary.org/obo/PO_0020124
+cell_type	 stem cell	http://purl.obolibrary.org/obo/CL_0000034
+cell_type	 Stem Cell	http://purl.obolibrary.org/obo/CL_0000034
+cell_type	 Stem cells	http://purl.obolibrary.org/obo/CL_0000034
+cell_type	 Susceptible	http://www.ebi.ac.uk/efo/, http://www.orpha.net/ORDO/EFO_0000180, Orphanet_391311
+cell_type	 Susceptible	http://www.ebi.ac.uk/efo/EFO_0000180
+cell_type	 Susceptible	http://www.ebi.ac.uk/efo/EFO_0001663
+cell_type	 Susceptible	http://www.orpha.net/ORDO/Orphanet_182067
+cell_type	 Th17	http://www.ebi.ac.uk/efo/EFO_0002804
+cell_type	 Th17	http://www.ebi.ac.uk/efo/EFO_0002803
+cell_type	 Treg	http://purl.obolibrary.org/obo/MP_0004974
+cell_type	 Treg	http://purl.obolibrary.org/obo/MP_0004972
+cell_type	 Treg	http://purl.obolibrary.org/obo/MP_0004973
+cell_type	 Treg	http://purl.obolibrary.org/obo/MP_0004941
+cell_type	 Trophoblast	http://purl.obolibrary.org/obo/CL_0000525
+cell_type	 whole inflorescence	http://purl.obolibrary.org/obo/PO_0007047
+cell_type	 ZYGOTE	http://purl.obolibrary.org/obo/PO_0000423
+cell_type	 ZYGOTE	http://purl.obolibrary.org/obo/CL_0000365
+dev_stage	 10 days after pollination	http://purl.obolibrary.org/obo/PO_0009010
+dev_stage	 10 days post anthesis	http://purl.obolibrary.org/obo/PO_0007016
+dev_stage	 10 days post inoculation	http://purl.obolibrary.org/obo/NCBITaxon_52586
+dev_stage	 12 days post anthesis	http://purl.obolibrary.org/obo/PO_0007016
+dev_stage	 12 Days Post Anthesis	http://purl.obolibrary.org/obo/PO_0007016
+dev_stage	 14-15 flowers	http://purl.obolibrary.org/obo/PO_0009046
+dev_stage	 14DAP	http://www.orpha.net/ORDO/Orphanet_122211
+dev_stage	 14 days after pollination	http://purl.obolibrary.org/obo/PO_0009010
+dev_stage	 14 DPA	http://purl.obolibrary.org/obo/CHEBI_39867
+dev_stage	 14 DPA	http://purl.obolibrary.org/obo/PO_0009001
+dev_stage	 15 days post inoculation	http://purl.obolibrary.org/obo/NCBITaxon_52586
+dev_stage	 15 DPA	http://purl.obolibrary.org/obo/PO_0009001
+dev_stage	 15 DPA	http://purl.obolibrary.org/obo/CHEBI_39867
+dev_stage	 17 days after pollination	http://purl.obolibrary.org/obo/PO_0009010
+dev_stage	 1DPA	http://purl.obolibrary.org/obo/CHEBI_39867
+dev_stage	 1mm	http://purl.obolibrary.org/obo/UO_0000063
+dev_stage	 1mm	http://purl.obolibrary.org/obo/UO_0000016
+dev_stage	 1mm-2mm	http://www.ebi.ac.uk/efo/EFO_0005724
+dev_stage	 1mm-2mm	http://www.ebi.ac.uk/efo/EFO_0005458
+dev_stage	 1mm-2mm	http://purl.obolibrary.org/obo/PO_0025477
+dev_stage	 1mm-2mm	http://purl.obolibrary.org/obo/UO_0000063
+dev_stage	 1mm-2mm	http://purl.obolibrary.org/obo/UO_0000016
+dev_stage	 20 days post anthesis	http://purl.obolibrary.org/obo/PO_0007016
+dev_stage	 25DAP	http://www.orpha.net/ORDO/Orphanet_122211
+dev_stage	 25 DPA	http://purl.obolibrary.org/obo/PO_0009001
+dev_stage	 25 DPA	http://purl.obolibrary.org/obo/CHEBI_39867
+dev_stage	 28 days post anthesis	http://purl.obolibrary.org/obo/PO_0007016
+dev_stage	 2DPA	http://purl.obolibrary.org/obo/CHEBI_39867
+dev_stage	 2mm	http://purl.obolibrary.org/obo/UO_0000063
+dev_stage	 2mm	http://purl.obolibrary.org/obo/UO_0000016
+dev_stage	 30 days	http://purl.obolibrary.org/obo/UO_0000033
+dev_stage	 3-5 days after pollination	http://purl.obolibrary.org/obo/PO_0009010
+dev_stage	 35 DPA	http://purl.obolibrary.org/obo/PO_0009001
+dev_stage	 35 DPA	http://purl.obolibrary.org/obo/CHEBI_39867
+dev_stage	 3-leaf stage	http://purl.obolibrary.org/obo/PO_0007123
+dev_stage	 3mm-4mm	http://www.ebi.ac.uk/efo/EFO_0005724
+dev_stage	 3mm-4mm	http://purl.obolibrary.org/obo/PO_0025477
+dev_stage	 3mm-4mm	http://purl.obolibrary.org/obo/UO_0000063
+dev_stage	 3mm-4mm	http://purl.obolibrary.org/obo/UO_0000016
+dev_stage	 5DPA	http://purl.obolibrary.org/obo/CHEBI_39867
+dev_stage	 ~5mm	http://purl.obolibrary.org/obo/UO_0000063
+dev_stage	 ~5mm	http://purl.obolibrary.org/obo/UO_0000016
+dev_stage	 ~5mm	http://purl.obolibrary.org/obo/PO_0025477
+dev_stage	 ~5mm	http://purl.obolibrary.org/obo/PO_0009049
+dev_stage	 5mm-7mm	http://www.ebi.ac.uk/efo/EFO_0005724
+dev_stage	 5mm-7mm	http://purl.obolibrary.org/obo/PO_0025477
+dev_stage	 5mm-7mm	http://purl.obolibrary.org/obo/UO_0000063
+dev_stage	 5mm-7mm	http://purl.obolibrary.org/obo/UO_0000016
+dev_stage	 6 day after pollination	http://purl.obolibrary.org/obo/PO_0009010
+dev_stage	 6 DPA	http://purl.obolibrary.org/obo/CHEBI_39867
+dev_stage	 6 DPA	http://purl.obolibrary.org/obo/PO_0009001
+dev_stage	 72h	http://www.orpha.net/ORDO/Orphanet_1454
+dev_stage	 72h	http://www.orpha.net/ORDO/Orphanet_79404
+dev_stage	 72h	http://purl.obolibrary.org/obo/UO_0000032
+dev_stage	 72h	http://www.orpha.net/ORDO/Orphanet_121693
+dev_stage	 72h	http://purl.obolibrary.org/obo/EO_0007610
+dev_stage	 7 days after pollination	http://purl.obolibrary.org/obo/PO_0009010
+dev_stage	 8 days post inoculation	http://purl.obolibrary.org/obo/NCBITaxon_52586
+dev_stage	 9 DPA	http://purl.obolibrary.org/obo/CHEBI_39867
+dev_stage	 9 DPA	http://purl.obolibrary.org/obo/PO_0009001
+dev_stage	 AA1	http://purl.obolibrary.org/obo/CHEBI_15843
+dev_stage	 AA1	http://www.orpha.net/ORDO/Orphanet_404448
+dev_stage	 adult	http://www.ebi.ac.uk/efo/EFO_0001272
+dev_stage	 ADULT	http://www.ebi.ac.uk/efo/EFO_0001272
+dev_stage	 anther length ~ 1.0 mm	http://purl.obolibrary.org/obo/PO_0001007
+dev_stage	 anther length ~ 1.5 mm	http://purl.obolibrary.org/obo/PO_0001007
+dev_stage	 anther length ~ 2.2 mm	http://purl.obolibrary.org/obo/PO_0001007
+dev_stage	 anther length ~ 3.0 mm	http://purl.obolibrary.org/obo/PO_0001007
+dev_stage	 anther stage 4-7	http://purl.obolibrary.org/obo/PO_0001035
+dev_stage	 anther stage 4-7	http://purl.obolibrary.org/obo/PO_0001007
+dev_stage	 anther stage 4-7	http://purl.obolibrary.org/obo/PO_0001034
+dev_stage	 anthesis	http://purl.obolibrary.org/obo/PO_0007016
+dev_stage	 B1	http://www.orpha.net/ORDO/Orphanet_235193
+dev_stage	 B1	http://www.orpha.net/ORDO/Orphanet_118994
+dev_stage	 booting stage	http://purl.obolibrary.org/obo/PO_0007014
+dev_stage	 breaker	http://purl.obolibrary.org/obo/PO_0009084
+dev_stage	 Breaker	http://purl.obolibrary.org/obo/PO_0009084
+dev_stage	 breaker+10 days	http://purl.obolibrary.org/obo/PO_0009084
+dev_stage	 breaker+5 days	http://purl.obolibrary.org/obo/PO_0009084
+dev_stage	 Bud	http://purl.obolibrary.org/obo/PO_0000055
+dev_stage	 callus	http://purl.obolibrary.org/obo/PO_0005052
+dev_stage	 DAP12	http://www.orpha.net/ORDO/Orphanet_120356
+dev_stage	 DAP21	http://www.orpha.net/ORDO/Orphanet_122211
+dev_stage	 DAP30	http://www.orpha.net/ORDO/Orphanet_122211
+dev_stage	 developing seed	http://purl.obolibrary.org/obo/PO_0004506
+dev_stage	 dry	http://purl.obolibrary.org/obo/TO_0000446
+dev_stage	 dry	http://purl.obolibrary.org/obo/TO_0002644
+dev_stage	 dry	http://www.ebi.ac.uk/efo/EFO_1001001
+dev_stage	 dry	http://www.ebi.ac.uk/efo/EFO_0007159
+dev_stage	 dry	http://purl.obolibrary.org/obo/TO_0000156
+dev_stage	 dry	http://www.ebi.ac.uk/efo/EFO_1000906
+dev_stage	 dry	http://purl.obolibrary.org/obo/TO_0000556
+dev_stage	 dry	http://purl.obolibrary.org/obo/TO_0001014
+dev_stage	 dry	http://purl.obolibrary.org/obo/TO_0000081
+dev_stage	 dry	http://purl.obolibrary.org/obo/PO_0001040
+dev_stage	 dry	http://purl.obolibrary.org/obo/MP_0000624
+dev_stage	 dry	http://purl.obolibrary.org/obo/MP_0013466
+dev_stage	 dry	http://purl.obolibrary.org/obo/MP_0011163
+dev_stage	 dry	http://purl.obolibrary.org/obo/TO_0000352
+dev_stage	 dry	http://purl.obolibrary.org/obo/TO_0001011
+dev_stage	 dry	http://purl.obolibrary.org/obo/TO_0000552
+dev_stage	 dry	http://purl.obolibrary.org/obo/TO_0001031
+dev_stage	 dry	http://www.orpha.net/ORDO/Orphanet_377602
+dev_stage	 dry	http://purl.obolibrary.org/obo/TO_0000644
+dev_stage	 dry	http://purl.obolibrary.org/obo/MP_0003853
+dev_stage	 dry	http://purl.obolibrary.org/obo/TO_0000078
+dev_stage	 dry	http://purl.obolibrary.org/obo/TO_0000579
+dev_stage	 dry	http://purl.obolibrary.org/obo/MP_0001337
+dev_stage	 dry	http://purl.obolibrary.org/obo/TO_0000901
+dev_stage	 dry	http://purl.obolibrary.org/obo/MP_0011162
+dev_stage	 dry	http://purl.obolibrary.org/obo/TO_0000636
+dev_stage	 dry	http://purl.obolibrary.org/obo/EO_0007286
+dev_stage	 dry	http://purl.obolibrary.org/obo/TO_0000633
+dev_stage	 dry	http://purl.obolibrary.org/obo/TO_0000812
+dev_stage	 dry	http://purl.obolibrary.org/obo/MP_0014053
+dev_stage	 elongation stage	http://purl.obolibrary.org/obo/PO_0007089
+dev_stage	 embryonic	http://www.ebi.ac.uk/efo/EFO_0000514
+dev_stage	 embryonic	http://purl.obolibrary.org/obo/CL_0002321
+dev_stage	 embryonic	http://purl.obolibrary.org/obo/UBERON_0007220
+dev_stage	 filling and maturity stage	http://purl.obolibrary.org/obo/PO_0007632
+dev_stage	 filling and maturity stage	http://purl.obolibrary.org/obo/PO_0007632
+dev_stage	 filling and maturity stage	http://purl.obolibrary.org/obo/TO_0000447
+dev_stage	 filling and maturity stage	http://purl.obolibrary.org/obo/PO_0007632
+dev_stage	 filling and maturity stage	http://purl.obolibrary.org/obo/PO_0007632
+dev_stage	 filling and maturity stage	http://purl.obolibrary.org/obo/MP_0004009
+dev_stage	 filling and maturity stage	http://purl.obolibrary.org/obo/MP_0004011
+dev_stage	 filling and maturity stage	http://purl.obolibrary.org/obo/PO_0009084
+dev_stage	 filling and maturity stage	http://purl.obolibrary.org/obo/MP_0004009
+dev_stage	 filling and maturity stage	http://purl.obolibrary.org/obo/TO_0000448
+dev_stage	 filling and maturity stage	http://purl.obolibrary.org/obo/TO_0000447
+dev_stage	 filling and maturity stage	http://purl.obolibrary.org/obo/PO_0009084
+dev_stage	 Flower	http://purl.obolibrary.org/obo/PO_0009046
+dev_stage	 Flower bud	http://purl.obolibrary.org/obo/PO_0000056
+dev_stage	 flowering	http://purl.obolibrary.org/obo/PO_0007016
+dev_stage	 FM	http://purl.obolibrary.org/obo/UO_0000073
+dev_stage	 FM	http://www.ebi.ac.uk/efo/EFO_0001721
+dev_stage	 Gamete	http://purl.obolibrary.org/obo/CL_0000019
+dev_stage	 Gamete	http://purl.obolibrary.org/obo/PO_0025006
+dev_stage	 globular-stage embryo	http://purl.obolibrary.org/obo/PO_0001185
+dev_stage	 Grain Filling	http://purl.obolibrary.org/obo/TO_0000447
+dev_stage	 Grain Filling	http://purl.obolibrary.org/obo/TO_0000448
+dev_stage	 harvest	http://purl.obolibrary.org/obo/TO_0000896
+dev_stage	 harvest	http://purl.obolibrary.org/obo/TO_0000897
+dev_stage	 harvest	http://purl.obolibrary.org/obo/TO_0000895
+dev_stage	 harvest	http://purl.obolibrary.org/obo/TO_0001029
+dev_stage	 Leaf	http://purl.obolibrary.org/obo/PO_0025034
+dev_stage	 Leaf 7	http://purl.obolibrary.org/obo/PO_0025034
+dev_stage	 Leaves	http://purl.obolibrary.org/obo/PO_0025034
+dev_stage	 mature	http://purl.obolibrary.org/obo/PO_0007632
+dev_stage	 mature	http://purl.obolibrary.org/obo/CL_0000785
+dev_stage	 mature	http://purl.obolibrary.org/obo/CL_0000814
+dev_stage	 mature	http://purl.obolibrary.org/obo/TO_0000469
+dev_stage	 mature	http://purl.obolibrary.org/obo/CL_0000096
+dev_stage	 mature	http://purl.obolibrary.org/obo/CL_0000041
+dev_stage	 mature	http://purl.obolibrary.org/obo/CL_0000788
+dev_stage	 mature	http://purl.obolibrary.org/obo/PO_0009084
+dev_stage	 Mature	http://purl.obolibrary.org/obo/PO_0007632
+dev_stage	 Mature	http://purl.obolibrary.org/obo/CL_0000785
+dev_stage	 Mature	http://purl.obolibrary.org/obo/CL_0000814
+dev_stage	 Mature	http://purl.obolibrary.org/obo/TO_0000469
+dev_stage	 Mature	http://purl.obolibrary.org/obo/CL_0000096
+dev_stage	 Mature	http://purl.obolibrary.org/obo/CL_0000041
+dev_stage	 Mature	http://purl.obolibrary.org/obo/CL_0000788
+dev_stage	 Mature	http://purl.obolibrary.org/obo/PO_0009084
+dev_stage	 mature green	http://purl.obolibrary.org/obo/PO_0009084
+dev_stage	 Mature Green	http://purl.obolibrary.org/obo/PO_0009084
+dev_stage	 Mature green 1	http://purl.obolibrary.org/obo/PO_0009084
+dev_stage	 Mature green 10	http://purl.obolibrary.org/obo/PO_0009084
+dev_stage	 Mature green 2	http://purl.obolibrary.org/obo/PO_0009084
+dev_stage	 Mature green 3	http://purl.obolibrary.org/obo/PO_0009084
+dev_stage	 Mature green 4	http://purl.obolibrary.org/obo/PO_0009084
+dev_stage	 Mature green 5	http://purl.obolibrary.org/obo/PO_0009084
+dev_stage	 Mature green 6	http://purl.obolibrary.org/obo/PO_0009084
+dev_stage	 Mature green 8	http://purl.obolibrary.org/obo/PO_0009084
+dev_stage	 Mature green 9	http://purl.obolibrary.org/obo/PO_0009084
+dev_stage	 mature leaf	http://purl.obolibrary.org/obo/PO_0025034
+dev_stage	 mature pollen	http://purl.obolibrary.org/obo/PO_0001016
+dev_stage	 mature seed	http://purl.obolibrary.org/obo/PO_0007632
+dev_stage	 mature seed	http://purl.obolibrary.org/obo/TO_0002661
+dev_stage	 meiotic	http://purl.obolibrary.org/obo/GO_0007128
+dev_stage	 meiotic	http://purl.obolibrary.org/obo/MP_0009566
+dev_stage	 meiotic	http://www.orpha.net/ORDO/Orphanet_327379
+dev_stage	 meiotic	http://purl.obolibrary.org/obo/TO_0000729
+dev_stage	 Orange	http://purl.obolibrary.org/obo/NCBITaxon_37690
+dev_stage	 Orange	http://purl.obolibrary.org/obo/NCBITaxon_2711
+dev_stage	 Orange	http://purl.obolibrary.org/obo/NCBITaxon_85571
+dev_stage	 P3	http://www.ebi.ac.uk/efo/EFO_0000651
+dev_stage	 P3	http://www.orpha.net/ORDO/Orphanet_121913
+dev_stage	 P3	http://purl.obolibrary.org/obo/CHEBI_28119
+dev_stage	 P3	http://www.ebi.ac.uk/efo/EFO_0004763
+dev_stage	 P3	http://www.ebi.ac.uk/efo/EFO_0005094
+dev_stage	 P3	http://www.ebi.ac.uk/efo/EFO_0002099
+dev_stage	 P3	http://purl.obolibrary.org/obo/CHEBI_29865
+dev_stage	 P4	http://www.ebi.ac.uk/efo/EFO_0002948
+dev_stage	 P5	http://www.ebi.ac.uk/efo/EFO_0000651
+dev_stage	 P5	http://purl.obolibrary.org/obo/CHEBI_28119
+dev_stage	 P5	http://www.ebi.ac.uk/efo/EFO_0004763
+dev_stage	 P5	http://www.ebi.ac.uk/efo/EFO_0005094
+dev_stage	 P5	http://www.ebi.ac.uk/efo/EFO_0002099
+dev_stage	 P5	http://purl.obolibrary.org/obo/CHEBI_29865
+dev_stage	 protonema	http://purl.obolibrary.org/obo/PO_0030003
+dev_stage	 Protonemal	http://purl.obolibrary.org/obo/PO_0030006
+dev_stage	 R2	http://purl.obolibrary.org/obo/UBERON_0005569
+dev_stage	 R4	http://purl.obolibrary.org/obo/UBERON_0005511
+dev_stage	 R5	http://purl.obolibrary.org/obo/UBERON_0005515
+dev_stage	 Reproductive development	http://purl.obolibrary.org/obo/MP_0003936
+dev_stage	 Reproductive stage	http://purl.obolibrary.org/obo/PO_0007130
+dev_stage	 Reproductive stage	http://purl.obolibrary.org/obo/PO_0025341
+dev_stage	 ripening	http://purl.obolibrary.org/obo/PO_0025502
+dev_stage	 Root	http://purl.obolibrary.org/obo/PO_0009005
+dev_stage	 rosette	http://purl.obolibrary.org/obo/PO_0025615
+dev_stage	 Rosette	http://purl.obolibrary.org/obo/PO_0025615
+dev_stage	 rosette stage	http://purl.obolibrary.org/obo/PO_0007113
+dev_stage	 seeding	http://purl.obolibrary.org/obo/PO_0004506
+dev_stage	 seeding	http://purl.obolibrary.org/obo/, http://purl.obolibrary.org/obo/PO_0009089, PO_0009088
+dev_stage	 seeding	http://purl.obolibrary.org/obo/PO_0009010
+dev_stage	 seeding	http://purl.obolibrary.org/obo/PO_0009088
+dev_stage	 seeding	http://purl.obolibrary.org/obo/TO_0000930
+dev_stage	 seeding stage	http://purl.obolibrary.org/obo/PO_0007022
+dev_stage	 seeding stage	http://purl.obolibrary.org/obo/PO_0007632
+dev_stage	 seeding stage	http://purl.obolibrary.org/obo/PO_0004506
+dev_stage	 seeding stage	http://purl.obolibrary.org/obo/PO_0007057
+dev_stage	 seedling	http://purl.obolibrary.org/obo/PO_0007131
+dev_stage	 Seedling	http://purl.obolibrary.org/obo/PO_0007131
+dev_stage	 seedlings	http://purl.obolibrary.org/obo/PO_0007131
+dev_stage	 Seedlings	http://purl.obolibrary.org/obo/PO_0007131
+dev_stage	 seedling stage	http://purl.obolibrary.org/obo/PO_0007131
+dev_stage	 Seedling stage	http://purl.obolibrary.org/obo/PO_0007131
+dev_stage	 senescence	http://purl.obolibrary.org/obo/GO_0007568
+dev_stage	 SM	http://www.ebi.ac.uk/efo/EFO_0004018
+dev_stage	 stage 12	http://www.ebi.ac.uk/efo/EFO_0005872
+dev_stage	 stage 12	http://www.ebi.ac.uk/efo/EFO_0005871
+dev_stage	 stage 4-7	http://www.ebi.ac.uk/efo/EFO_0005871
+dev_stage	 stage 4-7	http://www.ebi.ac.uk/efo/EFO_0005872
+dev_stage	 stage 4-7	http://www.ebi.ac.uk/efo/EFO_0004411
+dev_stage	 stage 4-7	http://www.ebi.ac.uk/efo/EFO_0005511
+dev_stage	 stage 4-7	http://www.ebi.ac.uk/efo/EFO_0002582
+dev_stage	 stages 1-12	http://www.ebi.ac.uk/efo/EFO_0005871
+dev_stage	 stages 1-12	http://www.ebi.ac.uk/efo/EFO_0005872
+dev_stage	 stages 1-12	http://purl.obolibrary.org/obo/PO_0007106
+dev_stage	 stages 1-12	http://purl.obolibrary.org/obo/PO_0007113
+dev_stage	 stages 1-12	http://purl.obolibrary.org/obo/PO_0007014
+dev_stage	 stages 1-12	http://purl.obolibrary.org/obo/PO_0007134
+dev_stage	 stages 1-12	http://www.ebi.ac.uk/efo/EFO_0004634
+dev_stage	 stages 1-12	http://www.ebi.ac.uk/efo/EFO_0004629
+dev_stage	 stages 1-12	http://www.ebi.ac.uk/efo/EFO_0004630
+dev_stage	 stages 1-12	http://purl.obolibrary.org/obo/PO_0007094
+dev_stage	 stages 1-12	http://purl.obolibrary.org/obo/PO_0007029
+dev_stage	 stages 1-12	http://purl.obolibrary.org/obo/PO_0007123
+dev_stage	 stages 1-12	http://purl.obolibrary.org/obo/PO_0007098
+dev_stage	 stages 1-12	http://purl.obolibrary.org/obo/PO_0007607
+dev_stage	 stages 1-12	http://purl.obolibrary.org/obo/PO_0007065
+dev_stage	 stages 1-12	http://purl.obolibrary.org/obo/PO_0007115
+dev_stage	 stages 1-12	http://purl.obolibrary.org/obo/PO_0007053
+dev_stage	 stages 1-12	http://purl.obolibrary.org/obo/PO_0007613
+dev_stage	 stages 1-12	http://purl.obolibrary.org/obo/PO_0007063
+dev_stage	 stages 1-12	http://purl.obolibrary.org/obo/PO_0007095
+dev_stage	 stages 1-12	http://purl.obolibrary.org/obo/PO_0007079
+dev_stage	 stages 1-12	http://www.ebi.ac.uk/efo/EFO_0002582
+dev_stage	 stages 1-12	http://purl.obolibrary.org/obo/PO_0007073
+dev_stage	 stages 1-12	http://purl.obolibrary.org/obo/PO_0007083
+dev_stage	 stages 1-12	http://purl.obolibrary.org/obo/PO_0007072
+dev_stage	 stages 1-12	http://purl.obolibrary.org/obo/PO_0007067
+dev_stage	 stages 1-12	http://purl.obolibrary.org/obo/PO_0007109
+dev_stage	 three leaf	http://purl.obolibrary.org/obo/PO_0007106
+dev_stage	 TP1	http://www.orpha.net/ORDO/Orphanet_159042
+dev_stage	 TP1	http://www.ebi.ac.uk/efo/EFO_0004021
+dev_stage	 TP2	http://www.orpha.net/ORDO/Orphanet_138451
+dev_stage	 TP3	http://www.orpha.net/ORDO/Orphanet_159042
+dev_stage	 TP3	http://www.ebi.ac.uk/efo/EFO_0004021
+dev_stage	 TP4	http://www.orpha.net/ORDO/Orphanet_159042
+dev_stage	 TP4	http://www.ebi.ac.uk/efo/EFO_0004021
+dev_stage	 TP5	http://www.orpha.net/ORDO/Orphanet_159042
+dev_stage	 TP5	http://www.ebi.ac.uk/efo/EFO_0004021
+dev_stage	 TP6	http://www.orpha.net/ORDO/Orphanet_159042
+dev_stage	 TP6	http://www.ebi.ac.uk/efo/EFO_0004021
+dev_stage	 TP7	http://www.orpha.net/ORDO/Orphanet_159042
+dev_stage	 TP7	http://www.ebi.ac.uk/efo/EFO_0004021
+dev_stage	 TP8	http://www.orpha.net/ORDO/Orphanet_159042
+dev_stage	 TP8	http://www.ebi.ac.uk/efo/EFO_0004021
+dev_stage	 TP9	http://www.orpha.net/ORDO/Orphanet_159042
+dev_stage	 TP9	http://www.ebi.ac.uk/efo/EFO_0004021
+dev_stage	 two-leaf stage	http://purl.obolibrary.org/obo/PO_0007098
+dev_stage	 V1	http://purl.obolibrary.org/obo/UBERON_0000411
+dev_stage	 V1	http://www.orpha.net/ORDO/Orphanet_647
+dev_stage	 V2	http://www.orpha.net/ORDO/Orphanet_123688
+dev_stage	 V2	http://purl.obolibrary.org/obo/CHEBI_27698
+dev_stage	 V3	http://purl.obolibrary.org/obo/CHEBI_27698
+dev_stage	 V3	http://www.orpha.net/ORDO/Orphanet_368
+dev_stage	 V3	http://purl.obolibrary.org/obo/MP_0009800
+dev_stage	 v5	http://purl.obolibrary.org/obo/CHEBI_27698
+dev_stage	 v5	http://www.orpha.net/ORDO/Orphanet_368
+dev_stage	 V6	http://purl.obolibrary.org/obo/CHEBI_27698
+dev_stage	 V6	http://www.orpha.net/ORDO/Orphanet_368
+dev_stage	 V7	http://purl.obolibrary.org/obo/CHEBI_27698
+dev_stage	 V7	http://www.orpha.net/ORDO/Orphanet_368
+dev_stage	 V8	http://www.orpha.net/ORDO/Orphanet_419348
+dev_stage	 vegetative	http://purl.obolibrary.org/obo/PO_0025223
+dev_stage	 vegetative	http://purl.obolibrary.org/obo/PO_0020099
+dev_stage	 vegetative	http://purl.obolibrary.org/obo/PO_0007134
+dev_stage	 vegetative	http://purl.obolibrary.org/obo/PO_0000058
+dev_stage	 vegetative	http://purl.obolibrary.org/obo/PO_0025615
+dev_stage	 Vegetative	http://purl.obolibrary.org/obo/PO_0025223
+dev_stage	 Vegetative	http://purl.obolibrary.org/obo/PO_0020099
+dev_stage	 Vegetative	http://purl.obolibrary.org/obo/PO_0007134
+dev_stage	 Vegetative	http://purl.obolibrary.org/obo/PO_0000058
+dev_stage	 Vegetative	http://purl.obolibrary.org/obo/PO_0025615
+dev_stage	 vegetative growth	http://purl.obolibrary.org/obo/TO_0000369
+dev_stage	 young	http://purl.obolibrary.org/obo/UBERON_0000112
+dev_stage	 Zygote	http://purl.obolibrary.org/obo/PO_0000423
+dev_stage	 Zygote	http://purl.obolibrary.org/obo/CL_0000365
+disease	 coronary artery disease	http://www.ebi.ac.uk/efo/EFO_0001645
+disease	 lung adenocarcinoma	http://www.ebi.ac.uk/efo/EFO_0000571
+disease	 NA	http://www.orpha.net/ORDO/Orphanet_158676
+disease	 NA	http://www.orpha.net/ORDO/Orphanet_118525
+disease	 none	http://www.ebi.ac.uk/efo/EFO_0001461
+disease	 None	http://www.ebi.ac.uk/efo/EFO_0001461
+disease	 normal	http://purl.obolibrary.org/obo/PATO_0000461
+disease	 Normal	http://purl.obolibrary.org/obo/PATO_0000461
+donor_health_status	 Diseased	http://www.orpha.net/ORDO/Orphanet_324561
+donor_health_status	 Diseased	http://www.orpha.net/ORDO/Orphanet_34587
+donor_health_status	 Diseased	http://www.orpha.net/ORDO/Orphanet_34217
+donor_health_status	 Diseased	http://www.orpha.net/ORDO/Orphanet_501
+donor_health_status	 Diseased	http://www.ebi.ac.uk/efo/EFO_0003096
+donor_health_status	 Diseased	http://www.orpha.net/ORDO/Orphanet_314
+donor_health_status	 Diseased	http://www.orpha.net/ORDO/Orphanet_31150
+donor_health_status	 Diseased	http://www.ebi.ac.uk/efo/EFO_0004720
+donor_health_status	 Diseased	http://www.orpha.net/ORDO/Orphanet_79293
+donor_health_status	 Diseased	http://www.orpha.net/ORDO/Orphanet_309334
+donor_health_status	 Diseased	http://www.ebi.ac.uk/efo/EFO_0003086
+donor_health_status	 Diseased	http://www.orpha.net/ORDO/Orphanet_845
+donor_health_status	 Disease-free	http://www.ebi.ac.uk/efo/, http://www.ebi.ac.uk/efo/EFO_0000409, EFO_0000305
+donor_health_status	 Disease-free	http://www.ebi.ac.uk/efo/EFO_0000409
+donor_health_status	 Disease Free	http://www.ebi.ac.uk/efo/, http://www.ebi.ac.uk/efo/EFO_0000409, EFO_0000305
+donor_health_status	 Disease Free	http://www.ebi.ac.uk/efo/EFO_0000409
+donor_health_status	 healthy	http://purl.obolibrary.org/obo/PATO_0000461
+donor_health_status	 NA	http://www.orpha.net/ORDO/Orphanet_158676
+donor_health_status	 NA	http://www.orpha.net/ORDO/Orphanet_118525
+donor_health_status	 none	http://www.ebi.ac.uk/efo/EFO_0001461
+donor_health_status	 normal	http://purl.obolibrary.org/obo/PATO_0000461
+donor_health_status	 Normal	http://purl.obolibrary.org/obo/PATO_0000461
+donor_health_status	 Unknown	http://www.ebi.ac.uk/efo/EFO_0003850
+donor_health_status	 Unknown	http://www.ebi.ac.uk/efo/EFO_0007538
+donor_health_status	 Unknown	http://www.ebi.ac.uk/efo/EFO_0000203
+ecotype	 AAA	http://www.orpha.net/ORDO/Orphanet_869
+ecotype	 AAA	http://www.orpha.net/ORDO/Orphanet_212604
+ecotype	 ABR5	http://purl.obolibrary.org/obo/MP_0011967
+ecotype	 ABR5	http://purl.obolibrary.org/obo/MP_0004738
+ecotype	 An1	http://www.ebi.ac.uk/efo/EFO_0006984
+ecotype	 Bd21-0	http://www.orpha.net/ORDO/Orphanet_163654
+ecotype	 Bd21-3	http://www.orpha.net/ORDO/Orphanet_163654
+ecotype	 Bur-0	http://www.ebi.ac.uk/efo/EFO_0005170
+ecotype	 C24	http://www.ebi.ac.uk/efo/EFO_0006987
+ecotype	 Can-0	http://www.orpha.net/ORDO/Orphanet_168420
+ecotype	 Chi	http://www.orpha.net/ORDO/Orphanet_657
+ecotype	 col	http://www.ebi.ac.uk/efo/EFO_0005147
+ecotype	 Col	http://www.ebi.ac.uk/efo/EFO_0005147
+ecotype	 col0	http://www.ebi.ac.uk/efo/EFO_0005148
+ecotype	 Col0	http://www.ebi.ac.uk/efo/EFO_0005148
+ecotype	 Col-0	http://www.ebi.ac.uk/efo/EFO_0005148
+ecotype	 Col-0	http://www.ebi.ac.uk/efo/EFO_0005151
+ecotype	 Col-0	http://www.ebi.ac.uk/efo/EFO_0005153
+ecotype	 Col-0	http://www.ebi.ac.uk/efo/EFO_0005149
+ecotype	 Col-0	http://www.ebi.ac.uk/efo/EFO_0005152
+ecotype	 Col-0	http://www.ebi.ac.uk/efo/EFO_0005150
+ecotype	 Col-0	http://www.ebi.ac.uk/efo/EFO_0006985
+ecotype	 Col 0 (CS70000)	http://www.ebi.ac.uk/efo/EFO_0005148
+ecotype	 Col-0 (CS70000)	http://www.ebi.ac.uk/efo/EFO_0005148
+ecotype	 Col/Col	http://www.ebi.ac.uk/efo/EFO_0005147
+ecotype	 columbia	http://www.ebi.ac.uk/efo/EFO_0005147
+ecotype	 Columbia	http://www.ebi.ac.uk/efo/EFO_0005147
+ecotype	 Columbia-0	http://www.ebi.ac.uk/efo/EFO_0005148
+ecotype	 Columbia-0	http://www.ebi.ac.uk/efo/EFO_0005149
+ecotype	 Columbia-0	http://www.ebi.ac.uk/efo/EFO_0005152
+ecotype	 Columbia-0	http://www.ebi.ac.uk/efo/EFO_0005151
+ecotype	 Columbia-0 (Col-0)	http://www.ebi.ac.uk/efo/EFO_0005148
+ecotype	 Columbia (Col-0)	http://www.ebi.ac.uk/efo/EFO_0005148
+ecotype	 Columbia (Col-0)	http://www.ebi.ac.uk/efo/EFO_0005147
+ecotype	 Columbia Col-0	http://www.ebi.ac.uk/efo/EFO_0005148
+ecotype	 Columbia; Col-0	http://www.ebi.ac.uk/efo/EFO_0005148
+ecotype	 Heat tolerance	http://purl.obolibrary.org/obo/TO_0000259
+ecotype	 Italian	http://www.orpha.net/ORDO/Orphanet_100006
+ecotype	 Italian	http://www.orpha.net/ORDO/Orphanet_324713
+ecotype	 Landsberg erecta	http://www.ebi.ac.uk/efo/EFO_0005154
+ecotype	 LD	http://www.orpha.net/ORDO/Orphanet_121577
+ecotype	 Ler	http://www.ebi.ac.uk/efo/EFO_0005154
+ecotype	 LER	http://www.ebi.ac.uk/efo/EFO_0005154
+ecotype	 lowland	http://purl.obolibrary.org/obo/NCBITaxon_9595
+ecotype	 Nipponbare	http://www.ebi.ac.uk/efo/EFO_0007587
+ecotype	 Oy0	http://www.ebi.ac.uk/efo/EFO_0006974
+ecotype	 Ped-0	http://www.ebi.ac.uk/efo/EFO_0007609
+ecotype	 R-11268	http://purl.obolibrary.org/obo/CHEBI_64195
+ecotype	 R-11272	http://purl.obolibrary.org/obo/CHEBI_64195
+ecotype	 R-11272	http://www.ebi.ac.uk/efo/EFO_0006767
+ecotype	 San	http://www.orpha.net/ORDO/Orphanet_120442
+ecotype	 San	http://www.orpha.net/ORDO/Orphanet_309020
+ecotype	 Sha	http://purl.obolibrary.org/obo/NCBITaxon_3767
+ecotype	 Swedish	http://www.orpha.net/ORDO/Orphanet_43115
+ecotype	 Swedish	http://www.orpha.net/ORDO/Orphanet_603
+ecotype	 wild type	http://www.ebi.ac.uk/efo/EFO_0005168
+ecotype	 WT	http://www.ebi.ac.uk/efo/EFO_0001103
+name	 Illumina HiSeq 2000 paired end sequencing; Infected cacao plant at the green broom stage of witches' broom disease - Replicate 1 ; <a href="http://www.ebi.ac.uk/ena/data/view/SRR747762">SRR747762</a>	N/AN/A
+name	 Illumina HiSeq 2000 paired end sequencing; Infected cacao plant at the green broom stage of witches' broom disease - Replicate 2 ; <a href="http://www.ebi.ac.uk/ena/data/view/SRR747779">SRR747779</a>	N/AN/A
+name	 Illumina HiSeq 2000 paired end sequencing; Infected cacao plant at the green broom stage of witches' broom disease - Replicate 3 ; <a href="http://www.ebi.ac.uk/ena/data/view/SRR747776">SRR747776</a>	N/AN/A
+name	 Illumina HiSeq 2000 paired end sequencing; Infected cacao plant at the green broom stage of witches' broom disease - Replicate 5 ; <a href="http://www.ebi.ac.uk/ena/data/view/SRR747778">SRR747778</a>	N/AN/A
+scientific_name	 Aegilops tauschii	http://purl.obolibrary.org/obo/NCBITaxon_37682
+scientific_name	 Amborella trichopoda	http://purl.obolibrary.org/obo/NCBITaxon_13333
+scientific_name	 Arabidopsis lyrata	http://purl.obolibrary.org/obo/NCBITaxon_59689
+scientific_name	 Arabidopsis lyrata subsp. lyrata	http://purl.obolibrary.org/obo/NCBITaxon_59691
+scientific_name	 Arabidopsis thaliana	http://purl.obolibrary.org/obo/NCBITaxon_3702
+scientific_name	 Arabidopsis thaliana x Arabidopsis arenosa	http://purl.obolibrary.org/obo/NCBITaxon_378006
+scientific_name	 Brachypodium distachyon	http://purl.obolibrary.org/obo/NCBITaxon_15368
+scientific_name	 Brassica oleracea	http://purl.obolibrary.org/obo/NCBITaxon_3712
+scientific_name	 Brassica oleracea var. alboglabra	http://purl.obolibrary.org/obo/NCBITaxon_3714
+scientific_name	 Brassica oleracea var. oleracea	http://purl.obolibrary.org/obo/NCBITaxon_3714
+scientific_name	 Brassica rapa	http://purl.obolibrary.org/obo/NCBITaxon_3711
+scientific_name	 Brassica rapa subsp. pekinensis	http://purl.obolibrary.org/obo/NCBITaxon_51351
+scientific_name	 Brassica rapa subsp. rapa	http://purl.obolibrary.org/obo/NCBITaxon_51351
+scientific_name	 Chlamydomonas reinhardtii	http://purl.obolibrary.org/obo/NCBITaxon_3055
+scientific_name	 Glycine max	http://purl.obolibrary.org/obo/NCBITaxon_3847
+scientific_name	 Homo sapiens (Human)	http://www.ebi.ac.uk/efo/EFO_0000408
+scientific_name	 Homo sapiens (Human)	http://www.ebi.ac.uk/efo/EFO_0002888
+scientific_name	 Hordeum vulgare	http://purl.obolibrary.org/obo/NCBITaxon_4513
+scientific_name	 Hordeum vulgare subsp. spontaneum	http://purl.obolibrary.org/obo/NCBITaxon_77009
+scientific_name	 Hordeum vulgare subsp. vulgare	http://purl.obolibrary.org/obo/NCBITaxon_112509
+scientific_name	 Medicago truncatula	http://purl.obolibrary.org/obo/NCBITaxon_3880
+scientific_name	 Musa acuminata	http://purl.obolibrary.org/obo/NCBITaxon_4641
+scientific_name	 Oryza longistaminata	http://purl.obolibrary.org/obo/NCBITaxon_4528
+scientific_name	 Oryza nivara	http://purl.obolibrary.org/obo/NCBITaxon_4536
+scientific_name	 Oryza punctata	http://purl.obolibrary.org/obo/NCBITaxon_4537
+scientific_name	 Oryza rufipogon	http://purl.obolibrary.org/obo/NCBITaxon_4529
+scientific_name	 Oryza sativa	http://purl.obolibrary.org/obo/NCBITaxon_4530
+scientific_name	 Oryza sativa Indica Group	http://purl.obolibrary.org/obo/NCBITaxon_39946
+scientific_name	 Oryza sativa Japonica Group	http://purl.obolibrary.org/obo/NCBITaxon_39947
+scientific_name	 Physcomitrella patens	http://purl.obolibrary.org/obo/NCBITaxon_3218
+scientific_name	 Populus trichocarpa	http://purl.obolibrary.org/obo/NCBITaxon_3694
+scientific_name	 Prunus persica	http://purl.obolibrary.org/obo/NCBITaxon_3760
+scientific_name	 Prunus persica var. persica	http://purl.obolibrary.org/obo/NCBITaxon_3760
+scientific_name	 Selaginella moellendorffii	http://purl.obolibrary.org/obo/NCBITaxon_88036
+scientific_name	 Setaria italica	http://purl.obolibrary.org/obo/NCBITaxon_4555
+scientific_name	 Solanum lycopersicum	http://purl.obolibrary.org/obo/NCBITaxon_4081
+scientific_name	 Solanum tuberosum	http://purl.obolibrary.org/obo/NCBITaxon_4113
+scientific_name	 Sorghum bicolor	http://purl.obolibrary.org/obo/NCBITaxon_4558
+scientific_name	 Theobroma cacao	http://purl.obolibrary.org/obo/NCBITaxon_3641
+scientific_name	 Triticum aestivum	http://purl.obolibrary.org/obo/NCBITaxon_4565
+scientific_name	 Vitis vinifera	http://purl.obolibrary.org/obo/NCBITaxon_29760
+scientific_name	 Zea mays	http://purl.obolibrary.org/obo/NCBITaxon_4577
+scientific_name	 Zea mays subsp. mays	http://purl.obolibrary.org/obo/NCBITaxon_381124
+strain	 C24 ecotype	http://www.ebi.ac.uk/efo/EFO_0006987
+tissue_type	 1mm ear primordia	http://purl.obolibrary.org/obo/PO_0025477
+tissue_type	 Adipose	http://purl.obolibrary.org/obo/UBERON_0001013
+tissue_type	 Adipose Tissue	http://purl.obolibrary.org/obo/UBERON_0001013
+tissue_type	 Adipose Tissue	http://purl.obolibrary.org/obo/UBERON_0001347
+tissue_type	 Adipose Tissue	http://purl.obolibrary.org/obo/UBERON_0001348
+tissue_type	 Adrenal Gland	http://purl.obolibrary.org/obo/UBERON_0002369
+tissue_type	 Adult Kidney	http://purl.obolibrary.org/obo/HP_0000113
+tissue_type	 Adult Liver	http://www.ebi.ac.uk/efo/EFO_0000182
+tissue_type	 aerial tissue	http://www.ebi.ac.uk/efo/EFO_0001901
+tissue_type	 aleurone	http://purl.obolibrary.org/obo/PO_0005360
+tissue_type	 Aleurone	http://purl.obolibrary.org/obo/PO_0005360
+tissue_type	 Angular gyrus	http://www.ebi.ac.uk/efo/EFO_0007285
+tissue_type	 Angular Gyrus	http://www.ebi.ac.uk/efo/EFO_0007285
+tissue_type	 anther	http://purl.obolibrary.org/obo/PO_0009066
+tissue_type	 Anther	http://purl.obolibrary.org/obo/PO_0009066
+tissue_type	 anthers	http://purl.obolibrary.org/obo/PO_0009066
+tissue_type	 anther stage 4-7	http://purl.obolibrary.org/obo/PO_0001035
+tissue_type	 anther stage 4-7	http://purl.obolibrary.org/obo/PO_0001007
+tissue_type	 anther stage 4-7	http://purl.obolibrary.org/obo/PO_0001034
+tissue_type	 Aorta	http://purl.obolibrary.org/obo/UBERON_0000947
+tissue_type	 Apex	http://purl.obolibrary.org/obo/PO_0000037
+tissue_type	 Apex	http://purl.obolibrary.org/obo/PO_0020137
+tissue_type	 apical meristem	http://purl.obolibrary.org/obo/PO_0020144
+tissue_type	 apical meristem	http://purl.obolibrary.org/obo/PO_0020148
+tissue_type	 apical meristem	http://purl.obolibrary.org/obo/PO_0020147
+tissue_type	 apical meristem	http://purl.obolibrary.org/obo/PO_0000229
+tissue_type	 Basal endosperm transfer layer	http://purl.obolibrary.org/obo/PO_0025196
+tissue_type	 Basal plate and villi	http://www.ebi.ac.uk/efo/EFO_0001904
+tissue_type	 Basal plate and villi	http://www.ebi.ac.uk/efo/EFO_0001904
+tissue_type	 Basal plate and villi	http://www.ebi.ac.uk/efo/EFO_0001904
+tissue_type	 Basal plate and villi	http://www.ebi.ac.uk/efo/EFO_0001904
+tissue_type	 Basal plate and villi	http://www.ebi.ac.uk/efo/EFO_0001904
+tissue_type	 Basal plate and villi	http://www.ebi.ac.uk/efo/EFO_0001904
+tissue_type	 Basal plate and villi	http://www.ebi.ac.uk/efo/EFO_0001904
+tissue_type	 Basal plate and villi	http://www.ebi.ac.uk/efo/EFO_0001904
+tissue_type	 Basal plate and villi	http://www.ebi.ac.uk/efo/EFO_0001904
+tissue_type	 Basal plate and villi	http://www.ebi.ac.uk/efo/EFO_0001904
+tissue_type	 Basal plate and villi	http://purl.obolibrary.org/obo/UBERON_0010285
+tissue_type	 Basal plate and villi	http://www.ebi.ac.uk/efo/EFO_0003110
+tissue_type	 Basal plate and villi	http://purl.obolibrary.org/obo/MP_0009693
+tissue_type	 Basal plate and villi	http://purl.obolibrary.org/obo/UBERON_0010285
+tissue_type	 Basal plate and villi	http://purl.obolibrary.org/obo/MP_0014080
+tissue_type	 Basal plate and villi	http://purl.obolibrary.org/obo/UBERON_0010285
+tissue_type	 Basal plate and villi	http://purl.obolibrary.org/obo/MP_0008108
+tissue_type	 Basal plate and villi	http://purl.obolibrary.org/obo/UBERON_0010285
+tissue_type	 Basal plate and villi	http://purl.obolibrary.org/obo/UBERON_0010285
+tissue_type	 Basal plate and villi	http://purl.obolibrary.org/obo/UBERON_0010285
+tissue_type	 Basal plate and villi	http://purl.obolibrary.org/obo/MP_0014083
+tissue_type	 Basal plate and villi	http://purl.obolibrary.org/obo/MP_0009693
+tissue_type	 Basal plate and villi	http://www.ebi.ac.uk/efo/EFO_0003110
+tissue_type	 Basal plate and villi	http://purl.obolibrary.org/obo/MP_0014083
+tissue_type	 Basal plate and villi	http://purl.obolibrary.org/obo/MP_0009693
+tissue_type	 Basal plate and villi	http://purl.obolibrary.org/obo/MP_0009693
+tissue_type	 Basal plate and villi	http://purl.obolibrary.org/obo/MP_0009693
+tissue_type	 Basal plate and villi	http://purl.obolibrary.org/obo/MP_0011528
+tissue_type	 Basal plate and villi	http://purl.obolibrary.org/obo/MP_0009693
+tissue_type	 Basal plate and villi	http://purl.obolibrary.org/obo/MP_0009693
+tissue_type	 base stem	http://purl.obolibrary.org/obo/PO_0008039
+tissue_type	 berry	http://www.ebi.ac.uk/efo/EFO_0001028
+tissue_type	 Berry	http://www.ebi.ac.uk/efo/EFO_0001028
+tissue_type	 Bladder	http://purl.obolibrary.org/obo/UBERON_0001255
+tissue_type	 blood plasma	http://purl.obolibrary.org/obo/UBERON_0001969
+tissue_type	 brain	http://purl.obolibrary.org/obo/UBERON_0000955
+tissue_type	 Brain	http://purl.obolibrary.org/obo/UBERON_0000955
+tissue_type	 bud	http://purl.obolibrary.org/obo/PO_0000055
+tissue_type	 Buds	http://www.ebi.ac.uk/efo/EFO_0003468
+tissue_type	 Buds	http://purl.obolibrary.org/obo/PO_0000055
+tissue_type	 Buds	http://purl.obolibrary.org/obo/UBERON_0005418
+tissue_type	 callus	http://purl.obolibrary.org/obo/PO_0005052
+tissue_type	 Callus	http://purl.obolibrary.org/obo/PO_0005052
+tissue_type	 carpels (collected manually from 15 developing inflorescences)	http://purl.obolibrary.org/obo/PO_0025598
+tissue_type	 carpels (collected manually from 15 developing inflorescences)	http://purl.obolibrary.org/obo/PO_0009030
+tissue_type	 Caryopsis	http://purl.obolibrary.org/obo/PO_0009001
+tissue_type	 Cell	http://purl.obolibrary.org/obo/CL_0000084
+tissue_type	 Cell	http://purl.obolibrary.org/obo/CL_0000236
+tissue_type	 Cell	http://purl.obolibrary.org/obo/GO_0005623
+tissue_type	 cell culture	http://purl.obolibrary.org/obo/BTO_0000214
+tissue_type	 Cells	http://purl.obolibrary.org/obo/CL_0000084
+tissue_type	 Cells	http://www.ebi.ac.uk/cmpo/CMPO_0000301
+tissue_type	 central starchy endosperm	http://purl.obolibrary.org/obo/PO_0006220
+tissue_type	 Cerebellum	http://purl.obolibrary.org/obo/UBERON_0002037
+tissue_type	 cerebrospinal fluid	http://purl.obolibrary.org/obo/UBERON_0001359
+tissue_type	 chloronema	http://purl.obolibrary.org/obo/PO_0030004
+tissue_type	 Cingulate Gyrus	http://purl.obolibrary.org/obo/MP_0004167
+tissue_type	 Colonic Mucosa	http://purl.obolibrary.org/obo/UBERON_0000317
+tissue_type	 corpus callosum	http://purl.obolibrary.org/obo/UBERON_0002336
+tissue_type	 cortex of primary root (basal of elongation zone)	http://purl.obolibrary.org/obo/PO_0000258
+tissue_type	 cotyledon	http://purl.obolibrary.org/obo/PO_0020030
+tissue_type	 Cotyledon	http://purl.obolibrary.org/obo/PO_0020030
+tissue_type	 Cotyledon2	http://purl.obolibrary.org/obo/PO_0020030
+tissue_type	 cotyledons	http://purl.obolibrary.org/obo/PO_0020030
+tissue_type	 developing xylem	http://purl.obolibrary.org/obo/PO_0005352
+tissue_type	 distal leaf abscission zone	http://purl.obolibrary.org/obo/PO_0006501
+tissue_type	 Duodenum Mucosa	http://purl.obolibrary.org/obo/UBERON_0000320
+tissue_type	 ear	http://purl.obolibrary.org/obo/UBERON_0001690
+tissue_type	 Ear	http://purl.obolibrary.org/obo/UBERON_0001690
+tissue_type	 Ear Inflorescence	http://purl.obolibrary.org/obo/PO_0020136
+tissue_type	 ear leaf	http://purl.obolibrary.org/obo/PO_0020106
+tissue_type	 ear primordia	http://purl.obolibrary.org/obo/PO_0025477
+tissue_type	 elongation zone of primary root	http://purl.obolibrary.org/obo/PO_0025257
+tissue_type	 embryo	http://purl.obolibrary.org/obo/UBERON_0000922
+tissue_type	 Embryo	http://purl.obolibrary.org/obo/UBERON_0000922
+tissue_type	 embryo proper	http://purl.obolibrary.org/obo/PO_0000001
+tissue_type	 embryo sacs	http://purl.obolibrary.org/obo/PO_0025074
+tissue_type	 endosperm	http://purl.obolibrary.org/obo/PO_0009089
+tissue_type	 Endosperm	http://purl.obolibrary.org/obo/PO_0009089
+tissue_type	 Esophagus	http://purl.obolibrary.org/obo/UBERON_0001043
+tissue_type	 fetal adrenal	http://purl.obolibrary.org/obo/MP_0008297
+tissue_type	 Fetal Adrenal Gland	http://purl.obolibrary.org/obo/MP_0008297
+tissue_type	 fetal brain	http://www.orpha.net/ORDO/Orphanet_444069
+tissue_type	 fetal brain	http://www.orpha.net/ORDO/Orphanet_1665
+tissue_type	 Fetal brain	http://www.orpha.net/ORDO/Orphanet_444069
+tissue_type	 Fetal brain	http://www.orpha.net/ORDO/Orphanet_1665
+tissue_type	 Fetal Brain	http://www.orpha.net/ORDO/Orphanet_444069
+tissue_type	 Fetal Brain	http://www.orpha.net/ORDO/Orphanet_1665
+tissue_type	 fetal lung	http://purl.obolibrary.org/obo/UBERON_0002048
+tissue_type	 Fetal lung	http://purl.obolibrary.org/obo/UBERON_0002048
+tissue_type	 Fetal Lung	http://purl.obolibrary.org/obo/UBERON_0002048
+tissue_type	 Fetal Placenta	http://purl.obolibrary.org/obo/MP_0011526
+tissue_type	 flag leaf	http://purl.obolibrary.org/obo/PO_0020103
+tissue_type	 Flag leaf	http://purl.obolibrary.org/obo/PO_0020103
+tissue_type	 Flag Leaf	http://purl.obolibrary.org/obo/PO_0020103
+tissue_type	 Flesh	http://purl.obolibrary.org/obo/PO_0025035
+tissue_type	 floral	http://purl.obolibrary.org/obo/PO_0000056
+tissue_type	 floral	http://purl.obolibrary.org/obo/PO_0007601
+tissue_type	 floral	http://purl.obolibrary.org/obo/PO_0007600
+tissue_type	 floral	http://purl.obolibrary.org/obo/PO_0000229
+tissue_type	 floral	http://purl.obolibrary.org/obo/PO_0025395
+tissue_type	 floral	http://purl.obolibrary.org/obo/PO_0004714
+tissue_type	 floral	http://purl.obolibrary.org/obo/PO_0004710
+tissue_type	 floral bud	http://purl.obolibrary.org/obo/PO_0000056
+tissue_type	 floral buds	http://purl.obolibrary.org/obo/PO_0000056
+tissue_type	 Floral meristem	http://purl.obolibrary.org/obo/PO_0000229
+tissue_type	 Floral organ	http://purl.obolibrary.org/obo/PO_0025395
+tissue_type	 flower	http://purl.obolibrary.org/obo/PO_0009046
+tissue_type	 Flower	http://purl.obolibrary.org/obo/PO_0009046
+tissue_type	 Flower1	http://purl.obolibrary.org/obo/PO_0009046
+tissue_type	 Flower2	http://purl.obolibrary.org/obo/PO_0009046
+tissue_type	 Flower3	http://purl.obolibrary.org/obo/PO_0009046
+tissue_type	 Flower4	http://purl.obolibrary.org/obo/PO_0009046
+tissue_type	 Flower5	http://purl.obolibrary.org/obo/PO_0009046
+tissue_type	 flower bud	http://purl.obolibrary.org/obo/PO_0000056
+tissue_type	 Flower bud	http://purl.obolibrary.org/obo/PO_0000056
+tissue_type	 Flower bud and flower	http://purl.obolibrary.org/obo/PO_0000229
+tissue_type	 Flower bud and flower	http://purl.obolibrary.org/obo/PO_0000056
+tissue_type	 Flower bud and flower	http://purl.obolibrary.org/obo/PO_0009046
+tissue_type	 Flower bud and flower	http://purl.obolibrary.org/obo/PO_0007616
+tissue_type	 Flower bud and flower	http://purl.obolibrary.org/obo/PO_0007016
+tissue_type	 Flower bud and flower	http://purl.obolibrary.org/obo/TO_0000671
+tissue_type	 Flower bud and flower	http://purl.obolibrary.org/obo/PO_0000056
+tissue_type	 Flower bud and flower	http://purl.obolibrary.org/obo/PO_0000056
+tissue_type	 Flower bud and flower	http://purl.obolibrary.org/obo/PO_0000056
+tissue_type	 Flower bud and flower	http://purl.obolibrary.org/obo/PO_0000056
+tissue_type	 Flower bud and flower	http://purl.obolibrary.org/obo/PO_0025599
+tissue_type	 Flower bud and flower	http://www.ebi.ac.uk/efo/EFO_0001924
+tissue_type	 Flower bud and flower	http://purl.obolibrary.org/obo/PO_0000229
+tissue_type	 Flower bud and flower	http://purl.obolibrary.org/obo/PO_0000229
+tissue_type	 Flower bud and flower	http://purl.obolibrary.org/obo/PO_0000229
+tissue_type	 Flower bud and flower	http://purl.obolibrary.org/obo/PO_0004710
+tissue_type	 Flower bud and flower	http://purl.obolibrary.org/obo/PO_0009064
+tissue_type	 Flower bud and flower	http://www.ebi.ac.uk/efo/EFO_0001924
+tissue_type	 Flower bud and flower	http://purl.obolibrary.org/obo/PO_0009064
+tissue_type	 flower buds	http://purl.obolibrary.org/obo/PO_0000056
+tissue_type	 flowers	http://purl.obolibrary.org/obo/PO_0009046
+tissue_type	 FOLIAGE	http://purl.obolibrary.org/obo/TO_0000977
+tissue_type	 FOLIAGE	http://purl.obolibrary.org/obo/PO_0006016
+tissue_type	 fruit	http://purl.obolibrary.org/obo/PO_0009001
+tissue_type	 gametophore apical cell	http://purl.obolibrary.org/obo/PO_0030019
+tissue_type	 gametophore bud	http://purl.obolibrary.org/obo/PO_0030026
+tissue_type	 Gametophytic	http://www.ebi.ac.uk/efo/EFO_0000988
+tissue_type	 Gametophytic	http://purl.obolibrary.org/obo/PO_0025280
+tissue_type	 Gastric	http://www.ebi.ac.uk/efo/EFO_0003897
+tissue_type	 Heart	http://purl.obolibrary.org/obo/UBERON_0000948
+tissue_type	 hypocotyl	http://purl.obolibrary.org/obo/PO_0020100
+tissue_type	 Hypocotyl	http://purl.obolibrary.org/obo/PO_0020100
+tissue_type	 hypocotyl (stem)	http://purl.obolibrary.org/obo/TO_0000762
+tissue_type	 hypocotyl (stem)	http://purl.obolibrary.org/obo/TO_0006065
+tissue_type	 hypocotyl (stem)	http://purl.obolibrary.org/obo/PO_0005013
+tissue_type	 hypocotyl (stem)	http://purl.obolibrary.org/obo/TO_0000760
+tissue_type	 hypocotyl (stem)	http://purl.obolibrary.org/obo/TO_0000759
+tissue_type	 hypocotyl (stem)	http://purl.obolibrary.org/obo/PO_0006065
+tissue_type	 hypocotyl (stem)	http://purl.obolibrary.org/obo/, http://purl.obolibrary.org/obo/PO_0020030, PO_0020100
+tissue_type	 hypocotyl (stem)	http://purl.obolibrary.org/obo/TO_0000781
+tissue_type	 hypocotyl (stem)	http://purl.obolibrary.org/obo/PO_0007043
+tissue_type	 immature inflorescence	http://purl.obolibrary.org/obo/PO_0009049
+tissue_type	 inflorescence	http://purl.obolibrary.org/obo/PO_0020136
+tissue_type	 inflorescence	http://purl.obolibrary.org/obo/PO_0009049
+tissue_type	 inflorescence	http://purl.obolibrary.org/obo/PO_0020126
+tissue_type	 inflorescence	http://purl.obolibrary.org/obo/PO_0025601
+tissue_type	 inflorescences	http://purl.obolibrary.org/obo/PO_0009049
+tissue_type	 inflorescences	http://purl.obolibrary.org/obo/PO_0020136
+tissue_type	 Inflorescences	http://purl.obolibrary.org/obo/PO_0009049
+tissue_type	 Inflorescences	http://purl.obolibrary.org/obo/PO_0020136
+tissue_type	 inflorescences and siliques	http://purl.obolibrary.org/obo/PO_0009001
+tissue_type	 inflorescences and siliques	http://purl.obolibrary.org/obo/PO_0009049
+tissue_type	 inflorescences and siliques	http://purl.obolibrary.org/obo/PO_0009049
+tissue_type	 inflorescences and siliques	http://purl.obolibrary.org/obo/PO_0009049
+tissue_type	 inflorescences and siliques	http://purl.obolibrary.org/obo/PO_0009001
+tissue_type	 inflorescences and siliques	http://purl.obolibrary.org/obo/PO_0009001
+tissue_type	 inflorescences and siliques	http://purl.obolibrary.org/obo/PO_0009001
+tissue_type	 inflorescences and siliques	http://purl.obolibrary.org/obo/PO_0009001
+tissue_type	 inflorescences and siliques	http://purl.obolibrary.org/obo/PO_0009001
+tissue_type	 inflorescences and siliques	http://purl.obolibrary.org/obo/PO_0009001
+tissue_type	 inflorescences and siliques	http://purl.obolibrary.org/obo/PO_0009001
+tissue_type	 inflorescences and siliques	http://purl.obolibrary.org/obo/PO_0009001
+tissue_type	 inflorescences and siliques	http://purl.obolibrary.org/obo/PO_0009001
+tissue_type	 inflorescences and siliques	http://purl.obolibrary.org/obo/PO_0009001
+tissue_type	 internode	http://purl.obolibrary.org/obo/PO_0020142
+tissue_type	 kernel	http://purl.obolibrary.org/obo/PO_0009001
+tissue_type	 Kernel	http://purl.obolibrary.org/obo/PO_0009001
+tissue_type	 lateral nectaries	http://purl.obolibrary.org/obo/PO_0009056
+tissue_type	 leaf	http://purl.obolibrary.org/obo/PO_0025034
+tissue_type	 Leaf	http://purl.obolibrary.org/obo/PO_0025034
+tissue_type	 Leaf1	http://purl.obolibrary.org/obo/PO_0025034
+tissue_type	 Leaf1	http://purl.obolibrary.org/obo/PO_0006338
+tissue_type	 Leaf2	http://purl.obolibrary.org/obo/PO_0025034
+tissue_type	 Leaf2	http://purl.obolibrary.org/obo/PO_0006338
+tissue_type	 leaf (20-day seedling)	http://purl.obolibrary.org/obo/PO_0007133
+tissue_type	 leaf (20-day seedling)	http://purl.obolibrary.org/obo/PO_0007106
+tissue_type	 Leaf3	http://purl.obolibrary.org/obo/PO_0025034
+tissue_type	 Leaf3	http://purl.obolibrary.org/obo/PO_0006338
+tissue_type	 Leaf and root	http://purl.obolibrary.org/obo/PO_0009005
+tissue_type	 Leaf and root	http://purl.obolibrary.org/obo/PO_0020039
+tissue_type	 Leaf and root	http://purl.obolibrary.org/obo/PO_0020039
+tissue_type	 Leaf and root	http://purl.obolibrary.org/obo/PO_0009005
+tissue_type	 Leaf and root	http://purl.obolibrary.org/obo/PO_0025034
+tissue_type	 Leaf and root	http://purl.obolibrary.org/obo/PO_0009005
+tissue_type	 Leaf and root	http://purl.obolibrary.org/obo/PO_0000014
+tissue_type	 Leaf and root	http://purl.obolibrary.org/obo/PO_0025034
+tissue_type	 Leaf and root	http://purl.obolibrary.org/obo/PO_0000014
+tissue_type	 Leaf and root	http://purl.obolibrary.org/obo/PO_0020039
+tissue_type	 Leaf and root	http://purl.obolibrary.org/obo/PO_0020039
+tissue_type	 Leaf and root	http://www.ebi.ac.uk/efo/EFO_0000989
+tissue_type	 Leaf and root	http://purl.obolibrary.org/obo/PO_0020039
+tissue_type	 Leaf and root	http://purl.obolibrary.org/obo/PO_0020039
+tissue_type	 Leaf and root	http://purl.obolibrary.org/obo/PO_0020039
+tissue_type	 Leaf and root	http://purl.obolibrary.org/obo/PO_0020039
+tissue_type	 Leaf and root	http://purl.obolibrary.org/obo/PO_0020039
+tissue_type	 Leaf and root	http://purl.obolibrary.org/obo/PO_0000046
+tissue_type	 leaf apex	http://purl.obolibrary.org/obo/PO_0020137
+tissue_type	 leaf base	http://purl.obolibrary.org/obo/PO_0020040
+tissue_type	 Leaf blades	http://purl.obolibrary.org/obo/PO_0020039
+tissue_type	 Leaf seedling (20 day)	http://purl.obolibrary.org/obo/PO_0007106
+tissue_type	 Leaf sheath	http://purl.obolibrary.org/obo/PO_0020104
+tissue_type	 leaf tip	http://purl.obolibrary.org/obo/PO_0025142
+tissue_type	 leave	http://purl.obolibrary.org/obo/PO_0025034
+tissue_type	 leave	http://purl.obolibrary.org/obo/PO_0000014
+tissue_type	 Leave	http://purl.obolibrary.org/obo/PO_0025034
+tissue_type	 Leave	http://purl.obolibrary.org/obo/PO_0000014
+tissue_type	 leaves	http://purl.obolibrary.org/obo/PO_0025034
+tissue_type	 Leaves	http://purl.obolibrary.org/obo/PO_0025034
+tissue_type	 Left Ventricle	http://purl.obolibrary.org/obo/UBERON_0002084
+tissue_type	 liver	http://purl.obolibrary.org/obo/UBERON_0002107
+tissue_type	 Liver	http://purl.obolibrary.org/obo/UBERON_0002107
+tissue_type	 lower stem	http://purl.obolibrary.org/obo/PO_0009047
+tissue_type	 lung	http://purl.obolibrary.org/obo/UBERON_0002048
+tissue_type	 Lung	http://purl.obolibrary.org/obo/UBERON_0002048
+tissue_type	 mature seeds	http://purl.obolibrary.org/obo/PO_0007632
+tissue_type	 meristematic zone of primary root (apical 2mm)	http://purl.obolibrary.org/obo/PO_0006081
+tissue_type	 Mixed tissues	http://www.ebi.ac.uk/efo/EFO_0007374
+tissue_type	 Mixed tissues	http://www.orpha.net/ORDO/Orphanet_809
+tissue_type	 mucosa	http://purl.obolibrary.org/obo/UBERON_0000344
+tissue_type	 nodule	http://www.ebi.ac.uk/efo/EFO_0001013
+tissue_type	 nodule	http://purl.obolibrary.org/obo/PO_0003023
+tissue_type	 nucellus	http://purl.obolibrary.org/obo/PO_0020020
+tissue_type	 Ovary	http://purl.obolibrary.org/obo/UBERON_0003134
+tissue_type	 ovule	http://purl.obolibrary.org/obo/PO_0020003
+tissue_type	 Pancreas	http://purl.obolibrary.org/obo/UBERON_0001264
+tissue_type	 panicle	http://purl.obolibrary.org/obo/PO_0009049
+tissue_type	 Panicle	http://purl.obolibrary.org/obo/PO_0009049
+tissue_type	 panicles	http://purl.obolibrary.org/obo/PO_0009049
+tissue_type	 Panicles	http://purl.obolibrary.org/obo/PO_0009049
+tissue_type	 pedicels	http://purl.obolibrary.org/obo/PO_0009052
+tissue_type	 pedicels	http://purl.obolibrary.org/obo/UBERON_3000692
+tissue_type	 Peel	http://www.orpha.net/ORDO/Orphanet_817
+tissue_type	 Peel	http://www.orpha.net/ORDO/Orphanet_263548
+tissue_type	 pericarp	http://purl.obolibrary.org/obo/PO_0009084
+tissue_type	 Petals	http://purl.obolibrary.org/obo/PO_0009032
+tissue_type	 petiole	http://purl.obolibrary.org/obo/PO_0020038
+tissue_type	 pistil	http://purl.obolibrary.org/obo/PO_0009030
+tissue_type	 pistils	http://purl.obolibrary.org/obo/PO_0009030
+tissue_type	 plant	http://www.ebi.ac.uk/efo/EFO_0002906
+tissue_type	 plant	http://purl.obolibrary.org/obo/PO_0000003
+tissue_type	 Pod	http://purl.obolibrary.org/obo/TO_0000901
+tissue_type	 Pod	http://purl.obolibrary.org/obo/TO_0002628
+tissue_type	 Pod	http://purl.obolibrary.org/obo/TO_0002626
+tissue_type	 Pod	http://purl.obolibrary.org/obo/NCBITaxon_12260
+tissue_type	 Pod	http://purl.obolibrary.org/obo/TO_0020006
+tissue_type	 Pod	http://purl.obolibrary.org/obo/TO_0002694
+tissue_type	 Pod	http://purl.obolibrary.org/obo/TO_0002625
+tissue_type	 Pod	http://purl.obolibrary.org/obo/TO_0002629
+tissue_type	 pod1	http://purl.obolibrary.org/obo/TO_0002625
+tissue_type	 pod1	http://purl.obolibrary.org/obo/TO_0000901
+tissue_type	 pod1	http://purl.obolibrary.org/obo/TO_0020006
+tissue_type	 pod2	http://purl.obolibrary.org/obo/TO_0002625
+tissue_type	 pod2	http://purl.obolibrary.org/obo/TO_0000901
+tissue_type	 pod2	http://purl.obolibrary.org/obo/TO_0020006
+tissue_type	 pod3	http://purl.obolibrary.org/obo/TO_0002625
+tissue_type	 pod3	http://purl.obolibrary.org/obo/TO_0000901
+tissue_type	 pod3	http://purl.obolibrary.org/obo/TO_0020006
+tissue_type	 Pods	http://purl.obolibrary.org/obo/TO_0002625
+tissue_type	 Pods	http://purl.obolibrary.org/obo/TO_0000901
+tissue_type	 Pods	http://purl.obolibrary.org/obo/TO_0020006
+tissue_type	 Pods	http://purl.obolibrary.org/obo/NCBITaxon_12260
+tissue_type	 pollen	http://purl.obolibrary.org/obo/PO_0025281
+tissue_type	 primary root	http://purl.obolibrary.org/obo/PO_0020127
+tissue_type	 primary root tip	http://purl.obolibrary.org/obo/PO_0000026
+tissue_type	 primary root (without apical 5mm)	http://purl.obolibrary.org/obo/PO_0003015
+tissue_type	 primary root (without apical 5mm)	http://purl.obolibrary.org/obo/PO_0006081
+tissue_type	 protonema	http://purl.obolibrary.org/obo/PO_0030003
+tissue_type	 pulps	http://purl.obolibrary.org/obo/MP_0005046
+tissue_type	 pulps	http://purl.obolibrary.org/obo/MP_0008477
+tissue_type	 pulps	http://purl.obolibrary.org/obo/MP_0008476
+tissue_type	 pulps	http://purl.obolibrary.org/obo/MP_0008475
+tissue_type	 pulps	http://purl.obolibrary.org/obo/MP_0013251
+tissue_type	 pulps	http://purl.obolibrary.org/obo/MP_0002819
+tissue_type	 pulps	http://purl.obolibrary.org/obo/CL_0000874
+tissue_type	 pulps	http://purl.obolibrary.org/obo/CL_0000876
+tissue_type	 pulps	http://www.orpha.net/ORDO/Orphanet_300869
+tissue_type	 Right Atrium	http://www.ebi.ac.uk/efo/EFO_0005884
+tissue_type	 Right Ventricle	http://purl.obolibrary.org/obo/UBERON_0002080
+tissue_type	 root	http://purl.obolibrary.org/obo/PO_0009005
+tissue_type	 Root	http://purl.obolibrary.org/obo/PO_0009005
+tissue_type	 Root and Shoot	http://purl.obolibrary.org/obo/TO_0000626
+tissue_type	 roots	http://purl.obolibrary.org/obo/PO_0009005
+tissue_type	 Roots	http://purl.obolibrary.org/obo/PO_0009005
+tissue_type	 root tip	http://purl.obolibrary.org/obo/PO_0000025
+tissue_type	 rosette	http://purl.obolibrary.org/obo/PO_0025615
+tissue_type	 Rosette	http://purl.obolibrary.org/obo/PO_0025615
+tissue_type	 rosette leaf	http://purl.obolibrary.org/obo/PO_0000014
+tissue_type	 rosette leaves	http://purl.obolibrary.org/obo/PO_0000014
+tissue_type	 rosettes	http://purl.obolibrary.org/obo/PO_0025615
+tissue_type	 SAM	http://purl.obolibrary.org/obo/CHEBI_15414
+tissue_type	 SAM	http://www.orpha.net/ORDO/Orphanet_121802
+tissue_type	 SAM	http://www.orpha.net/ORDO/Orphanet_132262
+tissue_type	 seed	http://purl.obolibrary.org/obo/PO_0009010
+tissue_type	 Seed	http://purl.obolibrary.org/obo/PO_0009010
+tissue_type	 seed1	http://purl.obolibrary.org/obo/PO_0009010
+tissue_type	 seed2	http://purl.obolibrary.org/obo/PO_0009010
+tissue_type	 Seed3	http://purl.obolibrary.org/obo/PO_0009010
+tissue_type	 Seed4	http://purl.obolibrary.org/obo/PO_0009010
+tissue_type	 Seed5	http://purl.obolibrary.org/obo/PO_0009010
+tissue_type	 seed coat	http://purl.obolibrary.org/obo/PO_0009088
+tissue_type	 Seed coat (100-200mg seed weight stage)	http://purl.obolibrary.org/obo/PO_0006048
+tissue_type	 Seed coat (100-200mg seed weight stage)	http://purl.obolibrary.org/obo/, http://purl.obolibrary.org/obo/PO_0009089, PO_0009088
+tissue_type	 Seed coat (100-200mg seed weight stage)	http://purl.obolibrary.org/obo/PO_0009088
+tissue_type	 Seed coat (100-200mg seed weight stage)	http://purl.obolibrary.org/obo/TO_0000903
+tissue_type	 Seed coat (100-200mg seed weight stage)	http://purl.obolibrary.org/obo/TO_0000880
+tissue_type	 Seed coat (100-200mg seed weight stage)	http://purl.obolibrary.org/obo/TO_0000888
+tissue_type	 Seed coat (100-200mg seed weight stage)	http://purl.obolibrary.org/obo/PO_0020056
+tissue_type	 Seed coat (100-200mg seed weight stage)	http://purl.obolibrary.org/obo/TO_0000889
+tissue_type	 Seed coat (100-200mg seed weight stage)	http://purl.obolibrary.org/obo/TO_0000904
+tissue_type	 Seed coat (100-200mg seed weight stage)	http://purl.obolibrary.org/obo/TO_0020017
+tissue_type	 Seed coat (400-500mg seed weight stage)	http://purl.obolibrary.org/obo/PO_0006048
+tissue_type	 Seed coat (400-500mg seed weight stage)	http://purl.obolibrary.org/obo/, http://purl.obolibrary.org/obo/PO_0009089, PO_0009088
+tissue_type	 Seed coat (400-500mg seed weight stage)	http://purl.obolibrary.org/obo/PO_0009088
+tissue_type	 Seed coat (400-500mg seed weight stage)	http://purl.obolibrary.org/obo/TO_0000903
+tissue_type	 Seed coat (400-500mg seed weight stage)	http://purl.obolibrary.org/obo/TO_0000880
+tissue_type	 Seed coat (400-500mg seed weight stage)	http://purl.obolibrary.org/obo/TO_0000888
+tissue_type	 Seed coat (400-500mg seed weight stage)	http://purl.obolibrary.org/obo/PO_0020056
+tissue_type	 Seed coat (400-500mg seed weight stage)	http://purl.obolibrary.org/obo/TO_0000889
+tissue_type	 Seed coat (400-500mg seed weight stage)	http://purl.obolibrary.org/obo/TO_0000904
+tissue_type	 Seed coat (400-500mg seed weight stage)	http://purl.obolibrary.org/obo/TO_0020017
+tissue_type	 Seed coat (50-100mg seed weight stage)	http://purl.obolibrary.org/obo/PO_0006048
+tissue_type	 Seed coat (50-100mg seed weight stage)	http://purl.obolibrary.org/obo/, http://purl.obolibrary.org/obo/PO_0009089, PO_0009088
+tissue_type	 Seed coat (50-100mg seed weight stage)	http://purl.obolibrary.org/obo/PO_0009088
+tissue_type	 Seed coat (50-100mg seed weight stage)	http://purl.obolibrary.org/obo/TO_0000903
+tissue_type	 Seed coat (50-100mg seed weight stage)	http://purl.obolibrary.org/obo/TO_0000880
+tissue_type	 Seed coat (50-100mg seed weight stage)	http://purl.obolibrary.org/obo/TO_0000888
+tissue_type	 Seed coat (50-100mg seed weight stage)	http://purl.obolibrary.org/obo/PO_0020056
+tissue_type	 Seed coat (50-100mg seed weight stage)	http://purl.obolibrary.org/obo/TO_0000889
+tissue_type	 Seed coat (50-100mg seed weight stage)	http://purl.obolibrary.org/obo/TO_0000904
+tissue_type	 Seed coat (50-100mg seed weight stage)	http://purl.obolibrary.org/obo/TO_0020017
+tissue_type	 seedings	http://purl.obolibrary.org/obo/PO_0004506
+tissue_type	 seedings	http://purl.obolibrary.org/obo/PO_0019024
+tissue_type	 seedings	http://purl.obolibrary.org/obo/PO_0009088
+tissue_type	 seedings	http://purl.obolibrary.org/obo/, http://purl.obolibrary.org/obo/PO_0009089, PO_0009088
+tissue_type	 seedling	http://purl.obolibrary.org/obo/PO_0007131
+tissue_type	 Seedling	http://purl.obolibrary.org/obo/PO_0007131
+tissue_type	 Seedling (20-day)	http://purl.obolibrary.org/obo/PO_0025471
+tissue_type	 Seedling (20-day)	http://purl.obolibrary.org/obo/PO_0025293
+tissue_type	 Seedling (20-day)	http://purl.obolibrary.org/obo/PO_0025295
+tissue_type	 Seedling (20-day)	http://purl.obolibrary.org/obo/PO_0025291
+tissue_type	 Seedling (20-day)	http://purl.obolibrary.org/obo/PO_0025297
+tissue_type	 Seedling leaves	http://purl.obolibrary.org/obo/PO_0007098
+tissue_type	 seedlings	http://purl.obolibrary.org/obo/PO_0007131
+tissue_type	 Seedlings	http://purl.obolibrary.org/obo/PO_0007131
+tissue_type	 seeds	http://purl.obolibrary.org/obo/PO_0009010
+tissue_type	 Seeds	http://purl.obolibrary.org/obo/PO_0009010
+tissue_type	 seeds 5 days after pollination	http://purl.obolibrary.org/obo/PO_0009010
+tissue_type	 seminal root	http://purl.obolibrary.org/obo/PO_0000046
+tissue_type	 sepal	http://purl.obolibrary.org/obo/PO_0009031
+tissue_type	 shoot	http://purl.obolibrary.org/obo/PO_0009006
+tissue_type	 Shoot	http://purl.obolibrary.org/obo/PO_0009006
+tissue_type	 shoot and root	http://purl.obolibrary.org/obo/TO_0000626
+tissue_type	 shoot apex	http://purl.obolibrary.org/obo/PO_0000037
+tissue_type	 shoot apical meristem	http://purl.obolibrary.org/obo/PO_0020148
+tissue_type	 Shoot apical meristem	http://purl.obolibrary.org/obo/PO_0020148
+tissue_type	 Shoot apical meristem and leaf primordium	http://purl.obolibrary.org/obo/PO_0020148
+tissue_type	 Shoot apical meristem and leaf primordium	http://purl.obolibrary.org/obo/PO_0008016
+tissue_type	 Shoot apical meristem and leaf primordium	http://purl.obolibrary.org/obo/PO_0020148
+tissue_type	 Shoot apical meristem and leaf primordium	http://purl.obolibrary.org/obo/PO_0020148
+tissue_type	 Shoot apical meristem and leaf primordium	http://purl.obolibrary.org/obo/PO_0020148
+tissue_type	 Shoot apical meristem and leaf primordium	http://purl.obolibrary.org/obo/PO_0008016
+tissue_type	 Shoot apical meristem and leaf primordium	http://purl.obolibrary.org/obo/PO_0008016
+tissue_type	 Shoot apical meristem and leaf primordium	http://purl.obolibrary.org/obo/PO_0008016
+tissue_type	 Shoot apical meristem and young leaves	http://purl.obolibrary.org/obo/PO_0020148
+tissue_type	 Shoot apical meristem and young leaves	http://purl.obolibrary.org/obo/PO_0008016
+tissue_type	 shoot (harvested above the upper node of the mesocotyl)	http://purl.obolibrary.org/obo/PO_0007080
+tissue_type	 shoot (harvested above the upper node of the mesocotyl)	http://purl.obolibrary.org/obo/PO_0008016
+tissue_type	 shoot (harvested above the upper node of the mesocotyl)	http://purl.obolibrary.org/obo/PO_0020148
+tissue_type	 shoot (harvested above the upper node of the mesocotyl)	http://purl.obolibrary.org/obo/, http://purl.obolibrary.org/obo/PO_0000037, PO_0009049
+tissue_type	 shoot (harvested above the upper node of the mesocotyl)	http://purl.obolibrary.org/obo/PO_0007073
+tissue_type	 shoot meristem	http://purl.obolibrary.org/obo/PO_0006079
+tissue_type	 shoot meristem	http://purl.obolibrary.org/obo/PO_0020148
+tissue_type	 shoots	http://purl.obolibrary.org/obo/PO_0009006
+tissue_type	 Shoots	http://purl.obolibrary.org/obo/PO_0009006
+tissue_type	 shoot tip	http://purl.obolibrary.org/obo/PO_0000037
+tissue_type	 Sigmoid Colon	http://purl.obolibrary.org/obo/UBERON_0001159
+tissue_type	 silique	http://purl.obolibrary.org/obo/PO_0009001
+tissue_type	 siliques	http://purl.obolibrary.org/obo/PO_0009001
+tissue_type	 silk	http://purl.obolibrary.org/obo/PO_0009074
+tissue_type	 Skeletal muscle	http://purl.obolibrary.org/obo/UBERON_0001134
+tissue_type	 Skin	http://purl.obolibrary.org/obo/UBERON_0000014
+tissue_type	 Small Intestine	http://purl.obolibrary.org/obo/UBERON_0002108
+tissue_type	 smooth muscle	http://purl.obolibrary.org/obo/UBERON_0001135
+tissue_type	 Smooth Muscle	http://purl.obolibrary.org/obo/UBERON_0001135
+tissue_type	 sperm cells	http://www.ebi.ac.uk/efo/EFO_0001005
+tissue_type	 sperm cells	http://purl.obolibrary.org/obo/PO_0025121
+tissue_type	 spike	http://purl.obolibrary.org/obo/PO_0009049
+tissue_type	 Spikelet meristem	http://purl.obolibrary.org/obo/PO_0006378
+tissue_type	 Spikelet meristem	http://purl.obolibrary.org/obo/PO_0006327
+tissue_type	 spikes	http://purl.obolibrary.org/obo/PO_0009049
+tissue_type	 Spleen	http://purl.obolibrary.org/obo/UBERON_0002106
+tissue_type	 stamen	http://purl.obolibrary.org/obo/PO_0009029
+tissue_type	 Starchy endosperm	http://purl.obolibrary.org/obo/PO_0006220
+tissue_type	 stem	http://purl.obolibrary.org/obo/PO_0009047
+tissue_type	 Stem	http://purl.obolibrary.org/obo/PO_0009047
+tissue_type	 Stem1	http://purl.obolibrary.org/obo/PO_0009047
+tissue_type	 Stem1	http://purl.obolibrary.org/obo/UBERON_0002298
+tissue_type	 Stem2	http://purl.obolibrary.org/obo/PO_0009047
+tissue_type	 Stem2	http://purl.obolibrary.org/obo/UBERON_0002298
+tissue_type	 stem cell	http://purl.obolibrary.org/obo/CL_0000034
+tissue_type	 Stem node	http://purl.obolibrary.org/obo/PO_0020141
+tissue_type	 stems	http://purl.obolibrary.org/obo/PO_0009047
+tissue_type	 stems	http://purl.obolibrary.org/obo/UBERON_0002298
+tissue_type	 Stigma	http://www.ebi.ac.uk/efo/EFO_0001053
+tissue_type	 Stigma	http://purl.obolibrary.org/obo/PO_0009073
+tissue_type	 Stomach Mucosa	http://purl.obolibrary.org/obo/MP_0005210
+tissue_type	 Substantia Nigra	http://purl.obolibrary.org/obo/UBERON_0002038
+tissue_type	 tassel	http://purl.obolibrary.org/obo/PO_0020126
+tissue_type	 temporal lobe	http://purl.obolibrary.org/obo/UBERON_0001871
+tissue_type	 testis	http://purl.obolibrary.org/obo/UBERON_0000473
+tissue_type	 Thymus	http://purl.obolibrary.org/obo/UBERON_0002370
+tissue_type	 Thyroid	http://purl.obolibrary.org/obo/UBERON_0002046
+tissue_type	 trifoliate	http://purl.obolibrary.org/obo/NCBITaxon_37690
+tissue_type	 tuber	http://purl.obolibrary.org/obo/PO_0025522
+tissue_type	 Tuber	http://purl.obolibrary.org/obo/PO_0025522
+tissue_type	 Unicellular	http://purl.obolibrary.org/obo/PO_0025537
+tissue_type	 Unicellular	http://purl.obolibrary.org/obo/PO_0025521
+tissue_type	 Unicellular	http://purl.obolibrary.org/obo/PO_0001013
+tissue_type	 Unicellular	http://purl.obolibrary.org/obo/PO_0001012
+tissue_type	 upper stem	http://purl.obolibrary.org/obo/PO_0009047
+tissue_type	 vegetative	http://purl.obolibrary.org/obo/PO_0025223
+tissue_type	 vegetative	http://purl.obolibrary.org/obo/PO_0020099
+tissue_type	 vegetative	http://purl.obolibrary.org/obo/PO_0007134
+tissue_type	 vegetative	http://purl.obolibrary.org/obo/PO_0000058
+tissue_type	 vegetative	http://purl.obolibrary.org/obo/PO_0025615
+tissue_type	 Villi	http://purl.obolibrary.org/obo/MP_0014080
+tissue_type	 Villi	http://purl.obolibrary.org/obo/MP_0014084
+tissue_type	 Villi	http://purl.obolibrary.org/obo/MP_0014083
+tissue_type	 Villi	http://www.ebi.ac.uk/efo/EFO_0003110
+tissue_type	 Villi	http://purl.obolibrary.org/obo/MP_0014081
+tissue_type	 Villi	http://purl.obolibrary.org/obo/MP_0014078
+tissue_type	 Villi	http://purl.obolibrary.org/obo/MP_0008108
+tissue_type	 Villi	http://purl.obolibrary.org/obo/MP_0014082
+tissue_type	 whole	http://purl.obolibrary.org/obo/UBERON_0000178
+tissue_type	 whole	http://purl.obolibrary.org/obo/UBERON_0001882
+tissue_type	 Whole	http://purl.obolibrary.org/obo/UBERON_0000178
+tissue_type	 Whole	http://purl.obolibrary.org/obo/UBERON_0001882
+tissue_type	 Whole organism	http://www.ebi.ac.uk/efo/EFO_0002906
+tissue_type	 whole plant	http://www.ebi.ac.uk/efo/EFO_0002906
+tissue_type	 whole plant	http://purl.obolibrary.org/obo/PO_0000003
+tissue_type	 Whole plant	http://www.ebi.ac.uk/efo/EFO_0002906
+tissue_type	 Whole plant	http://purl.obolibrary.org/obo/PO_0000003
+tissue_type	 whole plants	http://www.ebi.ac.uk/efo/EFO_0002906
+tissue_type	 whole plants	http://purl.obolibrary.org/obo/PO_0000003
+tissue_type	 whole root	http://purl.obolibrary.org/obo/PO_0009005
+tissue_type	 Whole roots	http://purl.obolibrary.org/obo/PO_0009005
+tissue_type	 whole rosette	http://purl.obolibrary.org/obo/PO_0025615
+tissue_type	 whole rosettes	http://purl.obolibrary.org/obo/PO_0025615
+tissue_type	 whole seedling	http://www.ebi.ac.uk/efo/EFO_0002906
+tissue_type	 Whole seedling	http://www.ebi.ac.uk/efo/EFO_0002906
+tissue_type	 whole seedlings	http://www.ebi.ac.uk/efo/EFO_0002906
+tissue_type	 Whole seedlings	http://www.ebi.ac.uk/efo/EFO_0002906
+tissue_type	 Xylem	http://purl.obolibrary.org/obo/PO_0005352
+tissue_type	 young leaves	http://purl.obolibrary.org/obo/, http://purl.obolibrary.org/obo/PO_0025034, PO_0009013

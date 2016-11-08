@@ -59,14 +59,9 @@ SKIP: {
 						  index => $config->{trackhub}{index},
 						  type  => $config->{trackhub}{type},
 						  mapping => 'trackhub_mappings.json'
-						},
-						authentication => {
-						  index => $config->{user}{index},
-						  type  => $config->{user}{type},
-						  mapping => 'authentication_mappings.json'
 						}
-					       );
-  $indexer->index_users();
+				       );
+					       
 
   # submit some public hubs
   my @public_hubs = (
@@ -124,7 +119,7 @@ SKIP: {
   is_deeply([ sort @{$content} ], [ sort keys %species_assemblies ], 'List of species');
 
   #
-  # /api/info/asseblies endpoint
+  # /api/info/assemblies endpoint
   #
   $request = GET('/api/info/assemblies');
   ok($response = request($request), 'GET request to /api/info/assemblies');
@@ -150,7 +145,7 @@ SKIP: {
   ok($hub, 'Ensembl regulatory build hub');
   is($hub->{longLabel}, 'Evidence summaries and provisional results for the new Ensembl Regulatory Build', 'Hub longLabel');
   is(scalar @{$hub->{trackdbs}}, 3, 'Number of trackDbs');
-  is($hub->{trackdbs}[0]{species} && $hub->{trackdbs}[1]{species}, 9606, 'trackDb species');
+  map { like($_->{species}, qr/9606|10090/, 'trackDb species') } @{$hub->{trackdbs}};
   map { like($_->{assembly}, qr/GCA_000001405|GCA_000001635/, 'trackDb assembly') } @{$hub->{trackdbs}};
   map { like($_->{uri}, qr/api\/search\/trackdb/, 'trackDb uri') } @{$hub->{trackdbs}};
 
@@ -161,7 +156,10 @@ SKIP: {
   is($hub->{trackdbs}[0]{species}, 7955, 'trackDb species');
   is($hub->{trackdbs}[0]{assembly}, 'GCA_000002035.2', 'trackDb assembly');
   like($hub->{trackdbs}[0]{uri}, qr/api\/search\/trackdb/, 'trackDb uri');
-
-}
+  
+  # Delete the index created
+  $indexer->delete();
+ 
+ }
 
 done_testing();

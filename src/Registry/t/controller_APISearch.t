@@ -44,14 +44,8 @@ SKIP: {
 						  index => $config->{trackhub}{index},
 						  type  => $config->{trackhub}{type},
 						  mapping => 'trackhub_mappings.json'
-						},
-						authentication => {
-						  index => $config->{user}{index},
-						  type  => $config->{user}{type},
-						  mapping => 'authentication_mappings.json'
 						}
-					       );
-  $indexer->index_users();
+			       );
 
   # submit some public hubs
   my @public_hubs = (
@@ -252,7 +246,9 @@ SKIP: {
   is($content->{configuration}{mir_sites_highcons}{bigDataUrl}, 'http://www.mircode.org/ucscHub/hg19/gencode_mirsites_highconsfamilies.bb', 'TrackDB configuration');
   # shouldn't have the metadata
   ok(!$content->{data}, 'No metadata');
-  
+ 
+  # Delete the index created
+  $indexer->delete(); 
 }
 
 done_testing();

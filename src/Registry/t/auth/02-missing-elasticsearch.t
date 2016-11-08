@@ -21,6 +21,8 @@ use Test::More 0.98;
 
 use lib "$FindBin::Bin/lib";
 
+plan( skip_all => 'ElasticSearch is not used to store User info anymore' );
+
 BEGIN {
     $ENV{TESTAPP_CONFIG} = {
         name => 'TestApp',

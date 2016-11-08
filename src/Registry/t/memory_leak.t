@@ -28,6 +28,8 @@ use LWP::UserAgent;
 use HTTP::Headers;
 use HTTP::Request::Common qw/GET POST/;
 
+use Catalyst::Test 'Registry';
+
 use Registry::Utils;
 use Registry::Indexer;
 
@@ -37,15 +39,9 @@ my $indexer = Registry::Indexer->new(dir   => "$Bin/trackhub-examples/",
 						  index => $config->{trackhub}{index},
 						  type  => $config->{trackhub}{type},
 						  mapping => 'trackhub_mappings.json'
-						 },
-				     authentication => {
-							index => $config->{user}{index},
-							type  => $config->{user}{type},
-							mapping => 'authentication_mappings.json'
-						       }
+						 }
 				    );
 
-# index sample users
 $indexer->index_users();
 
 my $server = 'http://127.0.0.1:3000';
@@ -77,6 +73,9 @@ print "end mem usage: ${end_mem}mb\n";
 print "diff " . ($end_mem - $start_mem) . "mb\n";
  
 logout($server, $user, $auth_token);
+
+# Delete the index created
+$indexer->delete();
 
 sub login {
   my ($server, $user, $pass) = @_;

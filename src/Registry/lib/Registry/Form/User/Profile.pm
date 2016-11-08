@@ -19,9 +19,10 @@ limitations under the License.
 package Registry::Form::User::Profile;
 use HTML::FormHandler::Moose;
 use namespace::autoclean;
-extends 'HTML::FormHandler';
+extends 'HTML::FormHandler::Model::DBIC';
 
 has '+name' => ( default => 'profile_form' );
+has '+item_class' => (default => 'User');
 
 has_field 'first_name' => (
     label            => 'First name',

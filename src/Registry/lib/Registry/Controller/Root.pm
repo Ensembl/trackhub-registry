@@ -51,6 +51,15 @@ The root page (/)
 
 =cut
 
+sub base : Chained('/login/required') PathPart('') CaptureArgs(0) {}
+
+sub home : Chained('/base') PathPart('') Args(0) {
+  my ($self, $c) = @_;
+  $c->res->redirect($c->uri_for($c->controller('User')->action_for('list_trackhubs', {
+      status_msg => 'Home'
+  })));
+}
+
 sub index :Path :Args(0) {
   my ( $self, $c ) = @_;
 
@@ -204,17 +213,23 @@ sub submit :Path('/submit_trackhubs') {
 sub login :Path('/api/login') Args(0) {
   my ($self, $c) = @_;
 
-  $c->authenticate({}, 'http');
-
+  my $user = $c->authenticate({}, 'http');
   # user should exist
-  $c->user->auth_key(String::Random::random_string('s' x 64));
-  # $c->user->obj->update();
-  # $c->response->headers->header('x-registry-authorization' => $c->user->get('auth_key'));
-  
-  # $self->status_ok($c, entity => { auth_token => $c->user->get('auth_key') });
-  $c->stash()->{auth_token} = $c->user->get('auth_key');
+  my $user_auth_key = String::Random::random_string('s' x 64);
+  $c->forward('auth_key', [$user_auth_key, $user]);
   $c->forward($c->view('JSON'));
 }
+
+sub auth_key : Private {
+    my ( $self, $c, $auth_key,$user ) = @_;
+    return unless $auth_key;
+    #if already auth_key exists for the user, delete it
+    $user->user_tokens->delete;
+    $user->add_to_user_tokens({auth_key => $auth_key}, );
+    $c->stash()->{auth_token} = $auth_key;
+ 
+ }
+
 
 =head1 AUTHOR
 

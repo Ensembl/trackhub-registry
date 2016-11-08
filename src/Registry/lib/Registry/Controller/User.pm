@@ -44,73 +44,36 @@ Catalyst Controller.
 
 has 'registration_form' => ( isa => 'Registry::Form::User::Registration', is => 'rw',
     lazy => 1, default => sub { Registry::Form::User::Registration->new } );
-
+    
 sub base : Chained('/login/required') PathPrefix CaptureArgs(1) {
   my ($self, $c, $username) = @_;
-
-  # retrieve user's data to show the profile
-  #
-  # since the user's logged in, it should be possible to
-  # call Catalyst::Authentication::Store::ElasticSearch::User method, 
-  # i.e. $user->get('..'), $user->id
-  # without looking directly into the persistence engine
-  # 
-  # NOTE
-  # Yes, but if the user changes its profile, then switches between 
-  # the various tabs, and then comes back to the profile, session
-  # data kicks in and it will show information before the update
-  #
-  # Catalyst::Exception->throw("Unable to find logged in user info")
-  #     unless $c->user_exists;
-
-  # $c->stash(user => $c->user->get_object()->{_source},
-  # 	    id   => $c->user->id);
-
-  my $config = Registry->config()->{'Model::Search'};
-  my $query = { term => { username => $username } };
-  my $user_search = $c->model('Search')->search( index => $config->{user}{index},
-						 type  => $config->{user}{type},
-						 body => { query => $query } );
-
-  $c->stash(user => $user_search->{hits}{hits}[0]{_source},
-  	    id   => $user_search->{hits}{hits}[0]{_id});
-
+  my $form = Registry::Form::User::Profile->new;
+  $c->stash(form => $form);
 }
 
-#
-# Change user profile
-#
-sub profile : Chained('base') :Path('profile') Args(0) {
-  my ($self, $c) = @_;
-  
-  # complain if user has not been found
-  Catalyst::Exception->throw("Unable to find user information")
-      unless defined $c->stash->{user};
+sub admin : Chained('base') PathPart('') CaptureArgs(0) Does('ACL') RequiresRole('admin') ACLDetachTo('denied') {}
 
-  # Fill in form with user data
-  my $profile_form = Registry::Form::User::Profile->new(init_object => $c->stash->{user});
 
-  $c->stash(template => "user/profile.tt",
-	    form     => $profile_form);
-  
-  return unless $profile_form->process( params => $c->req->parameters );
+sub profile : Chained('base') PathPart('profile') Args(0) {
+    my ($self, $c) = @_;
 
-  # new profile validated, merge old with new profile
-  # when attributes overlap overwrite the old entries with the new ones
-  my $new_user_profile = $c->stash->{user};
-  map { $new_user_profile->{$_} = $profile_form->value->{$_} } keys %{$profile_form->value};
-  
-  # update user profile on the backend
-  my $config = Registry->config()->{'Model::Search'};
-  $c->model('Search')->index(index   => $config->{user}{index},
-			     type    => $config->{user}{type},
-			     id      => $c->stash->{id},
-			     body    => $new_user_profile);
+    my $form = Registry::Form::User::Profile->new;
 
-  $c->model('Search')->indices->refresh(index => $config->{user}{index});
+    $c->stash(template => "user/profile.tt", form => $form);
 
-  $c->stash(status_msg => 'Profile updated');
+    return unless $form->process(
+        schema  => $c->model('DB')->schema,
+        item_id => $c->user->id,
+        params  => $c->req->body_parameters,
+    );
+
+	 $c->res->redirect($c->uri_for($c->controller('User')->action_for('list_trackhubs', {
+        status_msg => 'Profile Updated'
+    }), [$c->user->username]));
+    
+   
 }
+
 
 #
 # Admin deletes a user
@@ -127,22 +90,18 @@ sub delete : Chained('base') Path('delete') Args(1) Does('ACL') RequiresRole('ad
   # delete all trackDBs which belong to the user
   #
   # find username
-  my $username = $c->model('Search')->search(index => $config->{user}{index},
-					     type  => $config->{user}{type},
-					     body  => {
-						       query => { filtered => { filter => { bool => { must => [ { term => { _id => $id } } ] } } } }
-						      }
-					    )->{hits}{hits}[0]{_source}{username};
+  my $user = $c->model('DB::User')->find($id);
+  my $username = $user->username;
+
   Catalyst::Exception->throw("Unable to find user $id information")
       unless defined $username;
 
   # find trackDBs which belong to user
   my $query = { term => { owner => $username } };
-  # my $query = { filtered => { filter => { bool => { must => [ { term => { owner => lc $username } } ] } } } };
   my $user_trackdbs = $c->model('Search')->search_trackhubs(query => $query, size => 100000);
-  # my $user_trackdbs = grep { $_->{_source}{owner} eq $username } @{$c->model('Search')->search_trackhubs(query => $query, size => 100000)};
-
+  
   $c->log->debug(sprintf "Found %d trackDBs for user %s (%s)", scalar @{$user_trackdbs->{hits}{hits}}, $id, $username);
+  
   # delete user trackDBs
   foreach my $trackdb (@{$user_trackdbs->{hits}{hits}}) {
     $c->model('Search')->delete(index   => $config->{trackhub}{index},
@@ -153,14 +112,41 @@ sub delete : Chained('base') Path('delete') Args(1) Does('ACL') RequiresRole('ad
   $c->model('Search')->indices->refresh(index => $config->{trackhub}{index});
 
   # delete the user
-  $c->model('Search')->delete(index   => $config->{user}{index},
-			      type    => $config->{user}{type},
-			      id      => $id);
-  $c->model('Search')->indices->refresh(index => $config->{user}{index});
-
+   
+  $user->delete;
+  
   # redirect to the list of providers page
-  # $c->detach('list_providers', [$c->stash->{user}{username}]);
   $c->res->redirect($c->uri_for($c->controller->action_for('list_providers', [$c->stash->{user}{username}])));
+}
+
+#TODO
+sub change_password : Chained('base') PathPart('change_password') Args(0) {
+    my ($self, $c) = @_;
+
+    my $form = Registry::Form::ChangePassword->new;
+
+    $c->stash(form => $form);
+
+    return unless $form->process(
+        user   => $c->user,
+        params => $c->req->body_parameters,
+    );
+
+    $c->user->update({
+        password         => $form->field('new_password')->value,
+        password_expires => undef,
+    });
+
+     $c->res->redirect($c->uri_for($c->controller('User')->action_for('list_trackhubs', {
+        status_msg => 'Password changed successfully'
+    }), [$c->user->username]));
+}
+
+
+sub user : Chained('admin') PathPart('') CaptureArgs(1) {
+    my ($self, $c, $user_id) = @_;
+
+    $c->stash(user => $c->model('DB::User')->find($user_id));
 }
 
 #
@@ -247,19 +233,18 @@ sub list_providers : Chained('base') Path('providers') Args(0) Does('ACL') Requi
   my ($self, $c) = @_;
 
   # get all user info, attach id
+  my $all_users = $c->model('DB::User')->search(
+        { active => 'Y'},
+        {
+            order_by => ['username'],
+            page     => ($c->req->param('page') || 1),
+            rows     => 20,
+        }
+  );
+   
   my $users;
-  # map { push @{$users}, $_->{_source} }
-  #   @{$c->model('Search')->query(index => 'test', type => 'user')->{hits}{hits}};
-
-  my $config = Registry->config()->{'Model::Search'};
-  foreach my $user_data (@{$c->model('Search')->search(index => $config->{user}{index}, 
-						       type  => $config->{user}{type},
-						       size => 100000)->{hits}{hits}}) {
-    my $user = $user_data->{_source};
-    # don't want to show admin user to himself
-    next if $user->{username} eq 'admin';
-    $user->{id} = $user_data->{_id};
-    push @{$users}, $user;
+  foreach my $user_data($all_users->all){
+      push @{$users}, $user_data;
   }
 
   my $columns = [ 'username', 'first_name', 'last_name', 'fullname', 'email', 'affiliation' ];
@@ -288,41 +273,40 @@ sub register :Path('register') Args(0) {
     $c->stash(error_msg => "Username should not contain upper case characters.");
   } else {
     my $config = Registry->config()->{'Model::Search'};
-
-    my $query = { term => { username => $username } };
-    my $user_exists = 
-      $c->model('Search')->count(index    => $config->{user}{index},
-				 type     => $config->{user}{type},
-				 body => { query => $query } )->{count};
-  
-    unless ($user_exists) {
-      # user with the provided username does not exist, proceed with registration
     
-      # get the max user ID to assign the ID to the new user
-      my $users = $c->model('Search')->search(index => $config->{user}{index}, type => $config->{user}{type}, size => 100000);
-      my $current_max_id = max( map { $_->{_id} } @{$users->{hits}{hits}} );
-
-      # add default user role to user 
+    #check if user exists
+    my $user_exists = $c->model('DB::User')->search( {username=>$username})->all;
+    unless ($user_exists) {
+     # user with the provided username does not exist, proceed with registration
       my $user_data = $self->registration_form->value;
-      $user_data->{roles} = [ 'user' ];
-
-      $c->model('Search')->index(index => $config->{user}{index},
-				 type  => $config->{user}{type},
-				 id      => $current_max_id?$current_max_id + 1:1,
-				 body    => $user_data);
-
-      # refresh the index
-      $c->model('Search')->indices->refresh(index => $config->{user}{index});
+      my $user = $c->model('DB::User')->create({
+      	username => $user_data->{username},
+      	password => $user_data->{password},
+      	first_name => $user_data->{first_name},
+      	last_name => $user_data->{last_name},
+      	email_address => $user_data->{email},
+      	check_interval => $user_data->{check_interval},
+      	continuous_alert => $user_data->{continuous_alert},
+      	affiliation => $user_data->{affiliation}
+       });
 
       # authenticate and redirect to the user profile page
+      
+      if($user){
+      	#Search roles table for role 'user'
+      	my $user_role = $c->model('DB::Role')->single({name=>'user'});
+      	# add default user role to user 
+      	$user->add_to_user_roles({role_id => $user_role->id});
+      }
+      
       if ($c->authenticate({ username => $username,
 			     password => $self->registration_form->value->{password} } )) {
-	$c->stash(status_msg => sprintf "Welcome user %s", $username);
-	$c->res->redirect($c->uri_for($c->controller('User')->action_for('profile'), [$username]));
-	$c->detach;
+	    $c->stash(status_msg => sprintf "Welcome user %s", $username);
+	    $c->res->redirect($c->uri_for($c->controller('User')->action_for('profile'), [$username]));
+	    $c->detach;
       } else {
-	# Set an error message
-	$c->stash(error_msg => "Bad username or password.");
+	    # Set an error message
+	    $c->stash(error_msg => "Bad username or password.");
       }
 
     } else {
@@ -333,27 +317,6 @@ sub register :Path('register') Args(0) {
   }
 
 }
-
-# sub admin : Chained('base') PathPart('') CaptureArgs(0) Does('ACL') RequiresRole('admin') ACLDetachTo('denied') {}
-
-# sub list : Chained('admin') PathPart('user/list') Args(0) {
-#   my ($self, $c) = @_;
- 
-#   # my $users = $c->model('DB::User')->search(
-#   # 					    { active => 'Y'},
-#   # 					    {
-#   # 					     order_by => ['username'],
-#   # 					     page     => ($c->req->param('page') || 1),
-#   # 					     rows     => 20,
-#   # 					    }
-#   # 					   );
-  
-#   $c->stash(
-#   	    users => $users,
-#   	    pager => $users->pager,
-#   	   );
-  
-# }
 
 sub denied : Private {
   my ($self, $c) = @_;

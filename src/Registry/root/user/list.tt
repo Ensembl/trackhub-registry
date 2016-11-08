@@ -11,10 +11,8 @@
         <tr>
 	  <th>Id</th>
 	  <th>Username</th>
-	  <th>Password</th>
-          <th>First Name</th>
-          <th>Last Name</th>
-	  <th>Full Name</th>
+      <th>First Name</th>
+      <th>Last Name</th>
 	  <th>Email</th>
 	  <th>Affiliation</th>
 	  <th></th>
@@ -25,11 +23,9 @@
         <tr>
 	  <td style="word-wrap: break-word;" >[% user.id %]</td>
 	  <td style="word-wrap: break-word;" >[% user.username %]</td>
-	  <td style="word-wrap: break-word;" >[% user.password %]</td>
 	  <td style="word-wrap: break-word;" >[% user.first_name %]</td>
 	  <td style="word-wrap: break-word;" >[% user.last_name %]</td>
-	  <td style="word-wrap: break-word;" >[% user.fullname %]</td>
-	  <td style="word-wrap: break-word;" >[% user.email %]</td>
+	  <td style="word-wrap: break-word;" >[% user.email_address %]</td>
 	  <td style="word-wrap: break-word;" >[% user.affiliation %]</td>
 	  <td>
             <div class="btn-group">

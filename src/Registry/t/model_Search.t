@@ -48,14 +48,8 @@ SKIP: {
 						  index => $config->{trackhub}{index},
 						  type  => $config->{trackhub}{type},
 						  mapping => 'trackhub_mappings.json'
-						},
-						authentication => {
-						  index => $config->{user}{index},
-						  type  => $config->{user}{type},
-						  mapping => 'authentication_mappings.json'
 						}
-					       );
-  $indexer->index_users();
+			       );
   $indexer->index_trackhubs();
 
   #
@@ -97,6 +91,9 @@ SKIP: {
   # check we get the correct set of all users
   my $users = $es->get_all_users;
   is(scalar @{$users}, 4, 'Correct number of users');
+  
+  # Delete the index created
+  $indexer->delete();
 }
 
 done_testing();

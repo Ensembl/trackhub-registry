@@ -39,16 +39,14 @@ use Registry::Model::Search;
 sub new {
   my ($caller, %args) = @_;
 
-  my ($dir, $trackhub_settings, $auth_settings) = ($args{dir}, $args{trackhub}, $args{authentication});
+  my ($dir, $trackhub_settings) = ($args{dir}, $args{trackhub});
   defined $dir or croak "Undefined directory arg";
-  defined $trackhub_settings and defined $auth_settings or
-    croak "Undefined trackhub and/or authentication settings";
+  defined $trackhub_settings or
+    croak "Undefined trackhub settings";
 
   my $class = ref($caller) || $caller;
-  # my $self = bless({ index => $index, type => $type, mapping => "$dir/$mapping" }, $class);
-  my $self = bless({ trackhub => $trackhub_settings, auth => $auth_settings }, $class);
+  my $self = bless({ trackhub => $trackhub_settings}, $class);
   $self->{trackhub}{mapping} = "$dir/" . $self->{trackhub}{mapping};
-  $self->{auth}{mapping} = "$dir/" . $self->{auth}{mapping};
 
   #
   # Add example trackhub documents
@@ -79,50 +77,6 @@ sub new {
 		      },
 		     ];
 
-  # add example users, name should match the owners of the above docs
-  $self->{users} = [
-		    {		# the administrator
-		     id       => 1,
-		     fullname => "Administrator",
-		     email    => "avullo\@ebi.ac.uk",
-		     password => "admin",
-		     roles    => ["admin", "user"],
-		     username => "admin",
-		    },
-		    {		# a first trackhub content provider
-		     id          => 2,
-		     first_name  => "Track",
-		     last_name   => "Hub1",
-		     affiliation => "EMBL-EBI",
-		     email       => "trackhub1\@ebi.ac.uk",
-		     fullname    => "TrackHub1",
-		     password    => "trackhub1",
-		     roles       => ["user"],
-		     username    => "trackhub1",
-		    },
-		    {		# a second trackhub content provider
-		     id          => 3,
-		     first_name  => "Track",
-		     last_name   => "Hub2",
-		     affiliation => "UCSC",
-		     email       => "trackhub2\@ucsc.edu",
-		     fullname    => "TrackHub2",
-		     password    => "trackhub2",
-		     roles       => ["user"],
-		     username    => "trackhub2",
-		    },
-		    {		# a third trackhub content provider
-		     id          => 4,
-		     first_name  => "Track",
-		     last_name   => "Hub3",
-		     affiliation => "Sanger",
-		     email       => "trackhub3\@sanger.ac.uk",
-		     fullname    => "TrackHub3",
-		     password    => "trackhub3",
-		     roles       => ["user"],
-		     username    => "trackhub3",
-		    },
-		   ];
 
   # Module is used for testing, which assumes there's
   # an ES instance running on the same host.
@@ -145,7 +99,6 @@ sub create_indices {
     croak "Missing trackhub parameters (index|type|mapping)";
 
   my $indices = $self->{es}->indices;
-
   #
   # create the index 
   #
@@ -156,8 +109,7 @@ sub create_indices {
   # recreate the index
   carp "Creating index $index";
   $indices->create(index => $index); 
-  
-  #
+    #
   # create the trackhub mapping
   #
   $indices->put_mapping(index => $index,
@@ -167,34 +119,12 @@ sub create_indices {
   exists $mapping_json->{$index}{mappings}{$type} or croak "TrackHub mapping not created";
   carp "TrackHub mapping created";
 
-  #
-  # create the authentication/authorisation mapping
-  #
-  # Note: we might/might not store user data on the same index as that of the trackhubs
-  #       do not delete/recreate the index if it exists
-  ($index, $type, $mapping) = ($self->{auth}{index}, $self->{auth}{type}, $self->{auth}{mapping});
-  defined $index && defined $type && defined $mapping or
-    croak "Missing trackhub parameters (index|type|mapping)";
-  unless ($indices->exists(index => $index)) {
-    carp "Creating index $index";
-    $indices->create(index => $index);  
-  }
-
-  $indices->put_mapping(index => $index,
-			type  => $type,
-			body  => from_json(&Registry::Utils::slurp_file($mapping)));
-  $mapping_json = $indices->get_mapping(index => $index, type  => $type);
-  exists $mapping_json->{$index}{mappings}{$type} or croak "Authentication/authorisation mapping not created";
-  carp "Authentication/authorisation mapping created";
-
 }
-
 #
 # index the example documents 
 #
 sub index_trackhubs {
   my $self = shift;
-
   #
   # add example trackhub documents
   #
@@ -226,23 +156,8 @@ sub index_trackhubs {
 
 #
 # index the example users for the authentication/authorisation mechanism=
-#
-sub index_users {
-  my $self = shift;
-
-  foreach my $user (@{$self->{users}}) {
-    my $id = $user->{id};
-    carp "Indexing user $id ($user->{fullname}) document";
-    $self->{es}->index(index   => $self->{auth}{index},
-		       type    => $self->{auth}{type},
-		       id      => $id,
-		       body    => $user);
-  }
-
-  carp "Flushing recent changes";
-  $self->{es}->indices->refresh(index => $self->{auth}{index});
-}
-
+# deprecated
+sub index_users {}
 
 #
 # delete everything created 
@@ -251,8 +166,6 @@ sub delete {
   my $self = shift;
 
   $self->{es}->indices->delete(index => $self->{trackhub}{index});
-  $self->{es}->indices->delete(index => $self->{auth}{index})
-    if $self->{auth}{index} ne $self->{trackhub}{index};
 }
 
 #

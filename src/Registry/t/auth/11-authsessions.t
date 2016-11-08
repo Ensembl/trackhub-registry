@@ -20,7 +20,10 @@ use FindBin 1.49;
 use Test::More 0.98;
 use lib "$FindBin::Bin/lib";
 
+
+
 BEGIN {
+	plan( skip_all => 'ElasticSearch is not used to store User info anymore' );
     eval { require Test::WWW::Mechanize::Catalyst }
       or plan skip_all =>
       "Test::WWW::Mechanize::Catalyst is required for this test";

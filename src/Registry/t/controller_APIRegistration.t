@@ -46,15 +46,9 @@ SKIP: {
 						  index => $config->{trackhub}{index},
 						  type  => $config->{trackhub}{type},
 						  mapping => 'trackhub_mappings.json'
-						},
-						authentication => {
-						  index => $config->{user}{index},
-						  type  => $config->{user}{type},
-						  mapping => 'authentication_mappings.json'
 						}
-					       );
+				       );
   $indexer->index_trackhubs();
-  $indexer->index_users();
 
   #
   # Authenticate
@@ -263,8 +257,6 @@ SKIP: {
 
   note "Re-creating index test";
   $indexer->create_indices(); # do not index the documents this time through the indexer, the API will do that
-  $indexer->index_users();
-
   #
   # Re-Authenticate since the auth_token is deleted
   #

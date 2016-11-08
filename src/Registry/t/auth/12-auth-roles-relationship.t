@@ -21,6 +21,7 @@ use Test::More 0.98;
 use lib "$FindBin::Bin/lib";
 
 BEGIN {
+	plan( skip_all => 'ElasticSearch is not used to store User info anymore' );
     eval { require Catalyst::Plugin::Authorization::Roles }
         or plan skip_all =>
         "Catalyst::Plugin::Authorization::Roles is required for this test";

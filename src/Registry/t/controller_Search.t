@@ -47,16 +47,9 @@ SKIP: {
 						  index => $config->{trackhub}{index},
 						  type  => $config->{trackhub}{type},
 						  mapping => 'trackhub_mappings.json'
-						},
-						authentication => {
-						  index => $config->{user}{index},
-						  type  => $config->{user}{type},
-						  mapping => 'authentication_mappings.json'
 						}
-					       );
+			       );
 
-  # index sample users
-  $indexer->index_users();
 
   # authenticate one of them
   my $request = GET('/api/login');
@@ -126,7 +119,9 @@ SKIP: {
        note "Submitting hub $hub timed out. Please check the url $public_hubs{$hub})\n";
     }
   }
-		     
+  
+  # Delete the index created
+  $indexer->delete(); 	     
 }
 
 done_testing();

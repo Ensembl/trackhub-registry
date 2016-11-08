@@ -46,23 +46,15 @@ SKIP: {
 						  index => $config->{trackhub}{index},
 						  type  => $config->{trackhub}{type},
 						  mapping => 'trackhub_mappings.json'
-						},
-						authentication => {
-						  index => $config->{user}{index},
-						  type  => $config->{user}{type},
-						  mapping => 'authentication_mappings.json'
 						}
-					       );
+				      );
   $indexer->index_trackhubs();
-  $indexer->index_users();
 
   #
   # Authenticate
   #
   my $request = GET('/api/login');
   $request->headers->authorization_basic('trackhub1', 'trackhub1');
-  use Data::Dumper;
-  print Dumper $request;
   ok(my $response = request($request), 'Request to log in');
   my $content = from_json($response->content);
   ok(exists $content->{auth_token}, 'Logged in');
@@ -74,8 +66,6 @@ SKIP: {
   $request = GET('/api/trackdb');
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  print Dumper $request;
-
   ok($response = request($request), 'GET request to /api/trackdb');
   ok($response->is_success, 'Request successful 2xx');
   is($response->content_type, 'application/json', 'JSON content type');
@@ -89,7 +79,9 @@ SKIP: {
   		  'Content'      => to_json({ test => 'test' }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  print Dumper $request;
+  
+    # Delete the index created
+  $indexer->delete();
 }
 
 done_testing();

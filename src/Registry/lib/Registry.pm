@@ -38,17 +38,19 @@ use Catalyst::Runtime 5.80;
     # Session
     # Session::State::Cookie
     # Session::Store::FastMmap
+
 use Catalyst qw/
     -Debug
     ConfigLoader
     Static::Simple
-    StackTrace
-    +CatalystX::SimpleLogin
-    Authentication
-    Authorization::Roles
     Session
     Session::Store::FastMmap
     Session::State::Cookie
+    StackTrace
+    Authentication
+    Authorization::Roles
+    +CatalystX::SimpleLogin
+   
 /;
 
 extends 'Catalyst';
@@ -82,10 +84,12 @@ __PACKAGE__->config(
 		    {
 		     flash_to_stash => 1
 		    },
-		    'Controller::Login' => 
-		    {
-		     traits => ['-RenderAsTTTemplate'],
-		    },
+		    'Controller::Login' => {
+       			traits => ['-RenderAsTTTemplate'],
+       			login_form_args => {
+           		authenticate_args => { active => 'Y' },
+       			},
+   			},
 		    'Plugin::Static::Simple' => 
 		    {
 		     ignore_extensions => [ qw/tmpl tt tt2 xhtml/ ],
@@ -158,6 +162,63 @@ __PACKAGE__->config(
 		    # 	       }
 		    # },
 		   );
+		   
+		   
+__PACKAGE__->config(
+   authentication => {
+      default_realm => 'web',
+      realms        => {
+         web => {
+            credential => {
+               class          => 'Password',
+               password_field => 'password',
+               password_type  => 'self_check',
+               username_field => 'username',
+            },
+            store => {
+               class         => 'DBIx::Class',
+               user_model    => 'DB::User',
+               role_relation => 'roles',
+               role_field    => 'name',
+            }
+         },
+          http => {
+            credential => {
+               class          => 'HTTP',
+               type  		  => 'basic',
+               password_field => 'password',
+               password_type  => 'self_check',
+               username_field => 'username',
+            },
+            store => {
+               class         => 'DBIx::Class',
+               user_model    => 'DB::User',
+               role_relation => 'roles',
+               role_field    => 'name',
+            }
+         },
+          authkey => {
+            credential => {
+               class          => 'Password',
+               password_field => 'auth_key',
+               password_type  => 'clear'
+            },
+            store => {
+               class         => 'DBIx::Class',
+               user_model    => 'DB::UserToken',
+            }
+         }
+         
+      },
+   },
+   'Controller::Login' => {
+       traits => ['-RenderAsTTTemplate'],
+       login_form_args => {
+           authenticate_args => { active => 'Y' },
+       },
+   },
+);
+
 
 # Start the application
 my $log4perl_conf = $ENV{REGISTRY_LOG4PERL} || 'log4perl.conf';

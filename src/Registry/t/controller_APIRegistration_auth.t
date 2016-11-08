@@ -44,17 +44,10 @@ SKIP: {
 						  index => $config->{trackhub}{index},
 						  type  => $config->{trackhub}{type},
 						  mapping => 'trackhub_mappings.json'
-						},
-						authentication => {
-						  index => $config->{user}{index},
-						  type  => $config->{user}{type},
-						  mapping => 'authentication_mappings.json'
 						}
-					       );
+			       );
   $indexer->index_trackhubs();
-  $indexer->index_users();
 
-  #
   # Requests with no authentication should fail.
   # Should log in first
   #
@@ -99,11 +92,14 @@ SKIP: {
   # 3. correct username/password, test all available users
   $request = GET('/api/login');
   my $auth_token;
+  my $pass;
   foreach my $user (qw/admin trackhub1 trackhub2/) {
-    #
-    # NOTE: assume same username/password set by Indexer module
-    #
-    my $pass = $user;
+    if($user eq "admin"){
+    	$pass = "dummy";
+    }else{
+    	$pass = $user;
+    }
+   
     $request->headers->authorization_basic($user, $pass);
     ok($response = request($request), 'Request to log in with correct username/password');
     ok($response->is_success, 'Log in request successful 2xx');
@@ -171,6 +167,8 @@ SKIP: {
     } 
   }
 
+  # Delete the index created
+  $indexer->delete();
 }
 
 done_testing();

@@ -21,7 +21,10 @@ use lib "$FindBin::Bin/lib";
 
 use Test::More 0.98;
 
+
+
 BEGIN {
+  plan( skip_all => 'ElasticSearch is not used to store User info anymore' );
   use_ok( 'Catalyst::Authentication::Store::ElasticSearch' );
   use_ok( 'Catalyst::Authentication::Store::ElasticSearch::User' );
 }

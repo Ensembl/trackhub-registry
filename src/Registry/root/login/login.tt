@@ -44,7 +44,7 @@
   <div class="col-sm-6">
   <section id="login-form" class="margine-bottom">
     <h3 class="contatti-titoli">Please enter your details</h3>
-    <form id="login_form" class="form-horizontal">
+    <form id="login_form" method="post" action="[% c.req.uri %]" class="form-horizontal">
       <fieldset>
         <!-- Form Name -->
         <!--<legend>Please enter your details to login:</legend>-->

@@ -82,6 +82,7 @@ sub begin : Private {
     unless $authorized;
 
   $c->stash(user => $c->req->headers->{'user'});
+  $c->stash(authorized_user => $authorized);
 
   # $c->detach('/api/error', [ 'You need to login, get an auth_token and make requests using the token' ])
   #   unless $authorized;
@@ -782,8 +783,9 @@ sub logout :Path('/api/logout') Args(0) ActionClass('REST') {
 sub logout_GET {
   my ($self, $c) = @_;
 
-  $c->user->delete('auth_key');
-
+  my $auth_user = $c->stash->{authorized_user};
+  my $user = $c->model('DB::User')->find($auth_user->username->id);
+  $user->user_tokens->delete;
   $self->status_ok($c, entity => { message => 'Successfully logged out' });
 }
 

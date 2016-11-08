@@ -103,7 +103,7 @@ sub created {
 
   return unless $self->{_doc}{created};
 
-  return strftime "%x %X %Z (%z)", localtime($self->{_doc}{created})
+  return strftime "%Y-%m-%d %X %Z (%z)", localtime($self->{_doc}{created})
     if $format;
 
   return $self->{_doc}{created};
@@ -114,7 +114,7 @@ sub updated {
 
   return unless $self->{_doc}{updated};
 
-  return strftime "%x %X %Z (%z)", localtime($self->{_doc}{updated})
+  return strftime "%Y-%m-%d %X %Z (%z)", localtime($self->{_doc}{updated})
     if $format;
 
   return $self->{_doc}{updated};

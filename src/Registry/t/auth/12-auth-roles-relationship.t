@@ -21,6 +21,9 @@ use Test::More 0.98;
 use lib "$FindBin::Bin/lib";
 
 BEGIN {
+  use FindBin qw/$Bin/;
+  use lib "$Bin/../../lib";
+
     eval { require Catalyst::Plugin::Authorization::Roles }
         or plan skip_all =>
         "Catalyst::Plugin::Authorization::Roles is required for this test";

@@ -17,6 +17,9 @@
 use Test::More 0.98 tests => 2;
 
 BEGIN {
+  use FindBin qw/$Bin/;
+  use lib "$Bin/../../lib";
+
   use_ok( 'Catalyst::Authentication::Store::ElasticSearch' );
   use_ok( 'Catalyst::Authentication::Store::ElasticSearch::User' );
 }

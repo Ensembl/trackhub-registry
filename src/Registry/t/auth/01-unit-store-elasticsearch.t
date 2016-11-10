@@ -22,6 +22,9 @@ use lib "$FindBin::Bin/lib";
 use Test::More 0.98;
 
 BEGIN {
+  use FindBin qw/$Bin/;
+  use lib "$Bin/../../lib";
+
   use_ok( 'Catalyst::Authentication::Store::ElasticSearch' );
   use_ok( 'Catalyst::Authentication::Store::ElasticSearch::User' );
 }
@@ -41,6 +44,7 @@ isa_ok($store_es, 'Catalyst::Authentication::Store::ElasticSearch');
 
 my $good_user = $store_es->find_user({ username => 'test' });
 ok($good_user, 'User correctly found');
+
 isa_ok($good_user, 'Catalyst::Authentication::Store::ElasticSearch::User');
 my $missing_user = $store_es->find_user({ username => 'testmissing' });
 ok(!defined $missing_user, 'Missing user not found');

@@ -23,6 +23,9 @@ use Data::Dumper;
 use Test::More 0.98;
 
 BEGIN {
+  use FindBin qw/$Bin/;
+  use lib "$Bin/../../lib";
+
     $ENV{TESTAPP_CONFIG} = {
         name => 'TestApp',
         authentication => {

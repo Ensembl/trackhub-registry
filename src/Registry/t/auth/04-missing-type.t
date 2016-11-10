@@ -23,7 +23,10 @@ use lib "$FindBin::Bin/lib";
 use Test::More 0.98;
 
 BEGIN {
-    $ENV{TESTAPP_CONFIG} = {
+  use FindBin qw/$Bin/;
+  use lib "$Bin/../../lib";
+
+  $ENV{TESTAPP_CONFIG} = {
         name => 'TestApp',
         authentication => {
             default_realm => "users",

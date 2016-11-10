@@ -22,7 +22,10 @@ use Test::More 0.98;
 use lib "$FindBin::Bin/lib";
 
 BEGIN {
-    $ENV{TESTAPP_CONFIG} = {
+  use FindBin qw/$Bin/;
+  use lib "$Bin/../../lib";
+  
+  $ENV{TESTAPP_CONFIG} = {
         name => 'TestApp',
         authentication => {
             default_realm => "users",
@@ -54,7 +57,7 @@ use Catalyst::Test 'TestApp';
 # log a user in
 {
   ok( my $res = request('http://localhost/user_login?username=test&password=test'), 'request ok' );
-  is( $res->content, 'Elasticsearch instance not available', 'correct diagnostic for ElasticSearch missing');
+  like( $res->content, qr/available/, 'correct diagnostic for ElasticSearch missing');
 }
 
 done_testing;

@@ -23,6 +23,11 @@ use Test::More 0.98;
 use Test::Exception 0.31;
 use Catalyst::Utils;
 
+BEGIN {
+  use FindBin qw/$Bin/;
+  use lib "$Bin/../../lib";
+}
+
 my $good_config = 
   {
    index => 'test',

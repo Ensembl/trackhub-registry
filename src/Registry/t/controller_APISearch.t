@@ -211,6 +211,19 @@ SKIP: {
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
   is(scalar @{$content->{items}}, 0, 'Number of search results');
+
+  # test search by accession
+  $request = POST('/api/search',
+		  'Content-type' => 'application/json',
+		  'Content'      => to_json({ accession  => 'GCA_000002035.3' }));
+  ok($response = request($request), 'POST request to /api/search [filters: Danio rerio, GRCh37]');
+  ok($response->is_success, 'Request successful');
+  is($response->content_type, 'application/json', 'JSON content type');
+  $content = from_json($response->content);
+  is(scalar @{$content->{items}}, 2, 'Number of search results');
+  ok($content->{items}[0]{hub}{shortLabel} eq 'GRC Genome Issues under Review' || $content->{items}[0]{hub}{shortLabel} eq 'ZebrafishGenomics', 'Search result hub');
+  
+  
   
   # search for non public hub should get no results
   $request = POST('/api/search',

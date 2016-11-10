@@ -101,6 +101,8 @@ sub search_POST {
     if $data->{species};
   $filters->{'assembly.name'} = $data->{assembly}
     if $data->{assembly};
+  $filters->{'assembly.accession'} = $data->{accession}
+    if $data->{accession};
   $filters->{'hub.name'} = $data->{hub}
     if $data->{hub};
   $filters->{type} = $data->{type}

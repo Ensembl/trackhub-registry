@@ -93,10 +93,6 @@ SKIP: {
   # getting document by non-existant ID
   throws_ok { $es->get_trackhub_by_id(5) }
     qr/Missing/, "Request document by incorrect ID";
-
-  # check we get the correct set of all users
-  my $users = $es->get_all_users;
-  is(scalar @{$users}, 4, 'Correct number of users');
 }
 
 done_testing();

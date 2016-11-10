@@ -55,7 +55,6 @@ requires 'Compress::Bzip2';
 requires 'IO::Uncompress::Bunzip2';
 
 # For accessing the Genome Collection Assemby database
-requires 'DBD::Oracle';
 requires 'Math::Base36';
 requires 'DBIx::Class';
 requires 'Catalyst::Model::DBIC::Schema';
@@ -80,7 +79,6 @@ recommends 'Net::CIDR::Lite';
 recommends 'Net::Server::SS::PreFork';
 recommends 'Cache::Memcached';
 recommends 'Plack::Middleware::ReverseProxy';
-# recommends 'Plack::Middleware::DetectExtension';
 recommends 'Plack::Middleware::CrossOrigin';
 recommends 'Plack::Middleware::SizeLimit';
 recommends 'Plack::Middleware::StackTrace';

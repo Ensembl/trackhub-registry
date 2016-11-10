@@ -45,7 +45,7 @@ requires 'Digest::MD5';
 requires 'File::Temp';
 requires 'List::Util';
 requires 'String::Random';
-requires 'Search::Elasticsearch';
+requires 'Search::Elasticsearch' => 2.03;
 requires 'Data::SearchEngine';
 requires 'Encode';
 

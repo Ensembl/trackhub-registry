@@ -29,6 +29,7 @@ requires 'Catalyst::Plugin::StatusMessage';
 requires 'CatalystX::SimpleLogin';
 requires 'Catalyst::Controller::ActionRole';
 requires 'Catalyst::ActionRole::ACL';
+requires 'Test::WWW::Mechanize::Catalyst';
 
 requires 'Moose';
 requires 'MooseX::NonMoose';

@@ -17,6 +17,11 @@ use warnings;
 use Test::More;
 
 
-BEGIN { use_ok 'Registry::View::JSON' }
+BEGIN {
+  use FindBin qw/$Bin/;
+  use lib "$Bin/../lib";
+
+  use_ok 'Registry::View::JSON'
+}
 
 done_testing();

@@ -17,6 +17,11 @@ use strict;
 use warnings;
 use Test::More;
 
+BEGIN {
+  use FindBin qw/$Bin/;
+  use lib "$Bin/../lib";
+}
+
 use Catalyst::Test 'Registry';
 
 ok( request('/')->is_success, 'Request should succeed' );

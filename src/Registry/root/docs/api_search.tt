@@ -40,11 +40,12 @@
     Search track hubs using a query specified in the message body. Read the <a href="[% c.uri_for('/docs/search') %]">Search docs</a> for information on how to perform a query.
   </p>
   <p>
-    You may also specify some filters in the message body:
+    You may also specify some (optional) filters in the message body:
     <ul>
-      <li><mark>species</mark>: the species scientific name (optional)</li>
-      <li><mark>assembly</mark>: the name of the assembly (optional)</li>
-      <li><mark>hub</mark>: the hub name (optional)</li>
+      <li><mark>species</mark>: the species scientific name</li>
+      <li><mark>assembly</mark>: the name of the assembly</li>
+      <li><mark>accession</mark>: INSDC accession</li>
+      <li><mark>hub</mark>: the hub name</li>
     </ul>
   </p>
   <p>
@@ -101,6 +102,7 @@
 	        "query":    { "type": "string" },
 		"species":  { "type": "string" },
 		"assembly": { "type": "string" },
+		"accession": { "type": "string", "pattern": "^GCA_[0-9]+.[0-9]+$" },
 		"hub":      { "type": "string" },
 		"type":     { "type": "string", "enum": [ "genomics", "epigenomics", "transcriptomics", "proteomics" ] }
 	      }

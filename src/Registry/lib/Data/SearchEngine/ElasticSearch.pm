@@ -142,11 +142,7 @@ sub update {
  
 sub search {
   my ($self, $query, $filter_combine) = @_;
- 
-  unless(defined($filter_combine)) {
-    $filter_combine = 'and';
-  }
- 
+  
   # the options hash contains a set of parameters allowed
   # in the request body
   # see http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-request-body.html
@@ -177,14 +173,29 @@ sub search {
   # not a filter. Filters need to be wrapped in a filtered query
   # http://distinctplace.com/2014/07/29/build-zappos-like-products-facets-with-elasticsearch/
   # shows an example where the following applies
-  my @facet_cache = ();
+  my $query_filter;
   if ($query->has_filters) {
     foreach my $filter ($query->filter_names) {
-      push @facet_cache, { term => { $filter => $query->get_filter($filter) } };
+      my $operator = 'must';
+      if (exists $filter_combine->{$filter}) {
+	$operator = $filter_combine->{$filter};
+	if ($operator eq 'and') {
+	  $operator = 'must';
+	} elsif ($operator eq 'or') {
+	  $operator = 'should';
+	} elsif ($operator eq 'not') {
+	  $operator = 'must_not';
+	} else {
+	  die "Operator $operator not supported";
+	}
+      }
+
+      push @{$query_filter->{bool}{$operator}}, { term => { $filter => $query->get_filter($filter) } };
     }
-    $options->{body}{filter}{$filter_combine} = \@facet_cache;
+    $options->{body}{filter} = $query_filter; 
   }
- 
+
+  
   # and this one too
   # See http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-facets.html
   # "Facets are deprecated and will be removed in a future release. You are encouraged to migrate 
@@ -198,7 +209,7 @@ sub search {
      
     if ($query->has_filters) {
       foreach my $f (keys %facets) {
-  	$facets{$f}->{facet_filter}->{$filter_combine} = \@facet_cache;
+  	$facets{$f}->{facet_filter} = $query_filter;
       }
     }
  

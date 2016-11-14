@@ -96,16 +96,31 @@ sub search_POST {
     };
 
   # process filters, i.e. species, assembly, hub
+  my $filter_combine =
+    {
+     public => 'and' 
+    };
   my $filters = { public => 1 }; # present only 'public' hubs
-  $filters->{'species.scientific_name'} = $data->{species}
+  
+  $filters->{'species.scientific_name'} = $data->{species} and $filter_combine->{'species.scientific_name'} = 'and'
     if $data->{species};
-  $filters->{'assembly.name'} = $data->{assembly}
-    if $data->{assembly};
-  $filters->{'assembly.accession'} = $data->{accession}
+
+  # if assembly is provided extend the search to both the
+  # name and synonyms to allow fetching 
+  if ($data->{assembly}) {
+    $filters->{'assembly.name'} = $data->{assembly};
+    $filters->{'assembly.synonyms'} = $data->{assembly};
+
+    # change the logical operator to OR so that search is
+    # capable of fetching results in either cases
+    $filter_combine->{'assembly.name'} = 'or';
+    $filter_combine->{'assembly.synonyms'} = 'or';
+  }
+  $filters->{'assembly.accession'} = $data->{accession} and $filter_combine->{'assembly.accession'} = 'and'
     if $data->{accession};
-  $filters->{'hub.name'} = $data->{hub}
+  $filters->{'hub.name'} = $data->{hub} and $filter_combine->{'hub.name'} = 'and'
     if $data->{hub};
-  $filters->{type} = $data->{type}
+  $filters->{type} = $data->{type} and $filter_combine->{'type'} = 'and'
     if $data->{type};
   $query_args->{filters} = $filters if $filters;
 
@@ -114,7 +129,7 @@ sub search_POST {
   my $se = Data::SearchEngine::ElasticSearch->new(nodes => $config->{nodes});
   
   try {
-    $results = $se->search(Data::SearchEngine::ElasticSearch::Query->new($query_args));
+    $results = $se->search(Data::SearchEngine::ElasticSearch::Query->new($query_args), $filter_combine);
   } catch {
     $c->go('ReturnError', 'custom', [qq{$_}]);
   };

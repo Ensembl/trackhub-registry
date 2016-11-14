@@ -178,7 +178,7 @@ SKIP: {
   $request = POST('/api/search',
 		  'Content-type' => 'application/json',
 		  'Content'      => to_json({ species => 'Danio rerio'}));
-  ok($response = request($request), 'POST request to /api/search');
+  ok($response = request($request), 'POST request to /api/search [filter: Danio rerio (species)');
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
@@ -192,21 +192,30 @@ SKIP: {
 
   $request = POST('/api/search',
 		  'Content-type' => 'application/json',
-		  'Content'      => to_json({ species  => 'Danio rerio',
-					      assembly => 'GRCz10' }));
-  ok($response = request($request), 'POST request to /api/search [filters: Danio rerio, GRCz10]');
+		  'Content'      => to_json({ assembly => 'GRCz10' }));
+  ok($response = request($request), 'POST request to /api/search [filter: GRCz10 (assembly)]');
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
   is(scalar @{$content->{items}}, 2, 'Number of search results');
   ok($content->{items}[0]{hub}{shortLabel} eq 'GRC Genome Issues under Review' || $content->{items}[0]{hub}{shortLabel} eq 'ZebrafishGenomics', 'Search result hub');
   
+  $request = POST('/api/search',
+		  'Content-type' => 'application/json',
+		  'Content'      => to_json({ hub => '454paper' }));
+  ok($response = request($request), 'POST request to /api/search [filter: 454paper (hub)]');
+  ok($response->is_success, 'Request successful');
+  is($response->content_type, 'application/json', 'JSON content type');
+  $content = from_json($response->content);
+  is(scalar @{$content->{items}}, 1, 'Number of search results');
+  ok($content->{items}[0]{hub}{longLabel} eq 'Whole-Cell 454 Hela and K562 RNAseq', 'Search result hub');
+
   # incompatible filters should return no results
   $request = POST('/api/search',
 		  'Content-type' => 'application/json',
 		  'Content'      => to_json({ species  => 'Danio rerio',
-					      assembly => 'GRCh37'}));
-  ok($response = request($request), 'POST request to /api/search [filters: Danio rerio, GRCh37]');
+					      hub => '454paper'}));
+  ok($response = request($request), 'POST request to /api/search [filters: Danio rerio (species), 454paper (hub)]');
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);

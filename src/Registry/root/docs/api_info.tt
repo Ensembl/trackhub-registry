@@ -203,10 +203,10 @@
 
   <h3 id="assemblies">GET /api/info/assemblies</h3>
   <p>
-    Returns the set of assemblies the TrackHubs registered in the Registry contain data for. The assemblies returned are grouped by their corresponding species.
+    Returns the set of assemblies the track hubs registered in the Registry contain data for. The returned assemblies are grouped by their corresponding species.
   </p>
   <p>
-    If the request is successful, the response is a hash where a key is a species scientific name, and whose value is an array of NCBI assembly accessions for that species.
+    If the request is successful, the response is a hash where a key is a species scientific name, and whose value is an array of hashes, each one representing an assembly for that species and containing its name, synonyms and accession.
   </p>
 
   <h4>Resource Information</h4>
@@ -238,7 +238,13 @@
   <h4>Example Response</h4>
   <pre>
     HTTP/1.0 200 OK
-    {"Brassica rapa":["GCA_000309985.1"],"Homo sapiens":["GCA_000001405.1","GCA_000001405.15"],"Arabidopsis thaliana":["GCA_000001735.1"],"Danio rerio":["GCA_000002035.2","GCA_000002035.3"],"Ricinus communis":["GCA_000151685.2"],"Drosophila simulans":["GCA_000754195.2"],"Mus musculus":["GCA_000001635.1","GCA_000001635.2"]}
+    { "Brassica rapa": [ { "synonyms":"brarap1", "name":"Brapa_1.0", "accession":"GCA_000309985.1"} ],
+      "Homo sapiens": [ {"synonyms":"hg19", "name":"GRCh37", "accession":"GCA_000001405.1"}, {"synonyms":"hg38", "name":"GRCh38", "accession":"GCA_000001405.15"} ],
+      "Arabidopsis thaliana": [ { "synonyms":"aratha1", "name":"TAIR10", "accession":"GCA_000001735.1"} ],
+      "Danio rerio": [ {"synonyms":"danrer10", "name":"GRCz10", "accession":"GCA_000002035.3" }, {"synonyms":"danrer7", "name":"Zv9", "accession":"GCA_000002035.2"} ],
+      "Ricinus communis": [ {"synonyms":"riccom1", "name":"JCVI_RCG_1.1", "accession":"GCA_000151685.2"} ],
+      "Mus musculus": [ {"synonyms":"mm10", "name":"GRCm38", "accession":"GCA_000001635.2" }, { "synonyms":"mm9", "name":"MGSCv37", "accession":"GCA_000001635.1" } ]
+    }
   </pre>
 
   <h4>HTTP Status Codes</h4>

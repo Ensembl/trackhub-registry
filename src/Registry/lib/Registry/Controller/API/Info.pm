@@ -128,7 +128,7 @@ sub assemblies :Local :Args(0) ActionClass('REST') { }
 sub assemblies_GET {
   my ($self, $c) = @_;
 
-  # get the list of unique assemblies, grouped by species
+  # get the list of unique assemblies, with name, synonyms and accession, grouped by species
   my $config = Registry->config()->{'Model::Search'};
   my $results = $c->model('Search')->search(index => $config->{trackhub}{index},
 					    type  => $config->{trackhub}{type},
@@ -137,15 +137,41 @@ sub assemblies_GET {
 					     aggs => {
 						      species => { 
 								  terms => { field => 'species.scientific_name', size  => 0 },
-								  aggs  => { assembly => { terms => { field => 'assembly.accession', size => 0 } } }
+								  aggs  => {
+									    ass_name => {
+											 terms => { field => 'assembly.name', size => 0 },
+											 aggs => {
+												  ass_syn => {
+													      terms => { field => 'assembly.synonyms', size => 0 },
+													      aggs => {
+														       ass_acc => { terms => { field => 'assembly.accession', size => 0 } }
+														      }
+													     }
+												 }
+											}
+									   }
 								 },
 						     }
 					    });
 
   my $assemblies;
-  foreach my $agg (@{$results->{aggregations}{species}{buckets}}) {
-    my $species = $agg->{key};
-    map { push @{$assemblies->{$species}}, $_->{key} } @{$agg->{assembly}{buckets}};
+  foreach my $species_agg (@{$results->{aggregations}{species}{buckets}}) {
+    my $species = $species_agg->{key};
+    foreach my $ass_name_agg (@{$species_agg->{ass_name}{buckets}}) {
+      my $ass_name = $ass_name_agg->{key};
+      foreach my $ass_syn_agg (@{$ass_name_agg->{ass_syn}{buckets}}) {
+	my $ass_syn = $ass_syn_agg->{key};
+	foreach my $ass_acc_agg (@{$ass_syn_agg->{ass_acc}{buckets}}) {
+	  my $ass_acc = $ass_acc_agg->{key};
+	  push @{$assemblies->{$species}},
+	    {
+	     name => $ass_name,
+	     synonyms => $ass_syn,
+	     accession => $ass_acc
+	    }
+	  }
+      }
+    }
   }
 
   $self->status_ok($c, entity => $assemblies);

@@ -43,7 +43,7 @@ is($content->{release}, $Registry::VERSION, "API current version is $Registry::V
 
 SKIP: {
   skip "Cannot run tests: either elasticsearch is not running or there's no internet connection",
-    62 unless &Registry::Utils::es_running() and Registry::Utils::internet_connection_ok();
+    60 unless &Registry::Utils::es_running() and Registry::Utils::internet_connection_ok();
   
   # /api/info/ping
   my $request = GET('/api/info/ping');
@@ -97,7 +97,7 @@ SKIP: {
 		      'Content'      => to_json({ url => $hub->{url} }));
       $request->headers->header(user       => 'trackhub1');
       $request->headers->header(auth_token => $auth_token);
-      ok($response = request($request), 'POST request to /api/trackhub/create');
+      ok($response = request($request), 'POST request to /api/trackhub');
       ok($response->is_success, 'Request successful 2xx');
       is($response->content_type, 'application/json', 'JSON content type');
   	}else{
@@ -109,13 +109,22 @@ SKIP: {
   # /api/info/species endpoint
   #
   my %species_assemblies = 
-    ( 'Homo sapiens'         => ['GCA_000001405.1', 'GCA_000001405.15'],
-      'Danio rerio'          => ['GCA_000002035.2', 'GCA_000002035.3'],
-      'Mus musculus'         => ['GCA_000001635.2', 'GCA_000001635.1'], 
-      'Arabidopsis thaliana' => ['GCA_000001735.1'],
-      'Brassica rapa'        => ['GCA_000309985.1'],
+    ( 'Homo sapiens'         => [
+				 { name => 'GRCh37', synonyms => 'hg19', accession => 'GCA_000001405.1' },
+				 { name => 'GRCh38', synonyms => 'hg38', accession => 'GCA_000001405.15' }
+				],
+      'Danio rerio'          => [
+				 { name => 'GRCz10', synonyms => 'danrer10', accession => 'GCA_000002035.3' },
+				 { name => 'Zv9', synonyms => 'danrer7', accession => 'GCA_000002035.2' }
+				],
+      'Mus musculus'         => [
+				 { name => 'GRCm38', synonyms => 'mm10', accession => 'GCA_000001635.2' },
+				 { name => 'MGSCv37', synonyms => 'mm9', accession => 'GCA_000001635.1' }
+				], 
+      'Arabidopsis thaliana' => [ { name => 'TAIR10', synonyms => 'aratha1', accession => 'GCA_000001735.1' } ],
+      'Brassica rapa'        => [ { name => 'Brapa_1.0', synonyms => 'brarap1', accession => 'GCA_000309985.1' } ],
       #'Drosophila simulans'  => ['GCA_000754195.2'], 
-      'Ricinus communis'     => ['GCA_000151685.2']);
+      'Ricinus communis'     => [ { name => 'JCVI_RCG_1.1', synonyms => 'riccom1', accession => 'GCA_000151685.2' } ]);
 
   $request = GET('/api/info/species');
   ok($response = request($request), 'GET request to /api/info/species');
@@ -124,7 +133,7 @@ SKIP: {
   is_deeply([ sort @{$content} ], [ sort keys %species_assemblies ], 'List of species');
 
   #
-  # /api/info/asseblies endpoint
+  # /api/info/assemblies endpoint
   #
   $request = GET('/api/info/assemblies');
   ok($response = request($request), 'GET request to /api/info/assemblies');

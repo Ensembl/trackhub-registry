@@ -110,21 +110,21 @@ SKIP: {
   #
   my %species_assemblies = 
     ( 'Homo sapiens'         => [
-				 { name => 'GRCh37', synonyms => 'hg19', accession => 'GCA_000001405.1' },
-				 { name => 'GRCh38', synonyms => 'hg38', accession => 'GCA_000001405.15' }
+				 { name => 'GRCh37', synonyms => [ 'hg19' ], accession => 'GCA_000001405.1' },
+				 { name => 'GRCh38', synonyms => [ 'hg38' ], accession => 'GCA_000001405.15' }
 				],
       'Danio rerio'          => [
-				 { name => 'GRCz10', synonyms => 'danrer10', accession => 'GCA_000002035.3' },
-				 { name => 'Zv9', synonyms => 'danrer7', accession => 'GCA_000002035.2' }
+				 { name => 'GRCz10', synonyms => [ 'danrer10' ], accession => 'GCA_000002035.3' },
+				 { name => 'Zv9', synonyms => [ 'danrer7' ], accession => 'GCA_000002035.2' }
 				],
       'Mus musculus'         => [
-				 { name => 'GRCm38', synonyms => 'mm10', accession => 'GCA_000001635.2' },
-				 { name => 'MGSCv37', synonyms => 'mm9', accession => 'GCA_000001635.1' }
+				 { name => 'GRCm38', synonyms => [ 'mm10' ], accession => 'GCA_000001635.2' },
+				 { name => 'MGSCv37', synonyms => [ 'mm9' ], accession => 'GCA_000001635.1' }
 				], 
-      'Arabidopsis thaliana' => [ { name => 'TAIR10', synonyms => 'aratha1', accession => 'GCA_000001735.1' } ],
-      'Brassica rapa'        => [ { name => 'Brapa_1.0', synonyms => 'brarap1', accession => 'GCA_000309985.1' } ],
+      'Arabidopsis thaliana' => [ { name => 'TAIR10', synonyms => [ 'aratha1' ], accession => 'GCA_000001735.1' } ],
+      'Brassica rapa'        => [ { name => 'Brapa_1.0', synonyms => [ 'brarap1' ], accession => 'GCA_000309985.1' } ],
       #'Drosophila simulans'  => ['GCA_000754195.2'], 
-      'Ricinus communis'     => [ { name => 'JCVI_RCG_1.1', synonyms => 'riccom1', accession => 'GCA_000151685.2' } ]);
+      'Ricinus communis'     => [ { name => 'JCVI_RCG_1.1', synonyms => [ 'riccom1' ], accession => 'GCA_000151685.2' } ]);
 
   $request = GET('/api/info/species');
   ok($response = request($request), 'GET request to /api/info/species');

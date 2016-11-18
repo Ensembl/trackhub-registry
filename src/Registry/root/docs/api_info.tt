@@ -238,12 +238,12 @@
   <h4>Example Response</h4>
   <pre>
     HTTP/1.0 200 OK
-    { "Brassica rapa": [ { "synonyms":"brarap1", "name":"Brapa_1.0", "accession":"GCA_000309985.1"} ],
-      "Homo sapiens": [ {"synonyms":"hg19", "name":"GRCh37", "accession":"GCA_000001405.1"}, {"synonyms":"hg38", "name":"GRCh38", "accession":"GCA_000001405.15"} ],
-      "Arabidopsis thaliana": [ { "synonyms":"aratha1", "name":"TAIR10", "accession":"GCA_000001735.1"} ],
-      "Danio rerio": [ {"synonyms":"danrer10", "name":"GRCz10", "accession":"GCA_000002035.3" }, {"synonyms":"danrer7", "name":"Zv9", "accession":"GCA_000002035.2"} ],
-      "Ricinus communis": [ {"synonyms":"riccom1", "name":"JCVI_RCG_1.1", "accession":"GCA_000151685.2"} ],
-      "Mus musculus": [ {"synonyms":"mm10", "name":"GRCm38", "accession":"GCA_000001635.2" }, { "synonyms":"mm9", "name":"MGSCv37", "accession":"GCA_000001635.1" } ]
+    { "Brassica rapa": [ { "synonyms": [ "brarap1" ], "name":"Brapa_1.0", "accession":"GCA_000309985.1"} ],
+      "Homo sapiens": [ {"synonyms": [ "hg19" ], "name":"GRCh37", "accession":"GCA_000001405.1"}, {"synonyms": [ "hg38" ], "name":"GRCh38", "accession":"GCA_000001405.15"} ],
+      "Arabidopsis thaliana": [ { "synonyms": [ "aratha1" ], "name":"TAIR10", "accession":"GCA_000001735.1"} ],
+      "Danio rerio": [ {"synonyms": [ "danrer10" ], "name":"GRCz10", "accession":"GCA_000002035.3" }, {"synonyms": [ "danrer7" ], "name":"Zv9", "accession":"GCA_000002035.2"} ],
+      "Ricinus communis": [ {"synonyms": [ "riccom1" ], "name":"JCVI_RCG_1.1", "accession":"GCA_000151685.2"} ],
+      "Mus musculus": [ {"synonyms": [ "mm10" ], "name":"GRCm38", "accession":"GCA_000001635.2" }, { "synonyms": [ "mm9" ], "name":"MGSCv37", "accession":"GCA_000001635.1" } ]
     }
   </pre>
 

@@ -166,7 +166,7 @@ sub assemblies_GET {
 	  push @{$assemblies->{$species}},
 	    {
 	     name => $ass_name,
-	     synonyms => $ass_syn,
+	     synonyms => [ $ass_syn ],
 	     accession => $ass_acc
 	    }
 	  }

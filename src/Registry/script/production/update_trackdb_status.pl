@@ -33,7 +33,7 @@ use Config::Std;
 
 # use File::Temp qw/ tempfile /;
 use DBM::Deep;
-use Data::Structure::Util qw( unbless );
+# use Data::Structure::Util qw( unbless );
 use Email::MIME;
 use Email::Sender::Simple qw(sendmail);
 use Time::HiRes qw(usleep);
@@ -59,6 +59,7 @@ my $logger = get_logger();
 # default option values
 my $help = 0;
 my $log_dir = 'logs';
+my $type = 'production'; # default cluster type
 my $conf_file = '.initrc'; # expect file in current directory
 
 # parse command-line arguments
@@ -101,17 +102,29 @@ eval {
 };
 $logger->logdie("Error reading configuration file $conf_file: $@") if $@;
 
-$logger->info("Checking the cluster is up and running");
-$logger->logdie("Couldn't find ES node configuration")
-  unless $config{cluster}{nodes};
-my $esurl;
-if (ref $config{cluster}{nodes} eq 'ARRAY') {
-  $esurl = sprintf "http://%s", $config{cluster}{nodes}[0];
+my $cluster;
+if ($type =~ /prod/) {
+  $cluster = 'cluster_prod';
+} elsif ($type =~ /stag/) {
+  $cluster = 'cluster_staging';
 } else {
-  $esurl = sprintf "http://%s", $config{cluster}{nodes};
+  $logger->logdie("Unknown type of cluster, should be either 'production' or 'staging'");
 }
-$logger->logdie(sprintf "Cluster %s is not up", $config{cluster}{name})
+my $nodes = $config{$cluster}{nodes};
+
+$logger->info("Checking the cluster is up and running");
+my $esurl;
+if (ref $nodes eq 'ARRAY') {
+  $esurl = sprintf "http://%s", $nodes->[0];
+} else {
+  $esurl = sprintf "http://%s", $nodes;
+}
+$logger->logdie(sprintf "Cluster %s is not up", $config{$cluster}{name})
   unless HTTP::Tiny->new()->request('GET', $esurl)->{status} eq '200';
+
+$logger->info("Instantiating ES client");
+my $es = Search::Elasticsearch->new(cxn_pool => 'Sniff',
+				    nodes => $nodes);
 
 #
 # fetch from ES stats about last run report

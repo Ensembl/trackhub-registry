@@ -578,6 +578,7 @@ update_trackdb_status.pl [options]
 
    -c --config          configuration file [default: .initrc]
    -l --logdir          log directory [default: ./.logs]
+   -t --type            cluster type (production, staging) [default: production]
    -h --help            display this help and exits
 
 =cut

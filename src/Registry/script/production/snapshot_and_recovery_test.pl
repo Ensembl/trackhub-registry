@@ -301,8 +301,7 @@ sub connect_to_es_cluster {
     unless HTTP::Tiny->new()->request('GET', $esurl)->{status} eq '200';
 
   $logger->info("Instantiating ES client");
-  return Search::Elasticsearch->new(cxn_pool => 'Sniff',
-				    nodes => $nodes);
+  return Search::Elasticsearch->new(nodes => $nodes);
 }
 
 sub send_alert_message {

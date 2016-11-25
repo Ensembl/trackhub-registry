@@ -122,10 +122,6 @@ if (ref $nodes eq 'ARRAY') {
 $logger->logdie(sprintf "Cluster %s is not up", $config{$cluster}{name})
   unless HTTP::Tiny->new()->request('GET', $esurl)->{status} eq '200';
 
-$logger->info("Instantiating ES client");
-my $es = Search::Elasticsearch->new(cxn_pool => 'Sniff',
-				    nodes => $nodes);
-
 #
 # fetch from ES stats about last run report
 # --> store different type: check,
@@ -478,7 +474,7 @@ sub check_user_tracks {
   
 sub get_all_users {
   my ($index, $type) = ($config{users}{alias}, $config{users}{type});
-  my $nodes = $config{cluster}{nodes};
+  my $nodes = $config{$cluster}{nodes};
   defined $index or die "Couldn't find index for users in configuration file";
   defined $type or die "Couldn't find type for users in configuration file";
   defined $nodes or die "Couldn't find ES nodes in configuration file";
@@ -498,7 +494,7 @@ sub get_all_users {
 
 sub get_latest_report {
   my ($index, $type) = ($config{reports}{alias}, $config{reports}{type});
-  my $nodes = $config{cluster}{nodes};
+  my $nodes = $config{$cluster}{nodes};
   defined $index or die "Couldn't find index for reports in configuration file";
   defined $type or die "Couldn't find type for reports in configuration file";
   defined $nodes or die "Couldn't find ES nodes in configuration file";

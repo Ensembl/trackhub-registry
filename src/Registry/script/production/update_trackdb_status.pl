@@ -116,9 +116,11 @@ my $nodes = $config{$cluster}{nodes};
 $logger->info("Checking the cluster is up and running");
 my $esurl;
 if (ref $nodes eq 'ARRAY') {
-  $esurl = sprintf "http://%s", $nodes->[0];
+  $esurl = $nodes->[0];
+  $esurl = sprintf "http://%s", $esurl if $esurl !~ /^http/;
 } else {
-  $esurl = sprintf "http://%s", $nodes;
+  $esurl = $nodes;
+  $esurl = sprintf "http://%s", $esurl if $esurl !~ /^http/;
 }
 $logger->logdie(sprintf "Cluster %s is not up", $config{$cluster}{name})
   unless HTTP::Tiny->new()->request('GET', $esurl)->{status} eq '200';

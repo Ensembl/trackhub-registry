@@ -157,6 +157,8 @@ try {
 };
 $admin or $logger->logdie("Unable to find admin user.");
 
+use Data::Dumper; print Dumper $last_report, $users; exit;
+
 $logger->info("Crearing new run global report");
 unlink "current_report.db";
 my $current_report = DBM::Deep->new( "current_report.db" );

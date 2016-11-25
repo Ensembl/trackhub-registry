@@ -66,6 +66,7 @@ my $conf_file = '.initrc'; # expect file in current directory
 my $options_ok =
   GetOptions("config|c=s" => \$conf_file,
 	     "logdir|l=s" => \$log_dir,
+	     "type|t=s"   => \$type,
 	     "help|h"     => \$help) or pod2usage(2);
 pod2usage() if $help;
 

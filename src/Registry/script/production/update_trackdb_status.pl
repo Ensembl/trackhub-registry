@@ -206,8 +206,7 @@ if ($current_report) {
   $current_report->{created} = time;
   my $current_report_id = $last_report_id?++$last_report_id:1;
 
-  my $es = Search::Elasticsearch->new(cxn_pool => 'Sniff', 
-				      nodes => $config{cluster}{nodes});
+  my $es = Search::Elasticsearch->new(nodes => $config{cluster}{nodes});
   try {
     $es->index(index   => $config{reports}{alias},
 	       type    => $config{reports}{type},
@@ -484,7 +483,7 @@ sub get_all_users {
   defined $type or die "Couldn't find type for users in configuration file";
   defined $nodes or die "Couldn't find ES nodes in configuration file";
 
-  my $es = Search::Elasticsearch->new(cxn_pool => 'Sniff', nodes => $nodes);
+  my $es = Search::Elasticsearch->new(nodes => $nodes);
 
   # use scan & scroll API
   # see https://metacpan.org/pod/Search::Elasticsearch::Scroll
@@ -530,7 +529,7 @@ sub get_latest_report {
      }
     );
 
-  my $es = Search::Elasticsearch->new(cxn_pool => 'Sniff', nodes => $nodes);
+  my $es = Search::Elasticsearch->new(nodes => $nodes);
   
   return $es->search(%args)->{hits}{hits}[0];
 }
@@ -545,7 +544,7 @@ sub get_user_trackdbs {
   defined $type or die "Couldn't find type for users in configuration file";
   defined $nodes or die "Couldn't find ES nodes in configuration file";
 
-  my $es = Search::Elasticsearch->new(cxn_pool => 'Sniff', nodes => $nodes);
+  my $es = Search::Elasticsearch->new(nodes => $nodes);
   
   # my $scroll = $es->scroll_helper(index => $index,
   # 				  type  => $type,

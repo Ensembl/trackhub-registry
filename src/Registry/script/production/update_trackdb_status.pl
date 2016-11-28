@@ -160,7 +160,7 @@ try {
 };
 $admin or $logger->logdie("Unable to find admin user.");
 
-use Data::Dumper; print Dumper $last_report, $users; exit;
+# use Data::Dumper; print Dumper $last_report, $users; exit;
 
 $logger->info("Crearing new run global report");
 unlink "current_report.db";
@@ -183,7 +183,7 @@ foreach my $user (@{$users}) {
     push(@children, { user => $user->{username}, pid => $pid });
   } elsif ($pid == 0) { # child
     try {
-      $current_report->{$username} = check_user_tracks($user, $last_report);
+      $current_report->{$username} = 'test test'; # check_user_tracks($user, $last_report);
     } catch {
       $logger->fatal($_);
     };
@@ -195,7 +195,7 @@ foreach my $user (@{$users}) {
 
 foreach my $i (0 .. $#children) {
   my $tmp = waitpid($children[$i]->{pid}, 0);
-  usleep(100000);
+  usleep(100);
 
   $logger->info(sprintf "Done with user %s [pid %d]", $children[$i]->{user}, $tmp);
 }
@@ -206,17 +206,19 @@ if ($current_report) {
   $current_report->{created} = time;
   my $current_report_id = $last_report_id?++$last_report_id:1;
 
-  my $es = Search::Elasticsearch->new(nodes => $config{cluster}{nodes});
-  try {
-    $es->index(index   => $config{reports}{alias},
-	       type    => $config{reports}{type},
-	       id      => $current_report_id,
-	       body    => $current_report->export);
-    $es->indices->refresh(index => $config{report}{alias});
-  } catch {
-    $logger->logdie($_);
-  };
-  $message_body .= sprintf "Report [%d] has been generated.\n\n", $current_report_id;
+  # my $es = Search::Elasticsearch->new(nodes => $config{cluster}{nodes});
+  # try {
+  #   $es->index(index   => $config{reports}{alias},
+  # 	       type    => $config{reports}{type},
+  # 	       id      => $current_report_id,
+  # 	       body    => $current_report->export);
+  #   $es->indices->refresh(index => $config{report}{alias});
+  # } catch {
+  #   $logger->logdie($_);
+  # };
+  # $message_body .= sprintf "Report [%d] has been generated.\n\n", $current_report_id;
+  $message_body = sprintf "Report [%d] has been generated.\n\n", $current_report_id;
+  $message_body .= $current_report->export;
   
 } else {
   $message_body .= "Report has not been generated.\nReason: no users.\n";

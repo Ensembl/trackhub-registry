@@ -197,9 +197,9 @@ foreach my $user (@{$users}) {
       $es->update(index   => $config{reports}{alias},
 		  type    => $config{reports}{type},
 		  id      => $current_report_id,
+		  retry_on_conflict => 5,
 		  body    => {
-			      doc => { $username => "test $username" },
-			      retry_on_conflict => 5
+			      doc => { $username => "test $username" }
 			     });
     } catch {
       $logger->logdie($_);

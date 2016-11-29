@@ -32,7 +32,7 @@ use Pod::Usage;
 use Config::Std;
 
 # use File::Temp qw/ tempfile /;
-use DBM::Deep;
+# use DBM::Deep;
 # use Data::Structure::Util qw( unbless );
 use Email::MIME;
 use Email::Sender::Simple qw(sendmail);
@@ -160,13 +160,21 @@ try {
 };
 $admin or $logger->logdie("Unable to find admin user.");
 
-# use Data::Dumper; print Dumper $last_report, $users; exit;
-
 $logger->info("Crearing new run global report");
-unlink "current_report.db";
-my $current_report = DBM::Deep->new( "current_report.db" );
+my $current_report = {};
+$current_report->{created} = time;
+my $current_report_id = $last_report_id?++$last_report_id:1;
 
-my $message_body;
+my $es = Search::Elasticsearch->new(nodes => $nodes);
+try {
+  $es->index(index   => $config{reports}{alias},
+	     type    => $config{reports}{type},
+	     id      => $current_report_id,
+	     body    => $current_report);
+  $es->indices->refresh(index => $config{report}{alias});
+} catch {
+  $logger->logdie($_);
+};
 
 #
 # check tracks for every user (except admin)
@@ -176,16 +184,22 @@ my @children;
 foreach my $user (@{$users}) {
   # obviously skip admin user
   my $username = $user->{username};
-  next if $username eq $config{users}{admin_name} or $username =~ /tapanari/;
+  next if $username eq $config{users}{admin_name};
 
   my $pid = fork();
   if ($pid) { # parent
     push(@children, { user => $user->{username}, pid => $pid });
   } elsif ($pid == 0) { # child
+    $logger->info("Update global report with user $username info");
     try {
-      $current_report->{$username} = 'test test'; # check_user_tracks($user, $last_report);
+      # provide partial doc to be merged into the existing report
+      $es->update(index   => $config{reports}{alias},
+		  type    => $config{reports}{type},
+		  id      => $current_report_id,
+		  body    => { doc => { $username => "test $username" } });
+      $es->indices->refresh(index => $config{report}{alias});
     } catch {
-      $logger->fatal($_);
+      $logger->logdie($_);
     };
     exit 0;
   } else {
@@ -200,28 +214,29 @@ foreach my $i (0 .. $#children) {
   $logger->info(sprintf "Done with user %s [pid %d]", $children[$i]->{user}, $tmp);
 }
 
-$logger->info("Storing global report");
+exit;
 
-if ($current_report) {
-  $current_report->{created} = time;
-  my $current_report_id = $last_report_id?++$last_report_id:1;
+# Send message to admin to alert report has/hasn't been generated
+my $message_body;
+$current_report = $es->get_source(index => $config{reports}{alias},
+				  type  => $config{reports}{type},
+				  id    => $current_report_id);
 
-  # my $es = Search::Elasticsearch->new(nodes => $config{cluster}{nodes});
-  # try {
-  #   $es->index(index   => $config{reports}{alias},
-  # 	       type    => $config{reports}{type},
-  # 	       id      => $current_report_id,
-  # 	       body    => $current_report->export);
-  #   $es->indices->refresh(index => $config{report}{alias});
-  # } catch {
-  #   $logger->logdie($_);
-  # };
-  # $message_body .= sprintf "Report [%d] has been generated.\n\n", $current_report_id;
+if (keys %{$current_report} > 1) {
   $message_body = sprintf "Report [%d] has been generated.\n\n", $current_report_id;
-  $message_body .= $current_report->export;
+  $message_body .= Dumper $current_report;
   
 } else {
   $message_body .= "Report has not been generated.\nReason: no users.\n";
+  # delete empty report from index
+  $logger->info("Deleting last global report [$current_report_id] from index");
+  try {
+    $es->delete(index   => $config{reports}{alias},
+		type    => $config{reports}{type},
+		id      => $current_report_id);
+  } catch {
+    $logger->logdie($_);
+  };
 }
 
 $logger->info("Sending alert report to admin");

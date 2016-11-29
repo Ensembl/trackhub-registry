@@ -193,11 +193,11 @@ foreach my $user (@{$users}) {
     $logger->info("Update global report with user $username info");
     try {
       # provide partial doc to be merged into the existing report
+      $es->indices->refresh(index => $config{report}{alias});
       $es->update(index   => $config{reports}{alias},
 		  type    => $config{reports}{type},
 		  id      => $current_report_id,
 		  body    => { doc => { $username => "test $username" } });
-      $es->indices->refresh(index => $config{report}{alias});
     } catch {
       $logger->logdie($_);
     };

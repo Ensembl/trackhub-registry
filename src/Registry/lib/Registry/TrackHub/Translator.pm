@@ -980,7 +980,8 @@ sub _add_genome_info {
   return;
 }
 
-my @vector_base_assemblies = qw /AaegL3 AalbS1 AaloF1 AaraD1 AatrE1 AculA1 AdirW1 AepiE1 AfarF2 AfunF1 AgamP4 AmerM2 AminM1 AquaS1 AsinS2 AsteI2 AsteS1 BglaB1 CpipJ2 GausT1 GbreI1 GfusI1 GpalI1 GpapI1 IscaW1 LlonJ1 MdomA1 PpapI1 RproC3 ScalU1/;
+my @vector_base_assemblies = qw /AaegL3 AaloF1 AalbS1 AalbS2 AaraD1 AatrE1 AchrA1 AcolM1 AculA1 AdarC3 AdirW1 AepiE1 AfarF2 AfunF1 AgamP4 AmacM1 AmelC2 AmerM2 AminM1 AquaS1 AsinS2 AsteI2 AsteS1 BglaB1 ClecH1 CpipJ2 GausT1 GbreI1 GfusI1 GmorY1 GpalI1 GpapI1 IscaW1 LlonJ1 MdomA1 PhumU2 PpapI1 RproC3 SscaA1 ScalU1/;
+
 my %vector_base_assemblies;
 map { $vector_base_assemblies{$_}++ } @vector_base_assemblies;
 

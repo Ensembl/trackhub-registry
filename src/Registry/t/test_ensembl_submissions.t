@@ -110,6 +110,16 @@ my $hubs =
     url => "ftp://ftp.vectorbase.org/public_data/rnaseq_alignments/hubs/anopheles_epiroticus/VBRNAseq_group_SRP043018/hub.txt",
     assemblies => { 'AepiE1' => 'GCA_000349105.1' },
    },
+   #
+   # test a few others of the newly added VB track hubs (as of 29/11/2016)
+   {
+    url => "ftp://ftp.vectorbase.org/public_data/rnaseq_alignments/hubs/anopheles_coluzzii/VBRNAseq_group_1348/hub.txt",
+    assemblies => { 'AcolM1' => 'GCA_000150765.1' },
+   },
+   {
+    url => "ftp://ftp.vectorbase.org/public_data/rnaseq_alignments/hubs/cimex_lectularius/VBRNAseq_group_1345/hub.txt",
+    assemblies => { 'ClecH1' => 'GCA_000300775.2' },
+   },
   ];
 
 foreach my $hub (@{$hubs}) {

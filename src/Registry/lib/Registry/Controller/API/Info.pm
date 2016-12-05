@@ -134,24 +134,29 @@ sub assemblies_GET {
 					    type  => $config->{trackhub}{type},
 					    body => 
 					    {
-					     filter => { term => { public => 1 } },
 					     aggs => {
-						      species => { 
-								  terms => { field => 'species.scientific_name', size  => 0 },
-								  aggs  => {
-									    ass_name => {
-											 terms => { field => 'assembly.name', size => 0 },
-											 aggs => {
-												  ass_syn => {
-													      terms => { field => 'assembly.synonyms', size => 0 },
-													      aggs => {
-														       ass_acc => { terms => { field => 'assembly.accession', size => 0 } }
-														      }
-													     }
-												 }
-											}
-									   }
-								 },
+						      public => {
+								 filter => { term => { public => 1 } },
+								 aggs => {
+									  species => {
+										      filter => { term => { public => 1 } },
+										      terms => { field => 'species.scientific_name', size  => 0 },
+										      aggs  => {
+												ass_name => {
+													     terms => { field => 'assembly.name', size => 0 },
+													     aggs => {
+														      ass_syn => {
+																  terms => { field => 'assembly.synonyms', size => 0 },
+																  aggs => {
+																	   ass_acc => { terms => { field => 'assembly.accession', size => 0 } }
+																	  }
+																 }
+														     }
+													    }
+											       }
+										     },
+									 }
+								 }
 						     }
 					    });
 

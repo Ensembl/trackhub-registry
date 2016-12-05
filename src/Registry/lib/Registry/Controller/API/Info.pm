@@ -139,7 +139,6 @@ sub assemblies_GET {
 								 filter => { term => { public => 1 } },
 								 aggs => {
 									  species => {
-										      filter => { term => { public => 1 } },
 										      terms => { field => 'species.scientific_name', size  => 0 },
 										      aggs  => {
 												ass_name => {

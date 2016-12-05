@@ -160,7 +160,7 @@ sub assemblies_GET {
 					    });
 
   my $assemblies;
-  foreach my $species_agg (@{$results->{aggregations}{species}{buckets}}) {
+  foreach my $species_agg (@{$results->{aggregations}{public}{species}{buckets}}) {
     my $species = $species_agg->{key};
     foreach my $ass_name_agg (@{$species_agg->{ass_name}{buckets}}) {
       my $ass_name = $ass_name_agg->{key};

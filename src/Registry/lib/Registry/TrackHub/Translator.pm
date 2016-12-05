@@ -1145,6 +1145,10 @@ sub _add_genome_browser_links {
     # handle special case: Anopheles stephensi strain Indian (Anopheles_stephensiI in VB) 
     # cannot use species scientific name as it does not have strain
     $species = 'Anopheles_stephensiI' if $assembly_accession eq 'GCA_000300775.2';
+
+    # handle another special case: ENA uses Anopheles gambiae M as main species name instead of Anopheles coluzzii
+    $species = 'Anopheles_coluzzii' if $assembly_accession eq 'GCA_000150765.1';
+   
     $doc->{hub}{browser_links}{vectorbase} =
 	sprintf "%s/TrackHub?url=%s;species=%s;name=%s;registry=1", $domain, $hub->{url}, $species, $hub->{shortLabel};
   }

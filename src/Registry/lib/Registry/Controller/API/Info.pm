@@ -134,6 +134,7 @@ sub assemblies_GET {
 					    type  => $config->{trackhub}{type},
 					    body => 
 					    {
+					     filter => { term => { public => 1 } },
 					     aggs => {
 						      species => { 
 								  terms => { field => 'species.scientific_name', size  => 0 },

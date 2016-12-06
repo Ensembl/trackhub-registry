@@ -64,6 +64,7 @@ SKIP: {
 		     { name => 'zebrafish', url => 'http://research.nhgri.nih.gov/manuscripts/Burgess/zebrafish/downloads/NHGRI-1/hub.txt' },
 		     { name => 'sanger', url => 'http://ngs.sanger.ac.uk/production/grit/track_hub/hub.txt' },
 		     { name => 'thornton', url => 'http://devlaeminck.bio.uci.edu/RogersUCSC/hub.txt' },
+		     { name => 'vectorbase', url => 'ftp://ftp.vectorbase.org/public_data/rnaseq_alignments/hubs/anopheles_gambiae/VBRNAseq_group_SRP014756/hub.txt',  assemblies => { AgamP4 => 'GCA_000005575.1' } }
 		    );
 
   my $request = GET('/api/login');
@@ -76,9 +77,11 @@ SKIP: {
   foreach my $hub (@public_hubs) {
     if (head($hub->{url})) {
       note sprintf "Submitting hub %s", $hub->{name};
+      my $post = { url => $hub->{url} };
+      $post->{assemblies} = $hub->{assemblies} if $hub->{assemblies};
       $request = POST('/api/trackhub?permissive=1',
 		      'Content-type' => 'application/json',
-		      'Content'      => to_json({ url => $hub->{url} }));
+		      'Content'      => to_json($post));
       $request->headers->header(user       => 'trackhub1');
       $request->headers->header(auth_token => $auth_token);
       ok($response = request($request), 'POST request to /api/trackhub');
@@ -125,7 +128,7 @@ SKIP: {
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
-  is($content->{total_entries}, 17, 'Number of search results');
+  is($content->{total_entries}, 18, 'Number of search results');
   is(scalar @{$content->{items}}, 5, 'Number of search results per page');
   ok($content->{items}[0]{id}, 'Search result item has ID');
   ok($content->{items}[1]{score}, 'Search result item has score');
@@ -161,7 +164,7 @@ SKIP: {
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
-  is(scalar @{$content->{items}}, 1, 'Number of search results');
+  is(scalar @{$content->{items}}, 2, 'Number of search results');
   is($content->{items}[0]{hub}{shortLabel}, 'Blueprint Hub', 'Search result hub');
   is($content->{items}[0]{assembly}{accession}, 'GCA_000001405.15', 'Search result assembly');
 
@@ -199,6 +202,17 @@ SKIP: {
   $content = from_json($response->content);
   is(scalar @{$content->{items}}, 2, 'Number of search results');
   ok($content->{items}[0]{hub}{shortLabel} eq 'GRC Genome Issues under Review' || $content->{items}[0]{hub}{shortLabel} eq 'ZebrafishGenomics', 'Search result hub');
+
+  # ENSCORESW-2039: could not search we case sensitive assembly parameter
+  $request = POST('/api/search',
+		  'Content-type' => 'application/json',
+		  'Content'      => to_json({ assembly => 'AgamP4' }));
+  ok($response = request($request), 'POST request to /api/search [filter: AgamP4 (assembly)]');
+  ok($response->is_success, 'Request successful');
+  is($response->content_type, 'application/json', 'JSON content type');
+  $content = from_json($response->content);
+  is(scalar @{$content->{items}}, 1, 'Number of search results');
+  ok($content->{items}[0]{hub}{shortLabel} eq 'Male adult (Tu 2012)', 'Search result hub');
   
   $request = POST('/api/search',
 		  'Content-type' => 'application/json',

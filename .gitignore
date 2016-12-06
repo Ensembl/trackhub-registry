@@ -1,0 +1,5 @@
+src/Registry/*.yml
+src/Registry/*.json
+src/Registry/Makefile
+src/Registry/blib
+src/Registry/inc

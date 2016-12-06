@@ -43,7 +43,7 @@ is($content->{release}, $Registry::VERSION, "API current version is $Registry::V
 
 SKIP: {
   skip "Cannot run tests: either elasticsearch is not running or there's no internet connection",
-    60 unless &Registry::Utils::es_running() and Registry::Utils::internet_connection_ok();
+    62 unless &Registry::Utils::es_running() and Registry::Utils::internet_connection_ok();
   
   # /api/info/ping
   my $request = GET('/api/info/ping');
@@ -159,7 +159,7 @@ SKIP: {
   ok($hub, 'Ensembl regulatory build hub');
   is($hub->{longLabel}, 'Evidence summaries and provisional results for the new Ensembl Regulatory Build', 'Hub longLabel');
   is(scalar @{$hub->{trackdbs}}, 3, 'Number of trackDbs');
-  is($hub->{trackdbs}[0]{species} && $hub->{trackdbs}[1]{species}, 9606, 'trackDb species');
+  map { ok($_->{species} == 9606 || $_->{species} == 10090, "trackDb species") } @{$hub->{trackdbs}};
   map { like($_->{assembly}, qr/GCA_000001405|GCA_000001635/, 'trackDb assembly') } @{$hub->{trackdbs}};
   map { like($_->{uri}, qr/api\/search\/trackdb/, 'trackDb uri') } @{$hub->{trackdbs}};
 

@@ -85,16 +85,6 @@ sub search_POST {
   my $config = Registry->config()->{'Model::Search'};
   my ($index, $type) = ($config->{trackhub}{index}, $config->{trackhub}{type});
 
-  my $query_args = 
-    {
-     index     => $index,
-     data_type => $type,
-     page      => $c->stash->{page},
-     count     => $c->stash->{entries_per_page}, 
-     type      => $query_type,
-     query     => $query_body,
-    };
-
   # process filters, i.e. species, assembly, hub
   my $filter_combine =
     {
@@ -108,13 +98,24 @@ sub search_POST {
   # if assembly is provided extend the search to both the
   # name and synonyms to allow fetching 
   if ($data->{assembly}) {
-    $filters->{'assembly.name'} = $data->{assembly};
-    $filters->{'assembly.synonyms'} = $data->{assembly};
+    # $filters->{'assembly.name'} = $data->{assembly};
+    # $filters->{'assembly.synonyms'} = $data->{assembly};
 
-    # change the logical operator to OR so that search is
-    # capable of fetching results in either cases
-    $filter_combine->{'assembly.name'} = 'or';
-    $filter_combine->{'assembly.synonyms'} = 'or';
+    # # change the logical operator to OR so that search is
+    # # capable of fetching results in either cases
+    # $filter_combine->{'assembly.name'} = 'or';
+    # $filter_combine->{'assembly.synonyms'} = 'or';
+    
+    # ENSCORESW-2039
+    # put assembly parameter as query string, otherwise cannot find some assemblies
+    # due to the way assembly.synonyms and assembly.name are (not) indexed in combination
+    # with the use of a filter
+    if ($query) {
+      $query_body->{query} .= sprintf " AND %s", $data->{assembly};
+    } else {
+      $query_type = 'query_string';
+      $query_body = { query => $data->{assembly} };
+    }
   }
   $filters->{'assembly.accession'} = $data->{accession} and $filter_combine->{'assembly.accession'} = 'and'
     if $data->{accession};
@@ -122,6 +123,16 @@ sub search_POST {
     if $data->{hub};
   $filters->{type} = $data->{type} and $filter_combine->{'type'} = 'and'
     if $data->{type};
+
+  my $query_args = 
+    {
+     index     => $index,
+     data_type => $type,
+     page      => $c->stash->{page},
+     count     => $c->stash->{entries_per_page}, 
+     type      => $query_type,
+     query     => $query_body,
+    };  
   $query_args->{filters} = $filters if $filters;
 
   # do the search

@@ -1,0 +1,41 @@
+INSDC_accession	ENA_assembly_alias	VB_assembly_name	Species	Strain
+GCA_000004015.1	AaegL1	AaegL3	Aedes aegypti	Liverpool
+GCA_001444175.1	A.albopictus_v1.0	AaloF1	Aedes albopictus	Foshan
+GCA_000349125.1	Anop_albi_ALBI9_A_V1	AalbS1	Anopheles albimanus	STECLA
+GCA_000349125.1	Anop_albi_ALBI9_A_V1	AalbS2	Anopheles albimanus	STECLA
+GCA_000349185.1	Anop_arab_DONG5_A_V1	AaraD1	Anopheles arabiensis	Dongola
+GCA_000473505.1	Anop_atro_EBRO_V1	AatrE1	Anopheles atroparvus	EBRO
+GCA_000349165.1	Anop_chri_ACHKN1017_V1	AchrA1	Anopheles christyi	ACHKN1017
+GCA_000150765.1	m5	AcolM1	Anopheles coluzzii	Mali-NIH
+GCA_000473375.1	Anop_culi_species_A-37_1_V1	AculA1	Anopheles culicifacies	A-37
+GCA_000211455.3	A_darlingi_v1	AdarC3	Anopheles darlingi	Coari
+GCA_000349145.1	Anop_diru_WRAIR2_V1	AdirW1	Anopheles dirus	WRAIR2
+GCA_000349105.1	Anop_epir_epiroticus2_V1	AepiE1	Anopheles epiroticus	Epiroticus2
+GCA_000473445.2	Anop_fara_FAR1_V2	AfarF2	Anopheles farauti	FAR1
+GCA_000349085.1	Anop_fune_FUMOZ_V1	AfunF1	Anopheles funestus	FUMOZ
+GCA_000005575.1	AgamP3	AgamP4	Anopheles gambiae	PEST
+GCA_000473185.1	Anop_macu_maculatus3_V1	AmacM1	Anopheles maculatus	maculatus3
+GCA_000473525.2	Anop_mela_CM1001059_A_V2	AmelC2	Anopheles melas	CM1001059_A
+GCA_000473845.2	Anop_meru_MAF_V1	AmerM2	Anopheles merus	MAF
+GCA_000349025.1	Anop_mini_MINIMUS1_V1	AminM1	Anopheles minimus	MINIMUS1
+GCA_000349065.1	Anop_quad_QUAD4_A_V1	AquaS1	Anopheles quadriannulatus	SANGWE
+GCA_000472065.2	Anop_sine_SINENSIS_V1	AsinS2	Anopheles sinensis	SINENSIS
+GCA_000300775.2	ASM30077v2	AsteI2	Anopheles stephensi	Indian
+GCA_000349045.1	Anop_step_SDA-500_V1	AsteS1	Anopheles stephensi	SDA-500
+GCA_000457365.1	ASM45736v1	BglaB1	Biomphalaria glabrata	BB02
+GCA_000648675.1	Clec_1.0	ClecH1	Cimex lectularius	Harlan
+GCA_000209185.1	CulPip1.0	CpipJ2	Culex quinquefasciatus	Johannesburg
+GCA_000688735.1	Glossina_austeni-1.0.3	GausT1	Glossina austeni	TTRI
+GCA_000671755.1	Glossina_brevipalpis_1.0.3	GbreI1	Glossina brevipalpis	IAEA
+GCA_000671735.1	Glossina_fuscipes-3.0.2	GfusI1	Glossina fuscipes fuscipes	IAEA
+GCA_001077435.1	ASM107743v1	GmorY1	Glossina morsitans	Yale
+GCA_000688715.1	Glossina_pallidipes-1.0.3	GpalI1	Glossina pallidipes	IAEA
+GCA_000818775.1	Glossina_palpalis_gambiensis-2.0.1	GpapI1	Glossina palpalis gambiensis	IAEA
+GCA_000208615.1	JCVI_ISG_i3_1.0	IscaW1	Ixodes scapularis	Wikel
+GCA_000265325.1	Llon_1.0	LlonJ1	Lutzomyia longipalpis	Jacobina
+GCA_000371365.1	Musca_domestica-2.0.2	MdomA1	Musca domestica	aabys
+GCA_000006295.1	JCVI_LOUSE_1.0	PhumU2	Pediculus humanus	USDA
+GCA_000262795.1	Ppap_1.0	PpapI1	Phlebotomus papatasi	Israel
+GCA_000181055.3	Rhodnius_prolixus-3.0.3	RproC3	Rhodnius prolixus	CDC
+GCA_000828355.1	SarSca1.0	SscaA1	Sarcoptes scabiei	Arlian
+GCA_001015335.1	Stomoxys_calcitrans-1.0.1	ScalU1	Stomoxys calcitrans	USDA

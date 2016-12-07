@@ -79,8 +79,9 @@
   <h4>Parameters</h4>
   <p>
     <ul>
-      <li><mark>page</mark>: the wanted page of the search results</li>
-      <li><mark>entries_per_page</mark>: the number of search results per page</li>
+      <li><mark>page</mark>: the wanted page of the search results (default: 1)</li>
+      <li><mark>entries_per_page</mark>: the number of search results per page (default: 5)</li>
+      <li><mark>all</mark>: if non-zero, request to return all results with no pagination, page and entries_per_page parameters are ignored (default: 0)</li>
     </ul>
   </p>
 

@@ -60,6 +60,11 @@ sub search :Path('/api/search') Args(0) ActionClass('REST') {
   $page = 1 if $page !~ /^\d+$/;
   my $entries_per_page = $params->{entries_per_page} || 5;
 
+  if ($params->{all}) {
+    $page = 1;
+    $entries_per_page = 10000;
+  }
+  
   $c->stash( page => $page, entries_per_page => $entries_per_page );
 }
 

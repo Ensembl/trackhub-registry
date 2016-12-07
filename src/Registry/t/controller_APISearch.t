@@ -154,6 +154,29 @@ SKIP: {
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
   is(scalar @{$content->{items}}, 2, 'Number of entries per page');
+
+  # test option to return all results
+  $request = POST('/api/search?all=1',
+		  'Content-type' => 'application/json',
+		  'Content'      => to_json({ query => '' }));
+  ok($response = request($request), 'POST request to /api/search');
+  ok($response->is_success, 'Request successful');
+  is($response->content_type, 'application/json', 'JSON content type');
+  $content = from_json($response->content);
+  is($content->{total_entries}, 18, 'Number of search results');
+  is(scalar @{$content->{items}}, 18, 'Number of search results per page');
+
+  # when asking for all results, the other parameters should be ignored
+  $request = POST('/api/search?all=1&page=2&entries_per_page=10',
+		  'Content-type' => 'application/json',
+		  'Content'      => to_json({ query => '' }));
+  ok($response = request($request), 'POST request to /api/search');
+  ok($response->is_success, 'Request successful');
+  is($response->content_type, 'application/json', 'JSON content type');
+  $content = from_json($response->content);
+  is($content->{total_entries}, 18, 'Number of search results');
+  is(scalar @{$content->{items}}, 18, 'Number of search results per page');
+
   
   # test with query string
   # blueprint hub has some metadata to look for

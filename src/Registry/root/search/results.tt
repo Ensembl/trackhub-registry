@@ -191,8 +191,8 @@
                     </ul>
                   </div>
 		  [% END %]
-		  <a role="button" class="btn btn-lg btn-default" data-toggle="popover" title="More info about this collection" data-content="" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [ item.id ]) %]">View Info</a><br/><br/>
-		  <span class="label label-info"><a href="[% c.uri_for(c.controller('docs').action_for('results_page')) %]#status" style="text-decoration: none; color: inherit;" data-toggle="tooltip" title="Hub has been checked: all tracks available">[% status %]</a></span>
+		  <a role="button" class="btn btn-lg btn-default" data-toggle="popover" title="More info about this collection" data-content="" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [ item.id ]) %]">View Info</a>
+		  <!--<span class="label label-info"><a href="[% c.uri_for(c.controller('docs').action_for('results_page')) %]#status" style="text-decoration: none; color: inherit;" data-toggle="tooltip" title="Hub has been checked: all tracks available">[% status %]</a></span>-->
 		</div>
 	        <p>
 		  <!--<strong>Hub</strong>: [% h.shortLabel %]<br/>-->

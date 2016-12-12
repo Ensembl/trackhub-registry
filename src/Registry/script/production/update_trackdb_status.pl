@@ -186,19 +186,28 @@ foreach my $user (@{$users}) {
   my $username = $user->{username};
   next if $username eq $config{users}{admin_name};
 
+  # DEBUG
+  # test with just one user
+  next unless $username eq 'uniprot@ebi.ac.uk';
+  # skip Electra as she maintains hundreds of hubs
+  # next if $username eq 'mytesting' or $username eq 'testing' or $username eq 'ensemblplants';
+  #
+
   my $pid = fork();
   if ($pid) { # parent
     push(@children, { user => $user->{username}, pid => $pid });
   } elsif ($pid == 0) { # child
     $logger->info("Update global report with user $username info");
     try {
+      my $user_report = check_user_tracks($user, $last_report);
+      
       # provide partial doc to be merged into the existing report
       $es->update(index   => $config{reports}{alias},
 		  type    => $config{reports}{type},
 		  id      => $current_report_id,
 		  retry_on_conflict => 5,
 		  body    => {
-			      doc => { $username => "test $username" }
+			      doc => { $username => $user_report }
 			     });
     } catch {
       $logger->logdie($_);
@@ -215,8 +224,6 @@ foreach my $i (0 .. $#children) {
 
   $logger->info(sprintf "Done with user %s [pid %d]", $children[$i]->{user}, $tmp);
 }
-
-exit;
 
 # Send message to admin to alert report has/hasn't been generated
 my $message_body;
@@ -249,7 +256,7 @@ my $message =
 		      [
 		       From    => 'avullo@ebi.ac.uk',
 		       To      => $admin->{email},
-		       Subject => sprintf("Alert report from TrackHub Registry: %s", $localtime),
+		       Subject => sprintf("Report from TrackHub Registry: %s", $localtime),
 		      ],
 		      attributes => 
 		      {
@@ -290,18 +297,21 @@ sub check_user_tracks {
     $logger->info(sprintf "%s opts for %s checks. Checking report time interval", $username, $check_interval==1?'weekly':'monthly');
     my $current_time = time;
     my $last_check_time = $last_user_report->{end_time};
-    defined $last_check_time and $logger->error("Undefined last check time in last report for user $username. SKIP")
-      and return;
-    # check_interval == 1 -> week, 2 -> month
-    my $time_interval = $check_interval==1?604800:2592000;
+    $current_user_report = $last_user_report;
 
-    if ($current_time - $last_check_time < $time_interval) {
-      $current_user_report = $last_user_report;
+    if (defined $last_check_time) {
+      # check_interval == 1 -> week, 2 -> month
+      my $time_interval = $check_interval==1?604800:2592000;
 
-      $logger->info(sprintf "Less than a %s has passed since last check for %s. SKIP", 
-		    $check_interval==1?'week':'month', $username);
-
-      return $current_user_report;
+      if ($current_time - $last_check_time < $time_interval) {
+	$logger->info(sprintf "Less than a %s has passed since last check for %s. SKIP",
+		      $check_interval==1?'week':'month', $username);
+ 
+	return $current_user_report;
+      }
+    } else {
+      $logger->error("Undefined last check time in last report for user $username. SKIP");
+      return;
     }
   }
 
@@ -401,7 +411,7 @@ sub check_user_tracks {
     # }
 
     my ($id, $hub, $assembly) = ($trackdb->id, $trackdb->hub->{name}, $trackdb->assembly->{name});
-    $logger->info(sprintf "Checking trackDB [%s] (hub: %s, assembly: %s)", $id, $hub, $assembly);    
+    $logger->info(sprintf "User: %s. Checking trackDB [%s] (hub: %s, assembly: %s)", $username, $id, $hub, $assembly);
     my $status;
     try {
       $status = $trackdb->update_status();
@@ -444,8 +454,8 @@ sub check_user_tracks {
 			  header_str => 
 			  [
 			   From    => 'avullo@ebi.ac.uk',
-			   To      => $user->{email},
-			   Subject => 'Alert report from TrackHub Registry',
+			   To      => 'avullo@ebi.ac.uk',  # $user->{email},
+			   Subject => sprintf "Trackhub Registry: Alert Report for user [%s]", $username,
 			  ],
 			  attributes => 
 			  {
@@ -558,7 +568,7 @@ sub get_user_trackdbs {
   defined $user or die "Undefined username";
 
   my ($index, $type) = ($config{trackhubs}{alias}, $config{trackhubs}{type});
-  my $nodes = $config{cluster}{nodes};
+  my $nodes = $config{$cluster}{nodes};
   defined $index or die "Couldn't find index for users in configuration file";
   defined $type or die "Couldn't find type for users in configuration file";
   defined $nodes or die "Couldn't find ES nodes in configuration file";

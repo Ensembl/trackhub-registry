@@ -160,7 +160,7 @@ try {
 };
 $admin or $logger->logdie("Unable to find admin user.");
 
-$logger->info("Crearing new run global report");
+$logger->info("Creating new global report");
 my $current_report = {};
 $current_report->{created} = time;
 my $current_report_id = $last_report_id?++$last_report_id:1;
@@ -188,7 +188,7 @@ foreach my $user (@{$users}) {
 
   # DEBUG
   # test with just one user
-  next unless $username eq 'uniprot@ebi.ac.uk';
+  # next unless $username eq 'uniprot@ebi.ac.uk';
   # skip Electra as she maintains hundreds of hubs
   # next if $username eq 'mytesting' or $username eq 'testing' or $username eq 'ensemblplants';
   #

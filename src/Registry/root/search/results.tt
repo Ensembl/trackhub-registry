@@ -171,7 +171,7 @@
 	    [% a = item.get_value('assembly'); %]
 	    [% IF status == 'All is Well' %]
             <div class="panel panel-info">
-	      <a target="_blank" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [ item.id ]) %]><h3 class="panel-title">[% h.shortLabel %]</h3></a></h3>
+	      <a target="_blank" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [ item.id ]) %]><h3 class="panel-title">[% h.shortLabel %]</h3></a>
 	      <h4 style="padding-left: 10px;">[% h.longLabel %]</h4>
               <div class="panel-body">
 	        <div class="btn-group  btn-group-xs" style="float: right;">

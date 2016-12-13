@@ -448,13 +448,18 @@ sub check_user_tracks {
     my $user_message_body = "This alert report has been automatically generated during the last update of the TrackHub Registry.\n\n";
     # $user_message_body .= $message_body_update . "\n\n" if $message_body_update;
     $user_message_body .= $message_body_problem;
+    $user_message_body .= "\n\nYou can view a report for each of the above trackDBs by logging into the Trackhub Registry web front end (http://www.trackhubregistry.org/login).\n\n";
+    $user_message_body .= "The Registry has disabled the links of these hubs to various genome browsers. Do please fix the problems so that next time the Registry checks the hubs\n";
+    $user_message_body .= "it will be able to restore the links.\n";
+    $user_message_body .= "Regards,\n\nThe Trackhub Registry team\n";
     
     my $message = 
       Email::MIME->create(
 			  header_str => 
 			  [
 			   From    => 'avullo@ebi.ac.uk',
-			   To      => 'avullo@ebi.ac.uk',  # $user->{email},
+			   To      => $user->{email},
+			   Bcc     => 'avullo@ebi.ac.uk',
 			   Subject => sprintf "Trackhub Registry: Alert Report for user [%s]", $username,
 			  ],
 			  attributes => 

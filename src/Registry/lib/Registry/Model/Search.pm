@@ -40,7 +40,7 @@ extends 'Catalyst::Model::ElasticSearch';
 #
 sub search_trackhubs {
   my ($self, %args) = @_;
-
+  
   # default: return all documents
   $args{query} = { match_all => {} }
     unless exists $args{query};
@@ -53,8 +53,8 @@ sub search_trackhubs {
 
   # this is what Search::Elasticsearch expect 
   $args{body} = { query => $args{query} };
+  #$args{body} = $args{query};
   delete $args{query};
-
   return $self->_es->search(%args);
 }
 
@@ -137,7 +137,7 @@ sub next_trackdb_id {
      index => $config->{trackhub}{index},
      type  => $config->{trackhub}{type},
      body  => { query => { match_all => {} } },
-     search_type => 'scan'
+     #search_type => 'scan'
     );
 
   my $max_id = -1;
@@ -167,7 +167,7 @@ sub get_trackdbs {
   # use scan & scroll API
   # see https://metacpan.org/pod/Search::Elasticsearch::Scroll
   # use scan search type to disable sorting for efficient scrolling
-  $args{search_type} = 'scan';
+  # $args{search_type} = 'scan';
   my $scroll = $self->_es->scroll_helper(%args);
   
   my @trackdbs;

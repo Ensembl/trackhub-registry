@@ -123,7 +123,7 @@ sub search_POST {
   $filters->{type} = $data->{type} and $filter_combine->{'type'} = 'and'
     if $data->{type};
   $query_args->{filters} = $filters if $filters;
-
+   
   # do the search
   my $results;
   my $se = Data::SearchEngine::ElasticSearch->new(nodes => $config->{nodes});
@@ -194,14 +194,21 @@ sub biosample_search_POST {
   #
   $_ = lc for @{$biosample_ids};
 
-  my $query = {
-	       filtered => {
-			    filter => {
-				       terms => { 
-				       		 biosample_id => $biosample_ids
-				       		}
-				      }
-			   }
+#  my $query = {
+#	       filtered => {
+#			    filter => {
+#				       terms => { 
+#				       		 biosample_id => $biosample_ids
+#				       		}
+#				      }
+#			   }
+#	      };
+
+my $query = {
+	       terms => { 
+		       		 biosample_id => $biosample_ids
+		       		}
+
 	      };
   my $config = Registry->config()->{'Model::Search'};
   my %args =

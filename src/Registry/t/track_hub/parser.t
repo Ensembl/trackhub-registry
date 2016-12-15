@@ -17,6 +17,7 @@ use warnings;
 
 use Test::More;
 use Test::Exception;
+use Test::Deep;
 
 BEGIN {
   use FindBin qw/$Bin/;
@@ -96,6 +97,92 @@ SKIP: {
   is($metadata->{BIOMATERIAL_TYPE}, 'Primary_Cell', 'Correct metadata');
   is($metadata->{SAMPLE_ID}, 'ERS158623', 'Correct SAMPLE_ID metadata');
   
+  #Test meta lines
+  #my $test_line = '"Epigenome_Mnemonic"="BRST.HMEC" "Standardized_Epigenome_name"="HMEC Mammary Epithelial Primary Cells" "EDACC_Epigenome_name"="HMEC_Mammary_Epithelial" "Group"="<span style="color:#000000">ENCODE2012</span>" "Age"="" "Lab"="BI" "Sex"="Unknown" "Anatomy"="BREAST" "EID"="E119" "Type"="PrimaryCulture" "Order"="117" "Ethnicity"=""';
+  my $test_line = '"Epigenome_Mnemonic"="BRST.HMEC" "Standardized_Epigenome_name"="HMEC Mammary Epithelial Primary Cells" "Have.dot.in.key"="Ignored"';
+  my $valid_pair = $parser->_get_key_value_tokens($test_line);
+  
+  is($valid_pair->{'Epigenome_Mnemonic'}, "BRST.HMEC", 'Got back the right value for Epigenome_Mnemonic');
+  is($valid_pair->{'Standardized_Epigenome_name'}, "HMEC Mammary Epithelial Primary Cells", 'Got back the right value for Standardized_Epigenome_name');
+  is($valid_pair->{'Have.dot.in.key'}, undef, 'Ignored Have.dot.in.key');
+  
+  #"Cell_type/Tissue"="Mobilized_CD56_Primary_Cells" "FRAGLEN"="165" "NSC (Signal to noise)"="1.321089" "File_name"="UW.Mobilized_CD56_Primary_Cells.ChromatinAccessibility.RO_01689.DS16376.filt.tagAlign.gz" "Lab"="UW" "Control_file_name"="" "NREADS (36 bp mappability filtered)"="36048954" "Donor"="RO_01689.DS16376" "RSC (Phantom Peak)"="1.261162"
+  my $test_line2 = '"Cell_type/Tissue"="Mobilized_CD56_Primary_Cells" "FRAGLEN"="165" "NSC (Signal to noise)"="1.321089" "File_name"="UW.Mobilized_CD56_Primary_Cells.ChromatinAccessibility.RO_01689.DS16376.filt.tagAlign.gz" "Lab"="UW" "Control_file_name"="" "NREADS (36 bp mappability filtered)"="36048954" "Donor"="RO_01689.DS16376" "RSC (Phantom Peak)"="1.261162"';
+  my $expected_valid_pair2 = {
+          'FRAGLEN' => '165',
+          'Lab' => 'UW',
+          'Cell_type/Tissue' => 'Mobilized_CD56_Primary_Cells',
+          'File_name' => 'UW.Mobilized_CD56_Primary_Cells.ChromatinAccessibility.RO_01689.DS16376.filt.tagAlign.gz',
+          'Donor' => 'RO_01689.DS16376'
+        };
+  
+  my $got_valid_pair2 = $parser->_get_key_value_tokens($test_line2);
+  cmp_deeply($got_valid_pair2, $expected_valid_pair2, "Parsed test_line2 correctly");
+  
+  #text with html in it
+  my $test_line3='"Epigenome_Mnemonic"="GI.CLN.MUC" "Standardized_Epigenome_name"="Colonic Mucosa" "EDACC_Epigenome_name"="Colonic_Mucosa" "Group"="<span style="color:#C58DAA">Digestive</span>" "Age"="73Y" "Lab"="BI" "Sex"="Female" "Anatomy"="GI_COLON" "EID"="E075" "Type"="PrimaryTissue" "Order"="94" "Ethnicity"="Caucasian"';
+  my $got_valid_pair3 = $parser->_get_key_value_tokens($test_line3);
+  my $expected_valid_pair3 = {
+  		  'Epigenome_Mnemonic' => 'GI.CLN.MUC',
+          'Anatomy' => 'GI_COLON',
+          'Age' => '73Y',
+          'EDACC_Epigenome_name' => 'Colonic_Mucosa',
+          'EID' => 'E075',
+          'Sex' => 'Female',
+          'Ethnicity' => 'Caucasian',
+          'Group' => 'Digestive',
+          'Order' => '94',
+          'Type' => 'PrimaryTissue',
+          'Standardized_Epigenome_name' => 'Colonic Mucosa',
+          'Lab' => 'BI'
+  };
+  my $got_valid_pair3 = $parser->_get_key_value_tokens($test_line3);
+  cmp_deeply($got_valid_pair3, $expected_valid_pair3, "Parsed test_line3 correctly");
+   
+  my $test_line4='GEO_Accession="<a href=http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSM1127100 target=_blank>GSM1127100</a>" sample_alias="Breast Fibroblast RM071, batch 1" sample_common_name="Breast, Fibroblast Primary Cells" disease=None biomaterial_provider="Thea Tlsty lab" biomaterial_type="Primary Cell Culture" cell_type=Fibroblast markers=N/A culture_conditions=Trizol donor_id=RM071 donor_age=17 donor_health_status="Disease Free" donor_sex=Female donor_ethnicity="African American" passage_if_expanded=N/A batch=1 experiment_type=mRNA-Seq extraction_protocol="BCCAGSC mRNA Standard Operating Procedure" extraction_protocol_mrna_enrichment="Miltenyi-Biotec MACS mRNA purification" rna_preparation_initial_rna_qlty="RIN 9.7" rna_preparation_initial_rna_qnty="4 ug" rna_preparation_reverse_transcription_primer_sequence=NNNNNN rna_preparation_reverse_transcription_protocol="Invitrogen Superscript II RT" library_generation_pcr_template=cDNA library_fragmentation="COVARIS E210" library_fragment_size_range="266-470 bp" library_generation_pcr_polymerase_type=Phusion library_generation_pcr_thermocycling_program="98C 30 sec, 10 cycle of 98C 10 sec, 65C 30 sec, 72C 30 sec, then 72C 5 min, 4C hold" library_generation_pcr_number_cycles=10 library_generation_pcr_f_primer_sequence=AATGATACGGCGACCACCGAGATCTACACTCTTTCCCTACACGACGCTCTTCCGATCT library_generation_pcr_r_primer_sequence=CAAGCAGAAGACGGCATACGAGATCGGTCTCGGCATTCCTGCTGAACCGCTCTTCCGATCT library_generation_pcr_primer_conc="0.5 uM" library_generation_pcr_product_isolation_protocol="8% Novex TBE PAGE gel purification" dateUnrestricted=2014-04-15';
+  my $got_valid_pair4 = $parser->_get_key_value_tokens($test_line4);
+  my $expected_valid_pair4 = {
+          'donor_id' => 'RM071',
+          'donor_ethnicity' => 'African American',
+          'donor_sex' => 'Female',
+          'library_generation_pcr_primer_conc' => '0.5 uM',
+          'rna_preparation_reverse_transcription_primer_sequence' => 'NNNNNN',
+          'library_generation_pcr_f_primer_sequence' => 'AATGATACGGCGACCACCGAGATCTACACTCTTTCCCTACACGACGCTCTTCCGATCT',
+          'rna_preparation_initial_rna_qlty' => 'RIN 9.7',
+          'library_generation_pcr_number_cycles' => '10',
+          'disease' => 'None',
+          'donor_age' => '17',
+          'sample_common_name' => 'Breast, Fibroblast Primary Cells',
+          'library_fragmentation' => 'COVARIS E210',
+          'sample_alias' => 'Breast Fibroblast RM071, batch 1',
+          'library_generation_pcr_polymerase_type' => 'Phusion',
+          'biomaterial_type' => 'Primary Cell Culture',
+          'extraction_protocol_mrna_enrichment' => 'Miltenyi-Biotec MACS mRNA purification',
+          'GEO_Accession' => 'GSM1127100',
+          'library_generation_pcr_thermocycling_program' => '98C 30 sec, 10 cycle of 98C 10 sec, 65C 30 sec, 72C 30 sec, then 72C 5 min, 4C hold',
+          'dateUnrestricted' => '2014-04-15',
+          'passage_if_expanded' => 'N/A',
+          'library_generation_pcr_template' => 'cDNA',
+          'library_generation_pcr_product_isolation_protocol' => '8% Novex TBE PAGE gel purification',
+          'experiment_type' => 'mRNA-Seq',
+          'library_generation_pcr_r_primer_sequence' => 'CAAGCAGAAGACGGCATACGAGATCGGTCTCGGCATTCCTGCTGAACCGCTCTTCCGATCT',
+          'rna_preparation_initial_rna_qnty' => '4 ug',
+          'library_fragment_size_range' => '266-470 bp',
+          'rna_preparation_reverse_transcription_protocol' => 'Invitrogen Superscript II RT',
+          'batch' => '1',
+          'culture_conditions' => 'Trizol',
+          'extraction_protocol' => 'BCCAGSC mRNA Standard Operating Procedure',
+          'cell_type' => 'Fibroblast',
+          'markers' => 'N/A',
+          'donor_health_status' => 'Disease Free',
+          'biomaterial_provider' => 'Thea Tlsty lab'
+        };
+  cmp_deeply($got_valid_pair4, $expected_valid_pair4, "Parsed test_line4 correctly");
+  
+  
 }
 
+
 done_testing();
+
+__END__

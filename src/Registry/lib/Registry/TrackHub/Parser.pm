@@ -23,12 +23,17 @@ package Registry::TrackHub::Parser;
 
 use strict;
 use warnings;
+use HTML::Restrict;
 
 use Encode qw(decode_utf8 FB_CROAK);
 
 use Registry::Utils::URL qw(read_file);
 
 use vars qw($AUTOLOAD);
+
+open(VL, ">valid_log.out");
+open(IV, ">invalid_log.out");
+open(VLP, ">valid_pair_log.out");
 
 sub AUTOLOAD {
   my $self = shift;
@@ -38,14 +43,13 @@ sub AUTOLOAD {
   return unless $attr =~ /[^A-Z]/;  # skip DESTROY and all-cap methods
 
   $self->{$attr} = shift if @_;
-
   return $self->{$attr};
 }
 
 
 sub new {
   my ($class, %args) = @_;
-
+  
   defined $args{files} || die "Undefined files parameter";
   my $self = \%args || {};
   
@@ -55,10 +59,12 @@ sub new {
 
 sub parse {
   my $self = shift;
-
   my $tracks = {};
   foreach (@{$self->files}) {
+#  	my $tmp = 'http://localhost:3000/static/example/roadmap_both_02182015_trackDb_1000.txt';
+#  	print "$tmp\n";
     my $response = read_file($_, { 'nice' => 1 });
+#    my $response = read_file($tmp, { 'nice' => 1 });
     die join("\n", @{$response->{error}})
       if $response->{error};
     $response->{content} = Encode::decode_utf8($response->{content}, Encode::FB_CROAK);
@@ -70,7 +76,6 @@ sub parse {
 
 sub _parse_file_content {
   my ($self, $tracks, $content, $file) = @_;
-
   my $url      = $file =~ s|^(.+)/.+|$1|r; # URL relative to the file (up until the last slash before the file name)
   my @contents = split /track /, $content;
   shift @contents;
@@ -80,8 +85,10 @@ sub _parse_file_content {
 		       'bed'    => 'bed',
 		       'bb'     => 'bigBed',
 		       'bigBed' => 'bigBed',
+		       'bigbed' => 'bigBed',
 		       'bw'     => 'bigWig',
 		       'bigWig' => 'bigWig',
+		       'bigwig' => 'bigWig',
 		       'bam'    => 'bam',
 		       'gz'     => 'vcfTabix',
 		       'cram'   => 'cram'
@@ -164,61 +171,15 @@ sub _parse_file_content {
         # Short and long labels may contain =, but in these cases the value is just a single string
         if ($value =~ /=/ && $key !~ /^(short|long)Label$/) {
 
-	  #
-	  # NOTE
-	  # the following commented fragments do not correctly parse
-	  # metadata when key/value pairs contain text enclosed in double
-	  # quotes separated by spaces.
-	  #
-          # my ($k, $v);
-          # my @pairs = split /\s([^=]+)=/, " $value";
-          # shift @pairs;
-          
-          # for (my $i = 0; $i < $#pairs; $i += 2) {
-          #   $k = $pairs[$i];
-          #   $v = $pairs[$i + 1];
-            
-          #   # If the value starts with a quote, but doesn't end with it, this value contains the pattern \s(\w+)=, so has been split multiple times.
-          #   # In that case, append all subsequent elements in the array onto the value string, until one is found which closes with a matching quote.
-          #   if ($v =~ /^("|')/ && $v !~ /$1$/) {
-          #     my $quote = $1;
-              
-          #     for (my $j = $i + 2; $j < $#pairs; $j++) {
-          #       $v .= "=$pairs[$j]";
-                
-          #       if ($pairs[$j] =~ /$quote$/) {
-          #         $i += $j - $i - 1;
-          #         last;
-          #       }
-          #     }
-          #   }
-            
-          #   $v =~ s/(^["']|['"]$)//g; # strip the quotes from the start and end of the value string
-            
-          #   $tracks->{$id}{$key}{$k} = $v;
-          # }
+	    # PB with URLs containing =, remove key/value pairs containing them
+	     # $value =~ s/\w+?="[^="]+?=[^"]+?"\s//g;
+          my $valid_tokens = $self->_get_key_value_tokens($value);
 
-	  # PB with URLs containing =, remove key/value pairs containing them
-	  $value =~ s/\w+?="[^="]+?=[^"]+?"\s//g;
-
-	  my @tokens1 = split /=/, $value; 
-	  my @tokens2;
-
-	  for (my $i = 0; $i <= $#tokens1; $i++) {
-	    if ($tokens1[$i] =~ /^[\w:_]+$/) {
-	      push @tokens2, $tokens1[$i];
-	    } elsif ($tokens1[$i] =~ /"|'/) {
-	      push @tokens2, grep { defined $_ } $tokens1[$i] =~ /"(.*)"|'(.*)'|([\w:_]+)/g;;
-	    } else {
-	      push @tokens2, split(/\s+/, $tokens1[$i]);
-	    }
-	  }
-
-	  for (my $i = 0; $i < $#tokens2; $i += 2) {
-	    $tracks->{$id}{$key}{$tokens2[$i]} = $tokens2[$i+1];
-	  }
+	      while (my ($key_token, $value_token) = each %$valid_tokens) {
+	        $tracks->{$id}{$key}{$key_token} = $value_token;
+	      }
         } else {
-          $tracks->{$id}{$key} = $value;
+            $tracks->{$id}{$key} = $value;
         }
       }
     }
@@ -255,6 +216,90 @@ sub _parse_file_content {
       if $_->{'parent'} && !$tracks->{$_->{'parent'}};
   }
   
+}
+
+sub _get_key_value_tokens{
+	  my ($self, $value) = @_;
+
+	  # PB with URLs containing =, remove key/value pairs containing them
+	  
+	  # Check if the string contains HTML tags
+	  my $hr = HTML::Restrict->new();
+	  my $plain_text = $hr->process( $value );
+	  
+	  
+	  $plain_text =~ s/\w+?="[^="]+?=[^"]+?"\s//g;
+
+	  my @tokens1 = split /=/, $plain_text; 
+	  my @tokens2;
+	  for (my $i = 0; $i <= $#tokens1; $i++) {
+	  	my $tmp = $tokens1[$i];
+
+	    if ($tokens1[$i] =~ /^[\w:_]+$/) {
+	      push @tokens2, $tokens1[$i];
+	    } elsif ($tokens1[$i] =~ /"|'/) {
+	      my $quoted_str = $tokens1[$i];
+	      if ($quoted_str =~ /"(.*?)"\s+"(.*?)"|'(.*?)'\s+'(.*?)'/g){ #eg: "Epigenome_Mnemonic"="GI.CLN.MUC" "Standardized_Epigenome_name"="Colonic Mucosa"
+	      	my $tmp_token1 = $1;
+	      	my $tmp_token2 = $2;
+	      	$tmp_token1 =~ s/"|'//g;
+	      	$tmp_token2 =~ s/"|'//g;
+	      	
+	        push @tokens2, $tmp_token1, $tmp_token2;
+	      } elsif ($quoted_str =~ /"(.*?)"\s+([\w-]+)|'(.*?)'\s+([\w-]+)/g){  #eg: GEO_Accession="GSM1127100" sample_alias="Breast Fibroblast RM071, batch 1" 
+	      	my $tmp_token1 = $1;
+	      	my $tmp_token2 = $2;
+	      	$tmp_token1 =~ s/"|'//g;
+	      	$tmp_token2 =~ s/"|'//g;
+	        push @tokens2, $tmp_token1, $tmp_token2;
+	      }else{
+	      	my $tmp_token1 = $tokens1[$i];
+	      	$tmp_token1 =~ s/"|'//g;
+	        push @tokens2, $tmp_token1;
+	      }
+	      
+	      #push @tokens2, grep { defined $_ } $tokens1[$i] =~ /\"(.*)\"|\'(.*)\'|(.*)\"|\"(.*)|\'(.*)|(.*)\'|([\w:_]+)/g;;
+	    } else {
+	      push @tokens2, split(/\s+/, $tokens1[$i]);
+	    }
+
+	  }
+	  my $valid_key_value_tokens = {};
+	  for (my $i = 0; $i < $#tokens2; $i += 2) {
+	      	
+	      	my $key_token = $tokens2[$i];
+	      	my $value_token = $tokens2[$i+1];
+	      	
+	      	next if length($key_token) <=1;
+	      	next if length($value_token) < 1;
+	      	next unless $self->_is_valid_key_token($key_token);
+	      	
+	      	if (defined $key_token && defined $value_token){
+	      	  $valid_key_value_tokens->{$key_token} = $value_token;
+	      	}
+	  }
+     
+     return $valid_key_value_tokens;
+
+}
+
+sub _is_valid_key_token{
+	my ($self, $key_token) = @_;
+
+    #if ($key_token =~ /^[a-zA-Z0-9_\/]*$/){
+    if ($key_token =~ /^[a-zA-Z0-9_\/]*$/){
+
+	  if($key_token =~ /^[ATCGN]+$/){
+		return 0;
+	   }
+	
+	  if($key_token =~ /^[0-9]+$/){
+	  	print IV $key_token, "\n";
+		return 0;
+	  }
+	  return 1;
+    }
+  return 0;
 }
 
 1;

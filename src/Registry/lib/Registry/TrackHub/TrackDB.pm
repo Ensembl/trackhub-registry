@@ -33,16 +33,18 @@ use Registry::Model::Search;
 use Registry::Utils;
 use Registry::Utils::URL qw(file_exists);
 
-my %format_lookup = (
-		     'bed'    => 'BED',
-		     'bb'     => 'BigBed',
-		     'bigBed' => 'BigBed',
-		     'bw'     => 'BigWig',
-		     'bigWig' => 'BigWig',
-		     'bam'    => 'BAM',
-		     'gz'     => 'VCFTabix',
-		     'cram'   => 'CRAM'
-		    );
+ my %format_lookup = (
+		       'bed'    => 'bed',
+		       'bb'     => 'bigBed',
+		       'bigBed' => 'bigBed',
+		       'bigbed' => 'bigBed',
+		       'bw'     => 'bigWig',
+		       'bigWig' => 'bigWig',
+		       'bigwig' => 'bigWig',
+		       'bam'    => 'bam',
+		       'gz'     => 'vcfTabix',
+		       'cram'   => 'cram'
+                      );
 
 sub new {
   my ($class, $id) = @_; # arg is the ID of an ES doc

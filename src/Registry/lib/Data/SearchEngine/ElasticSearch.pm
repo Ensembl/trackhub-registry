@@ -174,6 +174,7 @@ sub search {
   # http://distinctplace.com/2014/07/29/build-zappos-like-products-facets-with-elasticsearch/
   # shows an example where the following applies
   my $query_filter;
+   my $minimum_should_match = 0;
   if ($query->has_filters) {
     foreach my $filter ($query->filter_names) {
       my $operator = 'must';
@@ -183,16 +184,29 @@ sub search {
 	  $operator = 'must';
 	} elsif ($operator eq 'or') {
 	  $operator = 'should';
+	  $minimum_should_match = 1;
 	} elsif ($operator eq 'not') {
 	  $operator = 'must_not';
 	} else {
 	  die "Operator $operator not supported";
 	}
       }
-
+      
       push @{$query_filter->{bool}{$operator}}, { term => { $filter => $query->get_filter($filter) } };
+      
     }
-    $options->{body}{filter} = $query_filter; 
+    
+    #changes for elastic 5.0
+    $query_filter->{bool}->{minimum_should_match} = $minimum_should_match if $minimum_should_match == 1;
+    
+    
+    my $body_query = $options->{body}{query};
+    delete $options->{body}{query};
+    my $must_query = $query_filter->{bool}{"must"};
+    push @{$must_query}, $body_query unless $query->type eq 'match_all';
+    
+    #$options->{body}{filter} = $query_filter; 
+    $options->{body}{query} = $query_filter; 
   }
 
   
@@ -249,6 +263,10 @@ sub search {
   $options->{size} = $query->count;
  
   my $start = Time::HiRes::time;
+  use Data::Dumper;
+  print STDERR "========================\n";
+  print STDERR Dumper($options);
+  print STDERR "========================\n";
   my $resp = $self->_es->search($options);
  
   my $page = $query->page;
@@ -278,26 +296,44 @@ sub search {
 							       raw => $resp
 							      );
  
-  if (exists($resp->{facets})) {
-    foreach my $facet (keys %{ $resp->{facets} }) {
-      my $href = $resp->{facets}->{$facet};
-      if (exists($href->{terms})) {
+#  if (exists($resp->{facets})) {
+#    foreach my $facet (keys %{ $resp->{facets} }) {
+#      my $href = $resp->{facets}->{$facet};
+#      if (exists($href->{terms})) {
+#	my @vals = ();	
+#	foreach my $term (@{ $href->{terms} }) {
+#	  push(@vals, { count => $term->{count}, value => $term->{term} });
+#	}
+#	$result->set_facet($facet, \@vals);
+#      }
+#    }
+#  }
+  
+  if (exists($resp->{aggregations})) {
+    foreach my $aggs (keys %{ $resp->{aggregations}->{thr_aggs} }) {
+      next if $aggs eq "doc_count";
+      my $href = $resp->{aggregations}->{thr_aggs}->{$aggs};
+      if (ref($href) eq 'HASH' && exists($href->{buckets})) {
 	my @vals = ();
-	foreach my $term (@{ $href->{terms} }) {
-	  push(@vals, { count => $term->{count}, value => $term->{term} });
+	foreach my $bucket (@{ $href->{buckets} }) {
+	  push(@vals, { count => $bucket->{doc_count}, value => $bucket->{key} });
 	}
-	$result->set_facet($facet, \@vals);
+	$result->set_facet($aggs, \@vals);
       }
     }
   }
-  if (exists($resp->{aggregations})) {
-    my $buckets = [];
-    $self->_get_buckets($resp->{aggregations}, $buckets);
-    # use Data::Dumper; 
-    # print Dumper $resp->{aggregations};
-    # print Dumper $buckets;
-    $result->{aggregations} = $buckets;
-  }
+  
+  
+#deprecated
+#  if (exists($resp->{aggregations})) {
+#  	print "===Reached aggregations ====== \n";
+#    my $buckets = [];
+#    $self->_get_buckets($resp->{aggregations}, $buckets);
+#    use Data::Dumper; 
+#    print Dumper $resp->{aggregations};
+#    print Dumper $buckets;
+#    $result->{aggregations} = $buckets;
+#  }
 
   foreach my $doc (@{ $resp->{hits}->{hits} }) {
     my $values = $doc->{_source};

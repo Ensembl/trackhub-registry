@@ -80,6 +80,7 @@ sub get_genome {
 
 # TODO: finish check
 sub _hub_check {
+  print STDERR "hub check called ==\n";
   my $self = shift;
   my $url = $self->url;
 
@@ -110,6 +111,7 @@ sub _hub_check {
 }
 
 sub _get_hub_info {
+  print STDERR " _get_hub_info called ==\n";
   my $self = shift;
   my $url = $self->url;
 
@@ -143,7 +145,7 @@ sub _get_hub_info {
     $hub_details{$line[0]} = $line[1];
   }
   die 'No genomesFile found' unless $hub_details{genomesFile};
- 
+  
   ## Now get genomes file and parse 
   $response = read_file("$url/$hub_details{'genomesFile'}", $file_args); 
   die join("\n", @{$response->{error}}) if $response->{error};

@@ -57,6 +57,10 @@ SKIP: {
 
   # index sample users
   $indexer->index_users();
+  
+  #updated settings
+  my $update_seetings = `curl -XPUT "http://localhost:9200/test/_settings" -d '{"index.mapping.total_fields.limit": 1000000}'`;
+  print STDERR "Settings updated  : $update_seetings\n";
 
   # authenticate one of them
   my $request = GET('/api/login');
@@ -82,7 +86,7 @@ SKIP: {
   # cemt: goes into timeout -> increase (solved)
   my %public_hubs = (
 		     vizhub  => 'http://vizhub.wustl.edu/VizHub/RoadmapReleaseAll.txt', # memory/CPU consumption, empty type (memory/CPU issue solved by printing just the error in the validation script)
-		     # zhub    => 'http://zlab.umassmed.edu/zlab/publications/UMassMedZHub/hub.txt', # empty type, do not exist any more
+#		     # zhub    => 'http://zlab.umassmed.edu/zlab/publications/UMassMedZHub/hub.txt', # empty type, do not exist any more
 		     polyA   => 'http://johnlab.org/xpad/Hub/UCSC.txt',
 		     encode  => 'http://ftp.ebi.ac.uk/pub/databases/ensembl/encode/integration_data_jan2011/hub.txt',
 		     mRNA    => 'http://www.mircode.org/ucscHub/hub.txt',

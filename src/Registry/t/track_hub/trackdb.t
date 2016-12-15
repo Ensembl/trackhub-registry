@@ -69,7 +69,7 @@ is($status->{tracks}{with_data}{ko}{bpDnaseRegionsC0010K46DNaseEBI}[0], 'http://
 is($status->{tracks}{with_data}{ko}{bpDnaseRegionsC0010K46DNaseEBI}[1], '404: Not Found', 'Error response');
 is($status->{message}, 'Remote Data Unavailable', 'Status message');
 ok($status->{last_update}, 'Last update');
-is_deeply($trackdb->file_type, [ 'BigBed' ], 'File type(s)');
+is_deeply($trackdb->file_type, [ 'bigBed' ], 'File type(s)');
 note sprintf "Doc [%d] updated: %s", $id, $trackdb->status_last_update(1);
 
 $id = 2;
@@ -86,7 +86,7 @@ foreach my $track (keys %{$status->{tracks}{with_data}{ko}}) {
 }
 is($status->{message}, 'Remote Data Unavailable', 'Status message');
 ok($status->{last_update}, 'Last update');
-is_deeply($trackdb->file_type, [ 'BigBed', 'BigWig' ], 'File type(s)');
+is_deeply($trackdb->file_type, [ 'bigBed', 'bigWig' ], 'File type(s)');
 note sprintf "Doc [%d] updated: %s", $id, $trackdb->status_last_update(1);
 
 SKIP: {

@@ -188,9 +188,24 @@ sub trackdb_create_POST {
     my $assembly_acc = $new_doc_data->{assembly}{accession};
     defined $hub and defined $assembly_acc or
       $c->go('ReturnError', 'custom', ["Unable to find hub/assembly information"]);
-    my $query = {
-		 filtered => {
-			      filter => {
+#    my $query = {
+#		 filtered => {
+#			      filter => {
+#					 bool => {
+#						  must => [
+#							   {
+#							    term => { owner => $c->stash->{user} } },
+#							   {
+#							    term => { 'hub.name' => $hub } },
+#							   {
+#							    term => { 'assembly.accession' => $assembly_acc } }
+#							  ]
+#						 }
+#					}
+#			     }
+#		};
+#		
+	 my $query = {
 					 bool => {
 						  must => [
 							   {
@@ -201,9 +216,9 @@ sub trackdb_create_POST {
 							    term => { 'assembly.accession' => $assembly_acc } }
 							  ]
 						 }
-					}
-			     }
 		};
+		
+		
     $c->go('ReturnError', 'custom', ["Cannot submit: a document with the same hub/assembly exists"])
       if $c->model('Search')->count_trackhubs(query => $query)->{count};
 	
@@ -311,9 +326,22 @@ sub trackhub_POST {
   #
   # prevent submission of a hub submitted by another user
   #
+#  my $query = {
+#	       filtered => {
+#			    filter => {
+#				       bool => {
+#						must => [
+#							 { term => { 'hub.url' => $url } }
+#							],
+#						must_not => [
+#							     { term => { owner => $c->stash->{user} } }
+#							    ]
+#					       }
+#				      }
+#			   }
+#	      };
+
   my $query = {
-	       filtered => {
-			    filter => {
 				       bool => {
 						must => [
 							 { term => { 'hub.url' => $url } }
@@ -322,10 +350,12 @@ sub trackhub_POST {
 							     { term => { owner => $c->stash->{user} } }
 							    ]
 					       }
-				      }
-			   }
 	      };
+
   my $registered_trackdbs = $c->model('Search')->search_trackhubs(query => $query);
+  
+  
+  
   if ($registered_trackdbs->{hits}{total}) {
     $c->go('ReturnError', 'custom', [qq{Cannot submit a track hub registered by another user}]);
   }
@@ -333,18 +363,30 @@ sub trackhub_POST {
   # call might be a request to update an already registered TrackHub
   # delete, if it exists, any trackDB in the document store belonging
   # to the TrackHub
-  $query = {
-	    filtered => {
-			 filter => {
+#  $query = {
+#	    filtered => {
+#			 filter => {
+#				    bool => {
+#					     must => [
+#						      { term => { owner => $c->stash->{user} } },
+#						      { term => { 'hub.url' => $url } }
+#						     ]
+#					    }
+#				   }
+#			}
+#	   };
+
+$query = {
 				    bool => {
 					     must => [
 						      { term => { owner => $c->stash->{user} } },
 						      { term => { 'hub.url' => $url } }
 						     ]
 					    }
-				   }
-			}
 	   };
+	   
+	   
+	   
   # TODO
   # pay attention here to the size parameter, certain hubs contain more than 10 trackDbs
   # using the scan & scroll API would definitively solve the problem
@@ -434,18 +476,29 @@ Actions for /api/trackhub/:id (GET, DELETE)
 sub trackhub_by_name :Path('/api/trackhub') Args(1) ActionClass('REST') { 
   my ($self, $c, $hubid) = @_;
 
-  my $query = {
-	       filtered => {
-			    filter => {
-				       bool => {
+#  my $query = {
+#	       filtered => {
+#			    filter => {
+#				       bool => {
+#						must => [
+#							 { term => { owner => $c->stash->{user} } },
+#							 { term => { 'hub.name' => $hubid } }
+#							]
+#					       }
+#				      }
+#			   }
+#	      };
+
+ my $query = {
+		       bool => {
 						must => [
 							 { term => { owner => $c->stash->{user} } },
 							 { term => { 'hub.name' => $hubid } }
 							]
-					       }
-				      }
-			   }
+				       }
+
 	      };
+
 
   my $trackdbs;
   try {
@@ -632,21 +685,31 @@ sub trackdb_PUT {
     my $assembly_acc = $new_doc_data->{assembly}{accession};
     defined $hub and defined $assembly_acc or
       $c->go('ReturnError', 'custom', ["Unable to find hub/assembly information"]);
-    my $query = {
-		 filtered => {
-			      filter => {
-					 bool => {
+#    my $query = {
+#		 filtered => {
+#			      filter => {
+#					 bool => {
+#						  must => [
+#							   { term => { owner => $c->stash->{user} } },
+#							   { term => { 'hub.name' => $hub } },
+#							   { term => { 'assembly.accession' => $assembly_acc } }
+#							  ]
+#						 }
+#					}
+#			     }
+#		};
+#		
+	 my $query = {
+			 bool => {
 						  must => [
 							   { term => { owner => $c->stash->{user} } },
 							   { term => { 'hub.name' => $hub } },
 							   { term => { 'assembly.accession' => $assembly_acc } }
 							  ]
 						 }
-					}
-			     }
 		};
     # TODO: use scan and scroll to retrieve large number of results efficiently
-    my $duplicate_docs = $c->model('Search')->search_trackhubs(size => 100000, query => $query)->{hits};
+    my $duplicate_docs = $c->model('Search')->search_trackhubs(size => 10000, query => $query)->{hits};
     if ($duplicate_docs->{total}) {
       foreach my $doc (@{$duplicate_docs->{hits}}) {
 	$c->go('ReturnError', 'custom', ["Cannot submit: a document with the same hub/assembly exists"])

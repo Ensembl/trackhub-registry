@@ -62,18 +62,27 @@ sub index :Path :Args(0) {
   # Basic query check: if empty query params, matches all document
   my ($query_type, $query_body) = ('match_all', {});
   if ($params->{q}) {
-    # $query_type = 'match';
-    # $query_body = { _all => $params->{q} };
     $query_type = 'query_string';
-    $query_body = { query => $params->{q} }; # default field is _all
+    my $query_str = $params->{q};
+    $query_str .= " AND public:1"; #add public:1 to the query_string
+    $query_body = { query => $query_str }; # default field is _all
+    
+    
+    
   } 
-  my $facets = 
+  my $aggregations = 
     {
      species  => { terms => { field => 'species.scientific_name', size => 20 } },
      assembly => { terms => { field => 'assembly.name', size => 20 } },
      hub      => { terms => { field => 'hub.name', size => 20 } },
      type     => { terms => { field => 'type', size => 20 } },
     };
+    
+  my $public_filter = {term => { "public" => "1" }}; # present only 'public' trackDbs
+  my $aggs = {
+        filter => $public_filter,
+        "aggregations" => $aggregations
+  };
 
   my $page = $params->{page} || 1;
   $page = 1 if $page !~ /^\d+$/;
@@ -90,12 +99,14 @@ sub index :Path :Args(0) {
      count     => $entries_per_page, 
      type      => $query_type,
      query     => $query_body,
-     facets    => $facets
+     aggregations    => {"thr_aggs" => $aggs},
     };
 
   # pass extra (i.e. besides query) parameters as ANDed filters
-  my $filters = { public => 1 }; # present only 'public' trackDbs
+  #my $filters = { public => 1 }; # present only 'public' trackDbs
+ 
   
+  my $filters_list = [];
   foreach my $param (keys %{$params}) {
     next if $param eq 'q' or $param eq 'page' or $param eq 'entries_per_page';
     # my $filter = ($param =~ /species/)?'species.tax_id':'assembly.name';
@@ -111,9 +122,18 @@ sub index :Path :Args(0) {
     } else {
       Catalyst::Exception::throw("Unrecognised parameter");
     }
-    $filters->{$filter} = $params->{$param};
+    push($filters_list, {term => { $filter => $params->{$param}}});
   }
-  $query_args->{filters} = $filters if $filters;
+  
+  push($filters_list, $public_filter) unless ($params->{q});
+  use Data::Dumper;
+  if(@$filters_list){
+  	print STDERR Dumper($filters_list);
+    push($filters_list, $public_filter);
+    $query_args->{type} = "bool";
+    $query_args->{query} = {"filter" => $filters_list};
+  }
+
 
   # # now query for the same thing by hub to build the track by hubs view
   # # build aggregation based on hub name taking into account filters
@@ -269,9 +289,9 @@ sub advanced_search :Path('advanced') Args(0) {
 					    body => 
 					    {
 					     aggs => {
-						      species   => { terms => { field => 'species.scientific_name', size  => 0 } },
-						      assembly  => { terms => { field => 'assembly.name', size  => 0 } },
-						      hub       => { terms => { field => 'hub.name', size  => 0 } }
+						      species   => { terms => { field => 'species.scientific_name' } },
+						      assembly  => { terms => { field => 'assembly.name' } },
+						      hub       => { terms => { field => 'hub.name'} }
 						     }
 					    });
   my $values;

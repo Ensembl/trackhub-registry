@@ -1,13 +1,13 @@
 {
   "trackdb": {
     "properties": {
-      "owner": { "type": "string", "index": "not_analyzed" },
+      "owner": { "type": "keyword", "index": "true" },
 
-      "public": { "type": "boolean", "index": "not_analyzed" },
+      "public": { "type": "boolean", "index": "true" },
 
-      "created": { "type": "long", "index": "not_analyzed"  },
+      "created": { "type": "long", "index": "false"  },
 
-      "updated": { "type": "long", "index": "not_analyzed"  },
+      "updated": { "type": "long", "index": "false"  },
 
       "status": {
         "type": "object",
@@ -17,23 +17,25 @@
       "hub": {
         "type": "object",
 	"properties": {
-	  "name": { "type": "string", "index": "not_analyzed" },
-	  "url": { "type": "string", "index": "not_analyzed" }
+	  "name": { "type": "keyword", "index": "true" },
+	  "url": { "type": "keyword", "index": "true" }
 	}
       },
 
       "species": {
         "type": "object",
 	"properties": {
-	  "scientific_name": { "type": "string", "index": "not_analyzed" }
+	  "scientific_name": { "type": "keyword", "index": "true" }
 	}
       },
 
       "assembly": {
         "type": "object",
 	"properties": {
-	  "accession": { "type": "string", "index": "not_analyzed" },
-	  "name": { "type": "string", "index": "not_analyzed" }
+	  "accession": { "type": "keyword", "index": "true" },
+	  "name": { "type": "keyword", "index": "true" },
+	  "synonyms": { "type": "text", "fielddata": true },
+	  "long_name": {"type": "text"}
 	}
       },
 

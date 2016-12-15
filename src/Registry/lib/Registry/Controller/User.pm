@@ -23,7 +23,6 @@ use namespace::autoclean;
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 # BEGIN { extends 'Catalyst::Controller' }
 
-use Data::Dumper;
 use List::Util 'max';
 use Try::Tiny;
 use Registry::Form::User::Registration;
@@ -127,19 +126,29 @@ sub delete : Chained('base') Path('delete') Args(1) Does('ACL') RequiresRole('ad
   # delete all trackDBs which belong to the user
   #
   # find username
+#  my $username = $c->model('Search')->search(index => $config->{user}{index},
+#					     type  => $config->{user}{type},
+#					     body  => {
+#						       query => { filtered => { filter => { bool => { must => [ { term => { _id => $id } } ] } } } }
+#						      }
+#					    )->{hits}{hits}[0]{_source}{username};
+#  
   my $username = $c->model('Search')->search(index => $config->{user}{index},
 					     type  => $config->{user}{type},
 					     body  => {
-						       query => { filtered => { filter => { bool => { must => [ { term => { _id => $id } } ] } } } }
+						       query =>{ bool => { must => [ { term => { _id => $id } } ] } } 
 						      }
 					    )->{hits}{hits}[0]{_source}{username};
+  
+  
+  
   Catalyst::Exception->throw("Unable to find user $id information")
       unless defined $username;
 
   # find trackDBs which belong to user
   my $query = { term => { owner => $username } };
   # my $query = { filtered => { filter => { bool => { must => [ { term => { owner => lc $username } } ] } } } };
-  my $user_trackdbs = $c->model('Search')->search_trackhubs(query => $query, size => 100000);
+  my $user_trackdbs = $c->model('Search')->search_trackhubs(query => $query, size => 10000);
   # my $user_trackdbs = grep { $_->{_source}{owner} eq $username } @{$c->model('Search')->search_trackhubs(query => $query, size => 100000)};
 
   $c->log->debug(sprintf "Found %d trackDBs for user %s (%s)", scalar @{$user_trackdbs->{hits}{hits}}, $id, $username);

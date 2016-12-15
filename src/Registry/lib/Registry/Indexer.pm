@@ -157,6 +157,9 @@ sub create_indices {
   carp "Creating index $index";
   $indices->create(index => $index); 
   
+    #update settings. ToDO. Update via API
+  my $update_setings = `curl -XPUT "http://localhost:9200/test/_settings" -d '{"index.mapping.total_fields.limit": 1000000}'`;
+  
   #
   # create the trackhub mapping
   #
@@ -221,6 +224,7 @@ sub index_trackhubs {
   # allowing recent changes to become visible to search. 
   # This process normally happens automatically once every second by default.
   carp "Flushing recent changes";
+  
   $self->{es}->indices->refresh(index => $self->{trackhub}{index});
 }
 

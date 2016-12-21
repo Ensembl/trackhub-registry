@@ -1,3 +1,5 @@
+#!/bin/bash
+
 source ~/perl5/perlbrew/etc/bashrc
 bioperl_libs=( ${HOME}/src/bioperl* )
 ensembl_libs=( ${HOME}/src/ensembl*/modules )

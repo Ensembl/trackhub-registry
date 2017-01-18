@@ -215,7 +215,12 @@ sub index :Path :Args(0) {
   try {
     $results = $se->search($query);
   } catch {
-    Catalyst::Exception->throw( qq/$_/ );
+    if($_->{'msg'} =~ /SearchPhaseExecutionException/gi){
+      $c->stash(error_msg => "An unexpected error happened, query parsing failed. Please check your query and try again", template => 'search/results.tt');
+    }else{
+      Catalyst::Exception->throw( qq/$_/ );
+    }
+
   };
   
   # check hub is available for each search result
@@ -236,14 +241,16 @@ sub index :Path :Args(0) {
   #   $item->set_value('hub', $hub);
   # }
 
-  $c->stash(query_string    => $params->{q},
+  if($results){
+    $c->stash(query_string    => $params->{q},
 	    filters         => $params,
 	    items           => $results->items,
 	    facets          => $results->facets,
 	    # aggregations    => $results->{aggregations},
 	    pager           => $results->pager,
 	    template        => 'search/results.tt');
-    
+  }
+
 }
 
 sub view_trackhub :Path('view_trackhub') Args(1) {

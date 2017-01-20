@@ -913,7 +913,7 @@ sub _add_genome_info {
   # If the submitter has directly provided a map, this takes precedence
   my $assembly_map = $self->assemblies;
   if (exists $assembly_map->{$assembly_syn}) {
-    if ($assembly_map->{$assembly_syn} =~ /^G(CA|CF)_[0-9]+?\.[0-9]+?$/) {
+    if ($assembly_map->{$assembly_syn} =~ /^G(CA|CF)_[0-9]+?(\.[0-9]+?)$/) {
       $assembly_id = $assembly_map->{$assembly_syn};
     } else {
       die sprintf "Assembly accession %s for %s does not comply with INSDC format", $assembly_map->{$assembly_syn}, $assembly_syn;

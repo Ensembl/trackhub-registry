@@ -1,0 +1,24 @@
+language: "perl"
+
+perl:
+  - "5.16"
+
+before_install:
+    - git clone --branch master --depth 1 https://github.com/Ensembl/ensembl.git
+    - git clone --branch master --depth 1 https://github.com/EnsemblGenomes/ensemblgenomes-api.git
+    - git clone -b bioperl-release-1-6-1 --depth 1 https://github.com/bioperl/bioperl-live.git
+    - curl -O https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-1.7.3.deb && sudo dpkg -i --force-confnew elasticsearch-1.7.3.deb && sudo service elasticsearch restart
+
+install:
+    - cpanm -v --installdeps --notest $PWD/src/Registry
+    - cpanm -n Devel::Cover::Report::Coveralls
+
+before_script:
+    - sleep 10
+  
+script: "./travisci/harness.sh"
+
+notifications:
+  email:
+    on_success: always
+    on_failure: always

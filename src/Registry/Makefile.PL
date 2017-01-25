@@ -16,6 +16,7 @@ requires 'Catalyst::Plugin::StackTrace';
 requires 'Catalyst::Action::RenderView';
 requires 'Catalyst::View::TT';
 requires 'Catalyst::View::JSON';
+requires 'Log::Log4perl::Catalyst';
 
 # for authentication/session handlng, as per
 # http://www.catalystframework.org/calendar/2007/5

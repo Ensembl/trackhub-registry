@@ -1080,16 +1080,25 @@ sub _add_genome_browser_links {
     } elsif ($assembly_name =~ /Release 5/i) {
       $division = 'dec2014.archive';
     }
-  } elsif ($species =~ /triticum_aestivum|zea_mays/i) { # Handle old wheat/maize assemblies
-    if ($assembly_name =~ /IWGSC1\+popseq|B73\sRefGen_v3/i) { # AGPv3 is assembly synonym
+  } elsif ($species =~ /zea_mays/i) { # Handle old maize assembly
+    if ($assembly_name =~ /B73\sRefGen_v3/i) { 
       $division = 'archive.plants';
-    } elsif ($assembly_name eq 'TGACv1' or $assembly_name eq 'AGPv4') { 
+    } elsif ($assembly_name eq 'AGPv4') { # AGPv4 is new assembly but doesn't have accession
       $division = 'plants';
-    }    
+    }
+    # Handle old wheat assembly, but also new since EG interface doesn't work here
+  } elsif ($species =~ /triticum_aestivum/i) {
+    if ($assembly_name =~ /IWGSC1\+popseq/) {
+      $division = 'archive.plants';
+    } elsif ($assembly_name =~ /TGAC/) { # TGCAv1 is new assembly and has accession, but
+      # as said above EG interface cannot fetch entry from genome shared db
+      # this is weird as same code elsewhere using EG interface works
+      $division = 'plants';
+    }
   } else {
     # Look up division in shared genome DB, by using assembly accession,
     # when provided, or assembly name
-
+    
     # create an adaptor to work with genomes
     my $gdba = Bio::EnsEMBL::Utils::MetaData::DBSQL::GenomeInfoAdaptor->build_adaptor();
     
@@ -1103,9 +1112,9 @@ sub _add_genome_browser_links {
       # TODO: there's no method in GenomeInfoAdaptor to fetch by assembly name. Ask Dan S to provide one
       #
       # Can still fetch by taxonomy ID
-      $genome = $gdba->fetch_all_by_taxonomy_id($doc->{species}{tax_id})->[0] if $doc->{species}{tax_id};
-      
+      $genome = $gdba->fetch_all_by_taxonomy_id($doc->{species}{tax_id})->[0] if $doc->{species}{tax_id};      
     }
+    
     # disconnect otherwise will end up with lots of sleeping connections on the
     # public server causing "Too many connections" error
     $gdba->{dbc}->disconnect_if_idle && 
@@ -1161,8 +1170,8 @@ sub _handle_ensemblplants_exceptions {
 
   return 0 unless $assembly_name eq 'v0117-2013Aug' or # Oryza longistaminata 
     $assembly_name eq 'PRJEB4137' or # Oryza rufipogon
-      $assembly_name =~ 'IWGSC1' or # Triticum aestivum
-	  $assembly_name =~ 'AGPv4'; # Zea mays
+    $assembly_name =~ 'IWGSC1' or # Triticum aestivum
+    $assembly_name =~ 'AGPv4'; # Zea mays
 
   if ($assembly_name =~ 'AGPv4') { # Zea mays
     $doc->{species}{tax_id} = 4577;

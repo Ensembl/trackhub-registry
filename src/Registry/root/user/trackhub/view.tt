@@ -129,7 +129,14 @@ function toggle(b) {
 	<tbody>
 	  [% assembly = trackdb.doc.assembly %]
 	  <tr>
-	    <td><a target="_blank" href="http://www.ebi.ac.uk/ena/data/view/[% assembly.accession %]">[% assembly.accession %]</a></td>
+	    <td>
+	    [% IF assembly.accession.match('GC') %]
+	    <!--  <a target="_blank" href="http://www.ncbi.nlm.nih.gov/assembly/?term=[% assembly.accession %]">[% assembly.accession %]</a>-->
+	      <a target="_blank" href="http://www.ebi.ac.uk/ena/data/view/[% assembly.accession %]">[% assembly.accession %]</a>
+	    [% ELSE %]
+	      [% assembly.accession %]
+	    [% END %]
+	    </td>
 	    <td>[% assembly.name %]</td>
 	    <td>[% assembly.long_name %]</td>
 	    <td>[% assembly.synonyms %]</td>

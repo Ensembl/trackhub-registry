@@ -33,6 +33,7 @@ use LWP::UserAgent;
 
 my $ua = LWP::UserAgent->new;
 # my $server = 'http://193.62.54.43:5000';
+# my $server = 'http://test.trackhubregistry.org';
 my $server = 'http://localhost:3000';
 
 # use Search::Elasticsearch;
@@ -60,6 +61,7 @@ my $server = 'http://localhost:3000';
 # print Dumper $results;
 # exit;
 
+# my ($user, $pass) = ('avullo', 'ALcsK32EX');
 my ($user, $pass) = ('trackhub1', 'trackhub1'); 
 my $request = GET("$server/api/login");
 $request->headers->authorization_basic($user, $pass);
@@ -75,8 +77,13 @@ if ($response->is_success) {
 my $hubs = 
   [
    # Ensembl Plants hubs
+   {
+    url => "ftp://ftp.ensemblgenomes.org/pub/misc_data/Track_Hubs/SRP051670/hub.txt",
+    assemblies => { 'TGACv1' => 'GCA_900067645.1' }
+   },
+   # },
    # {
-   #  url => "ftp://ftp.ensemblgenomes.org/pub/misc_data/Track_Hubs/SRP072774/hub.txt",
+   #  url => "ftp://ftp.ensemblgenomes.org/pub/misc_data/.TrackHubs/SRP033371/hub.txt",
    #  assemblies => { 'TAIR10' => 'GCA_000001735.1' }
    # },
    # {
@@ -112,10 +119,10 @@ my $hubs =
    # },
    #
    # test a few others of the newly added VB track hubs (as of 29/11/2016)
-   {
-    url => "ftp://ftp.vectorbase.org/public_data/rnaseq_alignments/hubs/anopheles_coluzzii/VBRNAseq_group_1348/hub.txt",
-    assemblies => { 'AcolM1' => 'GCA_000150765.1' },
-   },
+   # {
+   #  url => "ftp://ftp.vectorbase.org/public_data/rnaseq_alignments/hubs/anopheles_coluzzii/VBRNAseq_group_1348/hub.txt",
+   #  assemblies => { 'AcolM1' => 'GCA_000150765.1' },
+   # },
    # {
    #  url => "ftp://ftp.vectorbase.org/public_data/rnaseq_alignments/hubs/cimex_lectularius/VBRNAseq_group_1345/hub.txt",
    #  assemblies => { 'ClecH1' => 'GCA_000300775.2' },

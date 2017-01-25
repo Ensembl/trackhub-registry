@@ -8,12 +8,9 @@ export PERL5LIB=$ENSDIR/bioperl-live:$ENSDIR/ensembl/modules:$ENSDIR/ensemblgeno
 echo "Running test suite"
 export TEST_POD=1
 
-# if [ "$COVERALLS" = 'true' ]; then
-#   PERL5OPT='-MDevel::Cover=+ignore,bioperl,+ignore,ensembl-test,+ignore,ensembl-variation,ensembl-compara' perl $ENSDIR/ensembl-test/scripts/runtests.pl -verbose modules/t $SKIP_TESTS
-# else
-#   perl $ENSDIR/ensembl-test/scripts/runtests.pl modules/t $SKIP_TESTS
-# fi
-perl src/Registry/t/03podcoverage.t
+src/Registry/t/auth/script/setup.pl # initialisation for the authentication module tests
+prove -v src/Registry/t/auth # test Elastisearch based catalyst authentication 
+prove -v src/Registry/t # test application
 
 rt=$?
 if [ $rt -eq 0 ]; then

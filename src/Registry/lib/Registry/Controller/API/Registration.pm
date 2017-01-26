@@ -724,7 +724,7 @@ sub trackdb_DELETE {
   }
 }
 
-=item status_unauthorized
+=head2 status_unauthorized
 
 Returns a "401 Unauthorized" response.  Takes a "message" argument
 as a scalar, which will become the value of "error" in the serialized

@@ -7,6 +7,7 @@ export PERL5LIB=$ENSDIR/bioperl-live:$ENSDIR/ensembl/modules:$ENSDIR/ensemblgeno
 
 echo "Running test suite"
 export TEST_POD=1
+export CATALYST_DEBUG=0
 
 src/Registry/t/auth/script/setup.pl # initialisation for testing the authentication module
 prove -vr src/Registry/t

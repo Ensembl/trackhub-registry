@@ -9,8 +9,9 @@ echo "Running test suite"
 export TEST_POD=1
 export CATALYST_DEBUG=0
 
-src/Registry/t/auth/script/setup.pl # initialisation for testing the authentication module
-prove -vr src/Registry/t
+cd src/Registry
+script/setup.pl # initialisation for testing the authentication module
+prove -vr
 
 rt=$?
 if [ $rt -eq 0 ]; then

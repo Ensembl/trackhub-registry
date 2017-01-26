@@ -12,6 +12,7 @@ before_install:
 install:
     - cpanm -n Module::Install::Catalyst
     - cpanm -v --installdeps --with-recommends --notest $PWD/src/Registry
+    - cpanm Search::Elastisearch@2.03
     - cpanm -n Devel::Cover::Report::Coveralls
 
 before_script:

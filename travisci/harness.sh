@@ -8,9 +8,8 @@ export PERL5LIB=$ENSDIR/bioperl-live:$ENSDIR/ensembl/modules:$ENSDIR/ensemblgeno
 echo "Running test suite"
 export TEST_POD=1
 
-src/Registry/t/auth/script/setup.pl # initialisation for the authentication module tests
-prove -v src/Registry/t/auth # test Elastisearch based catalyst authentication
-prove -v src/Registry/t # test application
+src/Registry/t/auth/script/setup.pl # initialisation for testing the authentication module
+prove -vr src/Registry/t
 
 rt=$?
 if [ $rt -eq 0 ]; then

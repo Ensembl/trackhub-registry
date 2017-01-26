@@ -9,8 +9,8 @@ echo "Running test suite"
 export TEST_POD=1
 
 src/Registry/t/auth/script/setup.pl # initialisation for the authentication module tests
-prove -v src/Registry/t/auth # test Elastisearch based catalyst authentication 
-# prove -v src/Registry/t # test application
+prove -v src/Registry/t/auth # test Elastisearch based catalyst authentication
+prove -v src/Registry/t # test application
 
 rt=$?
 if [ $rt -eq 0 ]; then

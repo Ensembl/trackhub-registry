@@ -8,11 +8,12 @@ before_install:
     - git clone --branch master --depth 1 https://github.com/EnsemblGenomes/ensemblgenomes-api.git
     - git clone -b bioperl-release-1-6-1 --depth 1 https://github.com/bioperl/bioperl-live.git
     - curl -O https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-1.7.3.deb && sudo dpkg -i --force-confnew elasticsearch-1.7.3.deb && sudo service elasticsearch restart
+    - curl -O https://cpan.metacpan.org/authors/id/D/DR/DRTECH/Search-Elasticsearch-2.03.tar.gz
 
 install:
     - cpanm -n Module::Install::Catalyst
     - cpanm -v --installdeps --with-recommends --notest $PWD/src/Registry
-    - cpanm Search::Elastisearch@2.03
+    - cpanm Search-Elasticsearch-2.03.tar.gz
     - cpanm -n Devel::Cover::Report::Coveralls
 
 before_script:

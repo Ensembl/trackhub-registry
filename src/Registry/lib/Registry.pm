@@ -14,6 +14,37 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
+=head1 CONTACT
+
+Please email comments or questions to the Trackhub Registry help desk
+at C<< <http://www.trackhubregistry.org/help> >>
+
+Questions may also be sent to the public Trackhub Registry list at
+C<< <https://listserver.ebi.ac.uk/mailman/listinfo/thregistry-announce> >>
+
+=head1 NAME
+
+Registry - The main module
+
+=head1 SYNOPSIS
+
+    script/registry_server.pl
+
+=head1 DESCRIPTION
+
+This is the main module for the Trackhub Registry web application.
+It's setting up the application at start up either using the configuration
+parameters described here or overrding them by reading from the
+configuration file.
+
+=head1 AUTHOR
+
+Alessandro Vullo, C<< <avullo at ebi.ac.uk> >>
+
+=head1 BUGS
+
+No known bugs at the moment. Development in progress.
+
 =cut
 
 package Registry;
@@ -167,34 +198,5 @@ if(-f $log4perl_conf) {
   __PACKAGE__->log(Log::Log4perl::Catalyst->new());
 }
 __PACKAGE__->setup();
-
-=encoding utf8
-
-=head1 NAME
-
-Registry - Catalyst based application
-
-=head1 SYNOPSIS
-
-    script/registry_server.pl
-
-=head1 DESCRIPTION
-
-[enter your description here]
-
-=head1 SEE ALSO
-
-L<Registry::Controller::Root>, L<Catalyst>
-
-=head1 AUTHOR
-
-Alessandro,,,
-
-=head1 LICENSE
-
-This library is free software. You can redistribute it and/or modify
-it under the same terms as Perl itself.
-
-=cut
 
 1;

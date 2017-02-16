@@ -14,12 +14,46 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
+=head1 CONTACT
+
+Please email comments or questions to the Trackhub Registry help desk
+at C<< <http://www.trackhubregistry.org/help> >>
+
+Questions may also be sent to the public Trackhub Registry list at
+C<< <https://listserver.ebi.ac.uk/mailman/listinfo/thregistry-announce> >>
+
+=head1 NAME
+
+Registry::TrackHub::Translator - converts a track hub into trackDB JSON documents
+conforming to the JSON schema specification
+
+=head1 SYNOPSIS
+
+my $th_url = "http://ftp.ebi.ac.uk/pub/databases/blueprint/releases/20150128/homo_sapiens/hub"
+my $hg19_json = Registry::TrackHub::Translator->new()->translate($th_url, 'hg19');
+my $doc = from_json($hg_19);
+print "Hub: ", $doc->{hub}{name}, "\nSpecies: ", $doc->{species}{tax_id}, "\nAssembly: ", $doc->{assembly}{accession}, "\n";
+
+=head1 DESCRIPTION
+
+This module encapsulates the process of converting a remove track hub into a
+set of Elasticsearch JSON documents which represent trackDB data for each
+assembly in the hub. Each trackDB document mirrors the hierarchical structure
+of its source and, in addition to that, adds some metadata (e.g. species, assembly)
+which supports the search/faceting mechanism. Besides this, URLs for linking
+to the UCSC and/or Ensembl browser are computed and added to the document, if
+applicable.
+
+=head1 AUTHOR
+
+Alessandro Vullo, C<< <avullo at ebi.ac.uk> >>
+
+=head1 BUGS
+
+No known bugs at the moment. Development in progress.
+
 =cut
 
-#
-# A class to represent a translator from UCSC-style trackdb
-# documents to the corresponding JSON specification
-#
 package Registry::TrackHub::Translator;
 
 use strict;
@@ -61,6 +95,23 @@ my %format_lookup = (
 		     'cram'   => 'CRAM'
 		    );
 
+=head1 METHODS
+
+=head2 new
+
+  Arg[1]:     : Hash - constructor parameters
+                       version - String, specifies the version of JSON schema to which
+                       the trackDBs should be converted to. Currently, only version 1.0
+                       is supported.
+  Example     : Registry::TrackHub::Translator->new(version => '1.0');
+  Description : Build a Registry::TrackHub::Translator object
+  Returntype  : Registry::TrackHub::Translator
+  Exceptions  : Thrown if required parameter is not provided
+  Caller      : Registry::Controller::API::Registration
+  Status      : Stable
+
+=cut
+
 sub new {
   my ($class, %args) = @_;
   
@@ -81,6 +132,22 @@ sub new {
 
   return $self;
 }
+
+=head2 translate
+
+  Arg [1]     : String - the URL of the track hub
+  Arg [2]     : String (optional) - translate only trackDB of this assembly name
+                If not provided, convert the trackDB for all assemblies in the hub.
+  Example:    : my $tracks = $translator->translate($URL, 'hg19');
+  Description : Convert trackDB files for one or all assemblies in a hub
+  Returntype  : ArrayRef - A list of JSON strings, each one representing the trackDB
+                file for a given assembly in the hub converted into a JSON doc which
+                conforms to the JSON schema specification
+  Exceptions  : Thrown if JSON version specified in the constructor is not supported
+  Caller      : Registry::Controller::API::Registration
+  Status      : Stable
+
+=cut
 
 sub translate {
   my ($self, $url, $assembly) = @_;
@@ -114,10 +181,26 @@ sub translate {
   return $docs;
 }
 
+=head2 to_json_1_0
+
+  Arg [1]     : Registry::TrackHub - an object representing a track hub at a given URL
+  Arg [2]     : String - the assembly name whose trackDB file has to be converted
+  Example:    : my $docs = $translator->to_json_1_0($url, $assembly)
+  Description : Convert trackDB file for assembly in a hub to a JSON document compliant
+                with version 1.0 trackDB JSON schema specification
+  Returntype  : String - A JSON strings representing the trackDB file for the given assembly 
+                in the hub converted into a JSON doc
+  Exceptions  : None
+  Caller      : Registry::TrackHub::Translator::translate
+  Status      : Stable
+
+=cut
+
+
 ##################################################################################
 #             
 # Version v1.0 
-#             
+#
 sub to_json_1_0 {
   my ($self, %args) = @_;
   my ($trackhub, $assembly) = ($args{trackhub}, $args{assembly});
@@ -1146,7 +1229,7 @@ sub _add_genome_browser_links {
   # VectorBase browser links
   if (exists $vector_base_assemblies{$assemblysyn}) {
     ($domain, $species) = 
-      ('http://www.vectorbase.org', $doc->{species}{scientific_name});
+      ('https://www.vectorbase.org', $doc->{species}{scientific_name});
 
     $species = join('_', (split(/\s/, $species))[0 .. 1]);
     $species =~ /^\w+_\w+$/ or die "Couldn't get the required species name to build the Ensembl URL";

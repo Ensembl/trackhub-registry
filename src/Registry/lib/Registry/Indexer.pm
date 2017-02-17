@@ -14,6 +14,50 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
+=head1 CONTACT
+
+Please email comments or questions to the Trackhub Registry help desk
+at C<< <http://www.trackhubregistry.org/help> >>
+
+Questions may also be sent to the public Trackhub Registry list at
+C<< <https://listserver.ebi.ac.uk/mailman/listinfo/thregistry-announce> >>
+
+=head1 NAME
+
+Registry::Indexer - Index mock user/track hub data
+
+=head1 SYNOPSIS
+
+    my $indexer = Registry::Indexer->new(dir => 'directory with track hub/mappings JSON',
+                                         trackhub => {
+                                           index   => 'track hub index name',
+                                           type    => 'track hub type name',
+                                           mapping => 'JSON file name with track hub mappings'
+                                         },
+                                         authentication => {
+                                           index   => 'user index name',
+                                           type    => 'user type name',
+                                           mapping => 'JSON file name with authentication mappings'
+                                         });
+    $indexer->index_users; # can now run endpoints requiring authentication
+    $indexer->index_trackhubs # can now run endpoints accessing track hub indexed data
+
+=head1 DESCRIPTION
+
+This module is used for preparing (mock) data for various tests. 
+
+It has methods for indexing some fake users and track hubs so that tests can 
+check correct responses from various endpoints requiring authentication and 
+the availability of some data in the back end.
+
+=head1 AUTHOR
+
+Alessandro Vullo, C<< <avullo at ebi.ac.uk> >>
+
+=head1 BUGS
+
+No known bugs at the moment. Development in progress.
+
 =cut
 
 package Registry::Indexer;
@@ -35,6 +79,42 @@ use JSON;
 
 use Registry::Utils;
 use Registry::Model::Search;
+
+=head1 METHODS
+
+=head2 new
+
+  Arg [dir]            : string (required)
+                         The name of the directory where track hub example JSON docs 
+                         and (track hub/authentication) mappings can be found. This
+                         directory is expected to contain the files blueprint(1|2).json
+                         containing examples of a JSON representation of the blueprint
+                         track hub.
+  Arg [trackhub]       : hashref (required)
+                         Provides the index/type names and the mapping files used for
+                         indexing track hubs                         
+  Arg [authentication] : hashref (required) 
+                         Provides the index/type names and the mapping files used for
+                         indexing users for authentication related tests                     
+  Example              :  my $indexer = Registry::Indexer->new(dir => 'trackhub-examples',
+                                                               trackhub => {
+                                                                 index   => 'test',
+                                                                 type    => 'trackdb',
+                                                                 mapping => 'trackhub_mappings.json'
+                                                               },
+                                                               authentication => {
+                                                                 index   => 'test',
+                                                                 type    => 'user',
+                                                                 mapping => 'authentication_mappings.json'
+                                                               });
+  Description          : Creates a new Indexer object. After creation, the track hub and user indices 
+                         will be available. 
+  Returntype           : Registry::Indexer
+  Exceptions           : none
+  Caller               : general
+  Status               : stable
+
+=cut
 
 sub new {
   my ($caller, %args) = @_;
@@ -133,9 +213,20 @@ sub new {
   return $self;
 }
 
-#
-# Create indices, mapping 
-#
+=head2 create_indices
+
+  Arg [1]    : none
+  Example    : $indexer->create_indices
+  Description: Create indices for track hubs and users
+  Returntype : none
+  Exceptions : Thrown is trackhub/user index,type,parameters are missing,
+               Elasticsearch client throws some error, or track hub/authentication
+               mapping cannot be created.
+  Caller     : general
+  Status     : stable
+
+=cut
+
 sub create_indices {
   my $self = shift;
 
@@ -189,9 +280,21 @@ sub create_indices {
 
 }
 
-#
-# index the example documents 
-#
+=head2 index_trackhubs
+
+  Arg [1]    : none
+  Example    : $indexer->index_trackhubs
+  Description: Index the example documents
+               After invoked, four documents will be available: two belonging to user 
+               trackhub1 (blueprint(1|2), one to user trackhub2 (blueprint1) and one
+               to trackhub3 (blueprint2).
+  Returntype : none
+  Exceptions : Thrown if Elasticsearch client fails to index one of the documents
+  Caller     : general
+  Status     : stable
+
+=cut
+
 sub index_trackhubs {
   my $self = shift;
 
@@ -224,9 +327,22 @@ sub index_trackhubs {
   $self->{es}->indices->refresh(index => $self->{trackhub}{index});
 }
 
-#
-# index the example users for the authentication/authorisation mechanism=
-#
+=head2 index_users
+
+  Arg [1]    : none
+  Example    : $indexer->index_users
+  Description: Index the example users for the authentication/authorisation mechanism.
+               After invoked, four users will be available: one with admin role, and
+               three for testing track hub submissions and data retrieval.
+               Check the source code for the constructor for details about these users,
+               e.g. username/password
+  Returntype : none
+  Exceptions : Thrown if Elasticsearch client fails to index one of the mock users
+  Caller     : general
+  Status     : stable
+
+=cut
+
 sub index_users {
   my $self = shift;
 
@@ -243,10 +359,18 @@ sub index_users {
   $self->{es}->indices->refresh(index => $self->{auth}{index});
 }
 
+=head2 delete
 
-#
-# delete everything created 
-#
+  Arg [1]    : none
+  Example    : $indexer->delete
+  Description: Delete track hub/user indices, with all their content within.
+  Returntype : none
+  Exceptions : Thrown if Elasticsearch client fails to delete one of the indices
+  Caller     : general
+  Status     : Stable
+
+=cut
+
 sub delete {
   my $self = shift;
 
@@ -255,19 +379,38 @@ sub delete {
     if $self->{auth}{index} ne $self->{trackhub}{index};
 }
 
-#
-# get the list of doc data
-#
+=head2 docs
+
+  Arg [1]    : none
+  Example    : my @docs = @{$indexer->docs};
+  Description: Get the list of example documents.
+               Each array item is a hashref with id, file and owner attributes
+  Returntype : arrayref
+  Exceptions : none
+  Caller     : general
+  Status     : stable
+
+=cut
+
 sub docs {
   my $self = shift;
 
   return $self->{docs};
 }
 
-#
-# return a list of documents representing users
-# that can authenticate and be authorised
-#
+=head2 get_user_data
+
+  Arg [1]    : none
+  Example    : my @users = @{$indexer->get_user_data};
+  Description: Returns a list of items, each one representing information about
+               a particular example user which can authenticate and submit track hubs.
+  Returntype : arrayref
+  Exceptions : none
+  Caller     : general
+  Status     : stable
+
+=cut
+
 sub get_user_data {
   my $self = shift;
 

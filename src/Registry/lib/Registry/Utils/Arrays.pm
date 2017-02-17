@@ -14,6 +14,39 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
+=head1 CONTACT
+
+Please email comments or questions to the Trackhub Registry help desk
+at C<< <http://www.trackhubregistry.org/help> >>
+
+Questions may also be sent to the public Trackhub Registry list at
+C<< <https://listserver.ebi.ac.uk/mailman/listinfo/thregistry-announce> >>
+
+=head1 NAME
+
+Registry::Utils::Array - Array utilities
+
+=head1 SYNOPSIS
+
+my @no_duplicates = remove_duplicates([1,2,1,1,2,4,6]);
+
+my $no_duplicates2 = [1,2,3,4,5,6,7];
+my ($union, $isect, $diff) union_intersection_difference(\@no_duplicates, $no_duplicates2);
+
+=head1 DESCRIPTION
+
+Provides useful functions to work with arrays, like extracting unique elements
+from a list and determine the union/intersection/difference between two (unique)
+lists.
+
+=head1 AUTHOR
+
+Alessandro Vullo, C<< <avullo at ebi.ac.uk> >>
+
+=head1 BUGS
+
+No known bugs at the moment. Development in progress.
+
 =cut
 
 package Registry::Utils::Arrays;
@@ -33,6 +66,20 @@ $VERSION = 1.00;
 @EXPORT_OK = qw( remove_duplicates union_intersection_difference );
 %EXPORT_TAGS = ();
 
+=head1 METHODS
+
+=head2 remove_duplicates
+
+  Arg [1]     : ArrayRef - reference to a list with duplicates.
+  Example     : my @no_duplicates = remove_duplicates([1,2,1,1,2,4,6]);
+  Description : Remove duplicates from a list
+  Returntype  : A list with the duplicates removed
+  Exceptions  : None
+  Caller      : General
+  Status      : Stable
+
+=cut
+
 #
 # Recipe 4.6 Perl Cookbook
 # Extracting Unique Elements from a List
@@ -48,6 +95,20 @@ sub remove_duplicates {
     my %seen = ();
     return grep { ! $seen{$_} ++ } @$a;
 }
+
+=head2 union_intersection_difference
+
+  Arg [1]     : ArrayRef - list with no duplicates
+  Arg [2]     : ArrayRef - list with no duplicates
+  Example     : my ($union, $isect, $diff) union_intersection_difference([1,2,3,4,5,6], [4,5,6,7];
+  Description : Return the union/intersection/difference between two lists, assume the
+                lists have no duplicates (so they in effect represents sets).
+  Returntype  : (ArrayRef, ArrayRef, ArrayRef) <- (Union, Intersection, Difference)
+  Exceptions  : None
+  Caller      : General
+  Status      : Stable
+
+=cut
 
 #
 # Recipe 4.8 Perl Cookbook

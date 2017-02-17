@@ -14,11 +14,31 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
+=head1 CONTACT
+
+Please email comments or questions to the Trackhub Registry help desk
+at C<< <http://www.trackhubregistry.org/help> >>
+
+Questions may also be sent to the public Trackhub Registry list at
+C<< <https://listserver.ebi.ac.uk/mailman/listinfo/thregistry-announce> >>
+
+=head1 NAME
+
+Registry::Utils::File - File utilities
+
+=head1 SYNOPSIS
+
+
+=head1 DESCRIPTION
+
+Library for location-independent file functions such as compression support.
+Most of the provided functions are borrowed from the Ensembl web team.
+
 =cut
 
 package Registry::Utils::File;
 
-### Library for location-independent file functions such as compression support
+### 
 
 use strict;
 
@@ -29,6 +49,20 @@ use IO::Uncompress::Bunzip2;
 use Exporter qw(import);
 our @EXPORT_OK = qw(slurp_file sanitise_filename get_filename get_extension get_compression uncompress);
 our %EXPORT_TAGS = (all => [@EXPORT_OK]);
+
+=head1 METHODS
+
+=head2 slurp_file
+
+  Arg [1]     : String - the name of the file
+  Example     : my $content = slurp_file('tmp.txt');
+  Description : Load the content of a file into a scalar
+  Returntype  : A string with the file content
+  Exceptions  : None
+  Caller      : General
+  Status      : Stable
+
+=cut
 
 sub slurp_file {
   my $file = shift;
@@ -45,27 +79,58 @@ sub slurp_file {
   return $string;
 }
 
+=head2 sanitise_filename
+
+  Arg [1]     : String - the name of the file
+  Example     : my $better_file_ name = sanitise_filename($file);
+  Description : Users often break the rules for safe, Unix-friendly filenames
+                so clean up input
+  Returntype  : A string with the sanitised file name
+  Exceptions  : None
+  Caller      : General
+  Status      : Stable
+
+=cut
+
 sub sanitise_filename {
-### Users often break the rules for safe, Unix-friendly filenames
-### so clean up input
   my $file_name = shift;
   $file_name =~ s/[^\w\.]/_/g;
   return $file_name;
 }
 
+=head2 get_filename
+
+  Arg [1]     : String - the file path
+  Arg [2]     : String - mode (optional), either 'read' or 'write'
+  Example     : my $filename = get_filename('/home/username/tmp.txt');
+  Description : Get filename parsing it from a path
+  Returntype  : A string containing the name of the file without path
+  Exceptions  : None
+  Caller      : General
+  Status      : Stable
+
+=cut
+
 sub get_filename {
-### Get filename parsing it from a path
-### @param file - filename
-### @param mode (optional) - String, either 'read' or 'write' 
   my ($file, $mode) = @_;
   my @path = split('/', $file);
   return $path[-1];
 }
 
+=head2 get_extension
+
+  Arg [1]     : String - the file name
+  Example     : my $ext = get_extension('/home/username/tmp.txt');
+  Description : Get file extension parsing it from a path. Note that the 
+                returned string does not include any compression extension
+  Returntype  : A string containing the extension of the file
+  Exceptions  : None
+  Caller      : General
+  Status      : Stable
+
+=cut
+
 sub get_extension {
-### Get file extension parsing it from a path
-### Note that the returned string does not include any compression extension
-### @param file - filename - String
   my ($file) = @_;
   my $extension = '';
 
@@ -79,11 +144,20 @@ sub get_extension {
   return $extension;
 }
 
+=head2 get_compression
+
+  Arg [1]     : String - the file name
+  Example     : my $cpr = get_compression('/home/username/tmp.txt.gz');
+  Description : Helper method to check if file is compressed and, if so,
+                what kind of compression appears to have been used.
+  Returntype  : A string containing the compression type of the file
+  Exceptions  : None
+  Caller      : General
+  Status      : Stable
+
+=cut
+
 sub get_compression {
-### Helper method to check if file is compressed and, if so,
-### what kind of compression appears to have been used.
-### @param file - filename - String
-### @return compression type - String
   my ($file) = @_;
   my $compression;
 
@@ -93,13 +167,22 @@ sub get_compression {
   return undef;
 }
 
+=head2 uncompress
+
+  Arg [1]     : ScalarRef - reference to file content
+  Arg [2]     : String - compression type (Optional)
+  Example     : uncompress($file_content_ref);
+  Description : Compression support for remote files, which cannot use the built-in support
+                in Bio::EnsEMBL::Utils::IO. If not passed an explicit compression type, will
+                attempt to work out compression type based on the file content
+  Returntype  : None
+  Exceptions  : None
+  Caller      : General
+  Status      : Stable
+
+=cut
+
 sub uncompress {
-### Compression support for remote files, which cannot use the built-in support
-### in Bio::EnsEMBL::Utils::IO. If not passed an explicit compression type, will
-### attempt to work out compression type based on the file content
-### @param content_ref - reference to file content
-### @param compression (optional) - compression type
-### @return Void
   my ($content_ref, $compression) = @_;
   $compression ||= ''; ## avoid undef, so we don't have to keep checking it exists!
   my $temp;

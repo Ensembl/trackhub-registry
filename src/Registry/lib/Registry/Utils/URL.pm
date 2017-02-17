@@ -14,19 +14,41 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
+=head1 CONTACT
+
+Please email comments or questions to the Trackhub Registry help desk
+at C<< <http://www.trackhubregistry.org/help> >>
+
+Questions may also be sent to the public Trackhub Registry list at
+C<< <https://listserver.ebi.ac.uk/mailman/listinfo/thregistry-announce> >>
+
+=head1 NAME
+
+Registry::Utils::URL - URL utilities
+
+=head1 SYNOPSIS
+
+warn "Cannot reach file" unless file_exists("ftp://ftp.somedomain.org/pub/README");
+my $readme_content = file_read("ftp://ftp.somedomain.org/pub/README");
+
+=head1 DESCRIPTION
+
+Non-OO library for common functions required for handling remote files 
+Note that we have to use two different Perl modules here, owing to 
+limitations on support for FTP and proxied HTTPS
+
+File access methods have two modes: "nice" mode is most suitable for
+web interfaces, and returns a hashref containing either the raw content
+or a user-friendly error message (no exceptions are thrown). "Non-nice" 
+or raw mode returns 0/1 for failure/success or the expected raw data, 
+and optionally throws exceptions.
+
+NOTE: this functions are borrowed from the Ensembl web team code base.
+
 =cut
 
 package Registry::Utils::URL;
 
-### Non-OO library for common functions required for handling remote files 
-### Note that we have to use two different Perl modules here, owing to 
-### limitations on support for FTP and proxied HTTPS
-
-### File access methods have two modes: "nice" mode is most suitable for
-### web interfaces, and returns a hashref containing either the raw content
-### or a user-friendly error message (no exceptions are thrown). "Non-nice" 
-### or raw mode returns 0/1 for failure/success or the expected raw data, 
-### and optionally throws exceptions.
 
 use strict;
 
@@ -46,13 +68,24 @@ our %EXPORT_TAGS = (all     => [@EXPORT_OK]);
 
 use constant 'MAX_HIGHLIGHT_FILESIZE' => 1048576;  # (bytes) = 1Mb
 
+=head1 METHODS
+
+=head2 chase_redirects
+
+  Arg [1]     : String - path to file | EnsEMBL::Web::File object
+  Arg [2]     : HashRef - 
+                         proxy (optional) String
+                         max_follow (optional) Integer - maximum number of redirects to follow
+  Example     : my $url = chase_redirects(""ftp://ftp.somedomain.org/pub/README");
+  Description : Deal with files "hidden" behind a URL-shortening service such as tinyurl
+  Returntype  : url (String) or Hashref containing errors (ArrayRef)
+  Exceptions  : None
+  Caller      : General
+  Status      : Stable
+
+=cut
+
 sub chase_redirects {
-### Deal with files "hidden" behind a URL-shortening service such as tinyurl
-### @param File - EnsEMBL::Web::File object or path to file (String)
-### @param args Hashref
-###                     proxy      (optional) String
-###                     max_follow (optional) Integer - maximum number of redirects to follow
-### @return url (String) or Hashref containing errors (ArrayRef)
   my ($file, $args) = @_;
   my $url = $file;
 
@@ -88,13 +121,29 @@ sub chase_redirects {
   }
 }
 
+=head2 file_exists
+
+  Arg [1]     : File - EnsEMBL::Web::File object or path to file (String)
+  Arg [2]     : HashRef - 
+                         proxy (optional) String
+                         nice (optional) Boolean - see introduction
+                         no_exception (optional) Boolean             
+  Example     : my $exists = file_exists(""ftp://ftp.somedomain.org/pub/README");
+  Description : Check if a file of this name exists
+  Returntype  : Hashref (nice mode) or Boolean 
+  Exceptions  : None
+  Caller      : General
+  Status      : Stable
+
+=cut
+
 sub file_exists {
-### Check if a file of this name exists
-### @param File - EnsEMBL::Web::File object or path to file (String)
+### 
+### @param 
 ### @param Args Hashref 
 ###         proxy      (optional) String
-###         nice (optional) Boolean - see introduction
-###         no_exception (optional) Boolean
+###         
+###         
 ### @return Hashref (nice mode) or Boolean 
   my ($file, $args) = @_;
   my $url = $file;
@@ -139,14 +188,23 @@ sub file_exists {
   }
 }
 
+=head2 read_file
+
+  Arg [1]     : File - EnsEMBL::Web::File object or path to file (String)
+  Arg [2]     : HashRef - 
+                         proxy (optional) String
+                         nice (optional) Boolean - see introduction
+                         compression (optional) String - see introduction
+  Example     : my $content = read_file(""ftp://ftp.somedomain.org/pub/README");
+  Description : Get entire content of file
+  Returntype  : Hashref (in nice mode) or String - contents of file
+  Exceptions  : None
+  Caller      : General
+  Status      : Stable
+
+=cut
+
 sub read_file {
-### Get entire content of file
-### @param File - EnsEMBL::Web::File object or path to file (String)
-### @param Args Hashref 
-###         proxy      (optional) String
-###         nice (optional) Boolean - see introduction
-###         compression String (optional) - compression type
-### @return Hashref (in nice mode) or String - contents of file
   my ($file, $args) = @_;
   my $url = $file;
 
@@ -204,14 +262,23 @@ sub read_file {
   }
 }
 
+=head2 get_headers
+
+  Arg [1]     : url - URL of file
+  Arg [2]     : HashRef - 
+                         header (optional) String - name of header
+                         nice (optional) Boolean - see introduction
+                         compression (optional) String - see introduction
+  Example     : my $headers = get_headers(""ftp://ftp.somedomain.org/pub/README");
+  Description : Get one or all headers from a remote file
+  Returntype  : Hashref containing results (single header or hashref of headers) or errors (ArrayRef)
+  Exceptions  : None
+  Caller      : General
+  Status      : Stable
+
+=cut
+
 sub get_headers {
-### Get one or all headers from a remote file 
-### @param url - URL of file
-### @param Args Hashref 
-###         header (optional) String - name of header
-###         nice (optional) Boolean - see introduction
-###         compression String (optional) - compression type
-### @return Hashref containing results (single header or hashref of headers) or errors (ArrayRef)
   my ($file, $args) = @_;
   my $url = ref($file) ? $file->location : $file;
   my ($all_headers, $result, $error);
@@ -253,13 +320,28 @@ sub get_headers {
   }
 }
 
+=head2 get_filesize
+
+  Arg [1]     : url - URL of file
+  Arg [2]     : HashRef - 
+                         nice (optional) Boolean - see introduction
+                         compression (optional) String - compression type
+  Example     : my $size = get_filesize(""ftp://ftp.somedomain.org/pub/README");
+  Description : Get size of remote file 
+  Returntype  : Hashref containing results (Integer - file size in bytes) or errors (ArrayRef)
+  Exceptions  : None
+  Caller      : General
+  Status      : Stable
+
+=cut
+
 sub get_filesize {
-### Get size of remote file 
+### 
 ### @param url - URL of file
 ### @param Args Hashref 
 ###         nice (optional) Boolean - see introduction
 ###         compression String (optional) - compression type
-### @return Hashref containing results (Integer - file size in bytes) or errors (ArrayRef)
+### @return 
   my ($file, $args) = @_;
   $args->{'header'} = 'Content-Length';
   return get_headers($file, $args);

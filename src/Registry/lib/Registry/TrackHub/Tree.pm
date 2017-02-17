@@ -14,12 +14,37 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
+=head1 CONTACT
+
+Please email comments or questions to the Trackhub Registry help desk
+at C<< <http://www.trackhubregistry.org/help> >>
+
+Questions may also be sent to the public Trackhub Registry list at
+C<< <https://listserver.ebi.ac.uk/mailman/listinfo/thregistry-announce> >>
+
+=head1 NAME
+
+Registry::TrackHub::Tree - Class for the trackDB hierarchy
+
+=head1 SYNOPSIS
+
+my $ctree = Registry::TrackHub::Tree->new({ id => 'root' });
+  $self->_make_configuration_tree($ctree, $tracks);
+
+=head1 DESCRIPTION
+
+A tree class for representing the hierarchy of tracks in a track db file, i.e. a forest in the most generic case
+
+=head1 AUTHOR
+
+Alessandro Vullo, C<< <avullo at ebi.ac.uk> >>
+
+=head1 BUGS
+
+No known bugs at the moment. Development in progress.
+
 =cut
 
-#
-# A tree class for representing the hierarchy of tracks 
-# in a track db file, i.e. a forest in the most generic case
-#
 package Registry::TrackHub::Tree;
 
 use strict;
@@ -40,6 +65,18 @@ sub AUTOLOAD {
 
   return $self->{$attr};
 }
+
+=head2 new
+
+  Arg[1]:     : HashRef - node parameters
+  Example     : my $ctree = Registry::TrackHub::Tree->new({ id => 'root' });
+  Description : Constructor, make a node of the tree
+  Returntype  : Registry::TrackHub::Tree
+  Exceptions  : None
+  Caller      : Registry::TrackHub::Translator
+  Status      : Stable
+
+=cut
 
 sub new {
   my ($class, $args) = @_;
@@ -64,6 +101,19 @@ sub new {
   return $self;
 }
 
+=head2 create_node
+
+  Arg [1]     : String - the id of the node (required)
+  Arg [2]     : HashRef - node data (optional)
+  Example:    : $tree->create_node('nodeid', { 'key' => 'value'} );
+  Description : Create a node of the hierarchy
+  Returntype  : Registry::TrackHub::Tree
+  Exceptions  : None
+  Caller      : Registry::TrackHub::Translator::_make_configuration_tree
+  Status      : Stable
+
+=cut
+
 sub create_node {
   my ($self, $id, $data) = @_;
   defined $id or die "Undefined id";
@@ -82,39 +132,105 @@ sub create_node {
 				       });
 }
 
+=head2 get_node
+
+  Arg [1]     : String - the id of the node (required)
+  Example:    : my $parent = $tree->get_node($node->{'parent'});
+  Description : Create a node in the hierarchy by id
+  Returntype  : Registry::TrackHub::Tree
+  Exceptions  : None
+  Caller      : Registry::TrackHub::Translator::_make_configuration_tree
+  Status      : Stable
+
+=cut
+
 sub get_node {
   my ($self, $id) = @_;
   return $self->{tree_ids}{$id};
 }
 
+=head2 get_all_nodes
+
+Not implemented
+
+=cut
+
 sub get_all_nodes {
 }
 
+=head2 is_leaf
+
+Not used. Returns whether or not the node is a leaf of the tree
+
+=cut
+
 sub is_leaf { return !$_[0]->has_child_nodes; }
+
+=head2 has_child_nodes
+
+Not used. Returns whether the node is a parent of some other nodes
+
+=cut
 
 sub has_child_nodes {
   return scalar @{shift->child_nodes}?1:0;
 }
 
+=head2 first_child
+
+Not used. Returns the first child of the node
+
+=cut
+
 sub first_child {
   return shift->child_nodes->[0] || undef;
 }
+
+=head2 last_child
+
+Not used. Returns whether the last child of the node
+
+=cut
 
 sub last_child {
   return shift->child_nodes->[-1] || undef;
 }
 
+
+=head2 previous
+
+Not used. Returns previous sibling of a child node
+
+=cut
+
 # previous|next_sibling attributes are set when
 # child is appended
 sub previous { return $_[0]->previous_sibling; }
 
+=head2 next
+
+Not used. Returns next sibling of a child node
+
+=cut
+
 sub next { return $_[0]->next_sibling; }
+
+=head2 append
+
+Add a child to the node
+
+=cut
 
 sub append { return $_[0]->append_child($_[1]); }
 
-# Appends a child node (or creates a new child node before appending)
-# @param New node 
-# @return New node if success, undef otherwise
+=head2 append_child
+
+Appends a child node (or creates a new child node before appending).
+@param New node 
+@return New node if success, undef otherwise
+
+=cut
+
 sub append_child {
   my ($self, $child) = @_;
 

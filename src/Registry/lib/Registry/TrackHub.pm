@@ -14,11 +14,46 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
+=head1 CONTACT
+
+Please email comments or questions to the Trackhub Registry help desk
+at C<< <http://www.trackhubregistry.org/help> >>
+
+Questions may also be sent to the public Trackhub Registry list at
+C<< <https://listserver.ebi.ac.uk/mailman/listinfo/thregistry-announce> >>
+
+=head1 NAME
+
+Registry::TrackHub - Represents a top-level track hub container
+
+=head1 SYNOPSIS
+
+  my $th = Registry::TrackHub->new(url => $URL, permissive => 1);
+
+  # print some basic hub info
+  print "Hub name: ", $th->hub;
+  print "Hub email: ", $th->email;
+
+  # the list of assemblies in the hub
+  print @{$th->assemblies}, "\n";
+
+  # get specific assembly information
+  my $genome = $th->get_genome("hg38");
+
+=head1 DESCRIPTION
+
+A class which represents information contained in a UCSC-style track hub.
+
+=head1 AUTHOR
+
+Alessandro Vullo, C<< <avullo at ebi.ac.uk> >>
+
+=head1 BUGS
+
+No known bugs at the moment. Development in progress.
+
 =cut
 
-#
-# A class to represent a top-level track hub container
-#
 package Registry::TrackHub;
 
 use strict;
@@ -30,6 +65,10 @@ use Registry::Utils::URL qw(read_file);
 use Encode qw(decode_utf8 FB_CROAK);
 
 use vars qw($AUTOLOAD);
+
+=head1 METHODS
+
+=cut
 
 sub AUTOLOAD {
   my $self = shift;
@@ -43,6 +82,22 @@ sub AUTOLOAD {
   return $self->{$attr};
 }
 
+=head2 new
+
+  Arg [url]        : string (required)
+                     The hub URL
+  Arg [permissive] : boolean (optional)
+                     Whether or not to validate the hub using hubCheck (UCSC)
+  Example          : my $URL = "ftp://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub";
+                     my $th = Registry::TrackHub->new(url => $URL, permissive => 1);
+  Description      : Build a new TrackHub object 
+  Returntype       : Registry::TrackHub
+  Exceptions       : Throws if required parameters are not specified or if hub at specified URL does not
+                     pass hubCheck validation (when permissive is false)
+  Caller           : general
+  Status           : stable
+
+=cut
 
 sub new {
   my ($class, %args) = @_;
@@ -62,11 +117,36 @@ sub new {
   return $self;
 }
 
+=head2 assemblies
+
+  Arg [1]     : none
+  Example     : print @{$th->assemblies}, "\n";
+  Description : Returns a list of assembly names for which the hub provides data
+  Returntype  : array
+  Exceptions  : none
+  Caller      : general
+  Status      : stable
+
+=cut
+
 sub assemblies {
   my $self = shift;
   
   return keys %{$self->genomes};
 }
+
+=head2 get_genome
+
+  Arg [1]     : string - the name of the assembly as specified in the hub genomes file
+  Example     : my $genome = $th->get_genome("hg38");
+  Description : Returns an object containing information for a genome assembly as
+                specified in the hub genomes file.
+  Returntype  : Registry::TrackHub::Genome
+  Exceptions  : none
+  Caller      : general
+  Status      : stable
+
+=cut
 
 sub get_genome {
   my ($self, $assembly) = @_;

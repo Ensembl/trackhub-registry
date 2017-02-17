@@ -14,12 +14,35 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
+=head1 CONTACT
+
+Please email comments or questions to the Trackhub Registry help desk
+at C<< <http://www.trackhubregistry.org/help> >>
+
+Questions may also be sent to the public Trackhub Registry list at
+C<< <https://listserver.ebi.ac.uk/mailman/listinfo/thregistry-announce> >>
+
+=head1 NAME
+
+Registry::TrackHub::Genome - A class representing genome info in a track hub
+
+=head1 DESCRIPTION
+
+A class to represent genome data which corresponds to a stanza in the UCSC genomes file.
+This is used by Registry::TrackHub internally when parsing various hub files.
+Most of the methods are automatically synthetised and allow to retrieve the attributes
+of a genome as specified in the hub genomesFile, e.g. trackDb.
+
+=head1 AUTHOR
+
+Alessandro Vullo, C<< <avullo at ebi.ac.uk> >>
+
+=head1 BUGS
+
+No known bugs at the moment. Development in progress.
+
 =cut
 
-#
-# A class to represent genome data which corresponds
-# to a stanza in the UCSC genomes file
-#
 package Registry::TrackHub::Genome;
 
 use strict;
@@ -41,6 +64,21 @@ sub AUTOLOAD {
   return $self->{$attr};
 }
 
+=head1 METHODS
+
+=head2 new
+
+  Arg[1]:     : Hash - constructor parameters
+                       assembly - String the assembly name
+  Example     : Registry::TrackHub::Genome->new(assembly => 'hg38')
+  Description : Build a Registry::TrackHub::Genome object
+  Returntype  : Registry::TrackHub::Genome
+  Exceptions  : None
+  Caller      : Registry::TrackHub
+  Status      : Stable
+
+=cut
+
 sub new {
   my ($class, %args) = @_;
   
@@ -49,6 +87,21 @@ sub new {
 
   return $self;
 }
+
+=head2 get_trackdb_content
+
+  Arg[1]:     : None
+  Example     : $genome->get_trackdb_content()
+  Description : Build a Registry::TrackHub::Genome object
+  Returntype  : ArrayRef - a list of strings, each one representing
+                the content of a trackDb file associated with the 
+                genome/assembly
+  Exceptions  : Thrown if the genome object does not have trackDb
+                files associated
+  Caller      : None
+  Status      : Stable
+
+=cut
 
 sub get_trackdb_content {
   my $self = shift;

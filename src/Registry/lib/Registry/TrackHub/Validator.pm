@@ -14,17 +14,48 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
+=head1 CONTACT
+
+Please email comments or questions to the Trackhub Registry help desk
+at C<< <http://www.trackhubregistry.org/help> >>
+
+Questions may also be sent to the public Trackhub Registry list at
+C<< <https://listserver.ebi.ac.uk/mailman/listinfo/thregistry-announce> >>
+
+=head1 NAME
+
+Registry::TrackHub::Validator - Validate trackDB jSON document
+
+=head1 SYNOPSIS
+
+my $validator = Registry::TrackHub::Validator->new(schema => 'path to schema file');
+
+try {
+  $validator->validate($trackdb_json_file);  
+} catch {
+  warn "Could not validate JSON at $trackdb_json_file";
+};
+
+=head1 DESCRIPTION
+
+A class providing a method to validate JSON according to a given schema.
+
+=head1 AUTHOR
+
+Alessandro Vullo, C<< <avullo at ebi.ac.uk> >>
+
+=head1 BUGS
+
+No known bugs at the moment. Development in progress.
+
 =cut
 
-#
-#
 package Registry::TrackHub::Validator;
 
 use strict;
 use warnings;
 
 use Capture::Tiny qw( capture );
-# use Registry::Utils;
 use File::Basename qw();
 
 use vars qw($AUTOLOAD);
@@ -41,6 +72,21 @@ sub AUTOLOAD {
   return $self->{$attr};
 }
 
+=head1 METHODS
+
+=head2 new
+
+  Arg[1]:     : Hash - constructor parameters
+                       schema - String - filename of the JSON schema
+  Example     : Registry::TrackHub::Validator->new(schema => '/path/to/schema/file.json');
+  Description : Build a Registry::TrackHub::Validator object
+  Returntype  : Registry::TrackHub::Validator
+  Exceptions  : Thrown if required parameter is not provided or schema file is not readable
+  Caller      : Registry::Controller::API::Registration
+  Status      : Stable
+
+=cut
+
 sub new {
   my ($class, %args) = @_;
 
@@ -53,6 +99,18 @@ sub new {
 
   return $self;
 }
+
+=head2 validate
+
+  Arg [1]     : String - filename containing JSON to validate
+  Example:    : print "OK" if $validator->validate('/path/to/json/file');
+  Description : Validates the given JSON file according to the given schema
+  Returntype  : Scalar - true value if JSON validates
+  Exceptions  : Thrown if cannot validate or some other error occurs
+  Caller      : Registry::Controller::API::Registration
+  Status      : Stable
+
+=cut
 
 sub validate {
   my ($self, $file) = @_;

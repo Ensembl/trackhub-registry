@@ -14,6 +14,37 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
+=head1 CONTACT
+
+Please email comments or questions to the Trackhub Registry help desk
+at C<< <http://www.trackhubregistry.org/help> >>
+
+Questions may also be sent to the public Trackhub Registry list at
+C<< <https://listserver.ebi.ac.uk/mailman/listinfo/thregistry-announce> >>
+
+=head1 NAME
+
+Registry::TrackHub::Parser - Parse a trackDB file
+
+=head1 SYNOPSIS
+
+my $th = Registry::TrackHub->new(url => $URL);
+my $tracks = Registry::TrackHub::Parser->new(files => $th->get_genome('hg19')->trackDb)->parse;
+
+=head1 DESCRIPTION
+
+A class providing a method for parsing trackDB configuration files. This is usually used
+in conjuction with a Registry::TrackHub object which provides the (relative) path to
+the trackDB configuration file for a given assembly.
+
+=head1 AUTHOR
+
+Alessandro Vullo, C<< <avullo at ebi.ac.uk> >>
+
+=head1 BUGS
+
+Metadata fields are not parsed correctly when the format is a sequence of key/value pairs
+
 =cut
 
 #
@@ -30,6 +61,10 @@ use Registry::Utils::URL qw(read_file);
 
 use vars qw($AUTOLOAD);
 
+=head1 METHODS
+
+=cut
+
 sub AUTOLOAD {
   my $self = shift;
   my $attr = $AUTOLOAD;
@@ -42,6 +77,18 @@ sub AUTOLOAD {
   return $self->{$attr};
 }
 
+=head2 new
+
+  Arg [1]     : Hash - constructor parameters (required)
+                     - files - ArrayRef a list of trackDB configuration files, usually one item
+  Example     : Registry::TrackHub::Parser->new(files => $th->get_genome('hg19')->trackDB);
+  Description : Build a Registry::TrackHub::Parser object
+  Returntype  : Registry::TrackHub::Parser
+  Exceptions  : Thrown if required parameter is not provided
+  Caller      : Registry::TrackHub::Translator
+  Status      : Stable
+
+=cut
 
 sub new {
   my ($class, %args) = @_;
@@ -52,6 +99,19 @@ sub new {
   bless $self, $class;
   return $self;
 }
+
+=head2 parse
+
+  Arg [1]     : None
+  Example:    : my $tracks = $parser->parse();
+  Description : Parse the trackDB configuration file(s) for a particular assembly
+                in a given hub
+  Returntype  : HashRef - contains the hierarchical structure of tracks information
+  Exceptions  : None
+  Caller      : Registry::TrackHub::Translator
+  Status      : Stable
+
+=cut
 
 sub parse {
   my $self = shift;

@@ -199,7 +199,7 @@ SKIP: {
   is($response->code, 400, 'Request unsuccessful 400');
   # the validator raises an exception with the error message, check
   $content = from_json($response->content);
-  like($content->{error}, qr/Failed/, 'Correct error response');
+  like($content->{error}, qr/Unable/, 'Correct error response');
   # update doc1
   $request = PUT('/api/trackdb/1',
   		  'Content-type' => 'application/json',
@@ -298,7 +298,7 @@ SKIP: {
   is($response->code, 400, 'Request unsuccessful 400');
   $content = from_json($response->content);
   # validator raises an exception with error message
-  like($content->{error}, qr/Failed/, 'Correct error response');
+  like($content->{error}, qr/Unable/, 'Correct error response');
   
   # now the index's empty, create the sample docs through the API
   my $docs = $indexer->docs;

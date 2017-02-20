@@ -14,6 +14,30 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
+=head1 CONTACT
+
+Please email comments or questions to the Trackhub Registry help desk
+at C<< <http://www.trackhubregistry.org/help> >>
+
+Questions may also be sent to the public Trackhub Registry list at
+C<< <https://listserver.ebi.ac.uk/mailman/listinfo/thregistry-announce> >>
+
+=head1 NAME
+
+Registry::Controller::Search - 
+
+=head1 DESCRIPTION
+
+
+
+=head1 AUTHOR
+
+Alessandro Vullo, C<< <avullo at ebi.ac.uk> >>
+
+=head1 BUGS
+
+No known bugs at the moment. Development in progress.
+
 =cut
 
 package Registry::Controller::Search;
@@ -32,20 +56,14 @@ use Registry::TrackHub::Translator;
 
 BEGIN { extends 'Catalyst::Controller'; }
 
-=head1 NAME
-
-Registry::Controller::Search - Catalyst Controller
-
-=head1 DESCRIPTION
-
-Catalyst Controller.
 
 =head1 METHODS
 
-=cut
-
-
 =head2 index
+
+Action for the /search URL which takes a query as specified in the home page or the
+header, queries the Elasticsearch back-end and presents (faceted) results back to 
+the user using pagination.
 
 =cut
 
@@ -253,6 +271,14 @@ sub index :Path :Args(0) {
 
 }
 
+=head2 view_trackhub
+
+Action for /search/view_trackhub/:id triggered by the "View Info" button presented
+by each search result. This allow the user to view more detailed information about
+the trackdb with the given :id.
+
+=cut
+
 sub view_trackhub :Path('view_trackhub') Args(1) {
   my ($self, $c, $id) = @_;
   my $trackdb;
@@ -265,6 +291,17 @@ sub view_trackhub :Path('view_trackhub') Args(1) {
 
   $c->stash(trackdb => $trackdb, template  => "search/view.tt");
 }
+
+=head2 advanced_search
+
+Action for /search/advanced_search URL which presents a form where the user can
+refine the search by specifying the value of particular fields, i.e. species,
+assembly and hub name.
+
+NOTE: this is not active at the moment as it can be equivalently performed by
+the user with the faceting system.
+
+=cut
 
 sub advanced_search :Path('advanced') Args(0) {
   my ($self, $c) = @_;
@@ -297,19 +334,6 @@ Attempt to render a view, if needed.
 =cut
 
 sub end : ActionClass('RenderView') {}
-
-=encoding utf8
-
-=head1 AUTHOR
-
-Alessandro,,,
-
-=head1 LICENSE
-
-This library is free software. You can redistribute it and/or modify
-it under the same terms as Perl itself.
-
-=cut
 
 __PACKAGE__->meta->make_immutable;
 

@@ -14,14 +14,40 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
+=head1 CONTACT
+
+Please email comments or questions to the Trackhub Registry help desk
+at C<< <http://www.trackhubregistry.org/help> >>
+
+Questions may also be sent to the public Trackhub Registry list at
+C<< <https://listserver.ebi.ac.uk/mailman/listinfo/thregistry-announce> >>
+
+=head1 NAME
+
+Registry::Controller::User - A Catalyst controller for authenticated user actions
+
+=head1 DESCRIPTION
+
+This is a controller providing actions for various URLs which provide the
+front-end for authenticated users performing some administrative actions,
+e.g. changing profile, list/view/delete trackhubs.
+
+=head1 AUTHOR
+
+Alessandro Vullo, C<< <avullo at ebi.ac.uk> >>
+
+=head1 BUGS
+
+No known bugs at the moment. Development in progress.
+
 =cut
+
 
 package Registry::Controller::User;
 use Moose;
 use namespace::autoclean;
 
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
-# BEGIN { extends 'Catalyst::Controller' }
 
 use Data::Dumper;
 use List::Util 'max';
@@ -30,20 +56,18 @@ use Registry::Form::User::Registration;
 use Registry::Form::User::Profile;
 use Registry::TrackHub::TrackDB;
 
-=head1 NAME
-
-Registry::Controller::User - Catalyst Controller
-
-=head1 DESCRIPTION
-
-Catalyst Controller.
+has 'registration_form' => ( isa => 'Registry::Form::User::Registration', is => 'rw',
+    lazy => 1, default => sub { Registry::Form::User::Registration->new } );
 
 =head1 METHODS
 
-=cut
+=head2 base
 
-has 'registration_form' => ( isa => 'Registry::Form::User::Registration', is => 'rw',
-    lazy => 1, default => sub { Registry::Form::User::Registration->new } );
+This is the action on top of a chain of actions which capture user information
+after he/she has authenticated in the system. It puts the user ID and information
+in the stash which can be used by the following methods in the chain.
+
+=cut
 
 sub base : Chained('/login/required') PathPrefix CaptureArgs(1) {
   my ($self, $c, $username) = @_;
@@ -77,9 +101,13 @@ sub base : Chained('/login/required') PathPrefix CaptureArgs(1) {
 
 }
 
-#
-# Change user profile
-#
+=head2 profile
+
+Action for the /user/:user/profile URL, which presents the form to change 
+the user's profile.
+
+=cut
+
 sub profile : Chained('base') :Path('profile') Args(0) {
   my ($self, $c) = @_;
   
@@ -112,9 +140,13 @@ sub profile : Chained('base') :Path('profile') Args(0) {
   $c->stash(status_msg => 'Profile updated');
 }
 
-#
-# Admin deletes a user
-#
+=head2 delete
+
+Action for the /user/admin/delete/:id URL which allows the admin user to delete
+a user having the specified ID.
+
+=cut
+
 sub delete : Chained('base') Path('delete') Args(1) Does('ACL') RequiresRole('admin') ACLDetachTo('denied') {
   my ($self, $c, $id) = @_;
 
@@ -163,9 +195,13 @@ sub delete : Chained('base') Path('delete') Args(1) Does('ACL') RequiresRole('ad
   $c->res->redirect($c->uri_for($c->controller->action_for('list_providers', [$c->stash->{user}{username}])));
 }
 
-#
-# List all available trackhubs for a given user
-#
+=head2 list_trackhubs
+
+Action for /user/:user/list_trackhubs URL which shows an authenticated user the list
+of trackhubs he/she has submitted to the system.
+
+=cut
+
 sub list_trackhubs : Chained('base') :Path('trackhubs') Args(0) {
   my ($self, $c) = @_;
 
@@ -178,11 +214,26 @@ sub list_trackhubs : Chained('base') :Path('trackhubs') Args(0) {
 	    template  => "user/trackhub/list.tt");
 }
 
+=head2 submit_trackhubs
+
+Action for /user/:user/submit_trackhubs URL which, at the moment, shows an authenticated user
+how he/she might submit/update trackhubs to the system. In the future, we might want to provide
+a form allowing the user to submit/update trackhubs directly from the web.
+
+=cut
+
 sub submit_trackhubs : Chained('base') :Path('submit_trackhubs') Args(0) {
   my ($self, $c) = @_;
 
   $c->stash(template  => "user/trackhub/submit_update.tt");
 }
+
+=head2 view_trackhub_status
+
+Action for /user/:user/view_trackhub_status/:id allowing an authenticated user to view
+the status of a trackdb having the given id in the back end.
+
+=cut
 
 sub view_trackhub_status : Chained('base') :Path('view_trackhub_status') Args(1) {
   my ($self, $c, $id) = @_;
@@ -198,6 +249,17 @@ sub view_trackhub_status : Chained('base') :Path('view_trackhub_status') Args(1)
   $c->stash(trackdb => $trackdb, template  => "user/trackhub/view.tt");
 }
 
+=head2 refresh_trackhub_status
+
+Action for /user/:user/refresh_trackhub_status/:id allowing an authenticated user to
+refresh the status of a trackdb having the given id. This triggers the system to perform
+a check on the availability of the remote files specified in the trackdb.
+
+NOTE: this is not shown on the current front-end as it can take a very long time in case
+the trackdb references a very large number of remote files.
+
+=cut
+
 sub refresh_trackhub_status : Chained('base') :Path('refresh_trackhub_status') Args(1) {
   my ($self, $c, $id) = @_;
 
@@ -211,6 +273,12 @@ sub refresh_trackhub_status : Chained('base') :Path('refresh_trackhub_status') A
   $c->res->redirect($c->uri_for($c->controller->action_for('list_trackhubs', [$c->user->username])));
   $c->detach;
 }
+
+=head2 delete_trackhub
+
+Action for /user/:user/delete_trackhub/:id allowing an authenticated user to delete a trackdb by id.
+
+=cut
 
 sub delete_trackhub : Chained('base') :Path('delete') Args(1) {
   my ($self, $c, $id) = @_;
@@ -240,9 +308,13 @@ sub delete_trackhub : Chained('base') :Path('delete') Args(1) {
   $c->detach;
 }
 
-#
-# Admin lists all available trackhub providers
-#
+=head2 list_providers
+
+Action for /user/admin/list_providers URL used by the administrator to show the list of authenticated
+users who have submitted trackhubs to the system.
+
+=cut
+
 sub list_providers : Chained('base') Path('providers') Args(0) Does('ACL') RequiresRole('admin') ACLDetachTo('denied') {
   my ($self, $c) = @_;
 
@@ -269,6 +341,12 @@ sub list_providers : Chained('base') Path('providers') Args(0) Does('ACL') Requi
 	    template  => "user/list.tt");
 
 }
+
+=head2 register
+
+Action for /user/register URL presenting a form for signing up in the system.
+
+=cut
 
 sub register :Path('register') Args(0) {
   my ($self, $c) = @_;
@@ -355,25 +433,18 @@ sub register :Path('register') Args(0) {
   
 # }
 
+=head2 denied
+
+Redirect to the login page with an error message if a user fails to authenticate.
+
+=cut
+
 sub denied : Private {
   my ($self, $c) = @_;
  
   $c->stash(status_msg => "Access Denied",
 	    template   => "login/login.tt");
 }
-
-=encoding utf8
-
-=head1 AUTHOR
-
-Alessandro,,,
-
-=head1 LICENSE
-
-This library is free software. You can redistribute it and/or modify
-it under the same terms as Perl itself.
-
-=cut
 
 __PACKAGE__->meta->make_immutable;
 

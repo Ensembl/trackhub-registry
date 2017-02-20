@@ -60,8 +60,6 @@ use strict;
 use warnings;
 
 use JSON;
-# use Registry::GenomeAssembly::Schema;
-use Registry;
 use Registry::Utils;
 use IO::Uncompress::Gunzip qw(gunzip $GunzipError);
 use Registry::TrackHub;
@@ -1037,6 +1035,7 @@ sub _add_genome_info {
   #   from_json(Registry::Utils::slurp_file(Registry->config()->{GenomeCollection}{assembly_set_file}));
 
   # gc assembly set file is assumed to be compressed (gzip)
+  use Registry;
   my $buffer;
   my $file = Registry->config()->{GenomeCollection}{assembly_set_file};
   gunzip $file => \$buffer 

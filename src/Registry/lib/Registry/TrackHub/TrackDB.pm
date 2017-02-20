@@ -55,7 +55,8 @@ use strict;
 use warnings;
 
 use POSIX qw(strftime);
-use Registry;
+
+# use Registry;
 use Registry::Model::Search;
 use Registry::Utils;
 use Registry::Utils::URL qw(file_exists);

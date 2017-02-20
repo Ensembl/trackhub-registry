@@ -14,30 +14,72 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
+=head1 CONTACT
+
+Please email comments or questions to the Trackhub Registry help desk
+at C<< <http://www.trackhubregistry.org/help> >>
+
+Questions may also be sent to the public Trackhub Registry list at
+C<< <https://listserver.ebi.ac.uk/mailman/listinfo/thregistry-announce> >>
+
+=head1 NAME
+
+Registry::Model::Search
+
+=head1 SYNOPSIS
+
+my $model = Registry::Model::Search->new();
+
+# Empty search, get all documents
+my $docs = $model->search_trckhubs();
+print scalar @{$docs->{hits}{hits}}?"You've got hits!\n":"No hits.\n";
+
+=head1 DESCRIPTION
+
+Catalyst model Meant to provide conventient methods tailored for trub hubs to support 
+the REST API. It uses the elasticsearch catalyst model API built around the official 
+Search::Elasticsearch. 
+
+These extra functionalities are appropriately put in an app specific model, considering 
+Catalyst::Model::ElasticSearch is meant to be a minimalistic wrapper around the official 
+Search::Elasticsearch API.
+
+=head1 AUTHOR
+
+Alessandro Vullo, C<< <avullo at ebi.ac.uk> >>
+
+=head1 BUGS
+
+next_trackdb_id seems to be working not as reliably as expected, disable its use in
+controller.
+
 =cut
 
 package Registry::Model::Search;
-
-#
-# Meant to provide conventient methods to support the REST API
-# by using the elasticsearch catalyst model API built around the 
-# official Search::Elasticsearch 
-#
-# These extra functionalities are appropriately put in an app specific
-# model, considering Catalyst::Model::ElasticSearch is meant to be a 
-# minimalistic wrapper around the official Search::Elasticsearch API
-#
 
 use Carp;
 use Moose;
 use namespace::autoclean;
 extends 'Catalyst::Model::ElasticSearch';
 
-#
-# Get documents according to a given query
-#
-# Param is query, default: return all docs
-#
+=head1 METHODS
+
+=head2 search_trackhubs
+
+  Arg[1]      : Hash - hash of query parameters
+                  - query - HashRef, the Search::Elasticsearch compatible query parameter
+                  - index - Scalar, elasticsearch index with trackDB JSON docs
+                  - type  - Scalar, the ES type of the trackDB JSON docs
+  Example     : my $docs = $model->search_trackhubs(query = > { match_all = {} });
+  Description : Search over the trackDB docs using a Search::Elasticsearch compatible query arg
+  Returntype  : HashRef - the Search::Elasticsearch compatible result
+  Exceptions  : None
+  Caller      : General
+  Status      : Stable
+
+
+=cut
+
 sub search_trackhubs {
   my ($self, %args) = @_;
 
@@ -58,9 +100,21 @@ sub search_trackhubs {
   return $self->_es->search(%args);
 }
 
-#
-# Count the documents matching a given query
-#
+=head2 count_trackhubs
+
+  Arg[1]      : Hash - hash of query parameters
+                  - query - HashRef, the Search::Elasticsearch compatible query parameter
+                  - index - Scalar, elasticsearch index with trackDB JSON docs
+                  - type  - Scalar, the ES type of the trackDB JSON docs
+  Example     : my $hits = $model->count_trackhubs(query = > { match_all = {} });
+  Description : Count the number of trackDB docs matching a given Search::Elasticsearch compatible query arg
+  Returntype  : Scalar - the hits count
+  Exceptions  : None
+  Caller      : General
+  Status      : Stable
+
+=cut
+
 sub count_trackhubs {
   my ($self, %args) = @_;
 
@@ -81,13 +135,20 @@ sub count_trackhubs {
   return $self->_es->count(%args);
 }
 
-#
-# Return a document given its ID
-#
-# Params: 
-# - id (required) - the ID of the document
-# - orig - get the original document (content+metadata) instead of just its source (content)
-#
+=head2 get_trackhub_by_id
+
+  Arg[1]      : Scalar - ES trackDB doc ID (required)
+  Arg[2]      : Bool - whether to get the original ES document (the original doc with ES decorated metadata) 
+                instead of just the source
+  Example     : my $trackDB = $model->get_trackhub_by_id(1);
+  Description : Get the trackDB doc with the given (ES) id
+  Returntype  : HashRef - a Search::Elasticsearch compatible representation of the ES doc
+  Exceptions  : None
+  Caller      : General
+  Status      : Stable
+
+=cut
+
 sub get_trackhub_by_id {
   my ($self, $id, $orig) = @_;
 
@@ -105,7 +166,19 @@ sub get_trackhub_by_id {
   
 }
 
-# return the next available ID for a new trackdb document to insert
+=head2 next_trackdb_id
+
+  Arg[1]      : None
+  Example     : my $nextid = $model->next_trackdb_id;
+  Description : Return the next available ES ID, to be used when inserting a new trackDB
+                doc created when submitting a hub
+  Returntype  : Scalar - an Elasticsearch ID
+  Exceptions  : None
+  Caller      : Registry::Controller::API::Registration
+  Status      : Stable
+
+=cut
+
 sub next_trackdb_id {
   my ($self) = @_;
 
@@ -148,6 +221,23 @@ sub next_trackdb_id {
 
   return $max_id>0?$max_id+1:1;
 }
+
+=head2 get_trackdbs
+
+  Arg[1]      : Hash - hash of query parameters
+                  - query - HashRef, the Search::Elasticsearch compatible query parameter
+                  - index - Scalar, elasticsearch index with trackDB JSON docs
+                  - type  - Scalar, the ES type of the trackDB JSON docs
+  Example     : my $docs = $model->get_trackdbs();
+  Description : Search over the trackDB docs using a Search::Elasticsearch compatible query arg,
+                should be equivalent to search_trackhubs but implemented with the scan&scroll API,
+                so presumably faster. 
+  Returntype  : HashRef - the Search::Elasticsearch compatible result
+  Exceptions  : None
+  Caller      : Registry::Controller::API::Registration
+  Status      : Stable
+
+=cut
 
 sub get_trackdbs {
   my ($self, %args) = @_;

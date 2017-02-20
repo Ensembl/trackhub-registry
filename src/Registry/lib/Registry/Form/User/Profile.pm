@@ -14,6 +14,31 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
+=head1 CONTACT
+
+Please email comments or questions to the Trackhub Registry help desk
+at C<< <http://www.trackhubregistry.org/help> >>
+
+Questions may also be sent to the public Trackhub Registry list at
+C<< <https://listserver.ebi.ac.uk/mailman/listinfo/thregistry-announce> >>
+
+=head1 NAME
+
+Registry::Form::User::Registration - Form for user profile
+
+=head1 DESCRIPTION
+
+This represents the data of the form presented to the user who wants to update
+his/her profile.
+
+=head1 AUTHOR
+
+Alessandro Vullo, C<< <avullo at ebi.ac.uk> >>
+
+=head1 BUGS
+
+No known bugs at the moment. Development in progress.
+
 =cut
 
 package Registry::Form::User::Profile;
@@ -72,6 +97,14 @@ has_field 'continuous_alert' => (
     input_without_param => 0,
     checkbox_value   => 1
 );
+
+=head1 METHODS
+
+=head2 validate
+
+Executed after the user press submit, checks whether password and password confirmation fields match.
+
+=cut
 
 sub validate {
   my $self = shift;

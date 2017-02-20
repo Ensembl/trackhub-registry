@@ -14,20 +14,41 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
+=head1 CONTACT
+
+Please email comments or questions to the Trackhub Registry help desk
+at C<< <http://www.trackhubregistry.org/help> >>
+
+Questions may also be sent to the public Trackhub Registry list at
+C<< <https://listserver.ebi.ac.uk/mailman/listinfo/thregistry-announce> >>
+
+=head1 NAME
+
+Data::SearchEngine::ElasticSearch - Search::Elasticsearch support for Data::SearchEngine
+
+=head1 SYNOPSIS
+
+=head1 DESCRIPTION
+
+A rewrite of Data::SearchEngine::ElasticSearch to work with the new Search::ElasticSearch, since the 
+original module relies on the deprecated ElasticSearch module.
+
+This module also tries to extend support for the Elasticsearch's query language.
+
+=head1 AUTHOR
+
+Alessandro Vullo, C<< <avullo at ebi.ac.uk> >>
+
+=head1 BUGS
+
+No known bugs at the moment. Development in progress.
+
 =cut
+
 
 package Data::SearchEngine::ElasticSearch;
 
 use Moose;
-
-#
-# ABSTRACT: Search::Elasticsearch support for Data::SearchEngine
-# Adapt Data::SearchEngine::ElasticSearch to work
-# with the new Search::ElasticSearch, since the original module relies
-# on the deprecated ElasticSearch module
-#
-
- 
 use Clone qw(clone);
 use Time::HiRes;
 use Try::Tiny;
@@ -73,6 +94,15 @@ has 'transport' => (
 # 'add', 'present', 'remove', 'remove_by_id', and 'update'
 #
 # this is to update, change according to new interface , e.g. bulk_index not supported
+
+=head1 METHODS
+
+=head2 add
+
+Add items to the index. Arg is of type Data::SearchEngine::Item
+
+=cut
+
 sub add {
   my ($self, $items, $options) = @_;
  
@@ -96,8 +126,12 @@ sub add {
   $self->_es->bulk_index(\@docs);
 }
  
- 
- 
+=head2 present
+
+Returns true if the Data::SearchEngine::Item is present. Uses the item's id.
+
+=cut
+
 sub present {
   my ($self, $item) = @_;
  
@@ -116,12 +150,26 @@ sub present {
  
     return 1;
 }
- 
+
+=head2 remove
+
+Remove the specified item from the index.
+
+WARNING: not implemented
+
+=cut
+
 sub remove {
   die("not implemented");
 }
  
- 
+
+=head2 remove_by_id
+
+Remove the specified item from the index. Uses the item's id.
+
+=cut
+
 sub remove_by_id {
   my ($self, $item) = @_;
  
@@ -133,13 +181,26 @@ sub remove_by_id {
 		     id => $item->id
 		    );
 }
- 
+
+=head2 update
+
+A proxy method for 'add'
+
+=cut
+
 sub update {
   my $self = shift;
  
   $self->add(@_);
 }
  
+=head2 search
+
+Search the index for the items matching the query (Arg1). Arg2 specifies how to combine
+the filters present in the query.
+
+=cut
+
 sub search {
   my ($self, $query, $filter_combine) = @_;
   
@@ -360,7 +421,13 @@ sub _doc_to_item {
 				       values  => $values,
 				      );
 }
- 
+
+=head2 find_by_id
+
+Return the item with the given ID in the index
+
+=cut
+
 sub find_by_id {
   my ($self, $index, $type, $id) = @_;
  

@@ -14,11 +14,32 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
+=head1 CONTACT
+
+Please email comments or questions to the Trackhub Registry help desk
+at C<< <http://www.trackhubregistry.org/help> >>
+
+Questions may also be sent to the public Trackhub Registry list at
+C<< <https://listserver.ebi.ac.uk/mailman/listinfo/thregistry-announce> >>
+
+=head1 NAME
+
+Catalyst::Authentication::Store::ElasticSearch::User
+
+=head1 DESCRIPTION
+
+The backing user class for the Catalyst::Authentication::Store::ElasticSearch storage module.
+
+=head1 AUTHOR
+
+Alessandro Vullo, C<< <avullo at ebi.ac.uk> >>
+
+=head1 BUGS
+
+No known bugs at the moment. Development in progress.
+
 =cut
 
-#
-# The backing user class for the Catalyst::Authentication::Store::ElasticSearch storage module.
-#
 package Catalyst::Authentication::Store::ElasticSearch::User;
 
 use strict;
@@ -45,6 +66,10 @@ has '_user'  => (is => 'rw', isa => 'HashRef', );
 has '_es'    => (is => 'ro'); # , isa => 'Search::Elasticsearch::Client::Direct', );
 has '_index' => (is => 'ro', isa => 'Str', required => 1, );
 has '_type'  => (is => 'ro', isa => 'Str', required => 1, );
+
+=head1 METHODS
+
+=cut
 
 around BUILDARGS => sub {
   my ($orig, $class, $config, $c) = @_;
@@ -115,6 +140,12 @@ sub supported_features {
 	 };
 }
 
+=head2 id
+
+Returns user's ID
+
+=cut
+
 sub id {
   my ($self) = @_;
   return $self->_user->{_id};
@@ -140,6 +171,12 @@ sub get {
   return;
 }
 
+=head2 delete
+
+Deletes field from user data
+
+=cut
+
 sub delete {
   my ($self, $field) = @_;
 
@@ -156,6 +193,12 @@ sub delete {
 
   return;
 }
+
+=head2 get_object
+
+Return representation for user
+
+=cut
 
 sub get_object {
   my ($self, $force) = @_;

@@ -20,8 +20,8 @@ use Data::Dumper;
 
 BEGIN {
   use FindBin qw/$Bin/;
-  use lib "$Bin/../lib";
-  $ENV{CATALYST_CONFIG} = "$Bin/../registry_testing.conf";
+  use lib "$Bin/../../lib";
+  $ENV{CATALYST_CONFIG} = "$Bin/../../registry_testing.conf";
 }
 
 local $SIG{__WARN__} = sub {};
@@ -30,6 +30,10 @@ use JSON;
 use HTTP::Headers;
 use HTTP::Request::Common;
 use LWP::UserAgent;
+
+use Catalyst::Test 'Registry';
+use Registry::Utils; # es_running, slurp_file
+use Registry::Indexer; # index a couple of sample documents
 
 my $ua = LWP::UserAgent->new;
 # my $server = 'http://193.62.54.43:5000';
@@ -61,6 +65,21 @@ my $server = 'http://localhost:3000';
 # print Dumper $results;
 # exit;
 
+my $config = Registry->config()->{'Model::Search'};
+my $indexer = Registry::Indexer->new(dir   => "$Bin/../trackhub-examples/",
+				     trackhub => {
+						  index => $config->{trackhub}{index},
+						  type  => $config->{trackhub}{type},
+						  mapping => 'trackhub_mappings.json'
+						 },
+				     authentication => {
+							index => $config->{user}{index},
+							type  => $config->{user}{type},
+							mapping => 'authentication_mappings.json'
+						       }
+				    );
+$indexer->index_users();
+
 # my ($user, $pass) = ('avullo', 'ALcsK32EX');
 my ($user, $pass) = ('trackhub1', 'trackhub1'); 
 my $request = GET("$server/api/login");
@@ -77,10 +96,10 @@ if ($response->is_success) {
 my $hubs = 
   [
    # Ensembl Plants hubs
-   {
-    url => "ftp://ftp.ensemblgenomes.org/pub/misc_data/Track_Hubs/SRP051670/hub.txt",
-    assemblies => { 'TGACv1' => 'GCA_900067645.1' }
-   },
+   # {
+   #  url => "ftp://ftp.ensemblgenomes.org/pub/misc_data/Track_Hubs/SRP051670/hub.txt",
+   #  assemblies => { 'TGACv1' => 'GCA_900067645.1' }
+   # },
    # },
    # {
    #  url => "ftp://ftp.ensemblgenomes.org/pub/misc_data/.TrackHubs/SRP033371/hub.txt",
@@ -98,35 +117,35 @@ my $hubs =
    # VectorBase hubs
    # Hubs with some potential issues with species names
    # Glossina fuscipes fuscipes (Glossina_fuscipes in VB) 
-   # {
-   #  url => "ftp://ftp.vectorbase.org/public_data/rnaseq_alignments/hubs/glossina_fuscipes/VBRNAseq_group_SRP017755/hub.txt",
-   #  assemblies => { 'GfusI1' => 'GCA_000671735.1' },
-   # },
-   # # Glossina palpalis gambiensis (Glossina_palpalis in VB) 
-   # {
-   #  url => "ftp://ftp.vectorbase.org/public_data/rnaseq_alignments/hubs/glossina_palpalis/VBRNAseq_group_SRP015954/hub.txt",
-   #  assemblies => { 'GpapI1' => 'GCA_000818775.1' },
-   # },
-   # # Anopheles stephensi strain Indian (Anopheles_stephensiI in VB) 
-   # {
-   #  url => "ftp://ftp.vectorbase.org/public_data/rnaseq_alignments/hubs/anopheles_stephensiI/VBRNAseq_group_1252/hub.txt",
-   #  assemblies => { 'AsteI2' => 'GCA_000300775.2' },
-   # },
-   # # control
-   # {
-   #  url => "ftp://ftp.vectorbase.org/public_data/rnaseq_alignments/hubs/anopheles_epiroticus/VBRNAseq_group_SRP043018/hub.txt",
-   #  assemblies => { 'AepiE1' => 'GCA_000349105.1' },
-   # },
+   {
+    url => "ftp://ftp.vectorbase.org/public_data/rnaseq_alignments/hubs/glossina_fuscipes/VBRNAseq_group_SRP017755/hub.txt",
+    assemblies => { 'GfusI1' => 'GCA_000671735.1' },
+   },
+   # Glossina palpalis gambiensis (Glossina_palpalis in VB) 
+   {
+    url => "ftp://ftp.vectorbase.org/public_data/rnaseq_alignments/hubs/glossina_palpalis/VBRNAseq_group_SRP015954/hub.txt",
+    assemblies => { 'GpapI1' => 'GCA_000818775.1' },
+   },
+   # Anopheles stephensi strain Indian (Anopheles_stephensiI in VB) 
+   {
+    url => "ftp://ftp.vectorbase.org/public_data/rnaseq_alignments/hubs/anopheles_stephensiI/VBRNAseq_group_1252/hub.txt",
+    assemblies => { 'AsteI2' => 'GCA_000300775.2' },
+   },
+   # control
+   {
+    url => "ftp://ftp.vectorbase.org/public_data/rnaseq_alignments/hubs/anopheles_epiroticus/VBRNAseq_group_SRP043018/hub.txt",
+    assemblies => { 'AepiE1' => 'GCA_000349105.1' },
+   },
    #
    # test a few others of the newly added VB track hubs (as of 29/11/2016)
-   # {
-   #  url => "ftp://ftp.vectorbase.org/public_data/rnaseq_alignments/hubs/anopheles_coluzzii/VBRNAseq_group_1348/hub.txt",
-   #  assemblies => { 'AcolM1' => 'GCA_000150765.1' },
-   # },
-   # {
-   #  url => "ftp://ftp.vectorbase.org/public_data/rnaseq_alignments/hubs/cimex_lectularius/VBRNAseq_group_1345/hub.txt",
-   #  assemblies => { 'ClecH1' => 'GCA_000300775.2' },
-   # },
+   {
+    url => "ftp://ftp.vectorbase.org/public_data/rnaseq_alignments/hubs/anopheles_coluzzii/VBRNAseq_group_1348/hub.txt",
+    assemblies => { 'AcolM1' => 'GCA_000150765.1' },
+   },
+   {
+    url => "ftp://ftp.vectorbase.org/public_data/rnaseq_alignments/hubs/cimex_lectularius/VBRNAseq_group_1345/hub.txt",
+    assemblies => { 'ClecH1' => 'GCA_000300775.2' },
+   },
   ];
 
 foreach my $hub (@{$hubs}) {

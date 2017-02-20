@@ -14,6 +14,31 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
+=head1 CONTACT
+
+Please email comments or questions to the Trackhub Registry help desk
+at C<< <http://www.trackhubregistry.org/help> >>
+
+Questions may also be sent to the public Trackhub Registry list at
+C<< <https://listserver.ebi.ac.uk/mailman/listinfo/thregistry-announce> >>
+
+=head1 NAME
+
+Registry::Controller::API::Search - endpoints for programmatic search
+
+=head1 DESCRIPTION
+
+This is a controller providing actions implementing endpoints for doing
+programmatic search of track hubs.
+
+=head1 AUTHOR
+
+Alessandro Vullo, C<< <avullo at ebi.ac.uk> >>
+
+=head1 BUGS
+
+No known bugs at the moment. Development in progress.
+
 =cut
 
 package Registry::Controller::API::Search;
@@ -35,20 +60,11 @@ __PACKAGE__->config(
 		    # 	   }
 		   );
 
-=head1 NAME
-
-Registry::Controller::Search::API - Catalyst Controller
-
-=head1 DESCRIPTION
-
-Catalyst Controller.
-
 =head1 METHODS
 
-=cut
-
-
 =head2 search
+
+Action for /api/search endpoint
 
 =cut
 
@@ -67,6 +83,12 @@ sub search :Path('/api/search') Args(0) ActionClass('REST') {
   
   $c->stash( page => $page, entries_per_page => $entries_per_page );
 }
+
+=head2 search_POST
+
+POST method implementation for /api/search endpoint
+
+=cut
 
 sub search_POST {
   my ($self, $c) = @_;
@@ -189,6 +211,12 @@ Support querying by list of BioSample IDs
 
 sub biosample_search :Path('/api/search/biosample') Args(0) ActionClass('REST') { }
 
+=head2 biosample_search_POST
+
+Implement POST method for /api/search/biosample endpoint
+
+=cut
+
 sub biosample_search_POST {
   my ($self, $c) = @_;
 
@@ -255,7 +283,9 @@ sub biosample_search_POST {
 
 =head2 trackdb
 
-/api/search/trackdb/:id - return a trackDB document by ID
+/api/search/trackdb/:id - return a trackDB document by ID.
+This is supposed to be called by an agent to retrieve one of the
+available results after it has performed a search
 
 =cut 
 
@@ -270,8 +300,7 @@ sub trackdb :Local Args(1) ActionClass('REST') {
 
 =head2 trackdb_GET
 
-Return trackhub document content for a document
-with the specified ID
+GET method for /api/search/trackdb/:id endpoint
 
 =cut
 
@@ -288,19 +317,6 @@ sub trackdb_GET {
     $self->status_not_found($c, message => "Could not find trackdb doc (ID: $doc_id)");    
   }
 }
-
-=encoding utf8
-
-=head1 AUTHOR
-
-Alessandro,,,
-
-=head1 LICENSE
-
-This library is free software. You can redistribute it and/or modify
-it under the same terms as Perl itself.
-
-=cut
 
 __PACKAGE__->meta->make_immutable;
 

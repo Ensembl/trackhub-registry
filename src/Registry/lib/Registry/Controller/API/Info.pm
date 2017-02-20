@@ -14,6 +14,31 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
+=head1 CONTACT
+
+Please email comments or questions to the Trackhub Registry help desk
+at C<< <http://www.trackhubregistry.org/help> >>
+
+Questions may also be sent to the public Trackhub Registry list at
+C<< <https://listserver.ebi.ac.uk/mailman/listinfo/thregistry-announce> >>
+
+=head1 NAME
+
+Registry::Controller::API::Info - Endpoints for retrieving service and track hub information
+
+=head1 DESCRIPTION
+
+A controller to provide actions implements endpoints for retrieving information about
+the service and the content of the Registry.
+
+=head1 AUTHOR
+
+Alessandro Vullo, C<< <avullo at ebi.ac.uk> >>
+
+=head1 BUGS
+
+No known bugs at the moment. Development in progress.
+
 =cut
 
 package Registry::Controller::API::Info;
@@ -33,17 +58,7 @@ __PACKAGE__->config(
 		    # 	   }
 		   );
 
-=head1 NAME
-
-Registry::Controller::Info - Catalyst Controller
-
-=head1 DESCRIPTION
-
-Catalyst Controller.
-
 =head1 METHODS
-
-=cut
 
 =head2 version
 
@@ -53,6 +68,12 @@ Action for /api/info/version, returns the version of the API
 
 sub version :Local :Args(0) :ActionClass('REST') { }
 
+=head2 version_GET
+
+GET method for /api/info/version
+
+=cut
+
 sub version_GET {
   my ($self, $c) = @_;
 
@@ -61,11 +82,17 @@ sub version_GET {
 
 =head2 ping
 
-Action for /api/info/ping
+Action for /api/info/ping, check the service is alive
 
 =cut
 
 sub ping :Local Args(0) ActionClass('REST') { }
+
+=head2 ping_GET
+
+GET method for /api/ping endpoint
+
+=cut
 
 sub ping_GET {
   my ($self, $c) = @_;
@@ -96,6 +123,12 @@ sub ping_GET {
 
 sub species :Local :Args(0) ActionClass('REST') {}
 
+=head2 species_GET
+
+GET method for /api/info/species endpoint
+
+=cut
+
 sub species_GET {
   my ($self, $c) = @_;
 
@@ -124,6 +157,12 @@ sub species_GET {
 =cut
 
 sub assemblies :Local :Args(0) ActionClass('REST') { }
+
+=head2 assemblies_GET
+
+GET method for /api/info/assemblies endpoint
+
+=cut
 
 sub assemblies_GET {
   my ($self, $c) = @_;
@@ -190,6 +229,12 @@ Return the number of hubs per assembly, specified as name
 
 sub hubs_per_assembly :Local Args(1) ActionClass('REST') {}
 
+=head2 hubs_per_assembly_GET
+
+GET method for /api/info/hubs_per_assembly endpoint
+
+=cut
+
 sub hubs_per_assembly_GET {
   my ($self, $c, $assembly_name) = @_;
 
@@ -218,6 +263,12 @@ Return the number of tracks per assembly, specified as name
 =cut
 
 sub tracks_per_assembly :Local Args(1) ActionClass('REST') {}
+
+=head2 tracks_per_assembly_GET
+
+GET method for /api/info/tracks_per_assembly endpoint
+
+=cut
 
 sub tracks_per_assembly_GET {
   my ($self, $c, $assembly_name) = @_;
@@ -262,14 +313,20 @@ sub tracks_per_assembly_GET {
 
 =head2 trackhubs
 
-Return the list of available track data hubs.
-Each trackhub is listed with key/value parameters together with
-a list of URIs of the resources which corresponds to the trackDbs
-beloning to the track hub
+Action for /api/info/trackhub.
+
+Return the list of available track data hubs. Each trackhub is listed with key/value parameters together with
+a list of URIs of the resources which corresponds to the trackDbs beloning to the track hub
 
 =cut
 
 sub trackhubs :Local Args(0) ActionClass('REST') { }
+
+=head2 trackhubs_GET
+
+GET method for /api/info/trackhubs endpoint
+
+=cut
 
 sub trackhubs_GET {
   my ($self, $c) = @_;

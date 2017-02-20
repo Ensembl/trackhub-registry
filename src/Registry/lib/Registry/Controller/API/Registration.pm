@@ -14,6 +14,31 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
+=head1 CONTACT
+
+Please email comments or questions to the Trackhub Registry help desk
+at C<< <http://www.trackhubregistry.org/help> >>
+
+Questions may also be sent to the public Trackhub Registry list at
+C<< <https://listserver.ebi.ac.uk/mailman/listinfo/thregistry-announce> >>
+
+=head1 NAME
+
+Registry::Controller::API::Registration - A controller for submitting track hubs to the Registry
+
+=head1 DESCRIPTION
+
+Implements endpoints allowing an authenticated user to submit track hubs to the Registry
+and perform other operations with them, e.g. delete, retrieve information
+
+=head1 AUTHOR
+
+Alessandro Vullo, C<< <avullo at ebi.ac.uk> >>
+
+=head1 BUGS
+
+No known bugs at the moment. Development in progress.
+
 =cut
 
 package Registry::Controller::API::Registration;
@@ -38,19 +63,12 @@ __PACKAGE__->config(
 		    # 	   }
 		   );
 
-=head1 NAME
-
-Registry::Controller::API - Catalyst Controller
-
-=head1 DESCRIPTION
-
-Catalyst Controller.
-
 =head1 METHODS
 
-=cut
-
 =head2 begin
+
+This is executed before any action managed by this controller. It checks whether the user
+has authenticated and is submitting the request with an authorisation token.
 
 =cut
 
@@ -87,6 +105,12 @@ sub begin : Private {
   #   unless $authorized;
 }
 
+=head2 deserialize
+
+Deserialise request.
+
+=cut
+
 sub deserialize : ActionClass('Deserialize') {}
 
 =head2 auto
@@ -120,6 +144,12 @@ Action for /api/trackdb (GET), no arguments
 sub trackdb_list :Path('/api/trackdb') Args(0) ActionClass('REST') { 
   my ($self, $c) = @_;  
 }
+
+=head2 trackdb_list_GET
+
+Implements GET method of /api/trackdb
+
+=cut
 
 sub trackdb_list_GET { 
   my ($self, $c) = @_;
@@ -159,6 +189,12 @@ sub trackdb_create :Path('/api/trackdb/create') Args(0) ActionClass('REST') {
     
   $c->stash( version => $version ); 
 }
+
+=head2 trackdb_create_POST
+
+Implements POST method for /api/trackdb/create
+
+=cut
 
 sub trackdb_create_POST {
   my ($self, $c) = @_;
@@ -246,10 +282,14 @@ sub trackhub :Path('/api/trackhub') Args(0) ActionClass('REST') {
   $c->stash( version => $version, permissive => $permissive ); 
 }
 
-# Return the list of available track data hubs for a given user.
-# Each trackhub is listed with key/value parameters together with
-# a list of URIs of the resources which corresponds to the trackDbs
-# beloning to the track hub
+=head2 trackhub_GET
+
+Return the list of available track data hubs for a given user.
+Each trackhub is listed with key/value parameters together with
+a list of URIs of the resources which corresponds to the trackDbs
+beloning to the track hub
+
+=cut
 
 sub trackhub_GET {
   my ($self, $c) = @_;
@@ -275,6 +315,13 @@ sub trackhub_GET {
 }
 
 # Create/update trackdb documents from a remote public TrackHub (UCSC spec)
+
+=head2 trackhub_POST
+
+Implement POST method for /api/trackhub. This is the action with which a track hub
+is submitted to the Registry.
+
+=cut
 
 sub trackhub_POST {
   my ($self, $c) = @_;
@@ -458,6 +505,12 @@ sub trackhub_by_name :Path('/api/trackhub') Args(1) ActionClass('REST') {
   
 }
 
+=head2 trackhub_by_name_GET
+
+Returns the set of trackDB documents associated to the given track hub.
+
+=cut
+
 sub trackhub_by_name_GET {
   my ($self, $c, $hubid) = @_;
   my $trackdbs = $c->stash->{trackdbs};
@@ -482,6 +535,12 @@ sub trackhub_by_name_GET {
 
   $self->status_ok($c, entity => $trackhub);
 }
+
+=head2 trackhub_by_name_DELETE
+
+Delete the set of trackDB docs associated to the given track hub.
+
+=cut
 
 sub trackhub_by_name_DELETE {
   my ($self, $c, $hubid) = @_;
@@ -510,6 +569,12 @@ sub trackhub_by_name_DELETE {
   $c->model('Search')->indices->refresh(index => $index);
   $self->status_ok($c, entity => { message => "Deleted trackDBs from track hub $hubid" });
 }
+
+=head2 _validate
+
+Validate trackDB JSON document according to a given schema.
+
+=cut
 
 sub _validate: Private {
   my ($self, $c, $doc) = @_;
@@ -560,8 +625,7 @@ sub trackdb :Path('/api/trackdb') Args(1) ActionClass('REST') {
 
 =head2 trackdb_GET
 
-Return trackhub document content for a document
-with the specified ID
+Return trackhub document content for a document with the specified ID
 
 =cut
 
@@ -582,8 +646,7 @@ sub trackdb_GET {
 
 =head2 trackdb_PUT
 
-Update document content for a document
-with the specified ID
+Update document content for a document with the specified ID
 
 =cut
 
@@ -753,8 +816,6 @@ sub status_unauthorized : Private {
 
 =head2 error
 
-
-
 =cut
 
 sub error : Path('/api/error') Args(0) ActionClass('REST') {
@@ -764,11 +825,40 @@ sub error : Path('/api/error') Args(0) ActionClass('REST') {
   $self->status_bad_request( $c, message => $error_msg );
 }
 
+=head2 error_GET
+
+=cut
+
 sub error_GET { }
+
+=head2 error_POST
+
+=cut
+
 sub error_POST { }
+
+=head2 error_PUT
+
+=cut
+
 sub error_PUT { }
+
+=head2 error_DELETE
+
+=cut
+
 sub error_DELETE { }
+
+=head2 error_HEAD
+
+=cut
+
 sub error_HEAD { }
+
+=head2 error_OPTIONS
+
+=cut
+
 sub error_OPTIONS { }
 
 
@@ -778,6 +868,10 @@ sub error_OPTIONS { }
 
 sub logout :Path('/api/logout') Args(0) ActionClass('REST') {
 }
+
+=head2 logout_GET
+
+=cut
 
 sub logout_GET {
   my ($self, $c) = @_;

@@ -168,7 +168,7 @@ SKIP: {
   is($hub->{shortLabel}, 'ZebrafishGenomics', 'Hub shortLabel');
   is(scalar @{$hub->{trackdbs}}, 2, 'Number of trackDbs');
   is($hub->{trackdbs}[0]{species}, 7955, 'trackDb species');
-  is($hub->{trackdbs}[0]{assembly}, 'GCA_000002035.2', 'trackDb assembly');
+  like($hub->{trackdbs}[0]{assembly}, qr/^GCA_000002035.\d$/, 'trackDb assembly');
   like($hub->{trackdbs}[0]{uri}, qr/api\/search\/trackdb/, 'trackDb uri');
 
 }

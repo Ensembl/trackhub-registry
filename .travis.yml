@@ -16,7 +16,7 @@ install:
     - cpanm Search-Elasticsearch-2.03.tar.gz
     - cpanm -n Devel::Cover::Report::Coveralls
     - cpanm --installdeps --with-recommends --notest $PWD/src/Registry
-    - pip install jsonschema
+    - sudo pip install jsonschema
 
 before_script:
     - sleep 10

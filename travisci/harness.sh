@@ -4,6 +4,7 @@ ENSDIR="${ENSDIR:-$PWD}"
 echo $ENSDIR
 
 export PERL5LIB=$ENSDIR/bioperl-live:$ENSDIR/ensembl/modules:$ENSDIR/ensemblgenomes-api/modules:$PWD/src/Registry/lib
+export PYTHONPATH=$ENSDIR:$PYTHONPATH
 
 echo "Running test suite"
 export TEST_POD=1

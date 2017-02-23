@@ -4,7 +4,10 @@ ENSDIR="${ENSDIR:-$PWD}"
 echo $ENSDIR
 
 export PERL5LIB=$ENSDIR/bioperl-live:$ENSDIR/ensembl/modules:$ENSDIR/ensemblgenomes-api/modules:$PWD/src/Registry/lib
-export PYTHONPATH=$ENSDIR:$PYTHONPATH
+export PYTHONPATH=/usr/local/lib/python2.7/dist-packages/:$PYTHONPATH
+
+echo "import jsonschema" > test.py
+python test.py
 
 echo "Running test suite"
 export TEST_POD=1

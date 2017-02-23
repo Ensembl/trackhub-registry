@@ -9,7 +9,7 @@ before_install:
     - git clone -b bioperl-release-1-6-1 --depth 1 https://github.com/bioperl/bioperl-live.git
     - curl -O https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-1.7.3.deb && sudo dpkg -i --force-confnew elasticsearch-1.7.3.deb && sudo service elasticsearch restart
     - curl -O https://cpan.metacpan.org/authors/id/D/DR/DRTECH/Search-Elasticsearch-2.03.tar.gz
-    - curl -O https://pypi.python.org/packages/58/b9/171dbb07e18c6346090a37f03c7e74410a1a56123f847efed59af260a298/jsonschema-2.6.0.tar.gz && tar xvf jsonschema-2.6.0.tar.gz && cd jsonschema-2.6.0 && python setup.py install --home=~
+    - curl -O https://pypi.python.org/packages/58/b9/171dbb07e18c6346090a37f03c7e74410a1a56123f847efed59af260a298/jsonschema-2.6.0.tar.gz && tar xvf jsonschema-2.6.0.tar.gz && cd jsonschema-2.6.0 && python setup.py install --user
 
 install:
     - cpanm -n Module::Install::Catalyst DBD::mysql

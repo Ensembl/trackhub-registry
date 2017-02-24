@@ -120,13 +120,17 @@ sub validate {
   my $cmd = sprintf("$path/../../../../../docs/trackhub-schema/validate.py -s %s -f %s", $self->{schema}, $file);
   # my ($rc, $output) = Registry::Utils::run_cmd($cmd);
   my ($output, $err, $rc) = capture { system( $cmd ); };
+  print "****\n$err\n****\n$rc\n****";
   
   # Handle here the unexpected, the python validation script cannot run,
   # e.g. the schema is badly formatted
   if ($rc) {
     # this is to handle errors of the Python script
     # which cannot decode some UTF characters
-    return 0 if $rc == 256;
+    # WARNING: we get 256 in other circumnstances too, i.e. imported modules are not installed
+    #          so here we assume jsonschema (validate script dependency) is installed and on
+    #          the python module search path
+    return 0 if $rc == 256 and $err !~ /ImportError/s;
 
     die "Command \"$cmd\" failed $!\n" if $rc == -1;
     die "Command \"$cmd\" exited with value $rc\n$output\n";
@@ -141,7 +145,7 @@ sub validate {
   #
   # At the moment, the validation script simply prints the errors,
   # if there's any.
-  if ($output) {
+  if ($output || $err) {
     # the validation script prepend the JSON instance
     # to the error output.
     # remove

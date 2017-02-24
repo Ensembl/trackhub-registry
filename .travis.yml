@@ -13,7 +13,10 @@ before_install:
 
 install:
     - cpanm -n Module::Install::Catalyst DBD::mysql
-    - cpanm --installdeps --notest $PWD/src/Registry
+    - cpanm --installdeps --with-recommends --notest $PWD/src/Registry
+    - cpanm Search-Elasticsearch-2.03.tar.gz
+    - cpanm -n Devel::Cover::Report::Coveralls
+    - cpanm --installdeps --with-recommends --notest $PWD/src/Registry
 
 before_script:
     - sleep 10

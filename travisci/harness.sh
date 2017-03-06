@@ -13,7 +13,7 @@ export CATALYST_DEBUG=0
 cd src/Registry
 rm -rf blib
 t/auth/script/setup.pl # initialisation for testing the authentication module
-prove t/track_hub/validator.t
+prove -vr
 
 rt=$?
 if [ $rt -eq 0 ]; then

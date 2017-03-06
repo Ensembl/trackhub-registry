@@ -120,7 +120,6 @@ sub validate {
   my $cmd = sprintf("$path/../../../../../docs/trackhub-schema/validate.py -s %s -f %s", $self->{schema}, $file);
   # my ($rc, $output) = Registry::Utils::run_cmd($cmd);
   my ($output, $err, $rc) = capture { system( $cmd ); };
-  print "****\n$err\n****\n$rc\n****";
   
   # Handle here the unexpected, the python validation script cannot run,
   # e.g. the schema is badly formatted

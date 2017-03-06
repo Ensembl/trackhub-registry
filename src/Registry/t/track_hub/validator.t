@@ -56,7 +56,7 @@ SKIP: {
   $json_docs = $translator->translate($URL);
 
   # print the translation to file so we can fire the validator
-  my $filename = to_temp_file($json_docs->[0]);
+  my $filename = to_temp_file($json_docs->[0], 'bpcorrectXXXXX');
   ok($validator->validate($filename), "Validate correct document");
 
   # test manipulating JSON doc to make it not valid
@@ -65,8 +65,8 @@ SKIP: {
   foreach (@required) {
     my $doc = from_json($json_docs->[0]);
     delete $doc->{$_};
-    my $filename = to_temp_file(to_json($doc, { utf8 => 1, pretty => 1 }));
-    throws_ok { $validator->validate($filename) } qr/Failed/, "Validation throws if required element missing ($_)";
+    my $filename = to_temp_file(to_json($doc, { utf8 => 1, pretty => 1 }), 'bpcorruptXXXXX');
+    throws_ok { $validator->validate($filename) } qr/.+?/, "Validation throws if required element missing ($_)";
   }
 
   # test validation of other aspects with other public hubs
@@ -114,9 +114,9 @@ SKIP: {
 }
 
 sub to_temp_file {
-  my $content = shift;
+  my ($content, $template) = @_;
 
-  my ($fh, $filename) = tempfile( DIR => '.', SUFFIX => '.json', UNLINK => 1);
+  my ($fh, $filename) = tempfile( $template, DIR => '.', SUFFIX => '.json', UNLINK => 1);
   print $fh $content;
   close $fh;
 

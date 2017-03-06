@@ -310,21 +310,13 @@ sub _collect_track_info {
 
     if (ref $hash->{$track} eq 'HASH') {
       foreach my $attr (keys %{$hash->{$track}}) {
-	next unless $attr =~ /bigdataurl/i or $attr eq 'members';
-	if ($attr eq 'members') {
-	  $self->_collect_track_info($hash->{$track}{$attr}, $status, $file_type) if ref $hash->{$track}{$attr} eq 'HASH';
-	} else {
+	next unless $attr eq 'members' or $attr eq 'type';
+	if ($attr eq 'type' and exists $hash->{$track}{bigDataUrl}) {
+	  $file_type->{$hash->{$track}{type}}++ if $hash->{$track}{type};
 	  ++$status->{tracks}{with_data}{total};
-
-	  # determine type
-	  my $url = $hash->{$track}{$attr};
-	  my @path = split(/\./, $url);
-	  my $index = -1;
-	  # # handle compressed formats
-	  # $index = -2 if $path[-1] eq 'gz';
-	  $file_type->{$format_lookup{$path[$index]}}++;
-	}
-
+	} else {
+	  $self->_collect_track_info($hash->{$track}{$attr}, $status, $file_type) if ref $hash->{$track}{$attr} eq 'HASH';
+	} 
       }
     }
   } 

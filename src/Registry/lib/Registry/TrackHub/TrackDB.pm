@@ -447,7 +447,10 @@ sub update_status {
 		   total_ko => 0
 		  }
     };
+  $doc->{file_type} = {};
+  
   $self->_collect_track_info($doc->{configuration});
+
   $doc->{status}{message} = 
     $doc->{status}{tracks}{with_data}{total_ko}?'Remote Data Unavailable':'All is Well';
   $doc->{status}{last_update} = time;
@@ -469,28 +472,21 @@ sub _collect_track_info {
 
     if (ref $hash->{$track} eq 'HASH') {
       foreach my $attr (keys %{$hash->{$track}}) {
-	next unless $attr =~ /bigdataurl/i or $attr eq 'members';
-	if ($attr eq 'members') {
-	  $self->_collect_track_info($hash->{$track}{$attr}) if ref $hash->{$track}{$attr} eq 'HASH';
-	} else {
+	next unless $attr eq 'members' or $attr eq 'type';
+	if ($attr eq 'type' and exists $hash->{$track}{bigDataUrl}) {
+	  $self->{_doc}{file_type}{$hash->{$track}{type}}++ if $hash->{$track}{type};
 	  ++$self->{_doc}{status}{tracks}{with_data}{total};
 
-	  my $url = $hash->{$track}{$attr};
+	  my $url = $hash->{$track}{bigDataUrl};
 	  my $response = file_exists($url, { nice => 1 });
 	  if ($response->{error}) {
 	    $self->{_doc}{status}{tracks}{with_data}{total_ko}++;
 	    $self->{_doc}{status}{tracks}{with_data}{ko}{$track} = 
 	      [ $url, $response->{error}[0] ];
 	  }
-
-	  # determine type
-	  my @path = split(/\./, $url);
-	  my $index = -1;
-	  # # handle compressed formats
-	  # $index = -2 if $path[-1] eq 'gz';
-	  $self->{_doc}{file_type}{$format_lookup{$path[$index]}}++;
-	}
-
+	} else {
+	  $self->_collect_track_info($hash->{$track}{$attr}) if ref $hash->{$track}{$attr} eq 'HASH';
+	} 
       }
     }
   }

@@ -398,6 +398,7 @@ sub trackhub_POST {
   $registered_trackdbs = $c->model('Search')->search_trackhubs(query => $query, size => 1000);
   my $updated = 0;
   my $created;
+  my @deleted_docs;
   if ($registered_trackdbs->{hits}{total}) {
     $c->log->info("TrackHub already registered. Deleting existing trackDBs");
     foreach my $doc (@{$registered_trackdbs->{hits}{hits}}) {
@@ -406,6 +407,7 @@ sub trackhub_POST {
 				  type    => $config->{trackhub}{type},
 				  id      => $doc->{_id});
       $c->log->info(sprintf "Deleted trackDb [%s]", $doc->{_id});
+      push @deleted_docs, $doc;
     }
     $c->model('Search')->indices->refresh(index => $config->{trackhub}{index});
     $updated = 1;
@@ -462,6 +464,25 @@ sub trackhub_POST {
     #       all expect the trackhub doc to be loaded in the stash
     # map { $c->forward("trackdb_DELETE", $id) } @indexed;
 
+    # 
+    # When submitter resubmit a hub, the API first deletes the existing track dbs and then
+    # parse/translate/resubmit the hub again. Problems occur when resubmission generates an
+    # error, e.g. a wrong assembly specified. In these cases, the hub is deleted from the
+    # registry while the correct result should be the hub remains untouched.
+    #
+    # Resubmit the original deleted documents
+    if (@deleted_docs) {
+      $c->log->info("An error occurred while resubmitting the hub. Roll-back to previous content.");
+      foreach my $doc (@deleted_docs) {
+	$c->log->info(sprintf "Reindexing doc %s", $doc->{_id});
+	$c->model('Search')->index(index   => $config->{trackhub}{index},
+				   type    => $config->{trackhub}{type},
+				   id      => $doc->{_id},
+				   body    => $doc->{_source});
+      }
+      $c->model('Search')->indices->refresh(index => $config->{trackhub}{index});
+    }
+    
     $c->go('ReturnError', 'custom', [qq{$_}]);
   };
 

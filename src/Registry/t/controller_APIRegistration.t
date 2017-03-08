@@ -29,6 +29,7 @@ use JSON;
 use HTTP::Headers;
 use HTTP::Request::Common qw/GET POST PUT DELETE/;
 
+use Test::WWW::Mechanize::Catalyst;
 use Catalyst::Test 'Registry';
 
 use Registry::Utils; # es_running, slurp_file
@@ -36,7 +37,7 @@ use Registry::Indexer; # index a couple of sample documents
 
 SKIP: {
   skip "Launch an elasticsearch instance for the tests to run fully",
-    273 unless &Registry::Utils::es_running();
+    213 unless &Registry::Utils::es_running();
 
   # index test data
   note 'Preparing data for test (indexing sample documents)';
@@ -468,6 +469,29 @@ SKIP: {
   $content = from_json($response->content);
   ok($content, "Docs updated");
   #
+  # [ENSCORESW-1713]. Resubmission can fail, in this case we want to
+  # re-establish the previous hub content, since it's first deleted.
+  $request = POST('/api/trackhub?version=v1.0&permissive=1',
+  		  'Content-type' => 'application/json',
+  		  'Content'      => to_json({ url => $URL,
+					      assemblies => { araTha1 => 'dummy'} }));
+  $request->headers->header(user       => 'trackhub1');
+  $request->headers->header(auth_token => $auth_token);
+  ok($response = request($request), 'Resubmit with wrong POST request to /api/trackhub (Plants Hub)');
+  is($response->code, 400, 'Request unsuccessful');
+  like(from_json($response->content)->{error}, qr/does not comply/i, 'Correct error response');
+  my $mech = Test::WWW::Mechanize::Catalyst->new(catalyst_app => 'Registry');
+  $mech->get_ok('/', 'Requested main page');
+  $mech->submit_form_ok({
+  			 form_number => 1,
+  			 fields      => {
+  					 q => 'hub.shortLabel:plants'
+  					},
+  			}, 'Submit search query for plants hub'
+  		       );
+  $mech->content_like(qr/Track Collections 1 to 3 of 3/, 'Got original Plants trackDBs');
+  #
+  #
   # Submission of the same hub by another user should fail
   #
   $request = GET('/api/login');
@@ -499,7 +523,7 @@ SKIP: {
 					    }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
-  ok($response = request($request), 'POST request to /api/trackhub (Plants Hub)');
+  ok($response = request($request), 'POST request to /api/trackhub (Plants Hub) with assembly map');
   ok($response->is_success, 'Request successful 2xx');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);

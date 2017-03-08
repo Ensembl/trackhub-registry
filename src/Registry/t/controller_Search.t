@@ -29,16 +29,15 @@ use HTTP::Headers;
 use HTTP::Request::Common qw/GET POST PUT DELETE/;
 use LWP::Simple qw($ua head);
 
+use Test::WWW::Mechanize::Catalyst;
 use Catalyst::Test 'Registry';
 
 use Registry::Utils;
 use Registry::Indexer;
 
-# ok( request('/search')->is_success, 'Request should succeed' );
-
 SKIP: {
   skip "Cannot run tests: either elasticsearch is not running or there's no internet connection",
-    47 unless &Registry::Utils::es_running() and Registry::Utils::internet_connection_ok();
+    5 unless &Registry::Utils::es_running() and Registry::Utils::internet_connection_ok();
 
   note 'Preparing data for test (indexing users)';
   my $config = Registry->config()->{'Model::Search'};
@@ -111,22 +110,35 @@ SKIP: {
 		    );
 
   $ua->timeout(10);
-  foreach my $hub (keys %public_hubs) {
-    note "Submitting hub $hub";
-    if (head($public_hubs{$hub})) {
-      my $request = POST('/api/trackhub?permissive=1',
-		         'Content-type' => 'application/json',
-		         'Content'      => to_json({ url => $public_hubs{$hub} }));
-      $request->headers->header(user       => 'trackhub1');
-      $request->headers->header(auth_token => $auth_token);
-      ok($response = request($request), 'POST request to /api/trackhub/create');
-      ok($response->is_success, 'Request successful 2xx');
-      is($response->content_type, 'application/json', 'JSON content type');
-    }else{
-       note "Submitting hub $hub timed out. Please check the url $public_hubs{$hub})\n";
-    }
-  }
-		     
+  # foreach my $hub (keys %public_hubs) {
+  #   note "Submitting hub $hub";
+  #   if (head($public_hubs{$hub})) {
+  #     my $request = POST('/api/trackhub?permissive=1',
+  # 		         'Content-type' => 'application/json',
+  # 		         'Content'      => to_json({ url => $public_hubs{$hub} }));
+  #     $request->headers->header(user       => 'trackhub1');
+  #     $request->headers->header(auth_token => $auth_token);
+  #     ok($response = request($request), 'POST request to /api/trackhub/create');
+  #     ok($response->is_success, 'Request successful 2xx');
+  #     is($response->content_type, 'application/json', 'JSON content type');
+  #   }else{
+  #      note "Submitting hub $hub timed out. Please check the url $public_hubs{$hub})\n";
+  #   }
+  # }
+
+  # [ENSCORESW-2121]
+  # check unexpected characters in query are appropriately handled
+  my $mech = Test::WWW::Mechanize::Catalyst->new(catalyst_app => 'Registry');
+  $mech->get_ok('/', 'Requested main page');
+  $mech->submit_form_ok({
+  			 form_number => 1,
+  			 fields      => {
+  					 q => '/'
+  					},
+  			}, 'Submit wrong character as search query'
+  		       );
+  $mech->content_like(qr/An unexpected error happened.*?No results/s, 'Query parsing failed');
+
 }
 
 done_testing();

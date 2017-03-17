@@ -92,6 +92,7 @@ recommends 'Plack::Middleware::Static';
 recommends 'CHI::Driver::Memcached';
 recommends 'Term::Size::Any';
 recommends 'WWW::Mechanize';
+recommends 'Proc::ProcessTable';
 
 test_requires 'Test::More' => '0.88';
 catalyst;

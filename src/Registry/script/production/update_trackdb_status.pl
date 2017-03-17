@@ -25,6 +25,7 @@ BEGIN {
 
 use Registry;
 
+use Proc::ProcessTable; # to detect whether the load_public_hubs script's running
 use Try::Tiny;
 use Log::Log4perl qw(get_logger :levels);
 use Getopt::Long;
@@ -95,6 +96,16 @@ log4perl.appender.File.layout.ConversionPattern=%d %p> %F{1}:%L - %m%n
 LOGCONF
 
 Log::Log4perl->init(\$log_conf);
+
+# we've seen duplicates of the automatically managed public hubs are created
+# if this script and the load_public_hub.pl are running simultaneously.
+# detect if the latter is running and if so suspend execution
+my $process_table = Proc::ProcessTable->new->table;
+my $is_load_public_hubs_running = grep { $_->{cmndline} =~ /load_public_hubs/ } @{$process_table};
+if ($is_load_public_hubs_running) {
+  $logger->info("Abort operations as conflicting process is running (load_public_hubs.pl");
+  exit;
+}
 
 $logger->info("Reading configuration file $conf_file");
 my %config;

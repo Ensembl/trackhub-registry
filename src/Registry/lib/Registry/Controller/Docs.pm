@@ -188,7 +188,7 @@ Action for the /docs/api/registration/workflow/thdelete URL
 
 =cut
 
-sub api_registration_workflow_thdelete :Path('/docs/api') { }
+sub api_registration_workflow_thdelete :Path('/docs/api/registration/workflow/thdelete') { }
 
 =head2 api_registration_workflow_logout
 

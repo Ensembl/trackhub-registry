@@ -182,6 +182,9 @@
 		      [% IF urls.ensembl %]
                       <li><a target="_blank" href="[% urls.ensembl %]">Ensembl</a></li>
 		      [% END %]
+		      [% IF urls.biodalliance %]
+                      <li><a target="_blank" href="[% urls.biodalliance %]">Embedded View (Biodalliance)</a></li>
+		      [% END %]
 		      [% IF urls.vectorbase %]
                       <li><a target="_blank" href="[% urls.vectorbase %]">VectorBase</a></li>
 		      [% END %]
@@ -229,6 +232,9 @@
                     <ul class="dropdown-menu" role="menu">
 		      [% IF urls.ensembl %]
                       <li><a target="_blank" href="[% urls.ensembl %]">Ensembl</a></li>
+		      [% END %]
+		      [% IF urls.biodalliance %]
+                      <li><a target="_blank" href="[% urls.biodalliance %]">Embedded View (Biodalliance)</a></li>
 		      [% END %]
 		      [% IF urls.vectorbase %]
                       <li><a target="_blank" href="[% urls.vectorbase %]">VectorBase</a></li>

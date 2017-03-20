@@ -1094,11 +1094,22 @@ sub _add_genome_browser_links {
       sprintf "http://genome.ucsc.edu/cgi-bin/hgHubConnect?db=%s&hubUrl=%s&hgHub_do_redirect=on&hgHubConnect.remakeTrackHub=on", $assemblysyn, $hub->{url};
   }
 
+  return if $is_assembly_hub; # Ensembl/Biodalliance(?!) do not support assembly hubs
+
+  #
+  # Biodalliance embeddable browser link
+  #
+  # NOTE: support for only human assemblies, i.e. those for which we can
+  # fetch 2bit assembly data from the biodalliance server
+  #
+  if ($assemblysyn =~ /hg19|hg38|mm10/ and $hub->{url} !~ /^ftp/) {
+    $doc->{hub}{browser_links}{biodalliance} =
+      sprintf "/biodalliance/view?assembly=%s&name=%s&url=%s", $assemblysyn, $hub->{shortLabel}, $hub->{url};
+  }
+  
   #
   # EnsEMBL browser link
   #
-  return if $is_assembly_hub; # Ensembl does not support assembly hubs at the moment
-
   my ($domain, $species) = 
     ('http://### DIVISION ###.ensembl.org', $doc->{species}{scientific_name});
   defined $species or die "Couldn't get species to build Ensembl URL";

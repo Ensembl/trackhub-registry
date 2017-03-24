@@ -28,8 +28,6 @@ Registry::Controller::Search -
 
 =head1 DESCRIPTION
 
-
-
 =head1 AUTHOR
 
 Alessandro Vullo, C<< <avullo at ebi.ac.uk> >>

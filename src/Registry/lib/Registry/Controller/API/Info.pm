@@ -350,3 +350,12 @@ sub trackhubs_GET {
   my @trackhubs = values %{$trackhubs};
   $self->status_ok($c, entity => \@trackhubs);
 }
+
+sub summary_stats :Local Args(0) ActionClass('REST') { }
+
+sub summary_stats_GET {
+  my ($self, $c) = @_;
+
+  my $summary = $c->model('Stats')->fetch();
+  $self->status_ok($c, entity => $summary );
+}

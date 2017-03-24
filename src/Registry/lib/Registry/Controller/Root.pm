@@ -145,6 +145,12 @@ sub submit :Path('/submit_trackhubs') {
   my ($self, $c) = @_;
 }
 
+sub stats_test :Path('stats') {
+  my ($sefl, $c) = @_;
+
+  # $c->stash();
+}
+
 # =head2 search
 
 # Perform a search

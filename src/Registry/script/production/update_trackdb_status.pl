@@ -435,6 +435,26 @@ sub check_user_tracks {
       return;
     };
    
+    # if problem, it might be a temporary one, retry a few times before reporting the fault
+    if ($status->{tracks}{with_data}{total_ko}) {
+      $logger->info("There are faulty tracks, retrying in case of temporary problem");
+      for (1 .. 5) {
+	$logger->info("Retrying ($_)");
+	try {
+	  $status = $trackdb->update_status();
+	  $logger->info("Previously detected faulty tracks seem to be ok now, abort retrying") and last
+	    unless $status->{tracks}{with_data}{total_ko};
+	} catch {
+	  $logger->error("Could not update status for trackDB [$id]:\n$_");
+
+	  $message_body_problem .= 
+	    sprintf "Problem updating status for trackDB [%s] (hub: %s, assembly: %s)\n$@\n\n", 
+	    $id, $hub, $assembly;
+	  return;
+	};
+      }
+    }
+    
     # if problem add trackdb to user report
     if ($status->{tracks}{with_data}{total_ko}) {
       $logger->info("There are faulty tracks, updating report.");

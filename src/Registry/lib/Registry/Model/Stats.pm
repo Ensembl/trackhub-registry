@@ -53,11 +53,12 @@ use Registry::Utils::File qw(slurp_file);
 
 extends 'Catalyst::Model';
 
-has json => (
-	     isa => 'HashRef',
+has summary_json => (
+	     isa => 'ArrayRef',
+	     # isa => 'HashRef',	     
 	     is => 'rw',
 	     lazy => 1,
-	     builder  => '_build_json',
+	     builder  => '_build_summary_json',
 	     # default => sub { {} }
 	    );
 
@@ -67,19 +68,19 @@ has json => (
 
 =cut
 
-sub fetch {
+sub fetch_summary {
   my $self = shift;
 
-  return $self->json;
+  return $self->summary_json;
 }
 
-=head2 _build_json 
+=head2 _build_summary_json 
 
 =cut
 
-sub _build_json {
+sub _build_summary_json {
   my $self = shift;
-  my $source_file = Registry->config()->{'Model::Stats'}{file};
+  my $source_file = Registry->config()->{'Model::Stats'}{summary};
   return from_json(slurp_file($source_file));
 }
 
@@ -92,4 +93,5 @@ sub _build_json {
 # }
 
 __PACKAGE__->meta->make_immutable;
+
 1;

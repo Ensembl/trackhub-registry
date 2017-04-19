@@ -1,3 +1,42 @@
+<!--Load the AJAX API-->
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<!--<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script> -->
+<script type="text/javascript">
+    
+  // Load the Visualization API and the columnchart package.
+  google.charts.load('current', {'packages':['corechart']});
+      
+  // Set a callback to run when the Google Visualization API is loaded.
+  google.charts.setOnLoadCallback(drawChart);
+      
+  function drawChart() {
+    var jsonData = $.ajax({
+        url: "/api/stats/summary_stats",
+        dataType: "string",
+        async: false
+        }).responseText;
+
+    console.log(jsonData);
+    
+    // Create our data table out of JSON data loaded from server.
+    // var data = new google.visualization.DataTable(jsonData);
+    var data = google.visualization.arrayToDataTable(JSON.parse(jsonData));
+    var options = {
+    	width: 250,
+    	height: 150,
+    	legend: { position: "none" },
+    	chartArea: { left: 20 },
+    	//hAxis: { slantedText: true, slantedTextAngle: 30 },
+    	backgroundColor: '#fafafa'
+    };
+    
+    // Instantiate and draw our chart, passing in some options.
+    var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+    chart.draw(data, options);
+  }
+
+</script>
+
 <div class="jumbotron background-color-primary-accent">
   <div class="container content">
     <div>
@@ -22,7 +61,7 @@
 
 <section id="">
 <div class="row" style="text-align: justify; text-justify: inter-word;">
-  <div class="col-sm-6">
+  <div class="col-sm-5">
     <div class="box-progetto">
       <h2><span class="glyphicon glyphicon-upload"></span> Submit Data</h2>
 
@@ -34,7 +73,7 @@
       <a href="[% c.uri_for('/docs/management/overview') %]" class="btn btn-primary">How to Submit</a>
     </div>
   </div><!-- /.col-sm-6 -->
-  <div class="col-sm-6">
+  <div class="col-sm-5">
     <div class="box-progetto">
       <h2><span class="glyphicon glyphicon-search"></span> Access Data</h2>
 
@@ -46,6 +85,12 @@
       <!-- <a href="[% c.uri_for('/search/advanced') %]" class="btn btn-primary">Advanced track search</a> -->
       <a href="[% c.uri_for('/docs/search/advanced') %]" class="btn btn-primary">Help on Advanced Search</a>
     </div>
+  </div><!-- /.col-sm-6 -->
+  <div class="col-sm-2">
+    <div class="box-progetto">
+      <h2><span class="glyphicon glyphicon-stats"></span> Stats</h2>
+      <div id="chart_div"></div>
+      <a href="[% c.uri_for('') %]" class="btn btn-primary">More</a>
   </div><!-- /.col-sm-6 -->
 </div>
 </section>

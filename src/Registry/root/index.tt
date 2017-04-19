@@ -11,7 +11,7 @@
       
   function drawChart() {
     var jsonData = $.ajax({
-        url: "/api/stats/summary_stats",
+        url: "/api/stats/summary",
         dataType: "string",
         async: false
         }).responseText;

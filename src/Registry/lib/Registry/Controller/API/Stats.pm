@@ -135,7 +135,7 @@ GET method for /api/stats/summary endpoint.
 
 =cut
 
-sub summary_stats_GET {
+sub summary_GET {
   my ($self, $c) = @_;
 
   my $summary = $c->model('Stats')->fetch_summary();

@@ -22,8 +22,8 @@
     // var data = new google.visualization.DataTable(jsonData);
     var data = google.visualization.arrayToDataTable(JSON.parse(jsonData));
     var options = {
-    	width: 250,
-    	height: 150,
+    	width: 450,
+    	height: 200,
     	legend: { position: "none" },
     	chartArea: { left: 20 },
     	//hAxis: { slantedText: true, slantedTextAngle: 30 },
@@ -61,7 +61,7 @@
 
 <section id="">
 <div class="row" style="text-align: justify; text-justify: inter-word;">
-  <div class="col-sm-5">
+  <div class="col-sm-4">
     <div class="box-progetto">
       <h2><span class="glyphicon glyphicon-upload"></span> Submit Data</h2>
 
@@ -73,7 +73,7 @@
       <a href="[% c.uri_for('/docs/management/overview') %]" class="btn btn-primary">How to Submit</a>
     </div>
   </div><!-- /.col-sm-6 -->
-  <div class="col-sm-5">
+  <div class="col-sm-4">
     <div class="box-progetto">
       <h2><span class="glyphicon glyphicon-search"></span> Access Data</h2>
 
@@ -86,11 +86,12 @@
       <a href="[% c.uri_for('/docs/search/advanced') %]" class="btn btn-primary">Help on Advanced Search</a>
     </div>
   </div><!-- /.col-sm-6 -->
-  <div class="col-sm-2">
+  <div class="col-sm-4">
     <div class="box-progetto">
       <h2><span class="glyphicon glyphicon-stats"></span> Stats</h2>
+      <p>A brief summary of the data content, hovers over the column to view the exact numbers.</p>
       <div id="chart_div"></div>
-      <a href="[% c.uri_for('') %]" class="btn btn-primary">More</a>
+      <!-- <a href="[% c.uri_for('') %]" class="btn btn-primary">More</a> -->
   </div><!-- /.col-sm-6 -->
 </div>
 </section>

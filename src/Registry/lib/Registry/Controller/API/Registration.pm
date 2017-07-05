@@ -216,7 +216,7 @@ sub trackdb_create_POST {
   try {
     # validate the doc
     # NOTE: the doc is not indexed if it does not validate (i.e. raises an exception)
-    $c->forward('_validate', [ to_json($new_doc_data) ]);
+    $self->_validate($c, to_json($new_doc_data));
 
     # prevent submission of duplicate content, i.e. trackdb
     # with the same hub/assembly
@@ -434,7 +434,7 @@ sub trackhub_POST {
 
       # validate the doc
       # NOTE: the doc is not indexed if it does not validate (i.e. raises an exception)
-      $c->forward('_validate', [ $json_doc ]);
+      $self->_validate($c, $json_doc);
 
       # set the owner of the doc as the current user
       $doc->{owner} = $c->stash->{user};
@@ -604,7 +604,7 @@ sub _validate: Private {
   
   my $validator = 
     Registry::TrackHub::Validator->new(schema => Registry->config()->{TrackHub}{schema}{$version});
-  my ($fh, $filename) = tempfile( DIR => '.', SUFFIX => '.json', UNLINK => 1 );
+  my ($fh, $filename) = tempfile( DIR => Registry->config()->{TrackHub}{schema}{validate}, SUFFIX => '.json', UNLINK => 1 );
   print $fh $doc;
   close $fh;
 
@@ -708,7 +708,7 @@ sub trackdb_PUT {
   try {
     # validate the updated doc
     # NOTE: the doc is not indexed if it does not validate (i.e. raises an exception)
-    $c->forward('_validate', [ to_json($new_doc_data) ]);
+    $self->_validate($c, to_json($new_doc_data));
     
     # prevent submission of duplicate content, i.e. trackdb
     # with the same hub/assembly

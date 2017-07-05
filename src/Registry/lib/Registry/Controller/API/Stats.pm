@@ -120,7 +120,7 @@ sub complete_GET {
   $self->status_ok($c, entity => $stats);
 }
 
-=head2 
+=head2 summary
 
 Action for /api/stats/summary. Returns data suitable to be displayed
 in the main page as a brief summary of the content of the data.
@@ -129,7 +129,7 @@ in the main page as a brief summary of the content of the data.
 
 sub summary :Local Args(0) ActionClass('REST') { }
 
-=head2 
+=head2 summary_GET
 
 GET method for /api/stats/summary endpoint.
 

@@ -64,7 +64,9 @@ has summary_json => (
 
 =head1 METHODS
 
-=head2 fetch
+=head2 fetch_summary
+
+Method to return the summary file used to provide data to the front-end summary stats widget.
 
 =cut
 

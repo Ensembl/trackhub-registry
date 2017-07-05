@@ -145,6 +145,12 @@ sub submit :Path('/submit_trackhubs') {
   my ($self, $c) = @_;
 }
 
+=head2 stats_test
+
+An action added just to support the development of the stats interface.
+
+=cut
+
 sub stats_test :Path('stats') {
   my ($sefl, $c) = @_;
 

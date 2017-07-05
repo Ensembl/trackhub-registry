@@ -91,10 +91,10 @@ SKIP: {
   }
 
   # Now register another hub but do not make it available for search
-  note sprintf "Submitting hub polyA (not searchable)";
+  note sprintf "Submitting hub ultracons (not searchable)";
   $request = POST('/api/trackhub?permissive=1',
 		  'Content-type' => 'application/json',
-		  'Content'      => to_json({ url => 'http://johnlab.org/xpad/Hub/UCSC.txt', public => 0 }));
+		  'Content'      => to_json({ url => 'http://genome-test.cse.ucsc.edu/~hiram/hubs/GillBejerano/hub.txt', public => 0 }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'POST request to /api/trackhub');
@@ -274,8 +274,8 @@ SKIP: {
   # search for non public hub should get no results
   $request = POST('/api/search',
 		  'Content-type' => 'application/json',
-		  'Content'      => to_json({ hub => 'xPADHub'}));
-  ok($response = request($request), 'POST request to /api/search [filters: xPADHub]');
+		  'Content'      => to_json({ hub => 'UltraconservedElements'}));
+  ok($response = request($request), 'POST request to /api/search [filters: UltraconservedElements]');
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);

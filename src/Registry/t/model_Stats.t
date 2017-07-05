@@ -31,7 +31,10 @@ use_ok 'Registry::Model::Stats';
 my $stats = Registry::Model::Stats->new();
 isa_ok($stats, 'Registry::Model::Stats');
 
-my $json = $stats->fetch;
-cmp_deeply($json, { hubs => 18, species => 7, assemblies => 10 }, "basic summary");
+my $json = $stats->fetch_summary;
+cmp_deeply($json, [[ "Element", "", {"role" => "style"} ],
+		   [ "Hubs", 1772, "color: gray" ],
+		   [ "Species", 89, "color: #76A7FA" ],
+		   [ "Assemblies", 102, "opacity: 0.2"]], "basic summary");
 
 done_testing();

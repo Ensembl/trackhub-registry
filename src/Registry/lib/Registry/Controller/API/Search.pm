@@ -181,15 +181,15 @@ sub search_POST {
   # Build the response items as an array of simple hash references.
   foreach my $item (@{$results->items}) {
     my $response_item = $item->{values};
+    $response_item->{id} = $item->{id};
+    $response_item->{score} = $item->{score};
+    delete $response_item->{status}{tracks};
 
     # strip away the metadata/configuration field from each search result
     # this will save bandwidth
     # when a trackdb is chosen the client will request all the details by id
     # remove also other fields the user is not interested in
     map { delete $response_item->{$_} } qw ( source _index owner _version created data configuration );
-
-    $response_item->{id} = $item->{id};
-    $response_item->{score} = $item->{score};
 
     push @{$response->{items}}, $response_item;
   }

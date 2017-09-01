@@ -130,6 +130,7 @@ SKIP: {
   $content = from_json($response->content);
   is($content->{total_entries}, 18, 'Number of search results');
   is(scalar @{$content->{items}}, 5, 'Number of search results per page');
+  map { is($_->{status}{message}, "Unchecked", "Search result has status") } @{$content->{items}};
   ok($content->{items}[0]{id}, 'Search result item has ID');
   ok($content->{items}[1]{score}, 'Search result item has score');
   ok(!$content->{items}[2]{data}, 'Search results have no metadata');

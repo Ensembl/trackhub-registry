@@ -1,0 +1,9 @@
+<div class="alert alert-warning alert-dismissible" role="alert">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  <p>
+   <strong>Attention!! Server is running in "READ-ONLY" mode for essential maintenance.</strong>
+  </p>
+  <p>
+  <strong>In the mean time, you can still search our site. However, please remember that you CANNOT SUBMIT any trackhubs at this time.</strong>
+  </p>
+</div>

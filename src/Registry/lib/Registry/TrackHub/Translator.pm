@@ -120,7 +120,7 @@ sub new {
   # # TODO: Load the GCAssemblySet from the catalyst model which reads
   # #       the connection parameters from the configuration file
   # my $gcschema = 
-  #   Registry::GenomeAssembly::Schema->connect("DBI:Oracle:host=ora-vm5-003.ebi.ac.uk;sid=ETAPRO;port=1571", 
+  #   Registry::GenomeAssembly::Schema->connect("DBI:Oracle:host=ora-vm-066.ebi.ac.uk;sid=ETAPRO;port=1571", 
   # 					      'gc_reader', 
   # 					      'reader', 
   # 					      { 'RaiseError' => 1, 'PrintError' => 0 });

@@ -128,7 +128,7 @@ my $hubs =
    },
    # Anopheles stephensi strain Indian (Anopheles_stephensiI in VB) 
    {
-    url => "ftp://ftp.vectorbase.org/public_data/rnaseq_alignments/hubs/anopheles_stephensiI/VBRNAseq_group_1252/hub.txt",
+    url => "ftp://ftp.vectorbase.org/public_data/rnaseq_alignments/hubs/anopheles_stephensi_indian/VBRNAseq_group_1369/hub.txt",
     assemblies => { 'AsteI2' => 'GCA_000300775.2' },
    },
    # control

@@ -170,6 +170,30 @@ SKIP: {
       like($content->{error}, qr/You must provide/, 'Correct error response');
     } 
   }
+  #
+  #
+  # Testing read_only_mode
+  my $is_readonly = Registry->config()->{'read_only_mode'};
+  is($is_readonly, 0, 'read_only_mode is ' . $is_readonly);
+  my $request = GET('/api/login');
+  $request->headers->authorization_basic('trackhub1', 'trackhub1');
+  my $response = request($request);
+  ok(my $response = request($request), 'Request to log in with correct username/password');
+
+  Registry->config()->{'read_only_mode'} = 1;
+  $is_readonly = Registry->config()->{'read_only_mode'};
+  is($is_readonly, 1, 'read_only_mode is ' . $is_readonly);
+
+  my $content;
+  eval  {
+    my $request = GET('/api/login');
+    $request->headers->authorization_basic('trackhub1', 'trackhub1');
+    my $response = request($request);
+    $content = $response->content;
+  };
+
+  like($content, qr/Server is running in "READ-ONLY" mode/, 'Server is running in "READ-ONLY" mode');
+
 
 }
 

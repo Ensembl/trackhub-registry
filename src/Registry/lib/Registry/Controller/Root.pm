@@ -216,6 +216,15 @@ sub stats_test :Path('stats') {
 sub login :Path('/api/login') Args(0) {
   my ($self, $c) = @_;
 
+  my $is_readonly = 0;
+  $is_readonly = Registry->config()->{'read_only_mode'};
+
+  # Server is running on read only mode
+  if($is_readonly){
+    $c->stash(template => 'read_only_mode.tt');
+    return;
+  }
+
   $c->authenticate({}, 'http');
 
   # user should exist

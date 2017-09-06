@@ -1240,6 +1240,10 @@ sub _add_genome_browser_links {
     # cannot use species scientific name as it does not have strain
     $species = 'Anopheles_stephensi_indian' if $assembly_accession eq 'GCA_000300775.2';
 
+    # and similarly for other species, even if it's not planned to have track hubs for them at the moment
+    $species = 'Anopheles_gambiae_pimperena' if $assembly_accession eq 'GCA_000150785.1';
+    $species = 'Anopheles_sinensis_china' if $assembly_accession eq 'GCA_000441895.2';
+    
     # handle another special case: ENA uses Anopheles gambiae M as main species name instead of Anopheles coluzzii
     $species = 'Anopheles_coluzzii' if $assembly_accession eq 'GCA_000150765.1';
    

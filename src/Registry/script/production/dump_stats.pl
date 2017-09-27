@@ -171,7 +171,7 @@ sub summary_stats {
 		     ["Element", "Number of Elements", { "role" => "style" } ],
 		     ["Hubs", $num_hubs, "color: gray"],
 		     ["Species", $num_species, "color: #76A7FA"],
-		     ["Assemblies", $num_assemblies, "opacity: 0.2"]
+		     ["Assemblies", $num_assemblies, "color: green"]
 		    ]);
   close $FH;
 }

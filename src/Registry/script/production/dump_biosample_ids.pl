@@ -34,7 +34,7 @@ use Search::Elasticsearch;
 
 # default option values
 my $help = 0;  # print usage and exit
-my $log_dir = 'logs';
+my $log_dir = '/nfs/public/nobackup/ens_thr/production/biosample_dumps/logs/';
 my $config_file = '.initrc'; # expect file in current directory
 
 # parse command-line arguments
@@ -80,7 +80,6 @@ $logger->logdie("Error reading configuration file $config_file: $@") if $@;
 # Query ES cluster to get the list of BioSample IDs
 #
 my $es = connect_to_es_cluster($config{cluster_prod});
-
 #
 # TODO
 # Correct metakey should be communicated
@@ -122,7 +121,7 @@ sub connect_to_es_cluster {
   my $cluster_conf = shift;
   my $cluster_name = $cluster_conf->{name};
   my $nodes = $cluster_conf->{nodes};
-
+  
   $logger->info("Checking the cluster ${cluster_name} is up and running");
   my $esurl;
   if (ref $nodes eq 'ARRAY') {
@@ -134,7 +133,7 @@ sub connect_to_es_cluster {
     unless HTTP::Tiny->new()->request('GET', $esurl)->{status} eq '200';
 
   $logger->info("Instantiating ES client");
-  return Search::Elasticsearch->new(cxn_pool => 'Sniff',
+  return Search::Elasticsearch->new(cxn_pool => 'Static',
 				    nodes => $nodes);
 }
 

@@ -1,8 +1,7 @@
 [cluster_prod]
 name : thregistry
-nodes: 192.168.0.96:9200
-# add other nodes here, will be assigned to the same nodes arrayref
-nodes: 192.168.0.97:9200
+nodes: 10.49.2.114:9200
+nodes: 10.49.2.115:9200
 
 [cluster_staging]
 name : thregistry_staging
@@ -12,7 +11,7 @@ nodes : 192.168.0.100:9200
 index   : trackhubs_v1
 alias   : trackhubs
 type    : trackdb
-mapping : /home/ubuntu/src/trackhub-registry/docs/trackhub-schema/v1.0/examples/trackhub_mappings.json
+mapping : /nfs/public/release/ens_thr/production/src/trackhub-registry/docs/trackhub-schema/v1.0/examples/trackhub_mappings.json
 # could specify some settings with index API,
 # see https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-update-settings.html
 number_of_shards  : 3
@@ -22,7 +21,7 @@ number_of_replicas: 1
 index      : users_v1
 alias      : users
 type       : user
-mapping    : /home/ubuntu/src/trackhub-registry/docs/trackhub-schema/v1.0/examples/authentication_mappings.json
+mapping    : /nfs/public/release/ens_thr/production/src/trackhub-registry/docs/trackhub-schema/v1.0/examples/authentication_mappings.json
 admin_name : admin
 admin_pass : 
 number_of_shards  : 1
@@ -38,8 +37,8 @@ number_of_replicas: 1
 [repository]
 name       : backup
 type       : fs
-location   : /mnt/backup
-remote_location : /mnt/es_snapshots
+location   : /nfs/public/nobackup/ens_thr/production/elastic_dumps/es_snapshots
+remote_location : /nfs/public/nobackup/ens_thr/production/elastic_dumps/es_snapshots
 
 [dumps]
-biosample  : /home/ubuntu/src/trackhub-registry/src/Registry/root/static/data/biosample_ids.txt
+biosample  : /nfs/public/nobackup/ens_thr/production/biosample_dumps/biosample_ids.txt

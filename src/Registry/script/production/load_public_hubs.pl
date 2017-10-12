@@ -46,7 +46,7 @@ use Registry::Utils::URL qw(read_file);
 
 # default option values
 my $help = 0;  # print usage and exit
-my $log_dir = 'logs';
+my $log_dir = '/nfs/public/nobackup/ens_thr/production/public_hubs/logs/';
 my $config_file = 'public_hubs.conf'; # expect file in current directory
 
 # parse command-line arguments
@@ -92,7 +92,8 @@ $logger->logdie("Error reading configuration file $config_file: $@") if $@;
 
 # Login
 my $ua = LWP::UserAgent->new;
-my $server = 'https://beta.trackhubregistry.org';
+#my $server = 'https://beta.trackhubregistry.org';
+my $server = 'http://www.trackhubregistry.org/';
 
 my $request = GET("$server/api/login");
 $request->headers->authorization_basic($user, $pass);
@@ -214,7 +215,7 @@ sub parse_ucsc_public_list {
   my $response = read_file($hg_hub_connect_url, { nice => 1 });
   $logger->logdie(sprintf "Unable to parse UCSC public hub list: %s", $response->{error}) if $response->{error};
 
-  my ($fh, $filename) = tempfile( DIR => '.', SUFFIX => '.html', UNLINK => 1 );
+  my ($fh, $filename) = tempfile( DIR => '/nfs/public/nobackup/ens_thr/production/tmp/', SUFFIX => '.html', UNLINK => 1 );
   print $fh $response->{content};
   close $fh;
 
@@ -281,6 +282,7 @@ sub send_alert_message {
 			[
 			 From    => 'avullo@ebi.ac.uk',
 			 To      => 'avullo@ebi.ac.uk',
+                         Cc      => 'prem@ebi.ac.uk',
 			 Subject => sprintf("Alert report from TrackHub Registry: %s", $localtime),
 			],
 			attributes => 

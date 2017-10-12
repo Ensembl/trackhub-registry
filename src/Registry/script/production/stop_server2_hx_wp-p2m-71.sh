@@ -12,8 +12,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+HOME=/nfs/public/release/ens_thr/production/src
+LOG_HOME=/nfs/public/nobackup/ens_thr/production
+APP="starman2/registry"
+PIDFILE="$LOG_HOME/$APP.pid"
+STATUS="$LOG_HOME/$APP.status"
 
-
-source ~/.bash_profile
-cd /nfs/public/release/ens_thr/production/src/trackhub-registry/src/Registry/script/production
-perl load_public_hubs.pl avullo ALcsK32EX -c /nfs/public/nobackup/ens_thr/production/public_hubs/public_hubs.conf
+/nfs/public/release/ens_thr/utils/start-stop-daemon --stop --oknodo --pidfile ${PIDFILE}

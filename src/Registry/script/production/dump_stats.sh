@@ -14,6 +14,6 @@
 # limitations under the License.
 
 
-source ${HOME}/perl5/perlbrew/etc/bashrc
-cd ${HOME}/src/trackhub-registry/src/Registry/script/production
+source  ~/.bash_profile
+cd /nfs/public/release/ens_thr/production/src/trackhub-registry/src/Registry/script/production
 perl dump_stats.pl

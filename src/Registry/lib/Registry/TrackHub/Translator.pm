@@ -67,6 +67,7 @@ use Registry::TrackHub::Tree;
 use Registry::TrackHub::Parser;
 
 use Bio::EnsEMBL::Utils::MetaData::DBSQL::GenomeInfoAdaptor;
+use HTML::Restrict;
 
 use vars qw($AUTOLOAD $ucscdb2insdc);
 
@@ -206,13 +207,17 @@ sub to_json_1_0 {
     die "Undefined trackhub and/or assembly argument";
 
   my $genome = $trackhub->get_genome($assembly);
+  my $shortLabel = $trackhub->shortLabel;
+  my $hr = HTML::Restrict->new();
+  # strip away all HTML
+  $shortLabel = $hr->process($shortLabel);
 
   my $doc = 
     {
      version => 'v1.0',
      hub     => {
 		 name       => $trackhub->hub,
-		 shortLabel => $trackhub->shortLabel,
+		 shortLabel => $shortLabel,
 		 longLabel  => $trackhub->longLabel,
 		 url        => $trackhub->url,
 		 assembly   => $genome->twoBitPath?1:0 # detect if it is an assembly hub

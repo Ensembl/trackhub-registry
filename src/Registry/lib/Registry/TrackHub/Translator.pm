@@ -207,17 +207,18 @@ sub to_json_1_0 {
     die "Undefined trackhub and/or assembly argument";
 
   my $genome = $trackhub->get_genome($assembly);
-  my $shortLabel = $trackhub->shortLabel;
+  my $shortLabel_stripped = $trackhub->shortLabel;
   my $hr = HTML::Restrict->new();
   # strip away all HTML
-  $shortLabel = $hr->process($shortLabel);
+  $shortLabel_stripped = $hr->process($shortLabel_stripped);
 
   my $doc = 
     {
      version => 'v1.0',
      hub     => {
 		 name       => $trackhub->hub,
-		 shortLabel => $shortLabel,
+		 shortLabel => $trackhub->shortLabel,
+		 shortLabel_stripped => $shortLabel_stripped,
 		 longLabel  => $trackhub->longLabel,
 		 url        => $trackhub->url,
 		 assembly   => $genome->twoBitPath?1:0 # detect if it is an assembly hub
@@ -1109,7 +1110,7 @@ sub _add_genome_browser_links {
   #
   if ($assemblysyn =~ /hg19|hg38|mm10/ and $hub->{url} !~ /^ftp/) {
     $doc->{hub}{browser_links}{biodalliance} =
-      sprintf "/biodalliance/view?assembly=%s&name=%s&url=%s", $assemblysyn, $hub->{shortLabel}, $hub->{url};
+      sprintf "/biodalliance/view?assembly=%s&name=%s&url=%s", $assemblysyn, $hub->{shortLabel_stripped}, $hub->{url};
   }
   
   #
@@ -1226,10 +1227,10 @@ sub _add_genome_browser_links {
     $shortLabel =~ s/\s/_/g;
     if ($division =~ /archive(?!\.plants)/) { # link to plant archive site should be the current one
       $doc->{hub}{browser_links}{ensembl} =
-	sprintf "%s/%s/Location/View?contigviewbottom=url:%s;name=%s;format=TRACKHUB;#modal_user_data", $domain, $species, $hub->{url}, $shortLabel;
+	sprintf "%s/%s/Location/View?contigviewbottom=url:%s;name=%s;format=TRACKHUB;#modal_user_data", $domain, $species, $hub->{url}, $hub->{shortLabel_stripped};
     } else {
       $doc->{hub}{browser_links}{ensembl} =
-	sprintf "%s/TrackHub?url=%s;species=%s;name=%s;registry=1", $domain, $hub->{url}, $species, $shortLabel;
+	sprintf "%s/TrackHub?url=%s;species=%s;name=%s;registry=1", $domain, $hub->{url}, $species, $hub->{shortLabel_stripped};
     }
   }
 
@@ -1253,7 +1254,7 @@ sub _add_genome_browser_links {
     $species = 'Anopheles_coluzzii' if $assembly_accession eq 'GCA_000150765.1';
    
     $doc->{hub}{browser_links}{vectorbase} =
-	sprintf "%s/TrackHub?url=%s;species=%s;name=%s;registry=1", $domain, $hub->{url}, $species, $hub->{shortLabel};
+	sprintf "%s/TrackHub?url=%s;species=%s;name=%s;registry=1", $domain, $hub->{url}, $species, $hub->{shortLabel_stripped};
   }
   
   return;

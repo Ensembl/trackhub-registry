@@ -103,6 +103,9 @@
 	}
       }
     </pre>
+    
+    The above request can be done via the clients (see <a href="#example_clients">Example clients</a> section).<br/><br/>
+
     Some things happen in the background once you've made the request. Most notably, the server runs the <a target="_blank" href="https://genome.ucsc.edu/goldenPath/help/hgTrackHubHelp.html#Debug">hubCheck</a> from UCSC to check that the files in the hub are correctly formatted. The Registry will ignore error messages related to the use of deprecated features. For any other error, the request will be deemed unsuccessful and the response body will report the hubCheck output report.
   </p>
   <p>
@@ -197,13 +200,14 @@
     </ul>
   </p>
   
-  <h4>Example Clients</h4>
+  <h4 id="example_clients">Example Clients</h4>
   
   <ul class="nav nav-pills">
     <li class="active"><a href="#perl" data-toggle="tab">Perl</a></li>
     <li><a href="#python2" data-toggle="tab">Python2</a></li>
     <li><a href="#python3" data-toggle="tab">Python3</a></li>
     <li><a href="#ruby" data-toggle="tab">Ruby</a></li>
+    <li><a href="#curl" data-toggle="tab">Curl</a></li>
   </ul>
   <div class='tab-content'>
     <div class='tab-pane active' id='perl'>
@@ -417,6 +421,27 @@ logout(user, auth_token)
 
       </pre>
     </div>
+    
+ <!-- CURL EXAMPLE -->
+    <div class='tab-pane' id='curl'>
+<pre class="pre-scrollable prettyprint linenums">
+curl 'https://www.trackhubregistry.org/api/trackhub' \
+    -H 'User: exampleuser' \
+    -H 'Auth-Token: 6l5/GuIiOSCywuSI9HF1VU97clwb/CXPDFS0MyAB/HCZuxtjQBj4uORZL8NY3Yhi'\
+    -X POST -d '{ "url": "http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt", "assemblies": { "araTha1": "GCA_000001735.1", "ricCom1": "GCA_000151685.2", "braRap1": "GCA_000309985.1" } }' \
+    --header "Content-Type:application/json"
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      </pre>
+     </div>
 
   </div>
 

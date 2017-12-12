@@ -106,6 +106,7 @@
     <li><a href="#python2" data-toggle="tab">Python2</a></li>
     <li><a href="#python3" data-toggle="tab">Python3</a></li>
     <li><a href="#ruby" data-toggle="tab">Ruby</a></li>
+    <li><a href="#curl" data-toggle="tab">Curl</a></li>
   </ul>
   <div class='tab-content'>
     <div class='tab-pane active' id='perl'>
@@ -195,6 +196,34 @@ result = JSON.parse(response.body)
 puts "Logged in [#{result["auth_token"]}]"
       </pre>
     </div>
+
+ <!-- CURL EXAMPLE -->
+    <div class='tab-pane' id='curl'>
+<pre class="pre-scrollable prettyprint linenums">
+curl 'https://www.trackhubregistry.org/api/login' \
+     -X GET -u 'exampleuser' \
+     --header "Content-Type:application/json"
+      
+(Note: you will be prompted for password)      
+
+Another method:
+
+echo "exampleuser:examplepassword"|base64
+ZXhhbXBsZXVzZXI6ZXhhbXBsZXBhc3N3b3JkCg==
+
+curl -X GET "https://www.trackhubregistry.org/api/login" \
+     -H "Authorization:Basic ZXhhbXBsZXVzZXI6ZXhhbXBsZXBhc3N3b3JkCg==" 
+      
+      
+      
+      
+      
+      
+      </pre>
+     </div>
+
+
+
 
   </div>
 </div>

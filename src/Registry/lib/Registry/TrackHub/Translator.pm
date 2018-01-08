@@ -1,6 +1,6 @@
 =head1 LICENSE
 
-Copyright [2015-2017] EMBL-European Bioinformatics Institute
+Copyright [2015-2018] EMBL-European Bioinformatics Institute
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -1060,7 +1060,7 @@ sub _add_genome_info {
   return;
 }
 
-my @vector_base_assemblies = qw /AaegL3 AaloF1 AalbS1 AalbS2 AaraD1 AatrE1 AchrA1 AcolM1 AculA1 AdarC3 AdirW1 AepiE1 AfarF2 AfunF1 AgamP4 AmacM1 AmelC2 AmerM2 AminM1 AquaS1 AsinS2 AsteI2 AsteS1 BglaB1 ClecH1 CpipJ2 GausT1 GbreI1 GfusI1 GmorY1 GpalI1 GpapI1 IscaW1 LlonJ1 MdomA1 PhumU2 PpapI1 RproC3 SscaA1 ScalU1/;
+my @vector_base_assemblies = qw /AaegL3 AaegL5 AaloF1 AalbS1 AalbS2 AaraD1 AatrE1 AchrA1 AcolM1 AculA1 AdarC3 AdirW1 AepiE1 AfarF2 AfunF1 AgamP4 AmacM1 AmelC2 AmerM2 AminM1 AquaS1 AsinS2 AsteI2 AsteS1 BglaB1 ClecH1 CpipJ2 GausT1 GbreI1 GfusI1 GmorY1 GpalI1 GpapI1 IscaW1 LlonJ1 MdomA1 PhumU2 PpapI1 RproC3 SscaA1 ScalU1/;
 
 my %vector_base_assemblies;
 map { $vector_base_assemblies{$_}++ } @vector_base_assemblies;
@@ -1252,7 +1252,11 @@ sub _add_genome_browser_links {
     
     # handle another special case: ENA uses Anopheles gambiae M as main species name instead of Anopheles coluzzii
     $species = 'Anopheles_coluzzii' if $assembly_accession eq 'GCA_000150765.1';
-   
+
+    # updates on Aeges aegypti assemblies
+    $species = 'Aedes_aegypti_lvp' if $assembly_accession eq 'GCA_000004015.1'; # was Aedes_aegypti
+    $species = 'Aedes_aegypti_lvpagwg' if $assembly_accession eq 'GCA_002204515.1'; # new separate assembly
+    
     $doc->{hub}{browser_links}{vectorbase} =
 	sprintf "%s/TrackHub?url=%s;species=%s;name=%s;registry=1", $domain, $hub->{url}, $species, $hub->{shortLabel_stripped};
   }

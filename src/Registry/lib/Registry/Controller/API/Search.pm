@@ -1,6 +1,6 @@
 =head1 LICENSE
 
-Copyright [2015-2017] EMBL-European Bioinformatics Institute
+Copyright [2015-2018] EMBL-European Bioinformatics Institute
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -183,7 +183,7 @@ sub search_POST {
     my $response_item = $item->{values};
     $response_item->{id} = $item->{id};
     $response_item->{score} = $item->{score};
-    delete $response_item->{status}{tracks};
+    # delete $response_item->{status}{tracks}; # [ENSCORESW-2551]
 
     # strip away the metadata/configuration field from each search result
     # this will save bandwidth

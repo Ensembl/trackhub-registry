@@ -20,7 +20,8 @@ use warnings;
 BEGIN {
   use FindBin qw/$Bin/;
   use lib "$Bin/../../lib";
-  $ENV{CATALYST_CONFIG} = "$Bin/../../conf/production/registry.conf"
+  #$ENV{CATALYST_CONFIG} = "$Bin/../../conf/production/registry.conf"
+  $ENV{CATALYST_CONFIG} = "/nfs/public/release/ens_thr/production/src/trackhub-registry/src/Registry/conf/production/registry.hh.conf"
 }
 
 use Registry;
@@ -37,6 +38,7 @@ use Config::Std;
 # use Data::Structure::Util qw( unbless );
 use Email::MIME;
 use Email::Sender::Simple qw(sendmail);
+use Email::Sender::Transport::SMTP;
 use Time::HiRes qw(usleep);
 
 use JSON;
@@ -59,9 +61,17 @@ my $logger = get_logger();
 
 # default option values
 my $help = 0;
-my $log_dir = 'logs';
+#my $log_dir = 'logs';
+my $log_dir = '/nfs/public/nobackup/ens_thr/production/trackhub_checks/logs/';
 my $type = 'production'; # default cluster type
 my $conf_file = '.initrc'; # expect file in current directory
+
+# Initialize SMTP
+
+my $transport = Email::Sender::Transport::SMTP->new({
+    host => '193.62.196.50'
+});
+
 
 # parse command-line arguments
 my $options_ok =
@@ -200,6 +210,7 @@ foreach my $user (@{$users}) {
   # DEBUG
   # test with just one user
   # next unless $username eq 'uniprot@ebi.ac.uk';
+  # next unless $username eq 'avullo';
   # skip Electra as she maintains hundreds of hubs
   # next if $username eq 'mytesting' or $username eq 'testing' or $username eq 'ensemblplants';
   #
@@ -265,9 +276,11 @@ my $message =
   Email::MIME->create(
 		      header_str => 
 		      [
-		       From    => 'avullo@ebi.ac.uk',
-		       To      => $admin->{email},
-		       Subject => sprintf("Report from TrackHub Registry: %s", $localtime),
+		       From    => 'prem@ebi.ac.uk',
+		       #To      => $admin->{email},
+		       To    => 'avullo@ebi.ac.uk',
+                       Cc    => 'prem.apa@gmail.com',
+ 			Subject => sprintf("Report from TrackHub Registry: %s", $localtime),
 		      ],
 		      attributes => 
 		      {
@@ -278,7 +291,7 @@ my $message =
 		     );
 
 try {
-  sendmail($message);
+  sendmail($message, { transport => $transport });
 } catch {
   $logger->logdie($_);
 };
@@ -488,9 +501,10 @@ sub check_user_tracks {
       Email::MIME->create(
 			  header_str => 
 			  [
-			   From    => 'avullo@ebi.ac.uk',
-			   To      => $user->{email},
-			   Bcc     => 'avullo@ebi.ac.uk',
+			   From    => 'prem@ebi.ac.uk',
+			   #To      => $user->{email},
+			   To      => 'avullo@ebi.ac.uk',
+			   Cc     => 'prem.apa@gmail.com',
 			   Subject => sprintf "Trackhub Registry: Alert Report for user [%s]", $username,
 			  ],
 			  attributes => 
@@ -506,7 +520,7 @@ sub check_user_tracks {
       if ($continuous_alert) {
 	# user wants to be continuously alerted: send message anyway 
 	$logger->info("$username opts for continuous alerts. Sending report.");
-	sendmail($message);
+	sendmail($message, { transport => $transport });
       } elsif ($last_user_report) {
 	# user doesn't want to be bothered more than once with the same problems
 	# send alert only if current report != last report
@@ -519,19 +533,19 @@ sub check_user_tracks {
 	  
 	  if (scalar @{$diff}) {
 	    $logger->info("[$username]. Detected difference: sending alert report anyway.");
-	    sendmail($message);
+	    sendmail($message, { transport => $transport });
 	  } else {
 	    $logger->info("[$username]. No differences: not sending the alert report.");
 	  }
 	} else {
 	  # should send since we have problems in the new run
 	  $logger->info("[$username]. Last run there wasn't any problem, but now there is. Sending alert report");
-	  sendmail($message);
+	  sendmail($message, { transport => $transport });
 	}
       } else {
 	# send alert since this is the first check for this user
 	$logger->info("First $username user check. Sending alert report anyway");
-	sendmail($message);
+	sendmail($message, { transport => $transport });
       }
     } catch {
       $logger->error($_);

@@ -397,7 +397,7 @@ sub toggle_search {
 
 =head2 update_status
 
-  Arg[1]:     : None
+  Arg[1]:     : Bool; whether to label all tracks OK
   Example     : my $status = $trackdb->update_status();
   Description : Update the status of the trackDB, internally it checks whether
                 all remote data files pointed to by the tracks are remotely available
@@ -409,7 +409,7 @@ sub toggle_search {
 =cut
 
 sub update_status {
-  my $self = shift;
+  my ($self, $labelok) = @_;
 
   my $doc = $self->{_doc};
   
@@ -449,7 +449,7 @@ sub update_status {
     };
   $doc->{file_type} = {};
   
-  $self->_collect_track_info($doc->{configuration});
+  $self->_collect_track_info($doc->{configuration}, $labelok);
 
   $doc->{status}{message} = 
     $doc->{status}{tracks}{with_data}{total_ko}?'Remote Data Unavailable':'All is Well';
@@ -466,7 +466,7 @@ sub update_status {
 }
 
 sub _collect_track_info {
-  my ($self, $hash) = @_;
+  my ($self, $hash, $labelok) = @_;
   foreach my $track (keys %{$hash}) { # key is track name
     ++$self->{_doc}{status}{tracks}{total};
 
@@ -478,14 +478,16 @@ sub _collect_track_info {
 	  ++$self->{_doc}{status}{tracks}{with_data}{total};
 
 	  my $url = $hash->{$track}{bigDataUrl};
-	  my $response = file_exists($url, { nice => 1 });
-	  if ($response->{error}) {
-	    $self->{_doc}{status}{tracks}{with_data}{total_ko}++;
-	    $self->{_doc}{status}{tracks}{with_data}{ko}{$track} = 
-	      [ $url, $response->{error}[0] ];
+	  unless ($labelok) {
+	    my $response = file_exists($url, { nice => 1 });
+	    if ($response->{error}) {
+	      $self->{_doc}{status}{tracks}{with_data}{total_ko}++;
+	      $self->{_doc}{status}{tracks}{with_data}{ko}{$track} = 
+		[ $url, $response->{error}[0] ];
+	    }
 	  }
 	} else {
-	  $self->_collect_track_info($hash->{$track}{$attr}) if ref $hash->{$track}{$attr} eq 'HASH';
+	  $self->_collect_track_info($hash->{$track}{$attr}, $labelok) if ref $hash->{$track}{$attr} eq 'HASH';
 	} 
       }
     }

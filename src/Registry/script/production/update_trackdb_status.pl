@@ -61,6 +61,8 @@ my $logger = get_logger();
 my $help = 0;
 my $log_dir = 'logs';
 my $type = 'production'; # default cluster type
+my $runuser = undef; # whether to run the update for just one particular user
+my $labelok = 0; # whether to label all user checked hubs as OK
 my $conf_file = '.initrc'; # expect file in current directory
 
 # parse command-line arguments
@@ -68,6 +70,8 @@ my $options_ok =
   GetOptions("config|c=s" => \$conf_file,
 	     "logdir|l=s" => \$log_dir,
 	     "type|t=s"   => \$type,
+	     "user|u=s"   => \$runuser,
+	     "labelok|l"  => \$labelok,
 	     "help|h"     => \$help) or pod2usage(2);
 pod2usage() if $help;
 
@@ -197,12 +201,8 @@ foreach my $user (@{$users}) {
   my $username = $user->{username};
   next if $username eq $config{users}{admin_name};
 
-  # DEBUG
-  # test with just one user
-  # next unless $username eq 'uniprot@ebi.ac.uk';
-  # skip Electra as she maintains hundreds of hubs
-  # next if $username eq 'mytesting' or $username eq 'testing' or $username eq 'ensemblplants';
-  #
+  # run for just the specified user
+  next if $runuser and $username ne $runuser;
 
   my $pid = fork();
   if ($pid) { # parent
@@ -304,7 +304,7 @@ sub check_user_tracks {
   # if check_option is weekly|monthly and (current_time-last_check_time) < week|month
   #   copy last user report to new global report
   #   skip check
-  if (defined $last_user_report and $check_interval) { # check_interval == 0 -> 'Automatic' so do the check
+  if (defined $last_user_report and $check_interval and not $runuser) { # check_interval == 0 -> 'Automatic' so do the check
     $logger->info(sprintf "%s opts for %s checks. Checking report time interval", $username, $check_interval==1?'weekly':'monthly');
     my $current_time = time;
     my $last_check_time = $last_user_report->{end_time};
@@ -425,7 +425,7 @@ sub check_user_tracks {
     $logger->info(sprintf "User: %s. Checking trackDB [%s] (hub: %s, assembly: %s)", $username, $id, $hub, $assembly);
     my $status;
     try {
-      $status = $trackdb->update_status();
+      $status = $trackdb->update_status($labelok);
     } catch {
       $logger->error("Could not update status for trackDB [$id]:\n$_");
 

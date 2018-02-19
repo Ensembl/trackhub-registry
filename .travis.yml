@@ -6,7 +6,7 @@ perl:
 before_install:
     - git clone --branch master --depth 1 https://github.com/Ensembl/ensembl.git
     - git clone --branch master --depth 1 https://github.com/EnsemblGenomes/ensemblgenomes-api.git
-    - git clone -b bioperl-release-1-6-1 --depth 1 https://github.com/bioperl/bioperl-live.git
+    - git clone -b release-1-6-924 --depth 1 https://github.com/bioperl/bioperl-live.git
     - curl -O https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-1.7.3.deb && sudo dpkg -i --force-confnew elasticsearch-1.7.3.deb && sudo service elasticsearch restart
     - curl -O https://cpan.metacpan.org/authors/id/D/DR/DRTECH/Search-Elasticsearch-2.03.tar.gz
     - pip install --user jsonschema

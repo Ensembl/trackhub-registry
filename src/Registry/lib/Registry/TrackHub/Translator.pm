@@ -1091,8 +1091,8 @@ sub _add_genome_browser_links {
   # Provide different links in case it's an assembly hub
   # or an assembly supported by UCSC
   if ($is_assembly_hub) { 
-    # see http://genome.ucsc.edu/goldenPath/help/hubQuickStartAssembly.html#blatGbib
-     $doc->{hub}{browser_links}{ucsc} = sprintf "http://genome.ucsc.edu/cgi-bin/hgGateway?hubUrl=%s", $hub->{url};
+    # see http://genome.ucsc.edu/goldenPath/help/hubQuickStartAssembly.html
+     $doc->{hub}{browser_links}{ucsc} = sprintf "http://genome.ucsc.edu/cgi-bin/hgHubConnect?hgHub_do_redirect=on&hgHubConnect.remakeTrackHub=on&hgHub_do_firstDb=1&hubUrl=%s", $hub->{url};
   } elsif (exists $ucscdb2insdc->{lc $assemblysyn}) {
     # assembly supported by UCSC
     $doc->{hub}{browser_links}{ucsc} = 

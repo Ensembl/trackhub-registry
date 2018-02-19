@@ -236,22 +236,25 @@ GET method for /api/info/hubs_per_assembly endpoint
 =cut
 
 sub hubs_per_assembly_GET {
-  my ($self, $c, $assembly_name) = @_;
+  my ($self, $c, $assembly) = @_;
 
+  my $term_field = 'assembly.name';
+  $term_field = 'assembly.accession' if $assembly =~ /^GCA/;
+  
   my $config = Registry->config()->{'Model::Search'};
   my $results = $c->model('Search')->search(index => $config->{trackhub}{index},
 					    type  => $config->{trackhub}{type},
 					    body => 
 					    {
 					     aggs => {
-						      assembly => { terms => { field => 'assembly.name', size  => 0 } },
+						      assembly => { terms => { field => $term_field, size  => 0 } },
 						     }
 					    });
 
   # facets counts are the number of trackDBs per assembly, which is the same as the same
   # as the number of hubs as each hub as one trackDB per assembly
   my $hubs = 0;
-  map { $hubs = $_->{doc_count} if lc $_->{key} eq lc $assembly_name } @{$results->{aggregations}{assembly}{buckets}};
+  map { $hubs = $_->{doc_count} if lc $_->{key} eq lc $assembly } @{$results->{aggregations}{assembly}{buckets}};
 
   $self->status_ok($c, entity => { tot => $hubs });
 }

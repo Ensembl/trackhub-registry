@@ -78,7 +78,7 @@ SKIP: {
 		     { name => 'rnaseq', url => 'http://web.stanford.edu/~htilgner/2012_454paper/data/hub.txt' },
 		     { name => 'zebrafish', url => 'http://research.nhgri.nih.gov/manuscripts/Burgess/zebrafish/downloads/NHGRI-1/hub.txt' },
 		     { name => 'sanger', url => 'http://ngs.sanger.ac.uk/production/grit/track_hub/hub.txt' },
-		     { name => 'thornton', url => 'http://devlaeminck.bio.uci.edu/RogersUCSC/hub.txt' },
+		     # NA any more { name => 'thornton', url => 'http://devlaeminck.bio.uci.edu/RogersUCSC/hub.txt' }, 
 		    );
 
   $request = GET('/api/login');
@@ -90,7 +90,7 @@ SKIP: {
 
   $ua->timeout(10);
   foreach my $hub (@public_hubs) {
-  	if (head($hub->{url})) {
+    if (head($hub->{url})) {
       note sprintf "Submitting hub %s", $hub->{name};
       $request = POST('/api/trackhub?permissive=1',
 		      'Content-type' => 'application/json',
@@ -100,9 +100,9 @@ SKIP: {
       ok($response = request($request), 'POST request to /api/trackhub');
       ok($response->is_success, 'Request successful 2xx');
       is($response->content_type, 'application/json', 'JSON content type');
-  	}else{
-  	  note sprintf "WARN: Skipping hub %s ", $hub->{name}, " Please remove it from the public_hubs list";	
-  	}
+    } else{
+      note sprintf "WARN: Skipping hub %s ", $hub->{name}, " Please remove it from the public_hubs list";	
+    }
   }
 
   #
@@ -171,6 +171,23 @@ SKIP: {
   like($hub->{trackdbs}[0]{assembly}, qr/^GCA_000002035.\d$/, 'trackDb assembly');
   like($hub->{trackdbs}[0]{uri}, qr/api\/search\/trackdb/, 'trackDb uri');
 
+  #
+  # /api/info/hubs_per_assembly
+  #
+  # test with accession
+  $request = GET('/api/info/hubs_per_assembly/GCA_000001405.15');
+  ok($response = request($request), 'GET request to /api/info/hubs_per_assembly');
+  ok($response->is_success, 'Request successful');
+  $content = from_json($response->content);
+  is($content->{tot}, 3, 'Number of hubs per assembly');
+  #
+  # test with assembly name
+  $request = GET('/api/info/hubs_per_assembly/GRCh38');
+  ok($response = request($request), 'GET request to /api/info/hubs_per_assembly');
+  ok($response->is_success, 'Request successful');
+  $content = from_json($response->content);
+  is($content->{tot}, 3, 'Number of hubs per assembly');
+  
 }
 
 done_testing();

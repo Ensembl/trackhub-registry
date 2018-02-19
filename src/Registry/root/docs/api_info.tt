@@ -261,7 +261,7 @@
 
   <h3 id="hubassemblies">GET /api/info/hubs_per_assembly/:assembly</h3>
   <p>
-    Returns the number of hubs for a given assembly, specified by name.
+    Returns the number of hubs for a given assembly, specified either by INSDC name or accession.
   </p>
   <p>
     If the request is successful, the response is a hash with a key "tot", whose value is the total number of hubs which contains data for the specified assembly.
@@ -286,11 +286,15 @@
   </table>
 
   <h4>Parameters</h4>
-  <p>The <strong>INSDC</strong> name of the assembly</p>
+  <p>The <strong>INSDC</strong> name or accession of the assembly</p>
 
-  <h4>Example Request</h4>
+  <h4>Example Requests</h4>
   <pre>
     GET https://www.trackhubregistry.org/api/info/hubs_per_assembly/GRCz10
+  </pre>
+
+  <pre>
+    GET https://www.trackhubregistry.org/api/info/hubs_per_assembly/GCA_000002035.3
   </pre>
 
   <h4>Example Response</h4>

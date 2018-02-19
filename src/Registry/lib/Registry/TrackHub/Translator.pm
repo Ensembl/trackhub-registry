@@ -1100,7 +1100,10 @@ sub _add_genome_browser_links {
       sprintf "http://genome.ucsc.edu/cgi-bin/hgHubConnect?db=%s&hubUrl=%s&hgHub_do_redirect=on&hgHubConnect.remakeTrackHub=on", $assemblysyn, $hub->{url};
   }
 
-  return if $is_assembly_hub; # Ensembl/Biodalliance(?!) do not support assembly hubs
+  # [ENSCORESW-2629]. Do not skip trying to build a link to Ensembl
+  # as the assembly might be supported by Ensembl. The submitter might have declared
+  # an assembly hub just to get it shown in the UCSC browser.
+  # return if $is_assembly_hub; # Ensembl/Biodalliance(?!) do not support assembly hubs
 
   #
   # Biodalliance embeddable browser link

@@ -70,8 +70,6 @@ recommends 'Config::Std';
 recommends 'Getopt::Long';
 recommends 'Pod::Usage';
 recommends 'DBM::Deep';
-recommends 'Email::MIME';
-recommends 'Email::Sender::Simple';
 recommends 'Email::Date';
 recommends 'DateTime';
 recommends 'Scalar::Util';
@@ -96,6 +94,9 @@ recommends 'WWW::Mechanize';
 recommends 'Proc::ProcessTable';
 
 test_requires 'Test::More' => '0.88';
+test_requires 'Email::MIME';
+test_requires 'Email::Sender::Simple';
+
 catalyst;
 
 install_script glob('script/*.pl');

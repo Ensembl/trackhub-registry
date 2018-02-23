@@ -62,7 +62,7 @@ while (my $as = $rs->next) {
   $assembly_sets->{$data{set_acc}} = \%data;
 }
 
-open my $FH, "w", "$outfile" or die "Cannot open file: $!\n";
+open my $FH, ">", "$outfile" or die "Cannot open file: $!\n";
 print $FH to_json($assembly_sets, { utf8 => 1, pretty => 1 });
 close $FH;
 

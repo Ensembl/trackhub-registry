@@ -65,7 +65,7 @@ SKIP: {
   $json_docs = $translator->translate($URL, 'hg19');
   is(scalar @{$json_docs}, 1, "Correct number of translations");
 
-  open my $FH, ">$Bin/blueprint.json" or die "Cannot open blueprint.json: $!\n";
+  open my $FH, '>',"$Bin/blueprint.json" or die "Cannot open blueprint.json: $!\n";
   print $FH $json_docs->[0];
   close $FH;
 

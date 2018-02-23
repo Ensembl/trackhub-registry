@@ -80,7 +80,7 @@ $logger->logdie("Error reading configuration file $config_file: $@") if $@;
 # Query ES cluster to get the list of BioSample IDs
 #
 my $es = connect_to_es_cluster($config{cluster_prod});
-open my $FH, "<results_by_zooma_with_uri.txt" or die "Cannot open file: $!\n";
+open my $FH, '<',"results_by_zooma_with_uri.txt" or die "Cannot open file: $!\n";
 my $metadata2terms;
 while (my $line = <$FH>) {
   chomp($line);

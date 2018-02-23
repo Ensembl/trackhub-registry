@@ -218,7 +218,7 @@ sub slurp_file {
   my $string;
   {
     local $/=undef;
-    open my $fh, 'r', "$file" or $logger->logdie("Couldn't open file: $!");
+    open my $fh, '<', "$file" or $logger->logdie("Couldn't open file: $!");
     $string = <$fh>;
     close $fh;
   }

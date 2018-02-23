@@ -97,7 +97,7 @@ xiphophorus_maculatus);
 
 my @meta_keys = qw(assembly.name assembly.accession assembly.ucsc_alias);
 
-open my $FH, "tmp.txt","w" or die "Cannot open file: $!\n";
+open my $FH, "w","tmp.txt" or die "Cannot open file: $!\n";
 foreach my $species (@species) {
   my $meta_adaptor = $registry->get_adaptor($species, 'Core', 'MetaContainer');
 

@@ -127,7 +127,7 @@ sub collect_stats {
   # allow faster retrieval with the model
   foreach my $statsby (qw/species assemblies file_type/) {
     my $outfile = "../../root/static/data/${statsby}.json";
-    open my $FH, "$outfile",'w' or $logger->logdie("Cannot open file $outfile: $!");
+    open my $FH, 'w', "$outfile" or $logger->logdie("Cannot open file $outfile: $!");
     print $FH to_json($content->{$statsby});
     close $FH;
   }
@@ -166,7 +166,7 @@ sub summary_stats {
   }
 
   my $outfile = "../../root/static/data/summary.json";
-  open my $FH, "$outfile",'w' or $logger->logdie("Cannot open file $outfile: $!");
+  open my $FH, 'w', "$outfile" or $logger->logdie("Cannot open file $outfile: $!");
   print $FH to_json([
                      ["Element", "Number of Elements", { "role" => "style" } ],
                      ["Hubs", $num_hubs, "color: gray"],

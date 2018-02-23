@@ -46,13 +46,13 @@ my $outfile = 'gc_assembly_set.json';
 # parse command-line arguments
 my $options_ok =
   GetOptions("outfile|o=s" => \$outfile,
-	     "help|h"     => \$help) or pod2usage(2);
+             "help|h"     => \$help) or pod2usage(2);
 pod2usage() if $help;
 
 my $schema = Registry::GenomeAssembly::Schema->connect("DBI:Oracle:host=ora-vm-066.ebi.ac.uk;sid=ETAPRO;port=1571", 
-						       'gc_reader', 
-						       'reader', 
-						       { 'RaiseError' => 1, 'PrintError' => 0 });
+                                                       'gc_reader', 
+                                                       'reader', 
+                                                       { 'RaiseError' => 1, 'PrintError' => 0 });
 
 my $rs = $schema->resultset('GCAssemblySet');
 my $assembly_sets;
@@ -62,7 +62,7 @@ while (my $as = $rs->next) {
   $assembly_sets->{$data{set_acc}} = \%data;
 }
 
-open my $FH, "$outfile","w" or die "Cannot open file: $!\n";
+open my $FH, "w", "$outfile" or die "Cannot open file: $!\n";
 print $FH to_json($assembly_sets, { utf8 => 1, pretty => 1 });
 close $FH;
 

@@ -31,14 +31,6 @@ Registry::Controller::API::Info - Endpoints for retrieving service and track hub
 A controller to provide actions implements endpoints for retrieving information about
 the service and the content of the Registry.
 
-=head1 AUTHOR
-
-Alessandro Vullo, C<< <avullo at ebi.ac.uk> >>
-
-=head1 BUGS
-
-No known bugs at the moment. Development in progress.
-
 =cut
 
 package Registry::Controller::API::Info;
@@ -134,7 +126,8 @@ sub species_GET {
 
   # get the list of unique species, use aggregations
   my $config = Registry->config()->{'Model::Search'};
-  my $results = $c->model('Search')->search(index => $config->{trackhub}{index},
+  my $results = $c->model('Search')->search(
+              index => $config->{trackhub}{index},
 					    type  => $config->{trackhub}{type},
 					    body => 
 					    {
@@ -169,34 +162,35 @@ sub assemblies_GET {
 
   # get the list of unique assemblies, with name, synonyms and accession, grouped by species
   my $config = Registry->config()->{'Model::Search'};
-  my $results = $c->model('Search')->search(index => $config->{trackhub}{index},
-					    type  => $config->{trackhub}{type},
-					    body => 
-					    {
-					     aggs => {
-						      public => {
-								 filter => { term => { public => 1 } },
-								 aggs => {
-									  species => {
-										      terms => { field => 'species.scientific_name', size  => 0 },
-										      aggs  => {
-												ass_name => {
-													     terms => { field => 'assembly.name', size => 0 },
-													     aggs => {
-														      ass_syn => {
-																  terms => { field => 'assembly.synonyms', size => 0 },
-																  aggs => {
-																	   ass_acc => { terms => { field => 'assembly.accession', size => 0 } }
-																	  }
-																 }
-														     }
-													    }
-											       }
-										     },
-									 }
-								 }
-						     }
-					    });
+  my $results = $c->model('Search')->search(
+    index => $config->{trackhub}{index},
+    type  => $config->{trackhub}{type},
+    body => 
+    {
+      aggs => {
+        public => {
+          filter => { term => { public => 1 } },
+            aggs => {
+              species => {
+                terms => { field => 'species.scientific_name', size  => 0 },
+                aggs  => {
+                  ass_name => {
+                    terms => { field => 'assembly.name', size => 0 },
+                    aggs => {
+                      ass_syn => {
+                        terms => { field => 'assembly.synonyms', size => 0 },
+                        aggs => {
+                          ass_acc => { terms => { field => 'assembly.accession', size => 0 } }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+            }
+          }
+       }
+    });
 
   my $assemblies;
   foreach my $species_agg (@{$results->{aggregations}{public}{species}{buckets}}) {
@@ -204,16 +198,16 @@ sub assemblies_GET {
     foreach my $ass_name_agg (@{$species_agg->{ass_name}{buckets}}) {
       my $ass_name = $ass_name_agg->{key};
       foreach my $ass_syn_agg (@{$ass_name_agg->{ass_syn}{buckets}}) {
-	my $ass_syn = $ass_syn_agg->{key};
-	foreach my $ass_acc_agg (@{$ass_syn_agg->{ass_acc}{buckets}}) {
-	  my $ass_acc = $ass_acc_agg->{key};
-	  push @{$assemblies->{$species}},
-	    {
-	     name => $ass_name,
-	     synonyms => [ $ass_syn ],
-	     accession => $ass_acc
-	    }
-	  }
+        my $ass_syn = $ass_syn_agg->{key};
+        foreach my $ass_acc_agg (@{$ass_syn_agg->{ass_acc}{buckets}}) {
+          my $ass_acc = $ass_acc_agg->{key};
+          push @{$assemblies->{$species}},
+            {
+             name => $ass_name,
+             synonyms => [ $ass_syn ],
+             accession => $ass_acc
+            }
+        }
       }
     }
   }
@@ -243,13 +237,13 @@ sub hubs_per_assembly_GET {
   
   my $config = Registry->config()->{'Model::Search'};
   my $results = $c->model('Search')->search(index => $config->{trackhub}{index},
-					    type  => $config->{trackhub}{type},
-					    body => 
-					    {
-					     aggs => {
-						      assembly => { terms => { field => $term_field, size  => 0 } },
-						     }
-					    });
+                                            type  => $config->{trackhub}{type},
+                                            body => 
+                                            {
+                                             aggs => {
+                                                assembly => { terms => { field => $term_field, size  => 0 } },
+                                               }
+                                            });
 
   # facets counts are the number of trackDBs per assembly, which is the same as the same
   # as the number of hubs as each hub as one trackDB per assembly

@@ -31,10 +31,6 @@ Registry::Controller::API::Search - endpoints for programmatic search
 This is a controller providing actions implementing endpoints for doing
 programmatic search of track hubs.
 
-=head1 AUTHOR
-
-Alessandro Vullo, C<< <avullo at ebi.ac.uk> >>
-
 =head1 BUGS
 
 No known bugs at the moment. Development in progress.
@@ -54,11 +50,11 @@ use Data::SearchEngine::ElasticSearch;
 BEGIN { extends 'Catalyst::Controller::REST'; }
 
 __PACKAGE__->config(
-		    'default'   => 'application/json',
-		    # map => {
-		    # 	    'text/plain' => ['YAML'],
-		    # 	   }
-		   );
+    'default'   => 'application/json',
+    # map => {
+    # 	    'text/plain' => ['YAML'],
+    # 	   }
+  );
 
 =head1 METHODS
 
@@ -239,14 +235,14 @@ sub biosample_search_POST {
   $_ = lc for @{$biosample_ids};
 
   my $query = {
-	       filtered => {
-			    filter => {
-				       terms => { 
-				       		 biosample_id => $biosample_ids
-				       		}
-				      }
-			   }
-	      };
+    filtered => {
+      filter => {
+        terms => { 
+          biosample_id => $biosample_ids
+        }
+      }
+    }
+  };
   my $config = Registry->config()->{'Model::Search'};
   my %args =
     (
@@ -264,8 +260,8 @@ sub biosample_search_POST {
       # find which IDs this trackdb refers to
       my %match_ids;
       foreach my $track_metadata (@{$result->{_source}{data}}) {
-	map { $match_ids{uc $_}++ if exists $track_metadata->{biosample_id} and $track_metadata->{biosample_id} eq uc $_ } 
-	  @{$biosample_ids};
+        map { $match_ids{uc $_}++ if exists $track_metadata->{biosample_id} and $track_metadata->{biosample_id} eq uc $_ } 
+          @{$biosample_ids};
       } 
       # strip away various fields from each search result
       # when a trackdb is chosen the client will request all the details by id

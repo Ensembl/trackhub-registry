@@ -85,7 +85,7 @@ sub begin : Private {
   my $authorized = 0;
   if (exists($c->req->headers->{'user'}) && exists($c->req->headers->{'auth-token'})) {
     $authorized = $c->authenticate({ username => $c->req->headers->{'user'}, 
-				     auth_key => $c->req->headers->{'auth-token'} }, 'authkey');
+                                     auth_key => $c->req->headers->{'auth-token'} }, 'authkey');
   }
 
   $c->forward('deserialize');
@@ -96,8 +96,8 @@ sub begin : Private {
   # otherwise allow normal dispatch chain
   #
   $c->detach('status_unauthorized', 
-	     [ message => "You need to login, get an auth_token and make requests using the token" ] )
-    unless $authorized;
+     [ message => "You need to login, get an auth_token and make requests using the token" ] )
+     unless $authorized;
 
   $c->stash(user => $c->req->headers->{'user'});
 
@@ -233,28 +233,32 @@ sub trackdb_create_POST {
     defined $hub and defined $assembly_acc or
       $c->go('ReturnError', 'custom', ["Unable to find hub/assembly information"]);
     my $query = {
-		 filtered => {
-			      filter => {
-					 bool => {
-						  must => [
-							   {
-							    term => { owner => $c->stash->{user} } },
-							   {
-							    term => { 'hub.name' => $hub } },
-							   {
-							    term => { 'assembly.accession' => $assembly_acc } }
-							  ]
-						 }
-					}
-			     }
-		};
+      filtered => {
+        filter => {
+          bool => {
+            must => [
+              {
+                term => { owner => $c->stash->{user} } 
+              },
+              {
+                term => { 'hub.name' => $hub } 
+              },
+              {
+                term => { 'assembly.accession' => $assembly_acc } 
+              }
+            ]
+          }
+        }
+      }
+    };
     $c->go('ReturnError', 'custom', ["Cannot submit: a document with the same hub/assembly exists"])
       if $c->model('Search')->count_trackhubs(query => $query)->{count};
 	
     my $config = Registry->config()->{'Model::Search'};
     $id = $c->model('Search')->index(index   => $config->{trackhub}{index},
-				     type    => $config->{trackhub}{type},
-				     body    => $new_doc_data)->{_id};
+                                     type    => $config->{trackhub}{type},
+                                     body    => $new_doc_data
+                                     )->{_id};
 
     # refresh the index
     $c->model('Search')->indices->refresh(index => $config->{trackhub}{index});
@@ -263,8 +267,9 @@ sub trackdb_create_POST {
   };
 
   $self->status_created( $c,
-			 location => $c->uri_for( '/api/trackdb/' . $id )->as_string,
-			 entity   => $c->model('Search')->get_trackhub_by_id($id));
+    location => $c->uri_for( '/api/trackdb/' . $id )->as_string,
+    entity   => $c->model('Search')->get_trackhub_by_id($id)
+  );
 }
 
 
@@ -367,19 +372,19 @@ sub trackhub_POST {
   # prevent submission of a hub submitted by another user
   #
   my $query = {
-	       filtered => {
-			    filter => {
-				       bool => {
-						must => [
-							 { term => { 'hub.url' => $url } }
-							],
-						must_not => [
-							     { term => { owner => $c->stash->{user} } }
-							    ]
-					       }
-				      }
-			   }
-	      };
+    filtered => {
+      filter => {
+        bool => {
+          must => [
+            { term => { 'hub.url' => $url } }
+          ],
+          must_not => [
+            { term => { owner => $c->stash->{user} } }
+          ]
+        }
+      }
+    }
+  };
   my $registered_trackdbs = $c->model('Search')->search_trackhubs(query => $query);
   if ($registered_trackdbs->{hits}{total}) {
     $c->go('ReturnError', 'custom', [qq{Cannot submit a track hub registered by another user}]);
@@ -389,17 +394,17 @@ sub trackhub_POST {
   # delete, if it exists, any trackDB in the document store belonging
   # to the TrackHub
   $query = {
-	    filtered => {
-			 filter => {
-				    bool => {
-					     must => [
-						      { term => { owner => $c->stash->{user} } },
-						      { term => { 'hub.url' => $url } }
-						     ]
-					    }
-				   }
-			}
-	   };
+    filtered => {
+      filter => {
+        bool => {
+          must => [
+            { term => { owner => $c->stash->{user} } },
+            { term => { 'hub.url' => $url } }
+          ]
+        }
+      }
+    }
+  };
   # TODO
   # pay attention here to the size parameter, certain hubs contain more than 10 trackDbs
   # using the scan & scroll API would definitively solve the problem
@@ -412,8 +417,8 @@ sub trackhub_POST {
     foreach my $doc (@{$registered_trackdbs->{hits}{hits}}) {
       $created = $doc->{_source}{created};
       $c->model('Search')->delete(index   => $config->{trackhub}{index},
-				  type    => $config->{trackhub}{type},
-				  id      => $doc->{_id});
+                                  type    => $config->{trackhub}{type},
+                                  id      => $doc->{_id});
       $c->log->info(sprintf "Deleted trackDb [%s]", $doc->{_id});
       push @deleted_docs, $doc;
     }
@@ -424,8 +429,8 @@ sub trackhub_POST {
   try {
     $c->log->info("Translating TrackHub at $url");
     my $translator = Registry::TrackHub::Translator->new(version => $version, 
-							 permissive => $permissive, 
-							 assemblies => $assembly_map);
+                                                         permissive => $permissive, 
+                                                         assemblies => $assembly_map);
 
     # assembly can be left undefined by the user
     # in this case, we get a list of translations of all different 
@@ -448,17 +453,18 @@ sub trackhub_POST {
       $doc->{owner} = $c->stash->{user};
       # set creation/update date/status 
       unless ($updated) {
-	$doc->{created} = time();
+        $doc->{created} = time();
       } else {
-	$doc->{created} = $created;
-	$doc->{updated} = time();
+        $doc->{created} = $created;
+        $doc->{updated} = time();
       }
 
-      my $id = $c->model('Search')->index(index   => $config->{trackhub}{index},
-					  type    => $config->{trackhub}{type},
-					  # id      => $id,
-					  body    => $doc)->{_id};
-      # refresh the index
+      my $id = $c->model('Search')->index(
+        index   => $config->{trackhub}{index},
+        type    => $config->{trackhub}{type},
+        # id      => $id,
+        body    => $doc)->{_id};
+        # refresh the index
       $c->model('Search')->indices->refresh(index => $config->{trackhub}{index});
 
       $c->log->info(sprintf "Created trackDb [%s] (%s)", $id, $doc->{assembly}{name});
@@ -482,11 +488,12 @@ sub trackhub_POST {
     if (@deleted_docs) {
       $c->log->info("An error occurred while resubmitting the hub. Roll-back to previous content.");
       foreach my $doc (@deleted_docs) {
-	$c->log->info(sprintf "Reindexing doc %s", $doc->{_id});
-	$c->model('Search')->index(index   => $config->{trackhub}{index},
-				   type    => $config->{trackhub}{type},
-				   id      => $doc->{_id},
-				   body    => $doc->{_source});
+        $c->log->info(sprintf "Reindexing doc %s", $doc->{_id});
+        $c->model('Search')->index(
+          index   => $config->{trackhub}{index},
+          type    => $config->{trackhub}{type},
+          id      => $doc->{_id},
+          body    => $doc->{_source});
       }
       $c->model('Search')->indices->refresh(index => $config->{trackhub}{index});
     }
@@ -496,9 +503,11 @@ sub trackhub_POST {
 
   # location in status_created can be either a scalar or a blessed reference
   bless($location, 'Location');
-  $self->status_created( $c,
-			 location => $location,
-			 entity   => $entity);
+  $self->status_created( 
+    $c,
+    location => $location,
+    entity   => $entity
+  );
 }
 
 =head2 trackhub_by_name
@@ -511,17 +520,17 @@ sub trackhub_by_name :Path('/api/trackhub') Args(1) ActionClass('REST') {
   my ($self, $c, $hubid) = @_;
 
   my $query = {
-	       filtered => {
-			    filter => {
-				       bool => {
-						must => [
-							 { term => { owner => $c->stash->{user} } },
-							 { term => { 'hub.name' => $hubid } }
-							]
-					       }
-				      }
-			   }
-	      };
+    filtered => {
+      filter => {
+        bool => {
+          must => [
+            { term => { owner => $c->stash->{user} } },
+            { term => { 'hub.name' => $hubid } }
+          ]
+        }
+      }
+    }
+  };
 
   my $trackdbs;
   try {
@@ -587,9 +596,11 @@ sub trackhub_by_name_DELETE {
   #
   try {
     foreach my $trackdb (@{$trackdbs}) {
-      $c->model('Search')->delete(index   => $index,
-				  type    => $type,
-				  id      => $trackdb->{_id});
+      $c->model('Search')->delete(
+        index   => $index,
+        type    => $type,
+        id      => $trackdb->{_id}
+      );
     }
   } catch {
     $c->go('ReturnError', 'custom', [qq{$_}]);
@@ -725,24 +736,24 @@ sub trackdb_PUT {
     defined $hub and defined $assembly_acc or
       $c->go('ReturnError', 'custom', ["Unable to find hub/assembly information"]);
     my $query = {
-		 filtered => {
-			      filter => {
-					 bool => {
-						  must => [
-							   { term => { owner => $c->stash->{user} } },
-							   { term => { 'hub.name' => $hub } },
-							   { term => { 'assembly.accession' => $assembly_acc } }
-							  ]
-						 }
-					}
-			     }
-		};
+      filtered => {
+        filter => {
+          bool => {
+            must => [
+              { term => { owner => $c->stash->{user} } },
+              { term => { 'hub.name' => $hub } },
+              { term => { 'assembly.accession' => $assembly_acc } }
+            ]
+          }
+        }
+      }
+    };
     # TODO: use scan and scroll to retrieve large number of results efficiently
     my $duplicate_docs = $c->model('Search')->search_trackhubs(size => 100000, query => $query)->{hits};
     if ($duplicate_docs->{total}) {
       foreach my $doc (@{$duplicate_docs->{hits}}) {
-	$c->go('ReturnError', 'custom', ["Cannot submit: a document with the same hub/assembly exists"])
-	  if $doc->{_id} != $doc_id;
+        $c->go('ReturnError', 'custom', ["Cannot submit: a document with the same hub/assembly exists"])
+        if $doc->{_id} != $doc_id;
       }
     }
     
@@ -759,10 +770,12 @@ sub trackdb_PUT {
     # update a document is to retrieve it, change it, then reindex the whole document.
     #
     my $config = Registry->config()->{'Model::Search'};
-    $c->model('Search')->index(index   => $config->{trackhub}{index},
-			       type    => $config->{trackhub}{type},
-			       id      => $doc_id,
-			       body    => $new_doc_data);
+    $c->model('Search')->index(
+      index   => $config->{trackhub}{index},
+      type    => $config->{trackhub}{type},
+      id      => $doc_id,
+      body    => $new_doc_data
+    );
 
     # refresh the index
     $c->model('Search')->indices->refresh(index => $config->{trackhub}{index});
@@ -802,9 +815,10 @@ sub trackdb_DELETE {
     #
     my $config = Registry->config()->{'Model::Search'};
     try {
-      $c->model('Search')->delete(index   => $config->{trackhub}{index},
-				  type    => $config->{trackhub}{type},
-				  id      => $doc_id);
+      $c->model('Search')->delete(
+        index   => $config->{trackhub}{index},
+        type    => $config->{trackhub}{type},
+        id      => $doc_id);
       $c->model('Search')->indices->refresh(index => $config->{trackhub}{index});
     } catch {
       $c->go('ReturnError', 'custom', [qq{$_}]);
@@ -895,8 +909,7 @@ sub error_OPTIONS { }
 
 =cut 
 
-sub logout :Path('/api/logout') Args(0) ActionClass('REST') {
-}
+sub logout :Path('/api/logout') Args(0) ActionClass('REST') { }
 
 =head2 logout_GET
 

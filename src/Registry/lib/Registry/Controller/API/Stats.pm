@@ -31,10 +31,6 @@ Registry::Controller::API::Stats - Endpoints for basic stats
 A controller to provide actions implements endpoints for retrieving 
 basic statistics about the content of the registry.
 
-=head1 AUTHOR
-
-Alessandro Vullo, C<< <avullo at ebi.ac.uk> >>
-
 =head1 BUGS
 
 No known bugs at the moment. Development in progress.
@@ -52,8 +48,8 @@ use HTTP::Tiny;
 BEGIN { extends 'Catalyst::Controller::REST'; }
 
 __PACKAGE__->config(
-		    'default'   => 'application/json'
-		   );
+    'default'   => 'application/json'
+);
 
 =head1 METHODS
 

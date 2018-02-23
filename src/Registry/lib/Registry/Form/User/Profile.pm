@@ -85,7 +85,7 @@ has_field 'check_interval' => (
 );
 
 has_field 'continuous_alert' => (
-    label            => 'Receive continuos alerts',
+    label            => 'Receive continuous alerts',
     type             => 'Checkbox',
     input_without_param => 0,
     checkbox_value   => 1
@@ -95,7 +95,7 @@ has_field 'continuous_alert' => (
 
 =head2 validate
 
-Executed after the user press submit, checks whether password and password confirmation fields match.
+Executed after the user presses submit, checks whether password and password confirmation fields match.
 
 =cut
 

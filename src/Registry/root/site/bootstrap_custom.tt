@@ -24,7 +24,6 @@
 
   <body>
     <!-- Header and navigation bar -->
-    <img style="position: absolute; top: 0; right: 0; border: 0; z-index: 1031;" src="/static/img/ico_beta.png" />
 
     <header>
     <nav class="navbar navbar-inverse">

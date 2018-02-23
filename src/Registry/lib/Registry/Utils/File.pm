@@ -71,9 +71,9 @@ sub slurp_file {
   my $string;
   {
     local $/=undef;
-    open FILE, "<$file" or die "Couldn't open file: $!";
-    $string = <FILE>;
-    close FILE;
+    open my $fh, "$file",'r' or die "Couldn't open file: $!";
+    $string = <$fh>;
+    close $fh;
   }
   
   return $string;
@@ -82,7 +82,7 @@ sub slurp_file {
 =head2 sanitise_filename
 
   Arg [1]     : String - the name of the file
-  Example     : my $better_file_ name = sanitise_filename($file);
+  Example     : my $better_file_name = sanitise_filename($file);
   Description : Users often break the rules for safe, Unix-friendly filenames
                 so clean up input
   Returntype  : A string with the sanitised file name
@@ -164,7 +164,7 @@ sub get_compression {
   return 'gz'   if $file =~ /\.gz$/;
   return 'zip'  if $file =~ /\.zip$/;
   return 'bz'   if $file =~ /\.bz2?$/;
-  return undef;
+  return;
 }
 
 =head2 uncompress

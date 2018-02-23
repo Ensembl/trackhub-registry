@@ -31,17 +31,10 @@ Registry::Form::User::Registration - Form for user registration
 Implements a form capturing the information submitted by the users who wants
 to register themselves with the service and submit trackhubs.
 
-=head1 AUTHOR
-
-Alessandro Vullo, C<< <avullo at ebi.ac.uk> >>
-
-=head1 BUGS
-
-No known bugs at the moment. Development in progress.
-
 =cut
 
 package Registry::Form::User::Registration;
+use Moose;
 use HTML::FormHandler::Moose;
 use namespace::autoclean;
 extends 'HTML::FormHandler';
@@ -120,7 +113,7 @@ sub validate {
       $self->field('password')->value )
     {
       $self->field('password_conf')
-	->add_error('Passwords do not match. Please try again.');
+        ->add_error('Passwords do not match. Please try again.');
     }
 };
     

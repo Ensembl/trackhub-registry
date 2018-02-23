@@ -40,14 +40,6 @@ try {
 
 A class providing a method to validate JSON according to a given schema.
 
-=head1 AUTHOR
-
-Alessandro Vullo, C<< <avullo at ebi.ac.uk> >>
-
-=head1 BUGS
-
-No known bugs at the moment. Development in progress.
-
 =cut
 
 package Registry::TrackHub::Validator;

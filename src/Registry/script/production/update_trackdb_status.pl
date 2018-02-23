@@ -78,11 +78,11 @@ my $transport = Email::Sender::Transport::SMTP->new({
 # parse command-line arguments
 my $options_ok =
   GetOptions("config|c=s" => \$conf_file,
-	     "logdir|l=s" => \$log_dir,
-	     "type|t=s"   => \$type,
-	     "user|u=s"   => \$runuser,
-	     "labelok|l"  => \$labelok,
-	     "help|h"     => \$help) or pod2usage(2);
+             "logdir|l=s" => \$log_dir,
+             "type|t=s"   => \$type,
+             "user|u=s"   => \$runuser,
+             "labelok|l"  => \$labelok,
+             "help|h"     => \$help) or pod2usage(2);
 pod2usage() if $help;
 
 # set up logging, use inline configuration
@@ -193,9 +193,9 @@ my $current_report_id = $last_report_id?++$last_report_id:1;
 my $es = Search::Elasticsearch->new(nodes => $nodes);
 try {
   $es->index(index   => $config{reports}{alias},
-	     type    => $config{reports}{type},
-	     id      => $current_report_id,
-	     body    => $current_report);
+             type    => $config{reports}{type},
+             id      => $current_report_id,
+             body    => $current_report);
   $es->indices->refresh(index => $config{report}{alias});
 } catch {
   $logger->logdie($_);
@@ -224,12 +224,12 @@ foreach my $user (@{$users}) {
       
       # provide partial doc to be merged into the existing report
       $es->update(index   => $config{reports}{alias},
-		  type    => $config{reports}{type},
-		  id      => $current_report_id,
-		  retry_on_conflict => 5,
-		  body    => {
-			      doc => { $username => $user_report }
-			     });
+                  type    => $config{reports}{type},
+                  id      => $current_report_id,
+                  retry_on_conflict => 5,
+                  body    => {
+                        doc => { $username => $user_report }
+                       });
     } catch {
       $logger->logdie($_);
     };
@@ -249,8 +249,8 @@ foreach my $i (0 .. $#children) {
 # Send message to admin to alert report has/hasn't been generated
 my $message_body;
 $current_report = $es->get_source(index => $config{reports}{alias},
-				  type  => $config{reports}{type},
-				  id    => $current_report_id);
+                                  type  => $config{reports}{type},
+                                  id    => $current_report_id);
 
 if (keys %{$current_report} > 1) {
   $message_body = sprintf "Report [%d] has been generated.\n\n", $current_report_id;
@@ -262,8 +262,8 @@ if (keys %{$current_report} > 1) {
   $logger->info("Deleting last global report [$current_report_id] from index");
   try {
     $es->delete(index   => $config{reports}{alias},
-		type    => $config{reports}{type},
-		id      => $current_report_id);
+                type    => $config{reports}{type},
+                id      => $current_report_id);
   } catch {
     $logger->logdie($_);
   };
@@ -273,21 +273,21 @@ $logger->info("Sending alert report to admin");
 my $localtime = localtime;
 my $message = 
   Email::MIME->create(
-		      header_str => 
-		      [
-		       From    => 'prem@ebi.ac.uk',
-		       #To      => $admin->{email},
-		       To    => 'avullo@ebi.ac.uk',
-                       Cc    => 'prem.apa@gmail.com',
- 			Subject => sprintf("Report from TrackHub Registry: %s", $localtime),
-		      ],
-		      attributes => 
-		      {
-		       encoding => 'quoted-printable',
-		       charset  => 'ISO-8859-1',
-		      },
-		      body_str => $message_body,
-		     );
+    header_str => 
+    [
+     From    => 'prem@ebi.ac.uk',
+     #To      => $admin->{email},
+     To    => 'avullo@ebi.ac.uk',
+     Cc    => 'prem.apa@gmail.com',
+     Subject => sprintf("Report from TrackHub Registry: %s", $localtime),
+    ],
+    attributes => 
+    {
+     encoding => 'quoted-printable',
+     charset  => 'ISO-8859-1',
+    },
+    body_str => $message_body,
+   );
 
 try {
   sendmail($message, { transport => $transport });
@@ -327,10 +327,10 @@ sub check_user_tracks {
       my $time_interval = $check_interval==1?604800:2592000;
 
       if ($current_time - $last_check_time < $time_interval) {
-	$logger->info(sprintf "Less than a %s has passed since last check for %s. SKIP",
+        $logger->info(sprintf "Less than a %s has passed since last check for %s. SKIP",
 		      $check_interval==1?'week':'month', $username);
  
-	return $current_user_report;
+        return $current_user_report;
       }
     } else {
       $logger->error("Undefined last check time in last report for user $username. SKIP");
@@ -442,8 +442,8 @@ sub check_user_tracks {
       $logger->error("Could not update status for trackDB [$id]:\n$_");
 
       $message_body_problem .= 
-	sprintf "Problem updating status for trackDB [%s] (hub: %s, assembly: %s)\n$@\n\n", 
-	  $id, $hub, $assembly;
+        sprintf "Problem updating status for trackDB [%s] (hub: %s, assembly: %s)\n$@\n\n", 
+        $id, $hub, $assembly;
       return;
     };
    
@@ -451,19 +451,19 @@ sub check_user_tracks {
     if ($status->{tracks}{with_data}{total_ko}) {
       $logger->info("There are faulty tracks, retrying in case of temporary problem");
       for (1 .. 5) {
-	$logger->info("Retrying ($_)");
-	try {
-	  $status = $trackdb->update_status();
-	  $logger->info("Previously detected faulty tracks seem to be ok now, abort retrying") and last
-	    unless $status->{tracks}{with_data}{total_ko};
-	} catch {
-	  $logger->error("Could not update status for trackDB [$id]:\n$_");
+        $logger->info("Retrying ($_)");
+        try {
+          $status = $trackdb->update_status();
+          $logger->info("Previously detected faulty tracks seem to be ok now, abort retrying") and last
+            unless $status->{tracks}{with_data}{total_ko};
+        } catch {
+          $logger->error("Could not update status for trackDB [$id]:\n$_");
 
-	  $message_body_problem .= 
-	    sprintf "Problem updating status for trackDB [%s] (hub: %s, assembly: %s)\n$@\n\n", 
-	    $id, $hub, $assembly;
-	  return;
-	};
+          $message_body_problem .= 
+            sprintf "Problem updating status for trackDB [%s] (hub: %s, assembly: %s)\n$@\n\n", 
+            $id, $hub, $assembly;
+          return;
+        };
       }
     }
     
@@ -471,11 +471,11 @@ sub check_user_tracks {
     if ($status->{tracks}{with_data}{total_ko}) {
       $logger->info("There are faulty tracks, updating report.");
       $current_user_report->{ko}{$id} =
-	$status->{tracks}{with_data}{ko};
+        $status->{tracks}{with_data}{ko};
 
       $message_body_problem .= sprintf "trackDB [%s] (hub: %s, assembly: %s)\n", $id, $hub, $assembly;
       foreach my $track (keys %{$current_user_report->{ko}{$id}}) {
-	$message_body_problem .= sprintf "\t%s\t%s\t%s\n", $track, $current_user_report->{ko}{$id}{$track}[0], $current_user_report->{ko}{$id}{$track}[1];
+        $message_body_problem .= sprintf "\t%s\t%s\t%s\n", $track, $current_user_report->{ko}{$id}{$track}[0], $current_user_report->{ko}{$id}{$track}[1];
       }
       $message_body_problem .= "\n\n";
     } else {
@@ -498,53 +498,53 @@ sub check_user_tracks {
     
     my $message = 
       Email::MIME->create(
-			  header_str => 
-			  [
-			   From    => 'prem@ebi.ac.uk',
-			   #To      => $user->{email},
-			   To      => 'avullo@ebi.ac.uk',
-			   Cc     => 'prem.apa@gmail.com',
-			   Subject => sprintf "Trackhub Registry: Alert Report for user [%s]", $username,
-			  ],
-			  attributes => 
-			  {
-			   encoding => 'quoted-printable',
-			   charset  => 'ISO-8859-1',
-			  },
-			  body_str => $user_message_body,
-			 );
+        header_str => 
+        [
+         From    => 'prem@ebi.ac.uk',
+         #To      => $user->{email},
+         To      => 'avullo@ebi.ac.uk',
+         Cc     => 'prem.apa@gmail.com',
+         Subject => sprintf "Trackhub Registry: Alert Report for user [%s]", $username,
+        ],
+        attributes => 
+        {
+         encoding => 'quoted-printable',
+         charset  => 'ISO-8859-1',
+        },
+        body_str => $user_message_body,
+       );
 
     # check whether we have to send an alert to the user and send it, eventually
     try {
       if ($continuous_alert) {
-	# user wants to be continuously alerted: send message anyway 
-	$logger->info("$username opts for continuous alerts. Sending report.");
-	sendmail($message, { transport => $transport });
-      } elsif ($last_user_report) {
-	# user doesn't want to be bothered more than once with the same problems
-	# send alert only if current report != last report
-	$logger->info("$username does not opt for continuous alerts. Checking differences with last report");
-	if ($last_user_report->{ko}) {
-	  my @last_report_ko_trackdbs = keys %{$last_user_report->{ko}};
-	  my @current_report_ko_trackdbs = keys %{$current_user_report->{ko}};
-	  my ($union, $isect, $diff) = 
-	    union_intersection_difference(\@current_report_ko_trackdbs, \@last_report_ko_trackdbs);
-	  
-	  if (scalar @{$diff}) {
-	    $logger->info("[$username]. Detected difference: sending alert report anyway.");
-	    sendmail($message, { transport => $transport });
-	  } else {
-	    $logger->info("[$username]. No differences: not sending the alert report.");
-	  }
-	} else {
-	  # should send since we have problems in the new run
-	  $logger->info("[$username]. Last run there wasn't any problem, but now there is. Sending alert report");
-	  sendmail($message, { transport => $transport });
-	}
-      } else {
-	# send alert since this is the first check for this user
-	$logger->info("First $username user check. Sending alert report anyway");
-	sendmail($message, { transport => $transport });
+        # user wants to be continuously alerted: send message anyway 
+        $logger->info("$username opts for continuous alerts. Sending report.");
+        sendmail($message, { transport => $transport });
+            } elsif ($last_user_report) {
+        # user doesn't want to be bothered more than once with the same problems
+        # send alert only if current report != last report
+        $logger->info("$username does not opt for continuous alerts. Checking differences with last report");
+        if ($last_user_report->{ko}) {
+          my @last_report_ko_trackdbs = keys %{$last_user_report->{ko}};
+          my @current_report_ko_trackdbs = keys %{$current_user_report->{ko}};
+          my ($union, $isect, $diff) = 
+            union_intersection_difference(\@current_report_ko_trackdbs, \@last_report_ko_trackdbs);
+          
+          if (scalar @{$diff}) {
+            $logger->info("[$username]. Detected difference: sending alert report anyway.");
+            sendmail($message, { transport => $transport });
+          } else {
+            $logger->info("[$username]. No differences: not sending the alert report.");
+          }
+        } else {
+          # should send since we have problems in the new run
+          $logger->info("[$username]. Last run there wasn't any problem, but now there is. Sending alert report");
+          sendmail($message, { transport => $transport });
+        }
+            } else {
+        # send alert since this is the first check for this user
+        $logger->info("First $username user check. Sending alert report anyway");
+        sendmail($message, { transport => $transport });
       }
     } catch {
       $logger->error($_);
@@ -589,21 +589,21 @@ sub get_latest_report {
      body  => 
      {
       sort => [ 
-	       { 
-		created => {
-			    order => 'desc',
-			    # would otherwise throw exception if there
-			    # are documents missing the field,
-			    # see http://stackoverflow.com/questions/17051709/no-mapping-found-for-field-in-order-to-sort-on-in-elasticsearch
-			    # TODO:
-			    # Before 1.4.0 there was the ignore_unmapped boolean parameter, which was not enough information to 
-			    # decide on the sort values to emit, and didn’t work for cross-index search. It is still supported 
-			    # but users are encouraged to migrate to the new unmapped_type instead.
-			    # https://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-sort.html
-			    ignore_unmapped => 'true' 
-			   }
-	       }
-	      ]
+               { 
+                  created => {
+                    order => 'desc',
+                    # would otherwise throw exception if there
+                    # are documents missing the field,
+                    # see http://stackoverflow.com/questions/17051709/no-mapping-found-for-field-in-order-to-sort-on-in-elasticsearch
+                    # TODO:
+                    # Before 1.4.0 there was the ignore_unmapped boolean parameter, which was not enough information to 
+                    # decide on the sort values to emit, and didn’t work for cross-index search. It is still supported 
+                    # but users are encouraged to migrate to the new unmapped_type instead.
+                    # https://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-sort.html
+                    ignore_unmapped => 'true' 
+                  }
+              }
+             ]
      }
     );
 
@@ -637,9 +637,9 @@ sub get_user_trackdbs {
   my $trackdbs;
   map { push @{$trackdbs}, Registry::TrackHub::TrackDB->new($_->{_id}) }
     @{$es->search(index => $index,
-		  type  => $type,
-		  size  => 100000,
-		  body  => { query => { term => { owner => $user } }, fields => [] })->{hits}{hits}};
+                  type  => $type,
+                  size  => 100000,
+                  body  => { query => { term => { owner => $user } }, fields => [] })->{hits}{hits}};
 
   return $trackdbs;
 }

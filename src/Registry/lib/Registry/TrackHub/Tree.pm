@@ -35,14 +35,6 @@ my $ctree = Registry::TrackHub::Tree->new({ id => 'root' });
 
 A tree class for representing the hierarchy of tracks in a track db file, i.e. a forest in the most generic case
 
-=head1 AUTHOR
-
-Alessandro Vullo, C<< <avullo at ebi.ac.uk> >>
-
-=head1 BUGS
-
-No known bugs at the moment. Development in progress.
-
 =cut
 
 package Registry::TrackHub::Tree;

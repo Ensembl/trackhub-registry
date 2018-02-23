@@ -35,14 +35,6 @@ original module relies on the deprecated ElasticSearch module.
 
 This module also tries to extend support for the Elasticsearch's query language.
 
-=head1 AUTHOR
-
-Alessandro Vullo, C<< <avullo at ebi.ac.uk> >>
-
-=head1 BUGS
-
-No known bugs at the moment. Development in progress.
-
 =cut
 
 
@@ -112,11 +104,11 @@ sub add {
     my %data = %{ $item->values };
  
     my %doc = (
-	       index => delete($data{index}),
-	       type => delete($data{type}),
-	       id => $item->id,
-	       data => \%data
-	      );
+         index => delete($data{index}),
+         type => delete($data{type}),
+         id => $item->id,
+         data => \%data
+        );
     # Check for a version
     if (exists($data{'_version'})) {
       $doc{version} = delete($data{'_version'});
@@ -139,10 +131,10 @@ sub present {
  
   try {
     my $result = $self->_es->get(
-				 index => delete($data->{index}),
-				 type => delete($data->{type}),
-				 id => $item->id
-				);
+     index => delete($data->{index}),
+     type => delete($data->{type}),
+     id => $item->id
+    );
   } catch {
     # ElasticSearch throws an exception if the document isn't there.
     return 0;
@@ -176,10 +168,10 @@ sub remove_by_id {
   my $data = $item->values;
  
   $self->_es->delete(
-		     index => $data->{index},
-		     type => $data->{type},
-		     id => $item->id
-		    );
+     index => $data->{index},
+     type => $data->{type},
+     id => $item->id
+    );
 }
 
 =head2 update
@@ -239,16 +231,16 @@ sub search {
     foreach my $filter ($query->filter_names) {
       my $operator = 'must';
       if (exists $filter_combine->{$filter}) {
-	$operator = $filter_combine->{$filter};
-	if ($operator eq 'and') {
-	  $operator = 'must';
-	} elsif ($operator eq 'or') {
-	  $operator = 'should';
-	} elsif ($operator eq 'not') {
-	  $operator = 'must_not';
-	} else {
-	  die "Operator $operator not supported";
-	}
+        $operator = $filter_combine->{$filter};
+        if ($operator eq 'and') {
+          $operator = 'must';
+        } elsif ($operator eq 'or') {
+          $operator = 'should';
+        } elsif ($operator eq 'not') {
+          $operator = 'must_not';
+        } else {
+          die "Operator $operator not supported";
+        }
       }
 
       push @{$query_filter->{bool}{$operator}}, { term => { $filter => $query->get_filter($filter) } };
@@ -270,7 +262,7 @@ sub search {
      
     if ($query->has_filters) {
       foreach my $f (keys %facets) {
-  	$facets{$f}->{facet_filter} = $query_filter;
+        $facets{$f}->{facet_filter} = $query_filter;
       }
     }
  
@@ -285,11 +277,11 @@ sub search {
      
     if ($query->has_filters) {
       foreach my $f (keys %aggs) {
-	# does logical AND/OR work with aggregations?
-	# cannot find mentioned in the definitive guide
-  	# $aggs{$f}->{filter}->{$filter_combine} = \@facet_cache;
-	# $aggs{$f}->{filter} = { terms => { field => 'species.scientific_name' } };
-	# $aggs{$f}->{filters}{filters} = \@facet_cache;
+        # does logical AND/OR work with aggregations?
+        # cannot find mentioned in the definitive guide
+        # $aggs{$f}->{filter}->{$filter_combine} = \@facet_cache;
+        # $aggs{$f}->{filter} = { terms => { field => 'species.scientific_name' } };
+        # $aggs{$f}->{filters}{filters} = \@facet_cache;
       }
     }
  
@@ -327,27 +319,27 @@ sub search {
   }
  
   my $pager = Data::SearchEngine::Paginator->new(
-						 current_page => $page || 1,
-						 entries_per_page => $count,
-						 total_entries => $hit_count
-						);
+                                                  current_page => $page || 1,
+                                                  entries_per_page => $count,
+                                                  total_entries => $hit_count
+                                                );
  
   my $result = Data::SearchEngine::ElasticSearch::Results->new(
-							       query => $query,
-							       pager => $pager,
-							       elapsed => time - $start,
-							       raw => $resp
-							      );
- 
+     query => $query,
+     pager => $pager,
+     elapsed => time - $start,
+     raw => $resp
+    );
+
   if (exists($resp->{facets})) {
     foreach my $facet (keys %{ $resp->{facets} }) {
       my $href = $resp->{facets}->{$facet};
       if (exists($href->{terms})) {
-	my @vals = ();
-	foreach my $term (@{ $href->{terms} }) {
-	  push(@vals, { count => $term->{count}, value => $term->{term} });
-	}
-	$result->set_facet($facet, \@vals);
+        my @vals = ();
+        foreach my $term (@{ $href->{terms} }) {
+          push(@vals, { count => $term->{count}, value => $term->{term} });
+        }
+        $result->set_facet($facet, \@vals);
       }
     }
   }
@@ -376,7 +368,7 @@ sub _get_buckets {
     next if $key eq 'doc_count';
     if ($key eq 'buckets') {
       foreach my $agg (@{$hash->{$key}}) {
-	push @{$buckets}, { count => $agg->{doc_count}, value => $agg->{key} }
+        push @{$buckets}, { count => $agg->{doc_count}, value => $agg->{key} }
       }
       return;
     }
@@ -409,17 +401,17 @@ sub _doc_to_item {
     foreach my $field (keys %{$doc->{fields}}) {
       $values->{$field} = $doc->{fields}{$field};
       $values->{$field} = $doc->{fields}{$field}[0]
-	if ref($doc->{fields}{$field}) =~ /ARRAY/;
+        if ref($doc->{fields}{$field}) =~ /ARRAY/;
     }
   }
 
   $values->{_index} = $doc->{_index};
   $values->{_version} = $doc->{_version};
   return Data::SearchEngine::Item->new(
-				       id      => $doc->{_id},
-				       score   => $doc->{_score} || 0,
-				       values  => $values,
-				      );
+     id      => $doc->{_id},
+     score   => $doc->{_score} || 0,
+     values  => $values,
+    );
 }
 
 =head2 find_by_id
@@ -432,10 +424,10 @@ sub find_by_id {
   my ($self, $index, $type, $id) = @_;
  
   my $doc = $self->_es->get(
-			    index => $index,
-			    type => $type,
-			    id => $id
-			   );
+    index => $index,
+    type => $type,
+    id => $id
+   );
  
   return $self->_doc_to_item($doc);
 }

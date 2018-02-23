@@ -44,10 +44,6 @@ These extra functionalities are appropriately put in an app specific model, cons
 Catalyst::Model::ElasticSearch is meant to be a minimalistic wrapper around the official 
 Search::Elasticsearch API.
 
-=head1 AUTHOR
-
-Alessandro Vullo, C<< <avullo at ebi.ac.uk> >>
-
 =head1 BUGS
 
 next_trackdb_id seems to be working not as reliably as expected, disable its use in
@@ -156,13 +152,13 @@ sub get_trackhub_by_id {
     unless defined $id;
 
   my $config = Registry->config()->{'Model::Search'};
-  return $self->_es->get_source(index => $config->{trackhub}{index},           # add required (by Search::Elasticsearch)
-				type  => $config->{trackhub}{type},  # index and type parameter 
-				id    => $id) unless $orig;
+  return $self->_es->get_source(index => $config->{trackhub}{index}, # add required (by Search::Elasticsearch)
+                                type  => $config->{trackhub}{type},  # index and type parameter 
+                                id    => $id) unless $orig;
 
   return $self->_es->get(index => $config->{trackhub}{index},           
-			 type  => $config->{trackhub}{type},  
-			 id    => $id);
+                         type  => $config->{trackhub}{type},  
+                         id    => $id);
   
 }
 
@@ -200,7 +196,6 @@ sub next_trackdb_id {
   # 	       # not require the _id to be indexed.
   # 	       # https://www.elastic.co/guide/en/elasticsearch/reference/1.3/mapping-uid-field.html
   # 	       sort   => [ { _uid => { order => 'desc' } } ]
-	       
   # 	      }
   #   );
   # return $self->search(%args)->{hits}{hits}[0]{_id}+1;

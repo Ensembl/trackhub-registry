@@ -50,10 +50,10 @@ my $mech = WWW::Mechanize->new;
 $mech->get($server . '/login');
 ok($mech->success, 'Can access login page');
 $mech->submit_form(form_number => 2,
-		   fields      => {
-				   username => $user,
-				   password => $pass
-				  });
+                    fields      => {
+                       username => $user,
+                       password => $pass
+                      });
 like($mech->content, qr/Logout/, 'Logged in');
 
 for (1 .. 5) {

@@ -17,6 +17,7 @@ limitations under the License.
 =cut
 
 package Registry::Form::User::Help;
+use Moose;
 use HTML::FormHandler::Moose;
 use namespace::autoclean;
 extends 'HTML::FormHandler';

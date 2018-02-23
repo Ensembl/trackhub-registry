@@ -39,14 +39,6 @@ A class to represent track db data in JSON format, to provide methods to get/set
 check and update the status of its tracks. An object of this class is built from an ElasticSearch 
 document.
 
-=head1 AUTHOR
-
-Alessandro Vullo, C<< <avullo at ebi.ac.uk> >>
-
-=head1 BUGS
-
-No known bugs at the moment. Development in progress.
-
 =cut
 
 package Registry::TrackHub::TrackDB;
@@ -62,15 +54,15 @@ use Registry::Utils;
 use Registry::Utils::URL qw(file_exists);
 
 my %format_lookup = (
-		     'bed'    => 'BED',
-		     'bb'     => 'BigBed',
-		     'bigBed' => 'BigBed',
-		     'bw'     => 'BigWig',
-		     'bigWig' => 'BigWig',
-		     'bam'    => 'BAM',
-		     'gz'     => 'VCFTabix',
-		     'cram'   => 'CRAM'
-		    );
+     'bed'    => 'BED',
+     'bb'     => 'BigBed',
+     'bigBed' => 'BigBed',
+     'bw'     => 'BigWig',
+     'bigWig' => 'BigWig',
+     'bam'    => 'BAM',
+     'gz'     => 'VCFTabix',
+     'cram'   => 'CRAM'
+    );
 
 =head1 METHODS
 
@@ -96,13 +88,13 @@ sub new {
   my $config = Registry->config()->{'Model::Search'};
 
   my $self = { 
-	      _id  => $id,
-	      _es  => {
-		       client => Registry::Model::Search->new(nodes => $config->{nodes}),
-		       index  => $config->{trackhub}{index},
-		       type   => $config->{trackhub}{type}
-		      }
-	     };
+    _id  => $id,
+    _es  => {
+       client => Registry::Model::Search->new(nodes => $config->{nodes}),
+       index  => $config->{trackhub}{index},
+       type   => $config->{trackhub}{type}
+      }
+   };
   $self->{_doc} = $self->{_es}{client}->get_trackhub_by_id($id);
   defined $self->{_doc} or die "Unable to get document [$id] from store";
 
@@ -389,9 +381,9 @@ sub toggle_search {
   $doc->{public} = $doc->{public}?0:1;
 
   $self->{_es}{client}->index(index  => $self->{_es}{index},
-			      type   => $self->{_es}{type},
-			      id     => $self->{_id},
-			      body   => $doc);
+      type   => $self->{_es}{type},
+      id     => $self->{_id},
+      body   => $doc);
   $self->{_es}{client}->indices->refresh(index => $self->{_es}{index});
 }
 
@@ -433,9 +425,9 @@ sub update_status {
   # reindex doc to flag other processes its pending status
   # and refresh the index to immediately commit changes
   $self->{_es}{client}->index(index  => $self->{_es}{index},
-			      type   => $self->{_es}{type},
-			      id     => $self->{_id},
-			      body   => $doc);
+                              type   => $self->{_es}{type},
+                              id     => $self->{_id},
+                              body   => $doc);
   $self->{_es}{client}->indices->refresh(index => $self->{_es}{index});
 
   # check remote data URLs and record stats
@@ -443,9 +435,9 @@ sub update_status {
     {
      total => 0,
      with_data => {
-		   total => 0,
-		   total_ko => 0
-		  }
+       total => 0,
+       total_ko => 0
+      }
     };
   $doc->{file_type} = {};
   
@@ -457,9 +449,9 @@ sub update_status {
 
   # commit status change
   $self->{_es}{client}->index(index  => $self->{_es}{index},
-			      type   => $self->{_es}{type},
-			      id     => $self->{_id},
-			      body   => $doc);
+                              type   => $self->{_es}{type},
+                              id     => $self->{_id},
+                              body   => $doc);
   $self->{_es}{client}->indices->refresh(index => $self->{_es}{index});
 
   return $doc->{status};
@@ -472,23 +464,23 @@ sub _collect_track_info {
 
     if (ref $hash->{$track} eq 'HASH') {
       foreach my $attr (keys %{$hash->{$track}}) {
-	next unless $attr eq 'members' or $attr eq 'type';
-	if ($attr eq 'type' and exists $hash->{$track}{bigDataUrl}) {
-	  $self->{_doc}{file_type}{$hash->{$track}{type}}++ if $hash->{$track}{type};
-	  ++$self->{_doc}{status}{tracks}{with_data}{total};
+        next unless $attr eq 'members' or $attr eq 'type';
+        if ($attr eq 'type' and exists $hash->{$track}{bigDataUrl}) {
+          $self->{_doc}{file_type}{$hash->{$track}{type}}++ if $hash->{$track}{type};
+          ++$self->{_doc}{status}{tracks}{with_data}{total};
 
-	  my $url = $hash->{$track}{bigDataUrl};
-	  unless ($labelok) {
-	    my $response = file_exists($url, { nice => 1 });
-	    if ($response->{error}) {
-	      $self->{_doc}{status}{tracks}{with_data}{total_ko}++;
-	      $self->{_doc}{status}{tracks}{with_data}{ko}{$track} = 
-		[ $url, $response->{error}[0] ];
-	    }
-	  }
-	} else {
-	  $self->_collect_track_info($hash->{$track}{$attr}, $labelok) if ref $hash->{$track}{$attr} eq 'HASH';
-	} 
+          my $url = $hash->{$track}{bigDataUrl};
+          unless ($labelok) {
+            my $response = file_exists($url, { nice => 1 });
+            if ($response->{error}) {
+              $self->{_doc}{status}{tracks}{with_data}{total_ko}++;
+              $self->{_doc}{status}{tracks}{with_data}{ko}{$track} = 
+                [ $url, $response->{error}[0] ];
+            }
+          }
+        } else {
+          $self->_collect_track_info($hash->{$track}{$attr}, $labelok) if ref $hash->{$track}{$attr} eq 'HASH';
+        } 
       }
     }
   }

@@ -50,14 +50,6 @@ It has methods for indexing some fake users and track hubs so that tests can
 check correct responses from various endpoints requiring authentication and 
 the availability of some data in the back end.
 
-=head1 AUTHOR
-
-Alessandro Vullo, C<< <avullo at ebi.ac.uk> >>
-
-=head1 BUGS
-
-No known bugs at the moment. Development in progress.
-
 =cut
 
 package Registry::Indexer;
@@ -137,72 +129,72 @@ sub new {
   # owners
   #
   $self->{docs} = [
-		      {
-		       id    => 1,
-		       file  => "$dir/blueprint1.json",
-		       owner => 'trackhub1'
-		      },
-		      {
-		       id    => 2,
-		       file  => "$dir/blueprint2.json",
-		       owner => 'trackhub1'
-		      },
-		      {
-		       id    => 3,
-		       file  => "$dir/blueprint1.json",
-		       owner => 'trackhub2'
-		      },
-		      {
-		       id    => 4,
-		       file  => "$dir/blueprint2.json",
-		       owner => 'trackhub3'
-		      },
-		     ];
+          {
+           id    => 1,
+           file  => "$dir/blueprint1.json",
+           owner => 'trackhub1'
+          },
+          {
+           id    => 2,
+           file  => "$dir/blueprint2.json",
+           owner => 'trackhub1'
+          },
+          {
+           id    => 3,
+           file  => "$dir/blueprint1.json",
+           owner => 'trackhub2'
+          },
+          {
+           id    => 4,
+           file  => "$dir/blueprint2.json",
+           owner => 'trackhub3'
+          },
+         ];
 
   # add example users, name should match the owners of the above docs
   $self->{users} = [
-		    {		# the administrator
-		     id       => 1,
-		     fullname => "Administrator",
-		     email    => "avullo\@ebi.ac.uk",
-		     password => "admin",
-		     roles    => ["admin", "user"],
-		     username => "admin",
-		    },
-		    {		# a first trackhub content provider
-		     id          => 2,
-		     first_name  => "Track",
-		     last_name   => "Hub1",
-		     affiliation => "EMBL-EBI",
-		     email       => "trackhub1\@ebi.ac.uk",
-		     fullname    => "TrackHub1",
-		     password    => "trackhub1",
-		     roles       => ["user"],
-		     username    => "trackhub1",
-		    },
-		    {		# a second trackhub content provider
-		     id          => 3,
-		     first_name  => "Track",
-		     last_name   => "Hub2",
-		     affiliation => "UCSC",
-		     email       => "trackhub2\@ucsc.edu",
-		     fullname    => "TrackHub2",
-		     password    => "trackhub2",
-		     roles       => ["user"],
-		     username    => "trackhub2",
-		    },
-		    {		# a third trackhub content provider
-		     id          => 4,
-		     first_name  => "Track",
-		     last_name   => "Hub3",
-		     affiliation => "Sanger",
-		     email       => "trackhub3\@sanger.ac.uk",
-		     fullname    => "TrackHub3",
-		     password    => "trackhub3",
-		     roles       => ["user"],
-		     username    => "trackhub3",
-		    },
-		   ];
+        { # the administrator
+         id       => 1,
+         fullname => "Administrator",
+         email    => "avullo\@ebi.ac.uk",
+         password => "admin",
+         roles    => ["admin", "user"],
+         username => "admin",
+        },
+        { # a first trackhub content provider
+         id          => 2,
+         first_name  => "Track",
+         last_name   => "Hub1",
+         affiliation => "EMBL-EBI",
+         email       => "trackhub1\@ebi.ac.uk",
+         fullname    => "TrackHub1",
+         password    => "trackhub1",
+         roles       => ["user"],
+         username    => "trackhub1",
+        },
+        { # a second trackhub content provider
+         id          => 3,
+         first_name  => "Track",
+         last_name   => "Hub2",
+         affiliation => "UCSC",
+         email       => "trackhub2\@ucsc.edu",
+         fullname    => "TrackHub2",
+         password    => "trackhub2",
+         roles       => ["user"],
+         username    => "trackhub2",
+        },
+        { # a third trackhub content provider
+         id          => 4,
+         first_name  => "Track",
+         last_name   => "Hub3",
+         affiliation => "Sanger",
+         email       => "trackhub3\@sanger.ac.uk",
+         fullname    => "TrackHub3",
+         password    => "trackhub3",
+         roles       => ["user"],
+         username    => "trackhub3",
+        },
+       ];
 
   # Module is used for testing, which assumes there's
   # an ES instance running on the same host.
@@ -251,9 +243,10 @@ sub create_indices {
   #
   # create the trackhub mapping
   #
-  $indices->put_mapping(index => $index,
-			type  => $type,
-			body  => from_json(&Registry::Utils::slurp_file($mapping)));
+  $indices->put_mapping(
+    index => $index,
+    type  => $type,
+    body  => from_json(&Registry::Utils::slurp_file($mapping)));
   my $mapping_json = $indices->get_mapping(index => $index, type  => $type);
   exists $mapping_json->{$index}{mappings}{$type} or croak "TrackHub mapping not created";
   carp "TrackHub mapping created";
@@ -271,9 +264,10 @@ sub create_indices {
     $indices->create(index => $index);  
   }
 
-  $indices->put_mapping(index => $index,
-			type  => $type,
-			body  => from_json(&Registry::Utils::slurp_file($mapping)));
+  $indices->put_mapping(
+    index => $index,
+    type  => $type,
+    body  => from_json(&Registry::Utils::slurp_file($mapping)));
   $mapping_json = $indices->get_mapping(index => $index, type  => $type);
   exists $mapping_json->{$index}{mappings}{$type} or croak "Authentication/authorisation mapping not created";
   carp "Authentication/authorisation mapping created";
@@ -314,10 +308,11 @@ sub index_trackhubs {
     $doc_data->{status}{message} = 'Unknown';
 
     # index doc
-    $self->{es}->index(index   => $self->{trackhub}{index},
-		       type    => $self->{trackhub}{type},
-		       id      => $doc->{id},
-		       body    => $doc_data);
+    $self->{es}->index(
+      index   => $self->{trackhub}{index},
+      type    => $self->{trackhub}{type},
+      id      => $doc->{id},
+      body    => $doc_data);
   }
 
   # The refresh() method refreshes the specified indices (or all indices), 
@@ -349,10 +344,11 @@ sub index_users {
   foreach my $user (@{$self->{users}}) {
     my $id = $user->{id};
     carp "Indexing user $id ($user->{fullname}) document";
-    $self->{es}->index(index   => $self->{auth}{index},
-		       type    => $self->{auth}{type},
-		       id      => $id,
-		       body    => $user);
+    $self->{es}->index(
+      index   => $self->{auth}{index},
+      type    => $self->{auth}{type},
+      id      => $id,
+      body    => $user);
   }
 
   carp "Flushing recent changes";

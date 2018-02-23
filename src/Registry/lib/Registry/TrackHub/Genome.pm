@@ -33,14 +33,6 @@ This is used by Registry::TrackHub internally when parsing various hub files.
 Most of the methods are automatically synthetised and allow to retrieve the attributes
 of a genome as specified in the hub genomesFile, e.g. trackDb.
 
-=head1 AUTHOR
-
-Alessandro Vullo, C<< <avullo at ebi.ac.uk> >>
-
-=head1 BUGS
-
-No known bugs at the moment. Development in progress.
-
 =cut
 
 package Registry::TrackHub::Genome;

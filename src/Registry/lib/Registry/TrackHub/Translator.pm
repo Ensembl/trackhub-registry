@@ -44,14 +44,6 @@ which supports the search/faceting mechanism. Besides this, URLs for linking
 to the UCSC and/or Ensembl browser are computed and added to the document, if
 applicable.
 
-=head1 AUTHOR
-
-Alessandro Vullo, C<< <avullo at ebi.ac.uk> >>
-
-=head1 BUGS
-
-No known bugs at the moment. Development in progress.
-
 =cut
 
 package Registry::TrackHub::Translator;
@@ -84,15 +76,15 @@ sub AUTOLOAD {
 }
 
 my %format_lookup = (
-		     'bed'    => 'BED',
-		     'bb'     => 'BigBed',
-		     'bigBed' => 'BigBed',
-		     'bw'     => 'BigWig',
-		     'bigWig' => 'BigWig',
-		     'bam'    => 'BAM',
-		     'gz'     => 'VCFTabix',
-		     'cram'   => 'CRAM'
-		    );
+     'bed'    => 'BED',
+     'bb'     => 'BigBed',
+     'bigBed' => 'BigBed',
+     'bw'     => 'BigWig',
+     'bigWig' => 'BigWig',
+     'bam'    => 'BAM',
+     'gz'     => 'VCFTabix',
+     'cram'   => 'CRAM'
+    );
 
 =head1 METHODS
 
@@ -166,12 +158,14 @@ sub translate {
     # assembly not specified
     # translate tracksDB conf for all assemblies stored in the Hub
     foreach my $assembly ($trackhub->assemblies) {
-      push @{$docs}, $dispatch->(trackhub => $trackhub, 
-				 assembly => $assembly);
+      push @{$docs}, $dispatch->(
+        trackhub => $trackhub, 
+        assembly => $assembly);
     }
   } else {
-    push @{$docs}, $dispatch->(trackhub => $trackhub, 
-			       assembly => $assembly);
+    push @{$docs}, $dispatch->(
+      trackhub => $trackhub, 
+      assembly => $assembly);
   }
 
   scalar @{$docs} or 
@@ -216,18 +210,18 @@ sub to_json_1_0 {
     {
      version => 'v1.0',
      hub     => {
-		 name       => $trackhub->hub,
-		 shortLabel => $trackhub->shortLabel,
-		 shortLabel_stripped => $shortLabel_stripped,
-		 longLabel  => $trackhub->longLabel,
-		 url        => $trackhub->url,
-		 assembly   => $genome->twoBitPath?1:0 # detect if it is an assembly hub
-		},
+       name       => $trackhub->hub,
+       shortLabel => $trackhub->shortLabel,
+       shortLabel_stripped => $shortLabel_stripped,
+       longLabel  => $trackhub->longLabel,
+       url        => $trackhub->url,
+       assembly   => $genome->twoBitPath?1:0 # detect if it is an assembly hub
+     },
      # add the original trackDb file as the source
      source => { 
-		url => $genome->trackDb->[0],
-		checksum => Registry::Utils::checksum_compute($genome->trackDb->[0])
-	       }
+      url => $genome->trackDb->[0],
+      checksum => Registry::Utils::checksum_compute($genome->trackDb->[0])
+     }
     };
 
   # add species/assembly information
@@ -273,12 +267,12 @@ sub to_json_1_0 {
   $doc->{status} =
     { 
      tracks  => {
-		 total => 0,
-		 with_data => {
-			       total => 0,
-			       total_ko => 0
-			      }
-		},
+       total => 0,
+       with_data => {
+         total => 0,
+         total_ko => 0
+       }
+     },
      message => 'Unchecked',
      last_update => ''
     };
@@ -316,13 +310,13 @@ sub _collect_track_info {
 
     if (ref $hash->{$track} eq 'HASH') {
       foreach my $attr (keys %{$hash->{$track}}) {
-	next unless $attr eq 'members' or $attr eq 'type';
-	if ($attr eq 'type' and exists $hash->{$track}{bigDataUrl}) {
-	  $file_type->{$hash->{$track}{type}}++ if $hash->{$track}{type};
-	  ++$status->{tracks}{with_data}{total};
-	} else {
-	  $self->_collect_track_info($hash->{$track}{$attr}, $status, $file_type) if ref $hash->{$track}{$attr} eq 'HASH';
-	} 
+        next unless $attr eq 'members' or $attr eq 'type';
+        if ($attr eq 'type' and exists $hash->{$track}{bigDataUrl}) {
+          $file_type->{$hash->{$track}{type}}++ if $hash->{$track}{type};
+          ++$status->{tracks}{with_data}{total};
+        } else {
+          $self->_collect_track_info($hash->{$track}{$attr}, $status, $file_type) if ref $hash->{$track}{$attr} eq 'HASH';
+        } 
       }
     }
   } 
@@ -1217,9 +1211,9 @@ sub _add_genome_browser_links {
     $genome_division = $genome->division if $genome;
     if (defined $genome_division && $genome_division =~ /^Ensembl/) {
       if ($genome_division eq 'Ensembl') {
-	$division = 'www';
+        $division = 'www';
       } else {
-	($division = lc $genome_division) =~ s/ensembl//i;
+        ($division = lc $genome_division) =~ s/ensembl//i;
       }
     }
   }
@@ -1230,10 +1224,10 @@ sub _add_genome_browser_links {
     $shortLabel =~ s/\s/_/g;
     if ($division =~ /archive(?!\.plants)/) { # link to plant archive site should be the current one
       $doc->{hub}{browser_links}{ensembl} =
-	sprintf "%s/%s/Location/View?contigviewbottom=url:%s;name=%s;format=TRACKHUB;#modal_user_data", $domain, $species, $hub->{url}, $hub->{shortLabel_stripped};
+        sprintf "%s/%s/Location/View?contigviewbottom=url:%s;name=%s;format=TRACKHUB;#modal_user_data", $domain, $species, $hub->{url}, $hub->{shortLabel_stripped};
     } else {
       $doc->{hub}{browser_links}{ensembl} =
-	sprintf "%s/TrackHub?url=%s;species=%s;name=%s;registry=1", $domain, $hub->{url}, $species, $hub->{shortLabel_stripped};
+        sprintf "%s/TrackHub?url=%s;species=%s;name=%s;registry=1", $domain, $hub->{url}, $species, $hub->{shortLabel_stripped};
     }
   }
 
@@ -1261,7 +1255,7 @@ sub _add_genome_browser_links {
     $species = 'Aedes_aegypti_lvpagwg' if $assembly_accession eq 'GCA_002204515.1'; # new separate assembly
     
     $doc->{hub}{browser_links}{vectorbase} =
-	sprintf "%s/TrackHub?url=%s;species=%s;name=%s;registry=1", $domain, $hub->{url}, $species, $hub->{shortLabel_stripped};
+      sprintf "%s/TrackHub?url=%s;species=%s;name=%s;registry=1", $domain, $hub->{url}, $species, $hub->{shortLabel_stripped};
   }
   
   return;

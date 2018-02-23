@@ -30,14 +30,6 @@ Registry::Controller::Biodalliance
 
 Provide an action to show a trackhub in the embeddable Biodalliance browser.
 
-=head1 AUTHOR
-
-Alessandro Vullo, C<< <avullo at ebi.ac.uk> >>
-
-=head1 BUGS
-
-No known bugs at the moment. Development in progress.
-
 =cut
 
 package Registry::Controller::Biodalliance;

@@ -46,15 +46,15 @@ my $request = GET("$server/api/info/trackhubs");
 my $response = $ua->request($request);
 
 my %format_lookup = (
-		     'bed'    => 'BED',
-		     'bb'     => 'BigBed',
-		     'bigBed' => 'BigBed',
-		     'bw'     => 'BigWig',
-		     'bigWig' => 'BigWig',
-		     'bam'    => 'BAM',
-		     'gz'     => 'VCFTabix',
-		     'cram'   => 'CRAM'
-		    );
+ 'bed'    => 'BED',
+ 'bb'     => 'BigBed',
+ 'bigBed' => 'BigBed',
+ 'bw'     => 'BigWig',
+ 'bigWig' => 'BigWig',
+ 'bam'    => 'BAM',
+ 'gz'     => 'VCFTabix',
+ 'cram'   => 'CRAM'
+);
 
 my $stats;
 if ($response->code == 200) {
@@ -69,12 +69,12 @@ if ($response->code == 200) {
       $request = GET($uri);
       $response = $ua->request($request);
       if ($response->code == 200) {
-	my $trackdb = from_json($response->content);
-	my $file_type = {};
-	_collect_track_info($trackdb->{configuration}, $file_type);
-	$stats->{$hub->{name}} = $file_type;
+        my $trackdb = from_json($response->content);
+        my $file_type = {};
+        _collect_track_info($trackdb->{configuration}, $file_type);
+        $stats->{$hub->{name}} = $file_type;
       } else {
-	print STDERR "Couldn't get trackdb: %s [%d]", $response->content, $response->code;
+        print STDERR "Couldn't get trackdb: %s [%d]", $response->content, $response->code;
       }
     }
   }
@@ -115,19 +115,19 @@ sub _collect_track_info {
 
     if (ref $hash->{$track} eq 'HASH') {
       foreach my $attr (keys %{$hash->{$track}}) {
-	next unless $attr =~ /bigdataurl/i or $attr eq 'members';
-	if ($attr eq 'members') {
-	  _collect_track_info($hash->{$track}{$attr}, $file_type) if ref $hash->{$track}{$attr} eq 'HASH';
-	} else {
+        next unless $attr =~ /bigdataurl/i or $attr eq 'members';
+        if ($attr eq 'members') {
+          _collect_track_info($hash->{$track}{$attr}, $file_type) if ref $hash->{$track}{$attr} eq 'HASH';
+        } else {
 
-	  # determine type
-	  my $url = $hash->{$track}{$attr};
-	  my @path = split(/\./, $url);
-	  my $index = -1;
-	  # # handle compressed formats
-	  # $index = -2 if $path[-1] eq 'gz';
-	  $file_type->{$format_lookup{$path[$index]}}++;
-	}
+          # determine type
+          my $url = $hash->{$track}{$attr};
+          my @path = split(/\./, $url);
+          my $index = -1;
+          # # handle compressed formats
+          # $index = -2 if $path[-1] eq 'gz';
+          $file_type->{$format_lookup{$path[$index]}}++;
+        }
 
       }
     }

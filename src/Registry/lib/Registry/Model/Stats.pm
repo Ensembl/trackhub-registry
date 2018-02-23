@@ -31,14 +31,6 @@ Registry::Controller::API::Info - Endpoints for retrieving service and track hub
 A controller to provide actions implements endpoints for retrieving information about
 the service and the content of the Registry.
 
-=head1 AUTHOR
-
-Alessandro Vullo, C<< <avullo at ebi.ac.uk> >>
-
-=head1 BUGS
-
-No known bugs at the moment. Development in progress.
-
 =cut
 
 package Registry::Model::Stats;
@@ -54,13 +46,13 @@ use Registry::Utils::File qw(slurp_file);
 extends 'Catalyst::Model';
 
 has summary_json => (
-	     isa => 'ArrayRef',
-	     # isa => 'HashRef',	     
-	     is => 'rw',
-	     lazy => 1,
-	     builder  => '_build_summary_json',
-	     # default => sub { {} }
-	    );
+                     isa => 'ArrayRef',
+                     # isa => 'HashRef',	     
+                     is => 'rw',
+                     lazy => 1,
+                     builder  => '_build_summary_json',
+                     # default => sub { {} }
+                    );
 
 =head1 METHODS
 

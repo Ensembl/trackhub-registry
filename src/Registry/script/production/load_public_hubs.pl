@@ -52,8 +52,8 @@ my $config_file = 'public_hubs.conf'; # expect file in current directory
 # parse command-line arguments
 my $options_ok = 
   GetOptions("config|c=s" => \$config_file,
-	     "logdir|l=s" => \$log_dir,
-	     "help|h"     => \$help) or pod2usage(2);
+             "logdir|l=s" => \$log_dir,
+             "help|h"     => \$help) or pod2usage(2);
 pod2usage() if $help;
 
 my ($user, $pass) = ($ARGV[0], $ARGV[1]);
@@ -157,8 +157,8 @@ foreach my $hub_url (keys %config) {
     my $post_url = "$server/api/trackhub";
     $post_url .= '?permissive=1' if $config{$hub_url}->{permissive};
     $request = POST($post_url,
-		    'Content-type' => 'application/json',
-		    'Content'      => to_json($content));
+                    'Content-type' => 'application/json',
+                    'Content'      => to_json($content));
     $request->headers->header(user       => $user);
     $request->headers->header(auth_token => $auth_token);
     $response = $ua->request($request);
@@ -243,8 +243,8 @@ sub parse_ucsc_public_list {
 sub search_hub_by_url {
   my $url = shift;
   my $request = POST("$server/api/search",
-		     'Content-type' => 'application/json',
-		     'Content'      => to_json({ query => "hub.url:\"$url\"" }));
+                     'Content-type' => 'application/json',
+                     'Content'      => to_json({ query => "hub.url:\"$url\"" }));
   my $response = $ua->request($request);
   if ($response->is_success) {
     my $content = from_json($response->content);
@@ -261,8 +261,8 @@ sub search_hub_by_url {
       $hub = $item_hub and next unless $hub;
 
       if (exists $hub->{name} && $hub->{name} ne $item_hub->{name}) {
-	$logger->logwarn("Ambiguous results while searching for registered hub");
-	return -1;
+        $logger->logwarn("Ambiguous results while searching for registered hub");
+        return -1;
       }
     }
 
@@ -278,20 +278,20 @@ sub send_alert_message {
   my $localtime = localtime;
   my $message = 
     Email::MIME->create(
-			header_str => 
-			[
-			 From    => 'avullo@ebi.ac.uk',
-			 To      => 'avullo@ebi.ac.uk',
-                         Cc      => 'prem@ebi.ac.uk',
-			 Subject => sprintf("Alert report from TrackHub Registry: %s", $localtime),
-			],
-			attributes => 
-			{
-			 encoding => 'quoted-printable',
-			 charset  => 'ISO-8859-1',
-			},
-			body_str => $body,
-		       );
+      header_str => 
+      [
+       From    => 'avullo@ebi.ac.uk',
+       To      => 'avullo@ebi.ac.uk',
+       Cc      => 'prem@ebi.ac.uk',
+       Subject => sprintf("Alert report from TrackHub Registry: %s", $localtime),
+      ],
+      attributes => 
+      {
+       encoding => 'quoted-printable',
+       charset  => 'ISO-8859-1',
+      },
+      body_str => $body,
+    );
   
   $logger->info("Sending alert report to admin");
   sendmail($message);  

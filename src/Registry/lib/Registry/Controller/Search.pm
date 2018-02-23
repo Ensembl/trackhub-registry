@@ -259,12 +259,12 @@ sub index :Path :Args(0) {
 
   if($results){
     $c->stash(query_string    => $params->{q},
-	    filters         => $params,
-	    items           => $results->items,
-	    facets          => $results->facets,
-	    # aggregations    => $results->{aggregations},
-	    pager           => $results->pager,
-	    template        => 'search/results.tt');
+              filters         => $params,
+              items           => $results->items,
+              facets          => $results->facets,
+              # aggregations    => $results->{aggregations},
+              pager           => $results->pager,
+              template        => 'search/results.tt');
   }
 
 }
@@ -307,15 +307,15 @@ sub advanced_search :Path('advanced') Args(0) {
   # get the list of unique species/assemblies/hubs
   my $config = Registry->config()->{'Model::Search'};
   my $results = $c->model('Search')->search(index => $config->{trackhub}{index},
-					    type  => $config->{trackhub}{type},
-					    body => 
-					    {
-					     aggs => {
-						      species   => { terms => { field => 'species.scientific_name', size  => 0 } },
-						      assembly  => { terms => { field => 'assembly.name', size  => 0 } },
-						      hub       => { terms => { field => 'hub.name', size  => 0 } }
-						     }
-					    });
+                                            type  => $config->{trackhub}{type},
+                                            body => 
+                                            {
+                                             aggs => {
+                                                species   => { terms => { field => 'species.scientific_name', size  => 0 } },
+                                                assembly  => { terms => { field => 'assembly.name', size  => 0 } },
+                                                hub       => { terms => { field => 'hub.name', size  => 0 } }
+                                               }
+                                            });
   my $values;
   foreach my $agg (keys %{$results->{aggregations}}) {
     map { push @{$values->{$agg}}, $_->{key} } @{$results->{aggregations}{$agg}{buckets}}

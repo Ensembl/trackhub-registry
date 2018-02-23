@@ -43,18 +43,19 @@ SKIP: {
     6 unless &Registry::Utils::es_running();
 
   my $config = Registry->config()->{'Model::Search'};
-  my $indexer = Registry::Indexer->new(dir   => "$Bin/trackhub-examples/",
-						trackhub => {
-						  index => $config->{trackhub}{index},
-						  type  => $config->{trackhub}{type},
-						  mapping => 'trackhub_mappings.json'
-						},
-						authentication => {
-						  index => $config->{user}{index},
-						  type  => $config->{user}{type},
-						  mapping => 'authentication_mappings.json'
-						}
-					       );
+  my $indexer = Registry::Indexer->new(
+    dir   => "$Bin/trackhub-examples/",
+    trackhub => {
+      index => $config->{trackhub}{index},
+      type  => $config->{trackhub}{type},
+      mapping => 'trackhub_mappings.json'
+    },
+    authentication => {
+      index => $config->{user}{index},
+      type  => $config->{user}{type},
+      mapping => 'authentication_mappings.json'
+    }
+  );
   $indexer->index_users();
   $indexer->index_trackhubs();
 

@@ -101,7 +101,7 @@ sub help :Path('/help') {
   my $help_form = Registry::Form::User::Help->new();
 
   $c->stash(template => "help.tt",
-	    form     => $help_form);
+            form     => $help_form);
 
   return unless $help_form->process( params => $c->req->parameters );
 
@@ -114,18 +114,18 @@ sub help :Path('/help') {
     );
   my $email_message = 
     Email::MIME->create(header_str => 
-  			[
-  			 From => $email,
-  			 To   => "trackhub-registry\@ebi.ac.uk",
-  			 Subject => $subject
-  			],
-  			attributes =>
-  			{
-  			 encoding => 'quoted-printable',
-  			 charset  => 'ISO-8859-1',
-  			},
-  			body_str => $message,
-  		       );
+                          [
+                           From => $email,
+                           To   => "trackhub-registry\@ebi.ac.uk",
+                           Subject => $subject
+                          ],
+                          attributes =>
+                          {
+                           encoding => 'quoted-printable',
+                           charset  => 'ISO-8859-1',
+                          },
+                          body_str => $message,
+                               );
   try {
     sendmail($email_message);
   } catch {
@@ -236,10 +236,6 @@ sub login :Path('/api/login') Args(0) {
   $c->stash()->{auth_token} = $c->user->get('auth_key');
   $c->forward($c->view('JSON'));
 }
-
-=head1 AUTHOR
-
-Alessandro,,,
 
 =head1 LICENSE
 

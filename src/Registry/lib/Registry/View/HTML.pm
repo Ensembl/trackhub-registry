@@ -41,10 +41,6 @@ TT View for Registry.
 
 L<Registry>
 
-=head1 AUTHOR
-
-Alessandro,,,
-
 =head1 LICENSE
 
 This library is free software. You can redistribute it and/or modify

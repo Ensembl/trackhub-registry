@@ -30,14 +30,6 @@ Registry::Controller::Docs - Catalyst Controller
 
 Provide actions for assembling the pages corresponding to the URLs of the documentation.
 
-=head1 AUTHOR
-
-Alessandro Vullo, C<< <avullo at ebi.ac.uk> >>
-
-=head1 BUGS
-
-No known bugs at the moment. Development in progress.
-
 =cut
 
 package Registry::Controller::Docs;

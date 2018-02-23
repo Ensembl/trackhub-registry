@@ -19,11 +19,12 @@ use warnings;
 
 use Data::Dumper;
 use Bio::EnsEMBL::Registry;
+use Bio::EnsEMBL::ApiVersion 'software_version';
 
 my $registry = 'Bio::EnsEMBL::Registry';
 $registry->load_registry_from_db(-host => 'ensembldb.ensembl.org',
-				 -user => 'anonymous',
-				 -db_version => 81);
+                                 -user => 'anonymous',
+                                 -db_version => software_version);
 				 
 my @species = qw ( anas_platyrhynchos
 anolis_carolinensis
@@ -96,7 +97,7 @@ xiphophorus_maculatus);
 
 my @meta_keys = qw(assembly.name assembly.accession assembly.ucsc_alias);
 
-open my $FH, ">tmp.txt" or die "Cannot open file: $!\n";
+open my $FH, "tmp.txt","w" or die "Cannot open file: $!\n";
 foreach my $species (@species) {
   my $meta_adaptor = $registry->get_adaptor($species, 'Core', 'MetaContainer');
 

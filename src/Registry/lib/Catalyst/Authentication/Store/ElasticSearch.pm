@@ -63,9 +63,9 @@ around BUILDARGS => sub {
   # $orig will call the superclass BUILDARGS, which
   # will format the args hash appropriately.
   return $class->$orig(
-		       store_user_class => $config->{store_user_class},
-		       config => $config,
-		      );
+     store_user_class => $config->{store_user_class},
+     config => $config,
+    );
 };
 
 sub from_session {

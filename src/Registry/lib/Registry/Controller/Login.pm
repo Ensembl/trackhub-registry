@@ -32,14 +32,6 @@ This controller inherits from CatalystX::SimpleLogin::Controller::Login to overr
 the post login action so that after login users are immediately redirected to the page 
 listing the trackhub they have submitted.
 
-=head1 AUTHOR
-
-Alessandro Vullo, C<< <avullo at ebi.ac.uk> >>
-
-=head1 BUGS
-
-No known bugs at the moment. Development in progress.
-
 =cut
 
 package Registry::Controller::Login;

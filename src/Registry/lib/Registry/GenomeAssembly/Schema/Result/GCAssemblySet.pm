@@ -17,6 +17,8 @@ limitations under the License.
 =cut
 
 package Registry::GenomeAssembly::Schema::Result::GCAssemblySet;
+use strict;
+use warnings;
 use base qw/DBIx::Class::Core/;
 
 __PACKAGE__->table('gc_assembly_set');

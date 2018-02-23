@@ -87,15 +87,15 @@ my $es = connect_to_es_cluster($config{cluster_prod});
 my $sample_id_key = 'biosample_id';
 my $results = eval {
   $es->search(index  => 'trackhubs',
-	      type   => 'trackdb',
-	      body   => {
-			 # fields => [ $sample_id_key ],
-			 query => {
-				   filtered => {
-						filter => { 'exists' => { field => $sample_id_key }}
-					       }
-				  }
-			});
+              type   => 'trackdb',
+              body   => {
+               # fields => [ $sample_id_key ],
+                query => {
+                  filtered => {
+                    filter => { 'exists' => { field => $sample_id_key }}
+                  }
+                }
+              });
 }; 
 if ($@) {
   my $message = "Error querying for track hubs with BioSample IDs: $@";
@@ -134,7 +134,7 @@ sub connect_to_es_cluster {
 
   $logger->info("Instantiating ES client");
   return Search::Elasticsearch->new(cxn_pool => 'Static',
-				    nodes => $nodes);
+                                    nodes => $nodes);
 }
 
 sub send_alert_message {
@@ -143,19 +143,19 @@ sub send_alert_message {
   my $localtime = localtime;
   my $message = 
     Email::MIME->create(
-			header_str => 
-			[
-			 From    => 'avullo@ebi.ac.uk',
-			 To      => 'avullo@ebi.ac.uk',
-			 Subject => sprintf("Alert report from TrackHub Registry: %s", $localtime),
-			],
-			attributes => 
-			{
-			 encoding => 'quoted-printable',
-			 charset  => 'ISO-8859-1',
-			},
-			body_str => $body,
-		       );
+      header_str => 
+      [
+       From    => 'avullo@ebi.ac.uk',
+       To      => 'avullo@ebi.ac.uk',
+       Subject => sprintf("Alert report from TrackHub Registry: %s", $localtime),
+      ],
+      attributes => 
+      {
+       encoding => 'quoted-printable',
+       charset  => 'ISO-8859-1',
+      },
+      body_str => $body,
+           );
   
   $logger->info("Sending alert report to admin");
   sendmail($message);  

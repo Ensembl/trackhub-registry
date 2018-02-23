@@ -44,14 +44,6 @@ Registry::TrackHub - Represents a top-level track hub container
 
 A class which represents information contained in a UCSC-style track hub.
 
-=head1 AUTHOR
-
-Alessandro Vullo, C<< <avullo at ebi.ac.uk> >>
-
-=head1 BUGS
-
-No known bugs at the moment. Development in progress.
-
 =cut
 
 package Registry::TrackHub;
@@ -287,9 +279,9 @@ sub _get_hub_info {
       $genomes->{$genome}->trackDb(\@track_list);
     } else {
       if ($file =~ /^http|^ftp/) {
-	$genomes->{$genome}->trackDb([ "$file" ]);	
+        $genomes->{$genome}->trackDb([ "$file" ]);
       } else {
-	$genomes->{$genome}->trackDb([ "$url/$file" ]);	
+        $genomes->{$genome}->trackDb([ "$url/$file" ]);
       }
     }
   }

@@ -55,8 +55,8 @@ my $eg_server = "http://rest.ensemblgenomes.org";
 my $endpoint_eg_assembly_accession = "/info/assembly/populus_trichocarpa?content-type=application/json"; 
 
 $request = POST($url,
-		'Content-type' => 'application/json',
-		'Content' => to_json({ url => $trackHub_txt_file_url, type => 'transcriptomics', assemblies => { "$assembly_name" => "$assembly_accession" } }));
+                'Content-type' => 'application/json',
+                'Content' => to_json({ url => $trackHub_txt_file_url, type => 'transcriptomics', assemblies => { "$assembly_name" => "$assembly_accession" } }));
 $request->headers->header(user => 'trackhub1');
 $request->headers->header(auth_token => $auth_token);
 $response = $ua->request($request);

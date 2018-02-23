@@ -40,8 +40,8 @@ my $config_file = '.initrc'; # expect file in current directory
 # parse command-line arguments
 my $options_ok = 
   GetOptions("config|c=s" => \$config_file,
-	     "logdir|l=s" => \$log_dir,
-	     "help|h"     => \$help) or pod2usage(2);
+             "logdir|l=s" => \$log_dir,
+             "help|h"     => \$help) or pod2usage(2);
 pod2usage() if $help;
 
 # init logging, use log4perl inline configuration
@@ -88,10 +88,10 @@ my $indices = join(',', qw/trackhubs users reports/);
 $logger->info("Creating snapshot ${snapshot_name} of indices $indices");
 eval {
   $es->snapshot->create(repository  => $config{repository}{name},
-			snapshot    => $snapshot_name,
-			body        => {
-					indices => $indices
-				       });
+                        snapshot    => $snapshot_name,
+                        body        => {
+                          indices => $indices
+                        });
 }; # catch {
 if ($@) {
   my $message = "Couldn't take snapshot ${snapshot_name}: $@";
@@ -106,7 +106,7 @@ if ($@) {
 my $snapshot_status;
 do {
   $snapshot_status = $es->snapshot->status(repository  => $config{repository}{name},
-					   snapshot    => $snapshot_name)->{snapshots}[0]{state};
+                                           snapshot    => $snapshot_name)->{snapshots}[0]{state};
 } while ($snapshot_status eq 'IN_PROGRESS' or $snapshot_status eq 'STARTED');
 
 unless ($snapshot_status eq 'SUCCESS') {
@@ -211,15 +211,15 @@ eval {
   OUTER:
     foreach my $index (keys %{$content}) {
       foreach my $shard (@{$content->{$index}{shards}}) {
-	# we die if we get unexpected stage so that we
-	# can interrupt the monitoring process
-	my $stage = $shard->{stage};
-	die "Something unexpected happened during recovery, stage: $stage"
-	  unless ($stage eq 'DONE' or $stage eq 'INDEX' or $stage eq 'INIT');
-	if ($stage ne 'DONE') {
-	  $complete = 0;
-	  last OUTER;
-	}
+        # we die if we get unexpected stage so that we
+        # can interrupt the monitoring process
+        my $stage = $shard->{stage};
+        die "Something unexpected happened during recovery, stage: $stage"
+          unless ($stage eq 'DONE' or $stage eq 'INDEX' or $stage eq 'INIT');
+        if ($stage ne 'DONE') {
+          $complete = 0;
+          last OUTER;
+        }
 
       }
     }
@@ -277,7 +277,7 @@ sub restore_complete {
       my $stage = $shard->{stage};
       print "$index\t", $shard->{id}, "\t$stage\n"; 
       die "Something unexpected happened during recovery, stage: $stage"
-  	unless ($stage eq 'DONE' or $stage eq 'INDEX' or $stage eq 'INIT');
+        unless ($stage eq 'DONE' or $stage eq 'INDEX' or $stage eq 'INIT');
       return 0 if $stage ne 'DONE';
     }
   }
@@ -310,19 +310,19 @@ sub send_alert_message {
   my $localtime = localtime;
   my $message = 
     Email::MIME->create(
-			header_str => 
-			[
-			 From    => 'avullo@ebi.ac.uk',
-			 To      => 'avullo@ebi.ac.uk',
-			 Subject => sprintf("Alert report from TrackHub Registry: %s", $localtime),
-			],
-			attributes => 
-			{
-			 encoding => 'quoted-printable',
-			 charset  => 'ISO-8859-1',
-			},
-			body_str => $body,
-		       );
+      header_str => 
+      [
+       From    => 'avullo@ebi.ac.uk',
+       To      => 'avullo@ebi.ac.uk',
+       Subject => sprintf("Alert report from TrackHub Registry: %s", $localtime),
+      ],
+      attributes => 
+      {
+       encoding => 'quoted-printable',
+       charset  => 'ISO-8859-1',
+      },
+      body_str => $body,
+    );
   
   $logger->info("Sending alert report to admin");
   sendmail($message);  

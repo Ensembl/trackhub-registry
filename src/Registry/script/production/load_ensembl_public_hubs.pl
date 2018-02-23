@@ -130,8 +130,8 @@ my $hubs =
 foreach my $hub (@{$hubs}) {
   printf "Submitting hub at %s...", $hub->{url}; 
   $request = POST("$server/api/trackhub",
-		  'Content-type' => 'application/json',
-		  'Content'      => to_json($hub));
+                  'Content-type' => 'application/json',
+                  'Content'      => to_json($hub));
   $request->headers->header(user       => $user);
   $request->headers->header(auth_token => $auth_token);
   $response = $ua->request($request);

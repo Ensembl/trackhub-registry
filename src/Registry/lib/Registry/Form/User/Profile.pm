@@ -31,17 +31,10 @@ Registry::Form::User::Registration - Form for user profile
 This represents the data of the form presented to the user who wants to update
 his/her profile.
 
-=head1 AUTHOR
-
-Alessandro Vullo, C<< <avullo at ebi.ac.uk> >>
-
-=head1 BUGS
-
-No known bugs at the moment. Development in progress.
-
 =cut
 
 package Registry::Form::User::Profile;
+use Moose;
 use HTML::FormHandler::Moose;
 use namespace::autoclean;
 extends 'HTML::FormHandler';
@@ -113,7 +106,7 @@ sub validate {
       $self->field('password')->value )
     {
       $self->field('password_conf')
-	->add_error('Passwords do not match. Please try again.');
+        ->add_error('Passwords do not match. Please try again.');
     }
 };
     

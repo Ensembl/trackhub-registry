@@ -67,17 +67,17 @@ my $server = 'http://localhost:3000';
 
 my $config = Registry->config()->{'Model::Search'};
 my $indexer = Registry::Indexer->new(dir   => "$Bin/../trackhub-examples/",
-				     trackhub => {
-						  index => $config->{trackhub}{index},
-						  type  => $config->{trackhub}{type},
-						  mapping => 'trackhub_mappings.json'
-						 },
-				     authentication => {
-							index => $config->{user}{index},
-							type  => $config->{user}{type},
-							mapping => 'authentication_mappings.json'
-						       }
-				    );
+                                     trackhub => {
+                                      index => $config->{trackhub}{index},
+                                      type  => $config->{trackhub}{type},
+                                      mapping => 'trackhub_mappings.json'
+                                     },
+                                     authentication => {
+                                          index => $config->{user}{index},
+                                          type  => $config->{user}{type},
+                                          mapping => 'authentication_mappings.json'
+                                       }
+                                    );
 $indexer->index_users();
 
 # my ($user, $pass) = ('avullo', 'ALcsK32EX');
@@ -150,8 +150,8 @@ my $hubs =
 
 foreach my $hub (@{$hubs}) {
   $request = POST("$server/api/trackhub?permissive=1",
-		  'Content-type' => 'application/json',
-		  'Content'      => to_json($hub));
+                  'Content-type' => 'application/json',
+                  'Content'      => to_json($hub));
   $request->headers->header(user       => $user);
   $request->headers->header(auth_token => $auth_token);
   $response = $ua->request($request);

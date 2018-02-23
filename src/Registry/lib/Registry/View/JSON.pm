@@ -33,10 +33,6 @@ See L<Registry>
 
 Catalyst JSON View.
 
-=head1 AUTHOR
-
-Alessandro,,,
-
 =head1 LICENSE
 
 This library is free software, you can redistribute it and/or modify

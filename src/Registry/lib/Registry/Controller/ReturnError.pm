@@ -32,14 +32,6 @@ This is a controller whose actions are invoked by other controllers in case
 some error occurs. It has actions to return bad request/no content codes
 with customised messages.
 
-=head1 AUTHOR
-
-Alessandro Vullo, C<< <avullo at ebi.ac.uk> >>
-
-=head1 BUGS
-
-No known bugs at the moment. Development in progress.
-
 =cut
 
 package Registry::Controller::ReturnError;

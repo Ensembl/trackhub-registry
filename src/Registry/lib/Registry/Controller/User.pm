@@ -93,11 +93,11 @@ sub base : Chained('/login/required') PathPrefix CaptureArgs(1) {
   my $config = Registry->config()->{'Model::Search'};
   my $query = { term => { username => $username } };
   my $user_search = $c->model('Search')->search( index => $config->{user}{index},
-						 type  => $config->{user}{type},
-						 body => { query => $query } );
+                                                 type  => $config->{user}{type},
+                                                 body => { query => $query } );
 
   $c->stash(user => $user_search->{hits}{hits}[0]{_source},
-  	    id   => $user_search->{hits}{hits}[0]{_id});
+            id   => $user_search->{hits}{hits}[0]{_id});
 
 }
 
@@ -119,7 +119,7 @@ sub profile : Chained('base') :Path('profile') Args(0) {
   my $profile_form = Registry::Form::User::Profile->new(init_object => $c->stash->{user});
 
   $c->stash(template => "user/profile.tt",
-	    form     => $profile_form);
+            form     => $profile_form);
   
   return unless $profile_form->process( params => $c->req->parameters );
 
@@ -131,9 +131,9 @@ sub profile : Chained('base') :Path('profile') Args(0) {
   # update user profile on the backend
   my $config = Registry->config()->{'Model::Search'};
   $c->model('Search')->index(index   => $config->{user}{index},
-			     type    => $config->{user}{type},
-			     id      => $c->stash->{id},
-			     body    => $new_user_profile);
+                             type    => $config->{user}{type},
+                             id      => $c->stash->{id},
+                             body    => $new_user_profile);
 
   $c->model('Search')->indices->refresh(index => $config->{user}{index});
 
@@ -160,11 +160,11 @@ sub delete : Chained('base') Path('delete') Args(1) Does('ACL') RequiresRole('ad
   #
   # find username
   my $username = $c->model('Search')->search(index => $config->{user}{index},
-					     type  => $config->{user}{type},
-					     body  => {
-						       query => { filtered => { filter => { bool => { must => [ { term => { _id => $id } } ] } } } }
-						      }
-					    )->{hits}{hits}[0]{_source}{username};
+                                             type  => $config->{user}{type},
+                                             body  => {
+                                                 query => { filtered => { filter => { bool => { must => [ { term => { _id => $id } } ] } } } }
+                                                }
+                                            )->{hits}{hits}[0]{_source}{username};
   Catalyst::Exception->throw("Unable to find user $id information")
       unless defined $username;
 
@@ -178,16 +178,16 @@ sub delete : Chained('base') Path('delete') Args(1) Does('ACL') RequiresRole('ad
   # delete user trackDBs
   foreach my $trackdb (@{$user_trackdbs->{hits}{hits}}) {
     $c->model('Search')->delete(index   => $config->{trackhub}{index},
-				type    => $config->{trackhub}{type},
-				id      => $trackdb->{_id});
+                                type    => $config->{trackhub}{type},
+                                id      => $trackdb->{_id});
     $c->log->debug(sprintf "Document %s deleted", $trackdb->{_id});
   }
   $c->model('Search')->indices->refresh(index => $config->{trackhub}{index});
 
   # delete the user
   $c->model('Search')->delete(index   => $config->{user}{index},
-			      type    => $config->{user}{type},
-			      id      => $id);
+                              type    => $config->{user}{type},
+                              id      => $id);
   $c->model('Search')->indices->refresh(index => $config->{user}{index});
 
   # redirect to the list of providers page
@@ -211,7 +211,7 @@ sub list_trackhubs : Chained('base') :Path('trackhubs') Args(0) {
   }
 
   $c->stash(trackdbs => $trackdbs,
-	    template  => "user/trackhub/list.tt");
+            template  => "user/trackhub/list.tt");
 }
 
 =head2 submit_trackhubs
@@ -289,9 +289,9 @@ sub delete_trackhub : Chained('base') :Path('delete') Args(1) {
     if ($doc->{owner} eq $c->user->username) {
       my $config = Registry->config()->{'Model::Search'};
       # try { # TODO: this is not working for some reason
-	$c->model('Search')->delete(index   => $config->{trackhub}{index},
-				    type    => $config->{trackhub}{type},
-				    id      => $id);
+      $c->model('Search')->delete(index   => $config->{trackhub}{index},
+                                  type    => $config->{trackhub}{type},
+                                  id      => $id);
 	$c->model('Search')->indices->refresh(index => $config->{trackhub}{index});
       # } catch {
       # 	Catalyst::Exception->throw($_);
@@ -325,8 +325,8 @@ sub list_providers : Chained('base') Path('providers') Args(0) Does('ACL') Requi
 
   my $config = Registry->config()->{'Model::Search'};
   foreach my $user_data (@{$c->model('Search')->search(index => $config->{user}{index}, 
-						       type  => $config->{user}{type},
-						       size => 100000)->{hits}{hits}}) {
+                                                       type  => $config->{user}{type},
+                                                       size => 100000)->{hits}{hits}}) {
     my $user = $user_data->{_source};
     # don't want to show admin user to himself
     next if $user->{username} eq 'admin';
@@ -337,8 +337,8 @@ sub list_providers : Chained('base') Path('providers') Args(0) Does('ACL') Requi
   my $columns = [ 'username', 'first_name', 'last_name', 'fullname', 'email', 'affiliation' ];
 
   $c->stash(users     => $users,
-	    columns   => $columns,
-	    template  => "user/list.tt");
+            columns   => $columns,
+            template  => "user/list.tt");
 
 }
 
@@ -352,7 +352,7 @@ sub register :Path('register') Args(0) {
   my ($self, $c) = @_;
 
   $c->stash(template => "user/register.tt",
-	    form     => $self->registration_form);
+            form     => $self->registration_form);
 
   return unless $self->registration_form->process( params => $c->req->parameters );
 
@@ -370,8 +370,8 @@ sub register :Path('register') Args(0) {
     my $query = { term => { username => $username } };
     my $user_exists = 
       $c->model('Search')->count(index    => $config->{user}{index},
-				 type     => $config->{user}{type},
-				 body => { query => $query } )->{count};
+                                 type     => $config->{user}{type},
+                                 body => { query => $query } )->{count};
   
     unless ($user_exists) {
       # user with the provided username does not exist, proceed with registration
@@ -385,22 +385,22 @@ sub register :Path('register') Args(0) {
       $user_data->{roles} = [ 'user' ];
 
       $c->model('Search')->index(index => $config->{user}{index},
-				 type  => $config->{user}{type},
-				 id      => $current_max_id?$current_max_id + 1:1,
-				 body    => $user_data);
+                                 type  => $config->{user}{type},
+                                 id      => $current_max_id?$current_max_id + 1:1,
+                                 body    => $user_data);
 
       # refresh the index
       $c->model('Search')->indices->refresh(index => $config->{user}{index});
 
       # authenticate and redirect to the user profile page
       if ($c->authenticate({ username => $username,
-			     password => $self->registration_form->value->{password} } )) {
-	$c->stash(status_msg => sprintf "Welcome user %s", $username);
-	$c->res->redirect($c->uri_for($c->controller('User')->action_for('profile'), [$username]));
-	$c->detach;
+                             password => $self->registration_form->value->{password} } )) {
+        $c->stash(status_msg => sprintf "Welcome user %s", $username);
+        $c->res->redirect($c->uri_for($c->controller('User')->action_for('profile'), [$username]));
+        $c->detach;
       } else {
-	# Set an error message
-	$c->stash(error_msg => "Bad username or password.");
+        # Set an error message
+        $c->stash(error_msg => "Bad username or password.");
       }
 
     } else {
@@ -443,7 +443,7 @@ sub denied : Private {
   my ($self, $c) = @_;
  
   $c->stash(status_msg => "Access Denied",
-	    template   => "login/login.tt");
+            template   => "login/login.tt");
 }
 
 __PACKAGE__->meta->make_immutable;

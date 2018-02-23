@@ -36,8 +36,8 @@ my $config_file = '.initrc'; # expect file in current directory
 # parse command-line arguments
 my $options_ok = 
   GetOptions("config|c=s" => \$config_file,
-	     "type|t=s"   => \$type,
-	     "help|h"     => \$help) or pod2usage(2);
+             "type|t=s"   => \$type,
+             "help|h"     => \$help) or pod2usage(2);
 pod2usage() if $help;
 
 # init logging, use log4perl inline configuration
@@ -90,7 +90,7 @@ $logger->logdie(sprintf "Cluster %s is not up", $config{$cluster}{name})
 
 $logger->info("Instantiating ES client");
 my $es = Search::Elasticsearch->new(cxn_pool => 'Sniff',
-				    nodes => $nodes);
+                                    nodes => $nodes);
 
 $logger->info("Deleting existing indices/aliases");
 my $response = $es->indices->get(index => '_all', feature => '_aliases');
@@ -100,7 +100,7 @@ if (scalar @indices) {
     map { my $index = $_; 
 	  map { $logger->info("Deleting alias $_") and 
 		  $es->indices->delete_alias(index => $index,
-					     name  => $_) } keys %{$response->{$index}{aliases}};
+                                 name  => $_) } keys %{$response->{$index}{aliases}};
 	} @indices;
   } catch {
     $logger->logdie("Couldn't delete existing index/alias: $_");
@@ -133,7 +133,7 @@ foreach my $index_type (qw/trackhubs users reports/) {
   try {
     if ($settings) {
       $es->indices->create(index => $index, 
-			   body  => { settings => $settings }) if $settings;
+                           body  => { settings => $settings }) if $settings;
     } else {
       $es->indices->create(index => $index);
     }
@@ -147,8 +147,8 @@ foreach my $index_type (qw/trackhubs users reports/) {
     $logger->info("Creating mapping for type $type on index $index");
     try {
       $es->indices->put_mapping(index => $index,
-				type  => $type,
-				body  => from_json(slurp_file($config{$index_type}{mapping})));				
+                                type  => $type,
+                                body  => from_json(slurp_file($config{$index_type}{mapping})));
     } catch {
       $logger->logdie("Couldn't put mapping on index $index: $_");
     };
@@ -157,7 +157,7 @@ foreach my $index_type (qw/trackhubs users reports/) {
   $logger->info("Creating aliases on index $index");
   try {
     $es->indices->put_alias(index => $index,
-			    name  => $config{$index_type}{alias});
+                            name  => $config{$index_type}{alias});
   } catch {
     $logger->logdie("Couldn't add alias to index $index: $_");
   };
@@ -173,11 +173,11 @@ $repo_location = $config{repository}{location} if $type =~ /stag/;
 $logger->info("Creating repository on production cluster");
 try {
   $es->snapshot->create_repository(
-				   repository => $config{repository}{name},
-				   body       => {
-						  type => $config{repository}{type},
-						  settings => { location => $repo_location }
-						 });				   
+                                  repository => $config{repository}{name},
+                                  body       => {
+                                    type => $config{repository}{type},
+                                    settings => { location => $repo_location }
+                                  });
 } catch {
   $logger->logdie(sprintf "Couldn't create repository '%s': %s", $config{repository}{name}, $_);
 };
@@ -202,9 +202,9 @@ my $admin_user =
   };
 try {
   $es->index(index => $config{users}{alias},
-	     type  => $config{users}{type},
-	     id    => $admin_user->{id},
-	     body  => $admin_user);
+             type  => $config{users}{type},
+             id    => $admin_user->{id},
+             body  => $admin_user);
 } catch {
   $logger->logdie("Unable to index admin user: $_");
 };
@@ -218,9 +218,9 @@ sub slurp_file {
   my $string;
   {
     local $/=undef;
-    open FILE, "<$file" or $logger->logdie("Couldn't open file: $!");
-    $string = <FILE>;
-    close FILE;
+    open my $fh, "$file",'r' or $logger->logdie("Couldn't open file: $!");
+    $string = <$fh>;
+    close $fh;
   }
   
   return $string;

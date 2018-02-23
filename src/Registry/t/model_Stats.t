@@ -33,8 +33,8 @@ isa_ok($stats, 'Registry::Model::Stats');
 
 my $json = $stats->fetch_summary;
 cmp_deeply($json, [[ "Element", "", {"role" => "style"} ],
-		   [ "Hubs", 1772, "color: gray" ],
-		   [ "Species", 89, "color: #76A7FA" ],
-		   [ "Assemblies", 102, "opacity: 0.2"]], "basic summary");
+                   [ "Hubs", 1772, "color: gray" ],
+                   [ "Species", 89, "color: #76A7FA" ],
+                   [ "Assemblies", 102, "opacity: 0.2"]], "basic summary");
 
 done_testing();

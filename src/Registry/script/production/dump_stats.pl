@@ -38,9 +38,9 @@ my $config_file = '.initrc'; # expect file in current directory
 # parse command-line arguments
 my $options_ok = 
   GetOptions("config|c=s" => \$config_file,
-	     "logdir|l=s" => \$log_dir,
-	     "type|t=s"   => \$cluster_type,
-	     "help|h"     => \$help) or pod2usage(2);
+             "logdir|l=s" => \$log_dir,
+             "type|t=s"   => \$cluster_type,
+             "help|h"     => \$help) or pod2usage(2);
 pod2usage() if $help;
 
 # init logging, use log4perl inline configuration
@@ -99,7 +99,7 @@ $logger->logdie(sprintf "Cluster %s is not up", $config{$cluster}{name})
 
 $logger->info("Instantiating ES client");
 my $es = Search::Elasticsearch->new(cxn_pool => 'Sniff',
-				    nodes => $nodes);
+                                    nodes => $nodes);
 
 my ($index, $type) = ($config{trackhubs}->{alias}, $config{trackhubs}->{type});
 
@@ -127,7 +127,7 @@ sub collect_stats {
   # allow faster retrieval with the model
   foreach my $statsby (qw/species assemblies file_type/) {
     my $outfile = "../../root/static/data/${statsby}.json";
-    open my $FH, ">$outfile" or $logger->logdie("Cannot open file $outfile: $!");
+    open my $FH, "$outfile",'w' or $logger->logdie("Cannot open file $outfile: $!");
     print $FH to_json($content->{$statsby});
     close $FH;
   }
@@ -166,13 +166,13 @@ sub summary_stats {
   }
 
   my $outfile = "../../root/static/data/summary.json";
-  open my $FH, ">$outfile" or $logger->logdie("Cannot open file $outfile: $!");
+  open my $FH, "$outfile",'w' or $logger->logdie("Cannot open file $outfile: $!");
   print $FH to_json([
-		     ["Element", "Number of Elements", { "role" => "style" } ],
-		     ["Hubs", $num_hubs, "color: gray"],
-		     ["Species", $num_species, "color: #76A7FA"],
-		     ["Assemblies", $num_assemblies, "color: green"]
-		    ]);
+                     ["Element", "Number of Elements", { "role" => "style" } ],
+                     ["Hubs", $num_hubs, "color: gray"],
+                     ["Species", $num_species, "color: #76A7FA"],
+                     ["Assemblies", $num_assemblies, "color: green"]
+                    ]);
   close $FH;
 }
 

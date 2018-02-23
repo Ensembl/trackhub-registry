@@ -36,14 +36,6 @@ Registry::Utils - Useful methods
 
 A collections of useful functions
 
-=head1 AUTHOR
-
-Alessandro Vullo, C<< <avullo at ebi.ac.uk> >>
-
-=head1 BUGS
-
-No known bugs at the moment. Development in progress.
-
 =cut
 
 package Registry::Utils;
@@ -78,9 +70,9 @@ sub slurp_file {
   my $string;
   {
     local $/=undef;
-    open FILE, "<$file" or die "Couldn't open file: $!";
-    $string = <FILE>;
-    close FILE;
+    open my $fh, "$file", 'r' or die "Couldn't open file: $!";
+    $string = <$fh>;
+    close $fh;
   }
   
   return $string;

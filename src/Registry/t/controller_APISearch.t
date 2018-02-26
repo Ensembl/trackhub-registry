@@ -189,8 +189,11 @@ SKIP: {
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
   is(scalar @{$content->{items}}, 2, 'Number of search results');
-  is($content->{items}[0]{hub}{shortLabel}, 'Blueprint Hub', 'Search result hub');
-  is($content->{items}[0]{assembly}{accession}, 'GCA_000001405.15', 'Search result assembly');
+  
+  my ($blueprint) = grep { $_->{hub}{shortLabel} eq 'Blueprint Hub'} @{$content->{items}};
+
+  is($blueprint->{hub}{shortLabel}, 'Blueprint Hub', 'Search result hub');
+  is($blueprint->{assembly}{accession}, 'GCA_000001405.15', 'Search result assembly');
 
   $request = POST('/api/search?page=2',
 		  'Content-type' => 'application/json',
@@ -210,12 +213,13 @@ SKIP: {
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
   is(scalar @{$content->{items}}, 4, 'Number of search results');
-  is($content->{items}[0]{species}{tax_id}, '7955', 'Search result species');
-  ok($content->{items}[0]{hub}{shortLabel} eq 'GRC Genome Issues under Review' ||
-     $content->{items}[0]{hub}{shortLabel} eq 'ZebrafishGenomics', 'Search result hub');
-  ok($content->{items}[1]{assembly}{name} eq 'GRCz10' || $content->{items}[1]{assembly}{name} eq 'Zv9', 'Search result assembly');
-  ok($content->{items}[2]{hub}{longLabel} eq 'Burgess Lab Zebrafish Genomic Resources' ||
-     $content->{items}[2]{hub}{longLabel} eq 'Genome Reference Consortium: Genome issues and other features', 'Search result hub');
+  my @track_summaries = sort { $a->{hub}{shortLabel} cmp $b->{hub}{shortLabel} } @{$content->{items}}; # Deal with random order of return values
+  is($track_summaries[0]{species}{tax_id}, '7955', 'Search result species');
+  ok($track_summaries[0]{hub}{shortLabel} eq 'GRC Genome Issues under Review'); 
+  ok($track_summaries[1]{assembly}{name} eq 'Zv9','Search result assembly'); #|| $track_summaries[1]{assembly}{name} eq 'Zv9', 'Search result assembly');
+  ok($track_summaries[2]{hub}{longLabel} eq 'Burgess Lab Zebrafish Genomic Resources'); 
+  # ||
+  #    $track_summaries[2]{hub}{longLabel} eq 'Genome Reference Consortium: Genome issues and other features', 'Search result hub');
 
   $request = POST('/api/search',
 		  'Content-type' => 'application/json',
@@ -225,7 +229,8 @@ SKIP: {
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
   is(scalar @{$content->{items}}, 2, 'Number of search results');
-  ok($content->{items}[0]{hub}{shortLabel} eq 'GRC Genome Issues under Review' || $content->{items}[0]{hub}{shortLabel} eq 'ZebrafishGenomics', 'Search result hub');
+  @track_summaries = sort { $a->{hub}{shortLabel} cmp $b->{hub}{shortLabel} } @{$content->{items}};
+  ok($track_summaries[0]{hub}{shortLabel} eq 'GRC Genome Issues under Review', 'Search result hub');
 
   # ENSCORESW-2039: could not search we case sensitive assembly parameter
   $request = POST('/api/search',
@@ -268,7 +273,8 @@ SKIP: {
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
   is(scalar @{$content->{items}}, 2, 'Number of search results');
-  ok($content->{items}[0]{hub}{shortLabel} eq 'GRC Genome Issues under Review' || $content->{items}[0]{hub}{shortLabel} eq 'ZebrafishGenomics', 'Search result hub');
+  @track_summaries = sort { $a->{hub}{shortLabel} cmp $b->{hub}{shortLabel} } @{$content->{items}};
+  ok($track_summaries[0]{hub}{shortLabel} eq 'GRC Genome Issues under Review', 'Search result hub');
   
   
   

@@ -268,8 +268,12 @@ GET method for /api/info/tracks_per_assembly endpoint
 =cut
 
 sub tracks_per_assembly_GET {
-  my ($self, $c, $assembly_name) = @_;
+  my ($self, $c, $assembly) = @_;
 
+  my $term_field = 'name';
+  $term_field = 'accession' if $assembly =~ /^GCA/;
+
+  
   my $config = Registry->config()->{'Model::Search'};
 
   # Can't do with simple term filter or query, as the endpoint 
@@ -303,7 +307,7 @@ sub tracks_per_assembly_GET {
   # };
   my $trackdbs = $c->model('Search')->get_trackdbs();
   my $tracks = 0;
-  map { $tracks += scalar @{$_->{data}} if lc $_->{assembly}{name} eq lc $assembly_name } @{$trackdbs};
+  map { $tracks += scalar @{$_->{data}} if lc $_->{assembly}{$term_field} eq lc $assembly } @{$trackdbs};
 
   $self->status_ok($c, entity => { tot => $tracks });
 }

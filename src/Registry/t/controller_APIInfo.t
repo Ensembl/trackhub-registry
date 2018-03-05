@@ -188,6 +188,22 @@ SKIP: {
   $content = from_json($response->content);
   is($content->{tot}, 3, 'Number of hubs per assembly');
   
+  #
+  # /api/info/tracks_per_assembly
+  #
+  # test with accession
+  $request = GET('/api/info/tracks_per_assembly/GCA_000001405.15');
+  ok($response = request($request), 'GET request to /api/info/tracks_per_assembly');
+  ok($response->is_success, 'Request successful');
+  $content = from_json($response->content);
+  is($content->{tot}, 5864, 'Number of tracks per assembly');
+  #
+  # test with assembly name
+  $request = GET('/api/info/tracks_per_assembly/GRCh38');
+  ok($response = request($request), 'GET request to /api/info/tracks_per_assembly');
+  ok($response->is_success, 'Request successful');
+  $content = from_json($response->content);
+  is($content->{tot}, 5864, 'Number of tracks per assembly');
 }
 
 done_testing();

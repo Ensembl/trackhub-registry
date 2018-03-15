@@ -125,7 +125,7 @@ sub index :Path :Args(0) {
     } elsif ($param =~ /type/) {
       $filter = 'type';
     } else {
-      Catalyst::Exception::throw("Unrecognised parameter");
+      Catalyst::Exception->throw("Unrecognised parameter: $param");
     }
     $filters->{$filter} = $params->{$param};
   }

@@ -39,9 +39,6 @@ Provides useful functions to work with arrays, like extracting unique elements
 from a list and determine the union/intersection/difference between two (unique)
 lists.
 
-=head1 BUGS
-
-No known bugs at the moment. Development in progress.
 
 =cut
 

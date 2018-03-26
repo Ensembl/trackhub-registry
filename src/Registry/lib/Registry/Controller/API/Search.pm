@@ -31,10 +31,6 @@ Registry::Controller::API::Search - endpoints for programmatic search
 This is a controller providing actions implementing endpoints for doing
 programmatic search of track hubs.
 
-=head1 BUGS
-
-No known bugs at the moment. Development in progress.
-
 =cut
 
 package Registry::Controller::API::Search;

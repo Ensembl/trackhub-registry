@@ -31,14 +31,6 @@ Registry::Controller::API::Registration - A controller for submitting track hubs
 Implements endpoints allowing an authenticated user to submit track hubs to the Registry
 and perform other operations with them, e.g. delete, retrieve information
 
-=head1 AUTHOR
-
-Alessandro Vullo, C<< <avullo at ebi.ac.uk> >>
-
-=head1 BUGS
-
-No known bugs at the moment. Development in progress.
-
 =cut
 
 package Registry::Controller::API::Registration;

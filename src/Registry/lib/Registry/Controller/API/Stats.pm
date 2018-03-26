@@ -31,10 +31,6 @@ Registry::Controller::API::Stats - Endpoints for basic stats
 A controller to provide actions implements endpoints for retrieving 
 basic statistics about the content of the registry.
 
-=head1 BUGS
-
-No known bugs at the moment. Development in progress.
-
 =cut
 
 package Registry::Controller::API::Stats;

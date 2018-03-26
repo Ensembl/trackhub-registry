@@ -37,10 +37,6 @@ A class providing a method for parsing trackDB configuration files. This is usua
 in conjuction with a Registry::TrackHub object which provides the (relative) path to
 the trackDB configuration file for a given assembly.
 
-=head1 AUTHOR
-
-Alessandro Vullo, C<< <avullo at ebi.ac.uk> >>
-
 =head1 BUGS
 
 Metadata fields are not parsed correctly when the format is a sequence of key/value pairs

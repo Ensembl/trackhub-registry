@@ -32,14 +32,6 @@ This is a controller providing actions for various URLs which provide the
 front-end for authenticated users performing some administrative actions,
 e.g. changing profile, list/view/delete trackhubs.
 
-=head1 AUTHOR
-
-Alessandro Vullo, C<< <avullo at ebi.ac.uk> >>
-
-=head1 BUGS
-
-No known bugs at the moment. Development in progress.
-
 =cut
 
 

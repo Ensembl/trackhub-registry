@@ -43,10 +43,6 @@ L<Catalyst::Model::DBIC::Schema> Model using schema L<Registry::GenomeAssembly::
 
 Catalyst::Helper::Model::DBIC::Schema - 0.65
 
-=head1 AUTHOR
-
-Alessandro
-
 =head1 LICENSE
 
 This library is free software, you can redistribute it and/or modify

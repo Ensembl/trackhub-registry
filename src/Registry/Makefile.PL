@@ -30,6 +30,7 @@ requires 'Catalyst::Plugin::StatusMessage';
 requires 'CatalystX::SimpleLogin';
 requires 'Catalyst::Controller::ActionRole';
 requires 'Catalyst::ActionRole::ACL';
+requires 'Module::Install::Catalyst';
 requires 'Test::WWW::Mechanize::Catalyst';
 
 requires 'Moose';
@@ -48,9 +49,12 @@ requires 'File::Temp';
 requires 'List::Util';
 requires 'String::Random';
 requires 'Search::Elasticsearch' => 2.03;
+requires 'Clone';
 requires 'Data::SearchEngine';
 requires 'Encode';
 requires 'HTML::Restrict';
+requires 'Params::Validate';
+requires 'Template';
 
 # for file utils
 requires 'Compress::Zlib';
@@ -59,6 +63,7 @@ requires 'IO::Uncompress::Bunzip2';
 
 # For accessing the Genome Collection Assemby database
 requires 'Math::Base36';
+requires 'DBI';
 requires 'DBIx::Class';
 requires 'Catalyst::Model::DBIC::Schema';
 requires 'DBIx::Class::Cursor::Cached';
@@ -79,6 +84,7 @@ recommends 'Server::Starter';
 recommends 'Net::CIDR::Lite';
 recommends 'Net::Server::SS::PreFork';
 recommends 'Cache::Memcached';
+recommends 'Cache::FastMmap';
 recommends 'Plack::Middleware::ReverseProxy';
 recommends 'Plack::Middleware::CrossOrigin';
 recommends 'Plack::Middleware::SizeLimit';
@@ -92,6 +98,8 @@ recommends 'CHI::Driver::Memcached';
 recommends 'Term::Size::Any';
 recommends 'WWW::Mechanize';
 recommends 'Proc::ProcessTable';
+recommends 'WWW::Form::UrlEncoded';
+
 
 test_requires 'Test::More' => '0.88';
 test_requires 'Email::MIME';

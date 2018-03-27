@@ -1117,8 +1117,9 @@ sub _add_genome_browser_links {
     ('http://### DIVISION ###.ensembl.org', $doc->{species}{scientific_name});
   defined $species or die "Couldn't get species to build Ensembl URL";
 
-  $species = join('_', (split(/\s/, $species))[0 .. 1]);
-  $species =~ /^\w+_\w+$/ or die "Couldn't get the required species name to build the Ensembl URL";
+  my @species_fields = split(/\s/, $species);
+  $species = join('_', map { $_ =~ s/\W+//g; $_ } @species_fields[0..1]);
+  $species =~ /^\w+_\w+?/ or die "$species: Couldn't get the required species name to build the Ensembl URL";
   
   my $division;
 

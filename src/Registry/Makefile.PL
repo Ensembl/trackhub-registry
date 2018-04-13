@@ -99,6 +99,7 @@ recommends 'Term::Size::Any';
 recommends 'WWW::Mechanize';
 recommends 'Proc::ProcessTable';
 recommends 'WWW::Form::UrlEncoded';
+recommends 'Daemon::Control';
 
 
 test_requires 'Test::More' => '0.88';

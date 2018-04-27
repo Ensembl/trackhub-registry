@@ -98,7 +98,7 @@ SKIP: {
       $request->headers->header(user       => 'trackhub1');
       $request->headers->header(auth_token => $auth_token);
       ok($response = request($request), 'POST request to /api/trackhub');
-      ok($response->is_success, 'Request successful 2xx');
+      ok($response->is_success, 'Request successful 2xx for '.$hub->{name}.' hub');
       is($response->content_type, 'application/json', 'JSON content type');
     } else{
       note sprintf "WARN: Skipping hub %s ", $hub->{name}, " Please remove it from the public_hubs list";	

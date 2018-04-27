@@ -76,9 +76,4 @@
       </fieldset>
     </form>
   </div>
-  <div class="col-sm-6">
-    <h3>Mailing List</h3>
-    <p>We communicate new releases and other developments on our (very low-traffic) <a target="_blank" href="https://listserver.ebi.ac.uk/mailman/listinfo/thregistry-announce">announcement list</a>.</p>
-    <p>You can subscribe to the list, or change your existing subscription by following the above link and filling out the form.</p>
-  </div>
 </div>

@@ -40,17 +40,17 @@ SKIP: {
   note 'Preparing data for test (indexing sample documents)';
   my $config = Registry->config()->{'Model::Search'};
   my $indexer = Registry::Indexer->new(dir   => "$Bin/trackhub-examples/",
-						trackhub => {
-						  index => $config->{trackhub}{index},
-						  type  => $config->{trackhub}{type},
-						  mapping => 'trackhub_mappings.json'
-						},
-						authentication => {
-						  index => $config->{user}{index},
-						  type  => $config->{user}{type},
-						  mapping => 'authentication_mappings.json'
-						}
-					       );
+            trackhub => {
+              index => $config->{trackhub}{index},
+              type  => $config->{trackhub}{type},
+              mapping => 'trackhub_mappings.json'
+            },
+            authentication => {
+              index => $config->{user}{index},
+              type  => $config->{user}{type},
+              mapping => 'authentication_mappings.json'
+            }
+                 );
   $indexer->index_trackhubs();
   $indexer->index_users();
 

@@ -43,17 +43,17 @@ SKIP: {
   note 'Preparing data for test (indexing sample documents)';
   my $config = Registry->config()->{'Model::Search'};
   my $indexer = Registry::Indexer->new(dir   => "$Bin/trackhub-examples/",
-						trackhub => {
-						  index => $config->{trackhub}{index},
-						  type  => $config->{trackhub}{type},
-						  mapping => 'trackhub_mappings.json'
-						},
-						authentication => {
-						  index => $config->{user}{index},
-						  type  => $config->{user}{type},
-						  mapping => 'authentication_mappings.json'
-						}
-					       );
+            trackhub => {
+              index => $config->{trackhub}{index},
+              type  => $config->{trackhub}{type},
+              mapping => 'trackhub_mappings.json'
+            },
+            authentication => {
+              index => $config->{user}{index},
+              type  => $config->{user}{type},
+              mapping => 'authentication_mappings.json'
+            }
+                 );
   $indexer->index_trackhubs();
   $indexer->index_users();
 
@@ -162,7 +162,7 @@ SKIP: {
   #
   # request incorrect document (belongs to another provider)
   $request = PUT('/api/trackdb/3',
-  		  'Content-type' => 'application/json');
+        'Content-type' => 'application/json');
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'POST request to /api/trackdb/3');
@@ -172,7 +172,7 @@ SKIP: {
   #
   # request incorrect document (does not exist)
   $request = PUT('/api/trackdb/5',
-  		  'Content-type' => 'application/json');
+        'Content-type' => 'application/json');
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'POST request to /api/trackdb/3');
@@ -182,7 +182,7 @@ SKIP: {
   
   # request to update a doc but do not supply data
   $request = PUT('/api/trackdb/1',
-  		 'Content-type' => 'application/json');
+       'Content-type' => 'application/json');
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'POST request to /api/trackdb/1');
@@ -192,8 +192,8 @@ SKIP: {
   
   # request to update doc with invalid content (non v1.0 compliant)
   $request = PUT('/api/trackdb/1',
-  		  'Content-type' => 'application/json',
-  		  'Content'      => to_json({ test => 'test' }));
+        'Content-type' => 'application/json',
+        'Content'      => to_json({ test => 'test' }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'POST request to /api/trackdb/1');
@@ -203,15 +203,15 @@ SKIP: {
   like($content->{error}, qr/Failed/, 'Correct error response');
   # update doc1
   $request = PUT('/api/trackdb/1',
-  		  'Content-type' => 'application/json',
-  		  'Content'      => to_json({
-					     type    => 'epigenomics',
-					     hub     => { name => 'Test', shortLabel => 'Test Hub', longLabel => 'Test Hub' },
-					     version => 'v1.0',
-					     species => { tax_id => 9606, scientific_name => 'Homo sapiens' },
-					     assembly => { accession => 'GCA_000001405.15', name => 'GRCh38' },
-					     data => [ { id => 'test', molecule => 'genomic_DNA' } ],
-					     configuration => { test => { shortLabel => 'test' } } }));
+        'Content-type' => 'application/json',
+        'Content'      => to_json({
+               type    => 'epigenomics',
+               hub     => { name => 'Test', shortLabel => 'Test Hub', longLabel => 'Test Hub' },
+               version => 'v1.0',
+               species => { tax_id => 9606, scientific_name => 'Homo sapiens' },
+               assembly => { accession => 'GCA_000001405.15', name => 'GRCh38' },
+               data => [ { id => 'test', molecule => 'genomic_DNA' } ],
+               configuration => { test => { shortLabel => 'test' } } }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'POST request to /api/trackdb/1');
@@ -281,7 +281,7 @@ SKIP: {
   #
   # request to create a doc but do not supply data
   $request = POST('/api/trackdb/create',
-		  'Content-type' => 'application/json');
+      'Content-type' => 'application/json');
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'PUT request to /api/trackdb/create');
@@ -291,8 +291,8 @@ SKIP: {
   #
   # request to create a doc with invalid data (non v1.0 compliant)
   $request = POST('/api/trackdb/create',
-		  'Content-type' => 'application/json',
-		  'Content'      => to_json({ test => 'test' }));
+      'Content-type' => 'application/json',
+      'Content'      => to_json({ test => 'test' }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'PUT request to /api/trackdb/create');
@@ -307,8 +307,8 @@ SKIP: {
   #
   # create first doc
   $request = POST('/api/trackdb/create',
-		  'Content-type' => 'application/json',
-		  'Content'      => &Registry::Utils::slurp_file($docs->[2]{file}));
+      'Content-type' => 'application/json',
+      'Content'      => &Registry::Utils::slurp_file($docs->[2]{file}));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'PUT request to /api/trackdb/create');
@@ -321,8 +321,8 @@ SKIP: {
   #
   # attempt to submit trackdb with the same hub/assembly should fail
   $request = POST('/api/trackdb/create',
-		  'Content-type' => 'application/json',
-		  'Content'      => &Registry::Utils::slurp_file($docs->[2]{file}));
+      'Content-type' => 'application/json',
+      'Content'      => &Registry::Utils::slurp_file($docs->[2]{file}));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'PUT request to /api/trackdb/create');
@@ -333,8 +333,8 @@ SKIP: {
   #
   # create second doc
   $request = POST('/api/trackdb/create',
-		  'Content-type' => 'application/json',
-		  'Content'      => &Registry::Utils::slurp_file($docs->[3]{file}));
+      'Content-type' => 'application/json',
+      'Content'      => &Registry::Utils::slurp_file($docs->[3]{file}));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'PUT request to /api/trackdb/create');
@@ -374,7 +374,7 @@ SKIP: {
   #
   # should fail if no data is provided
   $request = POST('/api/trackhub',
-  		  'Content-type' => 'application/json');
+        'Content-type' => 'application/json');
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'POST request to /api/trackhub (no data)');
@@ -384,8 +384,8 @@ SKIP: {
   #
   # should fail if no URL is given
   $request = POST('/api/trackhub',
-  		  'Content-type' => 'application/json',
-  		  'Content'      => to_json({ 'dummy' => 1 }));
+        'Content-type' => 'application/json',
+        'Content'      => to_json({ 'dummy' => 1 }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'POST request to /api/trackhub (no URL)');
@@ -396,8 +396,8 @@ SKIP: {
   # should fail if URL is not correct
   my $URL = "http://";
   $request = POST('/api/trackhub?permissive=1',
-  		  'Content-type' => 'application/json',
-  		  'Content'      => to_json({ url => $URL }));
+        'Content-type' => 'application/json',
+        'Content'      => to_json({ url => $URL }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'POST request to /api/trackhub (incorrect URL)');
@@ -410,8 +410,8 @@ SKIP: {
   #
   # should fail if wrong schema version is specified
   $request = POST('/api/trackhub?version=dummy',
-  		  'Content-type' => 'application/json',
-  		  'Content'      => to_json({ url => $URL }));
+        'Content-type' => 'application/json',
+        'Content'      => to_json({ url => $URL }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'POST request to /api/trackhub?version=dummy (wrong version)');
@@ -421,8 +421,8 @@ SKIP: {
   #
   # should fail if unsupported schema version is specified
   $request = POST('/api/trackhub?version=v5.0',
-  		  'Content-type' => 'application/json',
-  		  'Content'      => to_json({ url => $URL }));
+        'Content-type' => 'application/json',
+        'Content'      => to_json({ url => $URL }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'POST request to /api/trackhub?version=v5.0 (unsupported version)');
@@ -432,8 +432,8 @@ SKIP: {
   #
   # request creation with schema version parameter: should get 3 docs
   $request = POST('/api/trackhub?version=v1.0&permissive=1',
-  		  'Content-type' => 'application/json',
-  		  'Content'      => to_json({ url => $URL }));
+        'Content-type' => 'application/json',
+        'Content'      => to_json({ url => $URL }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'POST request to /api/trackhub (Plants Hub)');
@@ -459,8 +459,8 @@ SKIP: {
   # by new ones
   #
   $request = POST('/api/trackhub?version=v1.0&permissive=1',
-  		  'Content-type' => 'application/json',
-  		  'Content'      => to_json({ url => $URL }));
+        'Content-type' => 'application/json',
+        'Content'      => to_json({ url => $URL }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'POST request to /api/trackhub (Plants Hub)');
@@ -472,9 +472,9 @@ SKIP: {
   # [ENSCORESW-1713]. Resubmission can fail, in this case we want to
   # re-establish the previous hub content, since it's first deleted.
   $request = POST('/api/trackhub?version=v1.0&permissive=1',
-  		  'Content-type' => 'application/json',
-  		  'Content'      => to_json({ url => $URL,
-					      assemblies => { araTha1 => 'dummy'} }));
+        'Content-type' => 'application/json',
+        'Content'      => to_json({ url => $URL,
+                assemblies => { araTha1 => 'dummy'} }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'Resubmit with wrong POST request to /api/trackhub (Plants Hub)');
@@ -483,12 +483,12 @@ SKIP: {
   my $mech = Test::WWW::Mechanize::Catalyst->new(catalyst_app => 'Registry');
   $mech->get_ok('/', 'Requested main page');
   $mech->submit_form_ok({
-  			 form_number => 1,
-  			 fields      => {
-  					 q => 'hub.shortLabel:plants'
-  					},
-  			}, 'Submit search query for plants hub'
-  		       );
+         form_number => 1,
+         fields      => {
+             q => 'hub.shortLabel:plants'
+            },
+        }, 'Submit search query for plants hub'
+             );
   $mech->content_like(qr/Track Collections 1 to 3 of 3/, 'Got original Plants trackDBs');
   #
   #
@@ -501,8 +501,8 @@ SKIP: {
   ok(exists $content->{auth_token}, 'Logged in');
   $auth_token2 = $content->{auth_token};
   $request = POST('/api/trackhub?version=v1.0&permissive=1',
-  		  'Content-type' => 'application/json',
-  		  'Content'      => to_json({ url => $URL }));
+        'Content-type' => 'application/json',
+        'Content'      => to_json({ url => $URL }));
   $request->headers->header(user       => 'trackhub2');
   $request->headers->header(auth_token => $auth_token2);
   ok($response = request($request), 'POST request to /api/trackhub (Plants Hub)');
@@ -513,14 +513,14 @@ SKIP: {
   # Test submission of same hub with assembly name -> INSDC accession map
   #
   $request = POST('/api/trackhub?permissive=1',
-		  'Content-type' => 'application/json',
-		  'Content'      => to_json({ url => 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt',
-					      assemblies => {
-							     araTha1 => 'GCA_000001735.1',
-							     ricCom1 => 'GCA_000151685.2',
-							     braRap1 => 'GCA_000309985.1'
-							    }
-					    }));
+      'Content-type' => 'application/json',
+      'Content'      => to_json({ url => 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt',
+                assemblies => {
+                   araTha1 => 'GCA_000001735.1',
+                   ricCom1 => 'GCA_000151685.2',
+                   braRap1 => 'GCA_000309985.1'
+                  }
+              }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'POST request to /api/trackhub (Plants Hub) with assembly map');
@@ -534,8 +534,8 @@ SKIP: {
   # test with other public hubs
   # $URL = 'http://smithlab.usc.edu/trackdata/methylation';
   # $request = POST('/api/trackhub?permissive=1',
-  # 		  'Content-type' => 'application/json',
-  # 		  'Content'      => to_json({ url => $URL, type => 'epigenomics' }));
+  #       'Content-type' => 'application/json',
+  #       'Content'      => to_json({ url => $URL, type => 'epigenomics' }));
   # $request->headers->header(user       => 'trackhub1');
   # $request->headers->header(auth_token => $auth_token);
   # ok($response = request($request), "POST request to /api/trackhub?version=v1.0 (Methylation Hub)");
@@ -586,9 +586,9 @@ SKIP: {
       is($hub->{shortLabel}, 'Plants', 'Hub short label');
       is(scalar @{$hub->{trackdbs}}, 3, 'Number of trackDbs');
       foreach my $trackdb (@{$hub->{trackdbs}}) {
-	ok(($trackdb->{species} == 3702) || ($trackdb->{species} == 3711) || ($trackdb->{species} == 3988), 'trackDb species');
-	ok(($trackdb->{assembly} eq 'GCA_000151685.2') || ($trackdb->{assembly} eq 'GCA_000309985.1') || ($trackdb->{assembly} eq 'GCA_000001735.1'), 'trackDb assembly');
-	like($trackdb->{uri}, qr/api\/trackdb/, 'trackDb uri');
+  ok(($trackdb->{species} == 3702) || ($trackdb->{species} == 3711) || ($trackdb->{species} == 3988), 'trackDb species');
+  ok(($trackdb->{assembly} eq 'GCA_000151685.2') || ($trackdb->{assembly} eq 'GCA_000309985.1') || ($trackdb->{assembly} eq 'GCA_000001735.1'), 'trackDb assembly');
+  like($trackdb->{uri}, qr/api\/trackdb/, 'trackDb uri');
       }
     } elsif ($hub->{name} eq 'Smith Lab Public Hub') {
       is($hub->{shortLabel}, 'DNA Methylation', 'Hub short label');
@@ -610,7 +610,7 @@ SKIP: {
   is($hub->{shortLabel}, 'Plants', 'Hub short label');
   is(scalar @{$hub->{trackdbs}}, 3, 'Number of trackDbs');
   foreach my $trackdb (@{$hub->{trackdbs}}) {
-  	ok(($trackdb->{species}->{tax_id} == 3702) || ($trackdb->{species}->{tax_id}  == 3711) || ($trackdb->{species}->{tax_id} == 3988), 'trackDb species');
+    ok(($trackdb->{species}->{tax_id} == 3702) || ($trackdb->{species}->{tax_id}  == 3711) || ($trackdb->{species}->{tax_id} == 3988), 'trackDb species');
     ok(($trackdb->{assembly}->{accession} eq 'GCA_000151685.2') || ($trackdb->{assembly}->{accession} eq 'GCA_000309985.1') || ($trackdb->{assembly}->{accession} eq 'GCA_000001735.1'), 'trackDb assembly');
     like($trackdb->{uri}, qr/api\/trackdb/, 'trackDb uri');
   }

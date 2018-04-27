@@ -40,32 +40,32 @@ SKIP: {
   note 'Preparing data for test (indexing users)';
   my $config = Registry->config()->{'Model::Search'};
   my $indexer = Registry::Indexer->new(dir   => "$Bin/trackhub-examples/",
-						trackhub => {
-						  index => $config->{trackhub}{index},
-						  type  => $config->{trackhub}{type},
-						  mapping => 'trackhub_mappings.json'
-						},
-						authentication => {
-						  index => $config->{user}{index},
-						  type  => $config->{user}{type},
-						  mapping => 'authentication_mappings.json'
-						}
-					       );
+            trackhub => {
+              index => $config->{trackhub}{index},
+              type  => $config->{trackhub}{type},
+              mapping => 'trackhub_mappings.json'
+            },
+            authentication => {
+              index => $config->{user}{index},
+              type  => $config->{user}{type},
+              mapping => 'authentication_mappings.json'
+            }
+                 );
   $indexer->index_users();
 
   # submit some public hubs
   my @public_hubs = (
-		     # { name => 'polyA', url => 'http://johnlab.org/xpad/Hub/UCSC.txt' },
-		     { name => 'mRNA', url => 'http://www.mircode.org/ucscHub/hub.txt' },
-		     { name => 'blueprint', url => 'ftp://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub' },
-		     { name => 'plants', url => 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt' },
-		     { name => 'ensembl', url => 'http://ngs.sanger.ac.uk/production/ensembl/regulation/hub.txt' },
-		     { name => 'rnaseq', url => 'http://web.stanford.edu/~htilgner/2012_454paper/data/hub.txt' },
-		     { name => 'zebrafish', url => 'http://research.nhgri.nih.gov/manuscripts/Burgess/zebrafish/downloads/NHGRI-1/hub.txt' },
-		     { name => 'sanger', url => 'http://ngs.sanger.ac.uk/production/grit/track_hub/hub.txt' },
-		     { name => 'thornton', url => 'http://devlaeminck.bio.uci.edu/RogersUCSC/hub.txt' },
-		     { name => 'vectorbase', url => 'ftp://ftp.vectorbase.org/public_data/rnaseq_alignments/hubs/anopheles_gambiae/VBRNAseq_group_SRP014756/hub.txt',  assemblies => { AgamP4 => 'GCA_000005575.1' } }
-		    );
+         # { name => 'polyA', url => 'http://johnlab.org/xpad/Hub/UCSC.txt' },
+         { name => 'mRNA', url => 'http://www.mircode.org/ucscHub/hub.txt' },
+         { name => 'blueprint', url => 'ftp://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub' },
+         { name => 'plants', url => 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt' },
+         { name => 'ensembl', url => 'http://ngs.sanger.ac.uk/production/ensembl/regulation/hub.txt' },
+         { name => 'rnaseq', url => 'http://web.stanford.edu/~htilgner/2012_454paper/data/hub.txt' },
+         { name => 'zebrafish', url => 'http://research.nhgri.nih.gov/manuscripts/Burgess/zebrafish/downloads/NHGRI-1/hub.txt' },
+         { name => 'sanger', url => 'http://ngs.sanger.ac.uk/production/grit/track_hub/hub.txt' },
+         { name => 'thornton', url => 'http://devlaeminck.bio.uci.edu/RogersUCSC/hub.txt' },
+         { name => 'vectorbase', url => 'ftp://ftp.vectorbase.org/public_data/rnaseq_alignments/hubs/anopheles_gambiae/VBRNAseq_group_SRP014756/hub.txt',  assemblies => { AgamP4 => 'GCA_000005575.1' } }
+        );
 
   my $request = GET('/api/login');
   $request->headers->authorization_basic('trackhub1', 'trackhub1');
@@ -80,8 +80,8 @@ SKIP: {
       my $post = { url => $hub->{url} };
       $post->{assemblies} = $hub->{assemblies} if $hub->{assemblies};
       $request = POST('/api/trackhub?permissive=1',
-		      'Content-type' => 'application/json',
-		      'Content'      => to_json($post));
+          'Content-type' => 'application/json',
+          'Content'      => to_json($post));
       $request->headers->header(user       => 'trackhub1');
       $request->headers->header(auth_token => $auth_token);
       ok($response = request($request), 'POST request to /api/trackhub');
@@ -93,8 +93,8 @@ SKIP: {
   # Now register another hub but do not make it available for search
   note sprintf "Submitting hub ultracons (not searchable)";
   $request = POST('/api/trackhub?permissive=1',
-		  'Content-type' => 'application/json',
-		  'Content'      => to_json({ url => 'http://genome-test.cse.ucsc.edu/~hiram/hubs/GillBejerano/hub.txt', public => 0 }));
+      'Content-type' => 'application/json',
+      'Content'      => to_json({ url => 'http://genome-test.cse.ucsc.edu/~hiram/hubs/GillBejerano/hub.txt', public => 0 }));
   $request->headers->header(user       => 'trackhub1');
   $request->headers->header(auth_token => $auth_token);
   ok($response = request($request), 'POST request to /api/trackhub');
@@ -113,7 +113,7 @@ SKIP: {
   #
   # no data
   $request = POST('/api/search',
-		  'Content-type' => 'application/json');
+      'Content-type' => 'application/json');
   ok($response = request($request), 'POST request to /api/search');
   is($response->code, 400, 'Request unsuccessful 400');
   $content = from_json($response->content);;
@@ -122,8 +122,8 @@ SKIP: {
   # empty query, get all entries
   # default page and entries_per_page
   $request = POST('/api/search',
-		  'Content-type' => 'application/json',
-		  'Content'      => to_json({ query => '' }));
+      'Content-type' => 'application/json',
+      'Content'      => to_json({ query => '' }));
   ok($response = request($request), 'POST request to /api/search');
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
@@ -138,8 +138,8 @@ SKIP: {
 
   # test getting the n-th page
   $request = POST('/api/search?page=3',
-		  'Content-type' => 'application/json',
-		  'Content'      => to_json({ query => '' }));
+      'Content-type' => 'application/json',
+      'Content'      => to_json({ query => '' }));
   ok($response = request($request), 'POST request to /api/search');
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
@@ -148,8 +148,8 @@ SKIP: {
 
   # test the entries_per_page parameter
   $request = POST('/api/search?page=3&entries_per_page=2',
-		  'Content-type' => 'application/json',
-		  'Content'      => to_json({ query => '' }));
+      'Content-type' => 'application/json',
+      'Content'      => to_json({ query => '' }));
   ok($response = request($request), 'POST request to /api/search');
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
@@ -158,8 +158,8 @@ SKIP: {
 
   # test option to return all results
   $request = POST('/api/search?all=1',
-		  'Content-type' => 'application/json',
-		  'Content'      => to_json({ query => '' }));
+      'Content-type' => 'application/json',
+      'Content'      => to_json({ query => '' }));
   ok($response = request($request), 'POST request to /api/search');
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
@@ -169,8 +169,8 @@ SKIP: {
 
   # when asking for all results, the other parameters should be ignored
   $request = POST('/api/search?all=1&page=2&entries_per_page=10',
-		  'Content-type' => 'application/json',
-		  'Content'      => to_json({ query => '' }));
+      'Content-type' => 'application/json',
+      'Content'      => to_json({ query => '' }));
   ok($response = request($request), 'POST request to /api/search');
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
@@ -182,8 +182,8 @@ SKIP: {
   # test with query string
   # blueprint hub has some metadata to look for
   $request = POST('/api/search',
-		  'Content-type' => 'application/json',
-		  'Content'      => to_json({ query => 'monocyte male' }));
+      'Content-type' => 'application/json',
+      'Content'      => to_json({ query => 'monocyte male' }));
   ok($response = request($request), 'POST request to /api/search');
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
@@ -196,8 +196,8 @@ SKIP: {
   is($blueprint->{assembly}{accession}, 'GCA_000001405.15', 'Search result assembly');
 
   $request = POST('/api/search?page=2',
-		  'Content-type' => 'application/json',
-		  'Content'      => to_json({ query => 'neutrophil' }));
+      'Content-type' => 'application/json',
+      'Content'      => to_json({ query => 'neutrophil' }));
   ok($response = request($request), 'POST request to /api/search');
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
@@ -206,8 +206,8 @@ SKIP: {
   
   # test with some filters
   $request = POST('/api/search',
-		  'Content-type' => 'application/json',
-		  'Content'      => to_json({ species => 'Danio rerio'}));
+      'Content-type' => 'application/json',
+      'Content'      => to_json({ species => 'Danio rerio'}));
   ok($response = request($request), 'POST request to /api/search [filter: Danio rerio (species)');
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
@@ -220,8 +220,8 @@ SKIP: {
   is($track_summaries[2]{hub}{longLabel}, 'Genome Reference Consortium: Genome issues and other features', 'Long form hub label'); 
   
   $request = POST('/api/search',
-		  'Content-type' => 'application/json',
-		  'Content'      => to_json({ assembly => 'GRCz10' }));
+      'Content-type' => 'application/json',
+      'Content'      => to_json({ assembly => 'GRCz10' }));
   ok($response = request($request), 'POST request to /api/search [filter: GRCz10 (assembly)]');
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
@@ -232,8 +232,8 @@ SKIP: {
 
   # ENSCORESW-2039: could not search we case sensitive assembly parameter
   $request = POST('/api/search',
-		  'Content-type' => 'application/json',
-		  'Content'      => to_json({ assembly => 'AgamP4' }));
+      'Content-type' => 'application/json',
+      'Content'      => to_json({ assembly => 'AgamP4' }));
   ok($response = request($request), 'POST request to /api/search [filter: AgamP4 (assembly)]');
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
@@ -242,8 +242,8 @@ SKIP: {
   is($content->{items}[0]{hub}{shortLabel}, 'Male adult (Tu 2012)', 'Search result hub');
   
   $request = POST('/api/search',
-		  'Content-type' => 'application/json',
-		  'Content'      => to_json({ hub => '454paper' }));
+      'Content-type' => 'application/json',
+      'Content'      => to_json({ hub => '454paper' }));
   ok($response = request($request), 'POST request to /api/search [filter: 454paper (hub)]');
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
@@ -253,9 +253,9 @@ SKIP: {
 
   # incompatible filters should return no results
   $request = POST('/api/search',
-		  'Content-type' => 'application/json',
-		  'Content'      => to_json({ species  => 'Danio rerio',
-					      hub => '454paper'}));
+      'Content-type' => 'application/json',
+      'Content'      => to_json({ species  => 'Danio rerio',
+                hub => '454paper'}));
   ok($response = request($request), 'POST request to /api/search [filters: Danio rerio (species), 454paper (hub)]');
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
@@ -264,8 +264,8 @@ SKIP: {
 
   # test search by accession
   $request = POST('/api/search',
-		  'Content-type' => 'application/json',
-		  'Content'      => to_json({ accession  => 'GCA_000002035.3' }));
+      'Content-type' => 'application/json',
+      'Content'      => to_json({ accession  => 'GCA_000002035.3' }));
   ok($response = request($request), 'POST request to /api/search [filters: Danio rerio, GRCh37]');
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
@@ -278,8 +278,8 @@ SKIP: {
   
   # search for non public hub should get no results
   $request = POST('/api/search',
-		  'Content-type' => 'application/json',
-		  'Content'      => to_json({ hub => 'UltraconservedElements'}));
+      'Content-type' => 'application/json',
+      'Content'      => to_json({ hub => 'UltraconservedElements'}));
   ok($response = request($request), 'POST request to /api/search [filters: UltraconservedElements]');
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
@@ -297,8 +297,8 @@ SKIP: {
   # get the ID of the trackDB of the miRcode Hub 
   # test hub filter meanwhile
   $request = POST('/api/search',
-		  'Content-type' => 'application/json',
-		  'Content'      => to_json({ hub => 'miRcodeHub'}));
+      'Content-type' => 'application/json',
+      'Content'      => to_json({ hub => 'miRcodeHub'}));
   ok($response = request($request), 'POST request to /api/search [filters: miRcodeHub]');
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');

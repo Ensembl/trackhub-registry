@@ -55,31 +55,31 @@ SKIP: {
   note 'Preparing data for test (indexing users)';
   my $config = Registry->config()->{'Model::Search'};
   my $indexer = Registry::Indexer->new(dir   => "$Bin/trackhub-examples/",
-						trackhub => {
-						  index => $config->{trackhub}{index},
-						  type  => $config->{trackhub}{type},
-						  mapping => 'trackhub_mappings.json'
-						},
-						authentication => {
-						  index => $config->{user}{index},
-						  type  => $config->{user}{type},
-						  mapping => 'authentication_mappings.json'
-						}
-					       );
+            trackhub => {
+              index => $config->{trackhub}{index},
+              type  => $config->{trackhub}{type},
+              mapping => 'trackhub_mappings.json'
+            },
+            authentication => {
+              index => $config->{user}{index},
+              type  => $config->{user}{type},
+              mapping => 'authentication_mappings.json'
+            }
+                 );
   $indexer->index_users();
 
   # submit some public hubs
   my @public_hubs = (
-		     # { name => 'polyA', url => 'http://johnlab.org/xpad/Hub/UCSC.txt' },
-		     { name => 'mRNA', url => 'http://www.mircode.org/ucscHub/hub.txt' },
-		     { name => 'blueprint', url => 'ftp://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub' },
-		     { name => 'plants', url => 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt' },
-		     { name => 'ensembl', url => 'http://ngs.sanger.ac.uk/production/ensembl/regulation/hub.txt' },
-		     { name => 'rnaseq', url => 'http://web.stanford.edu/~htilgner/2012_454paper/data/hub.txt' },
-		     { name => 'zebrafish', url => 'http://research.nhgri.nih.gov/manuscripts/Burgess/zebrafish/downloads/NHGRI-1/hub.txt' },
-		     { name => 'sanger', url => 'http://ngs.sanger.ac.uk/production/grit/track_hub/hub.txt' },
-		     # NA any more { name => 'thornton', url => 'http://devlaeminck.bio.uci.edu/RogersUCSC/hub.txt' }, 
-		    );
+         # { name => 'polyA', url => 'http://johnlab.org/xpad/Hub/UCSC.txt' },
+         { name => 'mRNA', url => 'http://www.mircode.org/ucscHub/hub.txt' },
+         { name => 'blueprint', url => 'ftp://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub' },
+         { name => 'plants', url => 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt' },
+         { name => 'ensembl', url => 'http://ngs.sanger.ac.uk/production/ensembl/regulation/hub.txt' },
+         { name => 'rnaseq', url => 'http://web.stanford.edu/~htilgner/2012_454paper/data/hub.txt' },
+         { name => 'zebrafish', url => 'http://research.nhgri.nih.gov/manuscripts/Burgess/zebrafish/downloads/NHGRI-1/hub.txt' },
+         { name => 'sanger', url => 'http://ngs.sanger.ac.uk/production/grit/track_hub/hub.txt' },
+         # NA any more { name => 'thornton', url => 'http://devlaeminck.bio.uci.edu/RogersUCSC/hub.txt' }, 
+        );
 
   $request = GET('/api/login');
   $request->headers->authorization_basic('trackhub1', 'trackhub1');
@@ -93,15 +93,15 @@ SKIP: {
     if (head($hub->{url})) {
       note sprintf "Submitting hub %s", $hub->{name};
       $request = POST('/api/trackhub?permissive=1',
-		      'Content-type' => 'application/json',
-		      'Content'      => to_json({ url => $hub->{url} }));
+          'Content-type' => 'application/json',
+          'Content'      => to_json({ url => $hub->{url} }));
       $request->headers->header(user       => 'trackhub1');
       $request->headers->header(auth_token => $auth_token);
       ok($response = request($request), 'POST request to /api/trackhub');
       ok($response->is_success, 'Request successful 2xx for '.$hub->{name}.' hub');
       is($response->content_type, 'application/json', 'JSON content type');
     } else{
-      note sprintf "WARN: Skipping hub %s ", $hub->{name}, " Please remove it from the public_hubs list";	
+      note sprintf "WARN: Skipping hub %s ", $hub->{name}, " Please remove it from the public_hubs list"; 
     }
   }
 
@@ -110,17 +110,17 @@ SKIP: {
   #
   my %species_assemblies = 
     ( 'Homo sapiens'         => [
-				 { name => 'GRCh37', synonyms => [ 'hg19' ], accession => 'GCA_000001405.1' },
-				 { name => 'GRCh38', synonyms => [ 'hg38' ], accession => 'GCA_000001405.15' }
-				],
+         { name => 'GRCh37', synonyms => [ 'hg19' ], accession => 'GCA_000001405.1' },
+         { name => 'GRCh38', synonyms => [ 'hg38' ], accession => 'GCA_000001405.15' }
+        ],
       'Danio rerio'          => [
-				 { name => 'GRCz10', synonyms => [ 'danrer10' ], accession => 'GCA_000002035.3' },
-				 { name => 'Zv9', synonyms => [ 'danrer7' ], accession => 'GCA_000002035.2' }
-				],
+         { name => 'GRCz10', synonyms => [ 'danrer10' ], accession => 'GCA_000002035.3' },
+         { name => 'Zv9', synonyms => [ 'danrer7' ], accession => 'GCA_000002035.2' }
+        ],
       'Mus musculus'         => [
-				 { name => 'GRCm38', synonyms => [ 'mm10' ], accession => 'GCA_000001635.2' },
-				 { name => 'MGSCv37', synonyms => [ 'mm9' ], accession => 'GCA_000001635.1' }
-				], 
+         { name => 'GRCm38', synonyms => [ 'mm10' ], accession => 'GCA_000001635.2' },
+         { name => 'MGSCv37', synonyms => [ 'mm9' ], accession => 'GCA_000001635.1' }
+        ], 
       'Arabidopsis thaliana' => [ { name => 'TAIR10', synonyms => [ 'aratha1' ], accession => 'GCA_000001735.1' } ],
       'Brassica rapa'        => [ { name => 'Brapa_1.0', synonyms => [ 'brarap1' ], accession => 'GCA_000309985.1' } ],
       #'Drosophila simulans'  => ['GCA_000754195.2'], 

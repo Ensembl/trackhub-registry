@@ -72,7 +72,7 @@ SKIP: {
   my @public_hubs = (
          # { name => 'polyA', url => 'http://johnlab.org/xpad/Hub/UCSC.txt' },
          { name => 'mRNA', url => 'http://www.mircode.org/ucscHub/hub.txt' },
-         { name => 'blueprint', url => 'ftp://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub' },
+         # { name => 'blueprint', url => 'ftp://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub' },
          { name => 'plants', url => 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt' },
          { name => 'ensembl', url => 'http://ngs.sanger.ac.uk/production/ensembl/regulation/hub.txt' },
          { name => 'rnaseq', url => 'http://web.stanford.edu/~htilgner/2012_454paper/data/hub.txt' },
@@ -152,7 +152,7 @@ SKIP: {
   ok($response->is_success, 'Request successful');
   $content = from_json($response->content);
   #is(scalar @{$content}, scalar @public_hubs, 'Number of hubs'); #excluding polyA and thornton
-  is(scalar @{$content}, 7, 'Number of hubs');
+  is(scalar @{$content}, 6, 'Number of hubs');
 
   # test a couple of hubs
   my $hub = first { $_->{name} eq 'EnsemblRegulatoryBuild' } @{$content};
@@ -179,14 +179,14 @@ SKIP: {
   ok($response = request($request), 'GET request to /api/info/hubs_per_assembly');
   ok($response->is_success, 'Request successful');
   $content = from_json($response->content);
-  is($content->{tot}, 3, 'Number of hubs per assembly');
+  is($content->{tot}, 2, 'Number of hubs per assembly');
   #
   # test with assembly name
   $request = GET('/api/info/hubs_per_assembly/GRCh38');
   ok($response = request($request), 'GET request to /api/info/hubs_per_assembly');
   ok($response->is_success, 'Request successful');
   $content = from_json($response->content);
-  is($content->{tot}, 3, 'Number of hubs per assembly');
+  is($content->{tot}, 2, 'Number of hubs per assembly');
   
   #
   # /api/info/tracks_per_assembly
@@ -196,14 +196,14 @@ SKIP: {
   ok($response = request($request), 'GET request to /api/info/tracks_per_assembly');
   ok($response->is_success, 'Request successful');
   $content = from_json($response->content);
-  is($content->{tot}, 5864, 'Number of tracks per assembly');
+  is($content->{tot}, 166, 'Number of tracks per assembly');
   #
   # test with assembly name
   $request = GET('/api/info/tracks_per_assembly/GRCh38');
   ok($response = request($request), 'GET request to /api/info/tracks_per_assembly');
   ok($response->is_success, 'Request successful');
   $content = from_json($response->content);
-  is($content->{tot}, 5864, 'Number of tracks per assembly');
+  is($content->{tot}, 166, 'Number of tracks per assembly');
 }
 
 done_testing();

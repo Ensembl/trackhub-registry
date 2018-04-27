@@ -57,7 +57,7 @@ SKIP: {
   my @public_hubs = (
          # { name => 'polyA', url => 'http://johnlab.org/xpad/Hub/UCSC.txt' },
          { name => 'mRNA', url => 'http://www.mircode.org/ucscHub/hub.txt' },
-         { name => 'blueprint', url => 'ftp://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub' },
+         # { name => 'blueprint', url => 'ftp://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub' },
          { name => 'plants', url => 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt' },
          { name => 'ensembl', url => 'http://ngs.sanger.ac.uk/production/ensembl/regulation/hub.txt' },
          { name => 'rnaseq', url => 'http://web.stanford.edu/~htilgner/2012_454paper/data/hub.txt' },
@@ -128,7 +128,7 @@ SKIP: {
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
-  is($content->{total_entries}, 18, 'Number of search results');
+  is($content->{total_entries}, 17, 'Number of search results');
   is(scalar @{$content->{items}}, 5, 'Number of search results per page');
   map { is($_->{status}{message}, "Unchecked", "Search result has status") } @{$content->{items}};
   ok($content->{items}[0]{id}, 'Search result item has ID');
@@ -164,8 +164,8 @@ SKIP: {
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
-  is($content->{total_entries}, 18, 'Number of search results');
-  is(scalar @{$content->{items}}, 18, 'Number of search results per page');
+  is($content->{total_entries}, 17, 'Number of search results');
+  is(scalar @{$content->{items}}, 17, 'Number of search results per page');
 
   # when asking for all results, the other parameters should be ignored
   $request = POST('/api/search?all=1&page=2&entries_per_page=10',
@@ -175,25 +175,25 @@ SKIP: {
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
-  is($content->{total_entries}, 18, 'Number of search results');
-  is(scalar @{$content->{items}}, 18, 'Number of search results per page');
+  is($content->{total_entries}, 17, 'Number of search results');
+  is(scalar @{$content->{items}}, 17, 'Number of search results per page');
 
   
   # test with query string
   # blueprint hub has some metadata to look for
-  $request = POST('/api/search',
-      'Content-type' => 'application/json',
-      'Content'      => to_json({ query => 'monocyte male' }));
-  ok($response = request($request), 'POST request to /api/search');
-  ok($response->is_success, 'Request successful');
-  is($response->content_type, 'application/json', 'JSON content type');
-  $content = from_json($response->content);
-  is(scalar @{$content->{items}}, 2, 'Number of search results');
+  # $request = POST('/api/search',
+  #     'Content-type' => 'application/json',
+  #     'Content'      => to_json({ query => 'monocyte male' }));
+  # ok($response = request($request), 'POST request to /api/search');
+  # ok($response->is_success, 'Request successful');
+  # is($response->content_type, 'application/json', 'JSON content type');
+  # $content = from_json($response->content);
+  # is(scalar @{$content->{items}}, 2, 'Number of search results');
   
-  my ($blueprint) = grep { $_->{hub}{shortLabel} eq 'Blueprint Hub'} @{$content->{items}};
+  # my ($blueprint) = grep { $_->{hub}{shortLabel} eq 'Blueprint Hub'} @{$content->{items}};
 
-  is($blueprint->{hub}{shortLabel}, 'Blueprint Hub', 'Search result hub');
-  is($blueprint->{assembly}{accession}, 'GCA_000001405.15', 'Search result assembly');
+  # is($blueprint->{hub}{shortLabel}, 'Blueprint Hub', 'Search result hub');
+  # is($blueprint->{assembly}{accession}, 'GCA_000001405.15', 'Search result assembly');
 
   $request = POST('/api/search?page=2',
       'Content-type' => 'application/json',

@@ -28,8 +28,10 @@ my $backlog    = $ENV{THR_BACKLOG} || 1024;
 my $status_file= $ENV{THR_STATUS} || "$root_dir/ensembl_rest.status";
 my $restart_interval = 1;
 my $max_requests=$ENV{THR_MAX_REQUESTS} || 10000;
-#my $access_log = "$root_dir/logs/access_log";
-#my $error_log  = "$root_dir/logs/error_log";
+
+my $log_dir = $ENV{THR_LOG_DIR} || "$root_dir/logs/";
+#my $access_log = Disabled for GDPR reasons
+my $error_log  = $log_dir.'/starman.error.log';
 my $pid_file   = $ENV{THR_PID} || "$root_dir/ensembl_rest.pid";
 my $init_config= $ENV{THR_CONFIG} || '~/.bashrc';
 
@@ -50,6 +52,7 @@ Daemon::Control->new(
       '--max-requests',$max_requests,
       '--status-file', $status_file,
       '--interval',   $restart_interval,
+      '--error-log', $error_log.
       $psgi_file
     ],
     pid_file     => $pid_file,

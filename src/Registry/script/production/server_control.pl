@@ -52,7 +52,7 @@ Daemon::Control->new(
       '--max-requests',$max_requests,
       '--status-file', $status_file,
       '--interval',   $restart_interval,
-      '--error-log', $error_log.
+      '--error-log', $error_log,
       $psgi_file
     ],
     pid_file     => $pid_file,

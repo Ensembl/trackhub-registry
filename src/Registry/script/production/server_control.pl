@@ -25,14 +25,14 @@ my $container  = $ENV{THR_STARMAN} || 'starman';
 my $port       = $ENV{THR_PORT} || 5000;
 my $workers    = $ENV{THR_WORKERS} || 5;
 my $backlog    = $ENV{THR_BACKLOG} || 1024;
-my $status_file= $ENV{THR_STATUS} || "$root_dir/ensembl_rest.status";
+my $status_file= $ENV{THR_STATUS} || "$root_dir/trackhub_registry.status";
 my $restart_interval = 1;
 my $max_requests=$ENV{THR_MAX_REQUESTS} || 10000;
 
 my $log_dir = $ENV{THR_LOG_DIR} || "$root_dir/logs/";
 #my $access_log = Disabled for GDPR reasons
 my $error_log  = $log_dir.'/starman.error.log';
-my $pid_file   = $ENV{THR_PID} || "$root_dir/ensembl_rest.pid";
+my $pid_file   = $ENV{THR_PID} || "$root_dir/trackhub_registry.pid";
 my $init_config= $ENV{THR_CONFIG} || '~/.bashrc';
 
 Daemon::Control->new(

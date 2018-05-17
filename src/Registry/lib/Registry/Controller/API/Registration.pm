@@ -50,9 +50,6 @@ use Params::Validate qw(SCALAR);
 
 __PACKAGE__->config(
 		    'default'   => 'application/json',
-		    # map => {
-		    # 	    'text/plain' => ['YAML'],
-		    # 	   }
 		   );
 
 =head1 METHODS
@@ -615,6 +612,7 @@ sub _validate: Private {
   
   my $validator = 
     Registry::TrackHub::Validator->new(schema => Registry->config()->{TrackHub}{schema}{$version});
+  # Put the submitted JSON into a file, so it can be validated by a Python tool
   my ($fh, $filename) = tempfile( DIR => Registry->config()->{TrackHub}{schema}{validate}, SUFFIX => '.json', UNLINK => 1 );
   print $fh $doc;
   close $fh;
@@ -918,83 +916,3 @@ sub logout_GET {
 __PACKAGE__->meta->make_immutable;
 
 1;
-
-# BEGIN { extends 'Catalyst::Controller' }
-
-#
-# Matching Actions on Request Content Types,
-# a feature introduced since v5.90050
-#
-# See http://www.catalystframework.org/calendar/2013/8
-# 
-# __PACKAGE__->config(
-#   action => {
-#     '*' => {
-#       # Attributes common to all actions
-#       # in this controller
-#       Consumes => 'JSON',
-#       Path => '',
-#     }
-#   }
-# );
-
-# =head2 index
- 
-# =cut
-
-# sub index :Path :Args(0) {
-#   my ( $self, $c ) = @_;
-
-#   #
-#   # TODO: should handle POST data
-#   #
-#   my $username = $c->request->params->{username} || "";
-#   my $password = $c->request->params->{password} || "";
-#   if ($username && $password) {
-#     # Attempt to authenticate the user
-#     if ($c->authenticate({ username => $username,
-#                            password => $password} )) {
-#       # return welcome message
-#       $c->stash->{data} = { msg => "Welcome user $username" };
-#       return;
-#     } else {
-#       # Set an error message
-#       $c->detach('error', [ 401, 'Unauthorized' ]);
-#     }
-#   } 
-
-#   $c->detach('error', [401, 'Please specify username/password credentials']);
-# }
-
-# # end action is always called at the end of the route
-# sub end :Private {
-#   my ( $self, $c ) = @_;
-
-#   # Render the stash using our JSON view
-#   $c->forward($c->view('JSON'));
-# }
- 
-# We use the error action to handle errors
-# sub error :Private {
-#   my ( $self, $c, $code, $reason ) = @_;
-#   $reason ||= 'Unknown Error';
-#   $code ||= 500;
- 
-#   $c->res->status($code);
-#   # Error text is rendered as JSON as well
-#   $c->stash->{data} = { error => $reason };
-# }
-
-=encoding utf8
-
-=head1 AUTHOR
-
-Alessandro,,,
-
-=head1 LICENSE
-
-This library is free software. You can redistribute it and/or modify
-it under the same terms as Perl itself.
-
-=cut
-

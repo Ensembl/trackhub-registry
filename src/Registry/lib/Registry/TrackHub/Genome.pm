@@ -19,9 +19,6 @@ limitations under the License.
 Please email comments or questions to the Trackhub Registry help desk
 at C<< <http://www.trackhubregistry.org/help> >>
 
-Questions may also be sent to the public Trackhub Registry list at
-C<< <https://listserver.ebi.ac.uk/mailman/listinfo/thregistry-announce> >>
-
 =head1 NAME
 
 Registry::TrackHub::Genome - A class representing genome info in a track hub

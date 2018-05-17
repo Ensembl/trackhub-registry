@@ -25,7 +25,7 @@ extends 'Catalyst::Model';
 
 
 # ABSTRACT: A simple Catalyst model to interface with Search::Elasticsearch
-
+# Adapted from Catalyst::Model::Search::ElasticSearch
 =head1 SYNOPSIS
 
     package My::App;

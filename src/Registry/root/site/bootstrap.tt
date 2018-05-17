@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="The Track Hub Registry">
-    <meta name="author" content="The EnsEMBL Core Team">
+    <meta name="author" content="The Ensembl Core Team">
 
     <title>[% template.title or "The Track Hub Registry" %]</title>
 
@@ -40,31 +40,31 @@
       </div> 
       <div class="collapse navbar-collapse navbar-responsive-collapse">
         <ul class="nav navbar-nav">
-	  <!--
-	  <li class="dropdown">
+    <!--
+        <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Tools <span class="caret"></span></a>
             <ul class="dropdown-menu" role="menu">
-	      <li><a href="#">Validate track hub</a></li>
+              <li><a href="#">Validate track hub</a></li>
               <li><a href="[% c.uri_for('/search/advanced') %]">Advanced Search</a></li>
             </ul>
           </li>
-	  -->
-	[% IF c.user_exists %]
-	  <li><a href="[% c.uri_for('/docs/management/overview') %]">Submit data</a></li>
-	[% ELSE %]
-	  <li><a href="[% c.uri_for('/user/register') %]">Submit data</a></li>
-	[% END %]
-	  <li class="menu-item dropdown">
-	    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Documentation <b class="caret"></b></a>
-            <ul class="dropdown-menu">
-	      <li class="menu-item dropdown dropdown-submenu">
-		<a href="#" class="dropdown-toggle" data-toggle="dropdown">Searching Track Hubs</a>
-		<ul class="dropdown-menu" role="menu">
-		  <li><a href="[% c.uri_for('/docs/search') %]">Basic Search</a></li>
-		  <li><a href="[% c.uri_for('/docs/search/advanced') %]">Advanced Search</a></li>
-		</ul>
+    -->
+        [% IF c.user_exists %]
+          <li><a href="[% c.uri_for('/docs/management/overview') %]">Submit data</a></li>
+        [% ELSE %]
+          <li><a href="[% c.uri_for('/user/register') %]">Submit data</a></li>
+        [% END %]
+          <li class="menu-item dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Documentation <b class="caret"></b></a>
+                  <ul class="dropdown-menu">
+              <li class="menu-item dropdown dropdown-submenu">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Searching Track Hubs</a>
+          <ul class="dropdown-menu" role="menu">
+            <li><a href="[% c.uri_for('/docs/search') %]">Basic Search</a></li>
+            <li><a href="[% c.uri_for('/docs/search/advanced') %]">Advanced Search</a></li>
+          </ul>
               </li>
-	      <!-- <li class="menu-item "><a href="[% c.uri_for('/docs/search') %]">Searching track hubs</a></li>-->
+              <!-- <li class="menu-item "><a href="[% c.uri_for('/docs/search') %]">Searching track hubs</a></li>-->
               <li class="menu-item dropdown dropdown-submenu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Registering/Managing<br/>track hubs</a>
                 <ul class="dropdown-menu">
@@ -72,28 +72,28 @@
                   <li class="menu-item "><a href="[% c.uri_for('/docs/management/assembly_support') %]">Genome Assembly Support</a></li>
                   <li class="menu-item "><a href="[% c.uri_for('/docs/management/modelling') %]">Modelling track hubs</a></li>
                   <li class="menu-item "><a href="[% c.uri_for('/docs/api/registration') %]">REST API</a></li>
-		  <li class="menu-item "><a href="[% c.uri_for('/docs/management/dashboard') %]">Dashboard</a></li>
+                  <li class="menu-item "><a href="[% c.uri_for('/docs/management/dashboard') %]">Dashboard</a></li>
                 </ul>
               </li>
-	      <li class="divider"></li>
+              <li class="divider"></li>
               <li><a href="[% c.uri_for('/docs/apis') %]">Registry APIs</a></li>
-	      <li class="menu-item "><a href="[% c.uri_for('/docs/management/modelling') %]">TrackDB JSON specification</a></li>
+              <li class="menu-item "><a href="[% c.uri_for('/docs/management/modelling') %]">TrackDB JSON specification</a></li>
             </ul>
           </li>
           <li><a href="[% c.uri_for('/about') %]">About</a></li>
           <li><a href="[% c.uri_for('/help') %]">Help</a></li>
           <!--<li><a href="[% c.uri_for('/about#contacts') %]">Help</a></li>-->
         </ul>
-	<ul class="nav navbar-nav navbar-right">
-	[% IF c.user_exists %]
-	  <li><a href="[% c.uri_for(c.controller('user').action_for('list_trackhubs'), [c.user.username]) %]">Dashboard</a></li>
+      <ul class="nav navbar-nav navbar-right">
+      [% IF c.user_exists %]
+          <li><a href="[% c.uri_for(c.controller('user').action_for('list_trackhubs'), [c.user.username]) %]">Dashboard</a></li>
           <li><a href="[% c.uri_for('/logout') %]">Logout</a></li>
         [% ELSE %]
           <li><a href="[% c.uri_for('/user/register') %]">Sign up</a></li>
           <li><a href="[% c.uri_for('/login') %]">Login</a></li>
         [% END %]
         </ul>
-	<!--
+  <!--
 	<form class="navbar-form navbar-right" role="search" method="post" action="[% c.uri_for('/search') %]">
           <div class="form-group">
             <input type="text" name="q" class="form-control" placeholder="Enter the search terms...">
@@ -102,16 +102,16 @@
         </form>
 	-->
 
-	<form class="navbar-form navbar-right" role="search" method="post" action="[% c.uri_for('/search') %]">
+        <form class="navbar-form navbar-right" role="search" method="post" action="[% c.uri_for('/search') %]">
           <div class="input-group">
             <input type="text" name="q" class="form-control" placeholder="Enter the search terms..." id="header-search-box" />
             <span class="input-group-btn">
               <button class="btn btn-default" type="submit" id="header-search-button">
-		<span class="glyphicon glyphicon-search glyphicon-white"></span>
+                <span class="glyphicon glyphicon-search glyphicon-white"></span>
               </button>
             </span>
           </div>
-	</form>
+        </form>
       </div>
     </div>
     </nav>
@@ -122,13 +122,13 @@
       [% IF status_msg %]
       <div class="alert alert-info alert-dismissible" role="alert">
         <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-	<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> [% status_msg %]
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> [% status_msg %]
       </div>
       [% END %]
       [% IF error_msg %]
       <div class="alert alert-danger alert-dismissible" role="alert">
         <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-	<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> [% error_msg %]
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> [% error_msg %]
       </div>
       [% END %]
       [% content %]
@@ -139,7 +139,7 @@
     <footer class="footer" style="margin-top: 20px;">
       <div class="container">
         <p class="text-muted">Copyright &copy;
-	  <a class="icon" id="ebi-logo" href="http://www.ebi.ac.uk" target="_blank">
+          <a class="icon" id="ebi-logo" href="http://www.ebi.ac.uk" target="_blank">
               <img alt="EBI logo" src="/static/img/EMBL_EBI_Logo_black.png" />
           </a>
           <a href="//www.ebi.ac.uk/about/privacy">Privacy</a> |
@@ -147,15 +147,7 @@
           <a href="//www.ebi.ac.uk/about/terms-of-use">Terms of use</a></p>
       </div>
     </footer>
-<!--
-    <footer>
-      <div class="row">
-	<div class="col-sm-12">
-	  <p class="right">&copy; 2015 TrackHub Registry. &middot; <a href="#">Privacy</a></p>
-	</div>
-      </div>
-    </footer>
--->
+
     <!-- JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->

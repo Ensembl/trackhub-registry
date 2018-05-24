@@ -207,6 +207,14 @@ sub api_search :Path('/docs/api/search') { }
 # Misc docs #
 #############
 
+=head2 gdpr
+
+Privacy notice in a distinct page. EBI policy pages only cater for anonymous usage at time of commit
+
+=cut
+
+sub gdpr_registered :Path('/docs/privacy/registered') { }
+
 __PACKAGE__->meta->make_immutable;
 
 1;

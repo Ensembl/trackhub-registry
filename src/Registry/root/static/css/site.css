@@ -108,6 +108,13 @@ div.hub-summary-caption {
     font-size: 0.5em;
 }
 
+.alert-fixed {
+    position: fixed;
+    bottom: 0px;
+    width: 100%;
+    z-index: 9999;
+}
+
 */
 
 /* Support for bootstrap 3 dropdown menus */

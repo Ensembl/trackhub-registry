@@ -12,7 +12,7 @@
     <title>[% template.title or "The Track Hub Registry" %]</title>
 
     <!-- style sheets -->
-    <!-- <link href="/static/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen"> -->
+    <link href="/static/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
     <!-- <link href="/static/lib/bootstrap/css/bootstrap-theme.min.css" rel="stylesheet" media="screen"> -->
     <link href="/static/lib/bootstrap/css/yeti.min.css" rel="stylesheet" media="screen">
     <!--<link href="/static/lib/bootstrap/css/flatly.min.css" rel="stylesheet" media="screen">-->
@@ -142,7 +142,8 @@
           <a class="icon" id="ebi-logo" href="http://www.ebi.ac.uk" target="_blank">
               <img alt="EBI logo" src="/static/img/EMBL_EBI_Logo_black.png" />
           </a>
-          <a href="//www.ebi.ac.uk/about/privacy">Privacy</a> |
+          <a href="//www.ebi.ac.uk/data-protection/privacy-notice/trackhub-registry-anonymous-browsing">Privacy</a> |
+          <a href="/docs/privacy/registered">Privacy of registered users</a> |
           <a href="//www.ebi.ac.uk/about/cookies">Cookies</a> |
           <a href="//www.ebi.ac.uk/about/terms-of-use">Terms of use</a></p>
       </div>
@@ -155,5 +156,6 @@
     <script src="/static/lib/bootstrap/js/bootstrap.min.js"></script>
     <!--script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?lang=perl&amp;lang=python&amp;lang=ruby"></script-->
     <script src="/static/js/site.js"></script>
+    <script src="/static/js/gdpr.js"></script>
   </body>
 </html>

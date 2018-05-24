@@ -89,7 +89,14 @@ has_field 'check_interval' => (
 );
 
 has_field 'continuous_alert' => (
-    label            => 'Receive continuos alerts',
+    label            => 'Receive continuous alerts',
+    type             => 'Checkbox',
+    input_without_param => 0,
+    checkbox_value   => 1
+);
+
+has_field 'gdpr_accept' => (
+    label            => 'gdpr_accept',
     type             => 'Checkbox',
     input_without_param => 0,
     checkbox_value   => 1

@@ -89,28 +89,37 @@
           </div>
         </div>
 
-        <legend>Track hub monitoring configuration</legend>
-	
         <div class="form-group">
-	  <label class="col-sm-3 control-label" for="check_interval">Check Interval <a href="#" data-toggle="tooltip" title="The frequency with which the Registry checks the availability of your remote track data files."><span class="glyphicon glyphicon-info-sign" /></a></label>
-	  <div class="col-sm-5">
-	    <select class="form-control" name="check_interval" id="check_interval">
-	      <option selected value="0">Automatic</option>
-	      <option value="1">Weekly</option>
-	      <option value="2">Monthly</option>
-	    </select>
-	  </div>
-	</div>
+          <div class="checkbox">
+              <label class="col-sm-5 control-label">
+              <input type="checkbox" id="gdpr_accept" name="gdpr_accept" value="1" required="">
+              Accept <a href='/docs/privacy/registered'>privacy policy</a> *       <a href="#" data-toggle="tooltip" title="You agree that we can retain the information entered in this form and use it as necessary to provide the Trackhub Registry service in accordance with GDPR regulations."><span class="glyphicon glyphicon-info-sign" /></a>
+              </label>
+          </div>
+        </div>
+
+        <legend>Track hub monitoring configuration</legend>
+        
+        <div class="form-group">
+          <label class="col-sm-3 control-label" for="check_interval">Check Interval <a href="#" data-toggle="tooltip" title="The frequency with which the Registry checks the availability of your remote track data files."><span class="glyphicon glyphicon-info-sign" /></a></label>
+          <div class="col-sm-5">
+            <select class="form-control" name="check_interval" id="check_interval">
+              <option selected value="0">Automatic</option>
+              <option value="1">Weekly</option>
+              <option value="2">Monthly</option>
+            </select>
+          </div>
+        </div>
 
         <div class="form-group">
-	  <!--<label class="col-sm-3 control-label" for="continuous_alert"></label>-->
-	  <div class="checkbox">
-  	    <label class="col-sm-5 control-label">
-    	      <input type="checkbox" id="continuous_alert" name="continuous_alert" value="1">
-	      Receive continuous alerts	<a href="#" data-toggle="tooltip" title="Tick this if you want to receive an alert in case of problems each time the Registry inspect your track data files."><span class="glyphicon glyphicon-info-sign" /></a>
-  	    </label>
-	  </div>
-	</div>
+          <!--<label class="col-sm-3 control-label" for="continuous_alert"></label>-->
+          <div class="checkbox">
+              <label class="col-sm-5 control-label">
+                  <input type="checkbox" id="continuous_alert" name="continuous_alert" value="1">
+              Receive continuous alerts        <a href="#" data-toggle="tooltip" title="Tick this if you want to receive an alert in case of problems each time the Registry inspect your track data files."><span class="glyphicon glyphicon-info-sign" /></a>
+              </label>
+          </div>
+        </div>
 
         <!-- Button -->
         <div class="form-group">

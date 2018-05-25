@@ -207,7 +207,7 @@ sub api_search :Path('/docs/api/search') { }
 # Misc docs #
 #############
 
-=head2 gdpr
+=head2 gdpr_registered
 
 Privacy notice in a distinct page. EBI policy pages only cater for anonymous usage at time of commit
 

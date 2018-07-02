@@ -1,0 +1,75 @@
+// This is trackhub_mappings_v1.json adapted for Elasticsearch v6.3
+{
+  "settings": {
+    "number_of_shards": 3,
+    "number_of_replicas": 2
+  },
+  "aliases": {
+    "trackhubs": {}
+  },
+  "mappings": {
+    "trackdb": {
+      "properties": {
+        "owner": {
+          "type": "keyword",
+          "index": true
+        },
+        "public": {
+          "type": "boolean",
+          "index": true
+        },
+        "created": {
+          "type": "date",
+          "index": false
+        },
+        "updated": {
+          "type": "date",
+          "index": false
+        },
+        "status": {
+          "type": "object",
+          "enabled": false
+        },
+        "hub": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "text",
+              "index": true
+            },
+            "url": {
+              "type": "keyword",
+              "index": false
+            }
+          }
+        },
+        "species": {
+          "type": "object",
+          "properties": {
+            "scientific_name": {
+              "type": "keyword",
+              "index": true
+            }
+          }
+        },
+        "assembly": {
+          "type": "object",
+          "properties": {
+            "accession": {
+              "type": "keyword",
+              "index": true
+            },
+            "name": {
+              "type": "keyword",
+              "index": true
+            }
+          }
+        },
+        "configuration": {
+          "type": "object",
+          "enabled": false
+        }
+      }
+    }
+  }
+}

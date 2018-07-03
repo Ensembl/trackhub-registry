@@ -9,6 +9,7 @@
   },
   "mappings": {
     "trackdb": {
+      "date_detection": false,
       "properties": {
         "owner": {
           "type": "keyword",
@@ -68,7 +69,8 @@
         "configuration": {
           "type": "object",
           "enabled": false
-        }
+        },
+        "data": []
       }
     }
   }

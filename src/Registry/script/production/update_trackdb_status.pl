@@ -30,8 +30,8 @@ use Proc::ProcessTable; # to detect whether the load_public_hubs script's runnin
 use Try::Tiny;
 use Log::Log4perl qw(get_logger :levels);
 use Getopt::Long;
+use Config::General;
 use Pod::Usage;
-use Config::Std;
 use Email::MIME;
 use Email::Sender::Simple qw(sendmail);
 use Email::Sender::Transport::SMTP;
@@ -51,15 +51,13 @@ use Registry::Model::Search;
 use Registry::TrackHub::TrackDB;
 use Registry::Utils::Arrays qw( remove_duplicates union_intersection_difference );
 
-my $logger = get_logger();
 
 # default option values
 my $help = 0;
-my $log_dir = '/nfs/public/nobackup/ens_thr/production/trackhub_checks/logs/';
-my $type = 'production'; # default cluster type
+my $log_dir = $ENV{THR_LOG_DIR}; #'/nfs/public/nobackup/ens_thr/production/trackhub_checks/logs/';
 my $runuser = undef; # whether to run the update for just one particular user
 my $labelok = 0; # whether to label all user checked hubs as OK
-my $conf_file = '.initrc'; # expect file in current directory
+my $conf_file = 'registry.conf'; # expect Catalyst config file in current directory
 
 # Initialize SMTP
 
@@ -72,37 +70,14 @@ my $transport = Email::Sender::Transport::SMTP->new({
 my $options_ok =
   GetOptions("config|c=s" => \$conf_file,
              "logdir|l=s" => \$log_dir,
-             "type|t=s"   => \$type,
              "user|u=s"   => \$runuser,
              "labelok|l"  => \$labelok,
              "help|h"     => \$help) or pod2usage(2);
 pod2usage() if $help;
 
-# set up logging, use inline configuration
-unless(-d $log_dir) {
-  $logger->info("Creating log directory $log_dir");
-  mkdir $log_dir or
-    $logger->logdie("cannot create directory: $!");
-}
+my $logger = init_logger();
 
-my $date = `date '+%F'`; chomp($date);
-my $log_file = sprintf "$log_dir/trackhub_check_%s.log", $date;
 
-my $log_conf = <<"LOGCONF";
-log4perl.logger=DEBUG, Screen, File
-
-log4perl.appender.Screen=Log::Dispatch::Screen
-log4perl.appender.Screen.layout=Log::Log4perl::Layout::PatternLayout
-log4perl.appender.Screen.layout.ConversionPattern=%d %p> %F{1}:%L - %m%n
-
-log4perl.appender.File=Log::Dispatch::File
-log4perl.appender.File.filename=$log_file
-log4perl.appender.File.mode=append
-log4perl.appender.File.layout=Log::Log4perl::Layout::PatternLayout
-log4perl.appender.File.layout.ConversionPattern=%d %p> %F{1}:%L - %m%n
-LOGCONF
-
-Log::Log4perl->init(\$log_conf);
 
 # we've seen duplicates of the automatically managed public hubs are created
 # if this script and the load_public_hub.pl are running simultaneously.
@@ -115,21 +90,12 @@ if ($is_load_public_hubs_running) {
 }
 
 $logger->info("Reading configuration file $conf_file");
-my %config;
-eval {
-  read_config $conf_file => %config
-};
-$logger->logdie("Error reading configuration file $conf_file: $@") if $@;
 
-my $cluster;
-if ($type =~ /prod/) {
-  $cluster = 'cluster_prod';
-} elsif ($type =~ /stag/) {
-  $cluster = 'cluster_staging';
-} else {
-  $logger->logdie("Unknown type of cluster, should be either 'production' or 'staging'");
-}
-my $nodes = $config{$cluster}{nodes};
+my $conf_file = Config::General->new($config);
+my %config = $conf_file->getall;
+
+
+my $nodes = $config{Model::Search}{nodes};
 
 $logger->info("Checking the cluster is up and running");
 my $esurl;
@@ -140,7 +106,7 @@ if (ref $nodes eq 'ARRAY') {
   $esurl = $nodes;
   $esurl = sprintf "http://%s", $esurl if $esurl !~ /^http/;
 }
-$logger->logdie(sprintf "Cluster %s is not up", $config{$cluster}{name})
+$logger->logdie(sprintf "Cluster %s is not up", $config{service_name})
   unless HTTP::Tiny->new()->request('GET', $esurl)->{status} eq '200';
 
 #
@@ -172,7 +138,7 @@ try {
 $logger->info("Retrieving user lists");
 try {
   $users = get_all_users();
-  map { $_->{username} =~ /$config{users}{admin_name}/ and $admin = $_ } @{$users};
+  map { $_->{username} =~ /$config{Admin}{admin_user}/ and $admin = $_ } @{$users};
 } catch {
   $logger->logdie("Couldn't get latest user list:\n$_");
 };
@@ -183,13 +149,17 @@ my $current_report = {};
 $current_report->{created} = time;
 my $current_report_id = $last_report_id?++$last_report_id:1;
 
+
+my $report_index = $config{Model::Search}{report}{index};
+my $report_type = $config{Model::Search}{report}{type};
+
 my $es = Search::Elasticsearch->new(nodes => $nodes);
 try {
-  $es->index(index   => $config{reports}{alias},
-             type    => $config{reports}{type},
+  $es->index(index   => $report_index,
+             type    => $report_type,
              id      => $current_report_id,
              body    => $current_report);
-  $es->indices->refresh(index => $config{report}{alias});
+  $es->indices->refresh(index => $report_index);
 } catch {
   $logger->logdie($_);
 };
@@ -202,7 +172,7 @@ my @children;
 foreach my $user (@{$users}) {
   # obviously skip admin user
   my $username = $user->{username};
-  next if $username eq $config{users}{admin_name};
+  next if $username eq $admin;
 
   # run for just the specified user
   next if $runuser and $username ne $runuser;
@@ -216,8 +186,8 @@ foreach my $user (@{$users}) {
       my $user_report = check_user_tracks($user, $last_report);
       
       # provide partial doc to be merged into the existing report
-      $es->update(index   => $config{reports}{alias},
-                  type    => $config{reports}{type},
+      $es->update(index   => $report_index,
+                  type    => $report_type,
                   id      => $current_report_id,
                   retry_on_conflict => 5,
                   body    => {
@@ -242,8 +212,8 @@ foreach my $i (0 .. $#children) {
 
 # Send message to admin to alert report has/hasn't been generated
 my $message_body;
-$current_report = $es->get_source(index => $config{reports}{alias},
-                                  type  => $config{reports}{type},
+$current_report = $es->get_source(index => $report_index,
+                                  type  => $report_type,
                                   id    => $current_report_id);
 
 if (keys %{$current_report} > 1) {
@@ -255,8 +225,8 @@ if (keys %{$current_report} > 1) {
   # delete empty report from index
   $logger->info("Deleting last global report [$current_report_id] from index");
   try {
-    $es->delete(index   => $config{reports}{alias},
-                type    => $config{reports}{type},
+    $es->delete(index   => $report_index,
+                type    => $report_type,
                 id      => $current_report_id);
   } catch {
     $logger->logdie($_);
@@ -269,10 +239,8 @@ my $message =
   Email::MIME->create(
     header_str => 
     [
-     From    => 'prem@ebi.ac.uk',
-     #To      => $admin->{email},
-     To    => 'avullo@ebi.ac.uk',
-     Cc    => 'prem.apa@gmail.com',
+     From    => $config{Admin}{admin_email},
+     To    => $config{Admin}{admin_email},
      Subject => sprintf("Report from TrackHub Registry: %s", $localtime),
     ],
     attributes => 
@@ -467,23 +435,22 @@ sub check_user_tracks {
     # if problem add trackdb to user report
     if ($status->{tracks}{with_data}{total_ko}) {
       $logger->info("There are faulty tracks, updating report.");
-      $current_user_report->{ko}{$id} =
-        $status->{tracks}{with_data}{ko};
+      $track_report->{ko}{$id} = $status->{tracks}{with_data}{ko};
 
       $message_body_problem .= sprintf "trackDB [%s] (hub: %s, assembly: %s)\n", $id, $hub, $assembly;
-      foreach my $track (keys %{$current_user_report->{ko}{$id}}) {
-        $message_body_problem .= sprintf "\t%s\t%s\t%s\n", $track, $current_user_report->{ko}{$id}{$track}[0], $current_user_report->{ko}{$id}{$track}[1];
+      foreach my $track (keys %{$track_report->{ko}{$id}}) {
+        $message_body_problem .= sprintf "\t%s\t%s\t%s\n", $track, $track_report->{ko}{$id}{$track}[0], $current_user_report->{ko}{$id}{$track}[1];
       }
       $message_body_problem .= "\n\n";
     } else {
-      push @{$current_user_report->{ok}}, $id;
+      push @{$track_report->{ok}}, $id;
     }
   }
-  $current_user_report->{end_time} = time;
+  $track_report->{end_time} = time;
   $logger->info("Finished with $username trackDBs.");
 
   $logger->info("Checking alert report status.");  
-  if (scalar keys %{$current_user_report->{ko}}) { # user trackdbs have problems
+  if (scalar keys %{$track_report->{ko}}) { # user trackdbs have problems
     # format complete message body
     my $user_message_body = "This alert report has been automatically generated during the last update of the TrackHub Registry.\n\n";
     # $user_message_body .= $message_body_update . "\n\n" if $message_body_update;
@@ -497,10 +464,8 @@ sub check_user_tracks {
       Email::MIME->create(
         header_str => 
         [
-         From    => 'prem@ebi.ac.uk',
-         #To      => $user->{email},
-         To      => 'avullo@ebi.ac.uk',
-         Cc     => 'prem.apa@gmail.com',
+         From    => $config{Admin}{admin_email},
+         To      => $config{Admin}{admin_email},
          Subject => sprintf "Trackhub Registry: Alert Report for user [%s]", $username,
         ],
         attributes => 
@@ -523,7 +488,7 @@ sub check_user_tracks {
         $logger->info("$username does not opt for continuous alerts. Checking differences with last report");
         if ($last_user_report->{ko}) {
           my @last_report_ko_trackdbs = keys %{$last_user_report->{ko}};
-          my @current_report_ko_trackdbs = keys %{$current_user_report->{ko}};
+          my @current_report_ko_trackdbs = keys %{$track_report->{ko}};
           my ($union, $isect, $diff) = 
             union_intersection_difference(\@current_report_ko_trackdbs, \@last_report_ko_trackdbs);
           
@@ -548,12 +513,12 @@ sub check_user_tracks {
     };
   }
 
-  return $current_user_report;
+  return $track_report;
 }
   
 sub get_all_users {
-  my ($index, $type) = ($config{users}{alias}, $config{users}{type});
-  my $nodes = $config{$cluster}{nodes};
+  my ($index, $type) = ($config{Model::Search}{user}{index}, $config{Model::Search}}{user}{type});
+  my $nodes = $config{Model::Search}{nodes};
   defined $index or die "Couldn't find index for users in configuration file";
   defined $type or die "Couldn't find type for users in configuration file";
   defined $nodes or die "Couldn't find ES nodes in configuration file";
@@ -572,8 +537,8 @@ sub get_all_users {
 }
 
 sub get_latest_report {
-  my ($index, $type) = ($config{reports}{alias}, $config{reports}{type});
-  my $nodes = $config{$cluster}{nodes};
+  my ($index, $type) = ($config{Model:Search}{report}{index}, $config{Model::Search}{report}{type});
+  my $nodes = $config{Model::Search}{nodes};
   defined $index or die "Couldn't find index for reports in configuration file";
   defined $type or die "Couldn't find type for reports in configuration file";
   defined $nodes or die "Couldn't find ES nodes in configuration file";
@@ -613,7 +578,7 @@ sub get_user_trackdbs {
   my $user = shift;
   defined $user or die "Undefined username";
 
-  my ($index, $type) = ($config{trackhubs}{alias}, $config{trackhubs}{type});
+  my ($index, $type) = ($config{Model::Search}{trackhub}{index}, $config{Model::Search}{trackhub}{type});
   my $nodes = $config{$cluster}{nodes};
   defined $index or die "Couldn't find index for users in configuration file";
   defined $type or die "Couldn't find type for users in configuration file";
@@ -641,6 +606,41 @@ sub get_user_trackdbs {
   return $trackdbs;
 }
 
+
+# set up logging, use inline configuration
+sub init_logger {
+  my $log_dir = shift;
+
+  unless(-d $log_dir) {
+    $logger->info("Creating log directory $log_dir");
+    mkdir $log_dir or $logger->logdie("cannot create directory: $!");
+  }
+
+  my $date = `date '+%F'`; chomp($date);
+  my $log_file = sprintf "$log_dir/trackhub_check_%s.log", $date;
+
+
+  my $log_conf = <<"LOGCONF";
+log4perl.logger=DEBUG, Screen, File
+
+log4perl.appender.Screen=Log::Dispatch::Screen
+log4perl.appender.Screen.layout=Log::Log4perl::Layout::PatternLayout
+log4perl.appender.Screen.layout.ConversionPattern=%d %p> %F{1}:%L - %m%n
+
+log4perl.appender.File=Log::Dispatch::File
+log4perl.appender.File.filename=$log_file
+log4perl.appender.File.mode=append
+log4perl.appender.File.layout=Log::Log4perl::Layout::PatternLayout
+log4perl.appender.File.layout.ConversionPattern=%d %p> %F{1}:%L - %m%n
+LOGCONF
+
+  Log::Log4perl->init(\$log_conf);
+  
+  my $logger = get_logger();
+  return $logger;
+}
+
+
 __END__
 
 =head1 NAME
@@ -651,9 +651,8 @@ update_trackdb_status.pl - Check trackdb tracks and notify its owners
 
 update_trackdb_status.pl [options]
 
-   -c --config          configuration file [default: .initrc]
+   -c --config          configuration file [default: trackhub.conf]
    -l --logdir          log directory [default: ./.logs]
-   -t --type            cluster type (production, staging) [default: production]
    -u --user            username [default: none]
    -l --labelok         label all hubs belonging to the given user as allright [default: 0]
    -h --help            display this help and exits

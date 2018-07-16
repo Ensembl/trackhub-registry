@@ -32,10 +32,6 @@ use Log::Log4perl qw(get_logger :levels);
 use Getopt::Long;
 use Pod::Usage;
 use Config::Std;
-
-# use File::Temp qw/ tempfile /;
-# use DBM::Deep;
-# use Data::Structure::Util qw( unbless );
 use Email::MIME;
 use Email::Sender::Simple qw(sendmail);
 use Email::Sender::Transport::SMTP;
@@ -53,15 +49,12 @@ use Search::Elasticsearch;
 
 use Registry::Model::Search;
 use Registry::TrackHub::TrackDB;
-# use Registry::TrackHub::Translator;
-# use Registry::TrackHub::Validator;
 use Registry::Utils::Arrays qw( remove_duplicates union_intersection_difference );
 
 my $logger = get_logger();
 
 # default option values
 my $help = 0;
-#my $log_dir = 'logs';
 my $log_dir = '/nfs/public/nobackup/ens_thr/production/trackhub_checks/logs/';
 my $type = 'production'; # default cluster type
 my $runuser = undef; # whether to run the update for just one particular user
@@ -228,7 +221,8 @@ foreach my $user (@{$users}) {
                   id      => $current_report_id,
                   retry_on_conflict => 5,
                   body    => {
-                        doc => { $username => $user_report }
+                        doc => { user => $username,
+                                 report => $user_report }
                        });
     } catch {
       $logger->logdie($_);
@@ -310,7 +304,7 @@ sub check_user_tracks {
   my $continuous_alert = $user->{continuous_alert};
 
   # get last report for user
-  my $last_user_report = $last_report->{$username};
+  my $last_user_report = $last_report->{$username}->[1];
   my $current_user_report;
 
   # if check_option is weekly|monthly and (current_time-last_check_time) < week|month
@@ -352,7 +346,8 @@ sub check_user_tracks {
     unless $trackdbs and scalar @{$trackdbs};
 
   # create user specific report
-  $current_user_report = { start_time => time };
+  my $start_time = time;
+  $current_user_report = { user => $user };
 
   # loop over trackdbs
   #   update doc if the source has changed
@@ -432,6 +427,8 @@ sub check_user_tracks {
     # 	next;
     #   };
     # }
+
+    my $track_report = { ok => [], start_time => $start_time, end_time => undef, ko => {}};
 
     my ($id, $hub, $assembly) = ($trackdb->id, $trackdb->hub->{name}, $trackdb->assembly->{name});
     $logger->info(sprintf "User: %s. Checking trackDB [%s] (hub: %s, assembly: %s)", $username, $id, $hub, $assembly);
@@ -520,7 +517,7 @@ sub check_user_tracks {
         # user wants to be continuously alerted: send message anyway 
         $logger->info("$username opts for continuous alerts. Sending report.");
         sendmail($message, { transport => $transport });
-            } elsif ($last_user_report) {
+      } elsif ($last_user_report) {
         # user doesn't want to be bothered more than once with the same problems
         # send alert only if current report != last report
         $logger->info("$username does not opt for continuous alerts. Checking differences with last report");
@@ -541,7 +538,7 @@ sub check_user_tracks {
           $logger->info("[$username]. Last run there wasn't any problem, but now there is. Sending alert report");
           sendmail($message, { transport => $transport });
         }
-            } else {
+      } else {
         # send alert since this is the first check for this user
         $logger->info("First $username user check. Sending alert report anyway");
         sendmail($message, { transport => $transport });

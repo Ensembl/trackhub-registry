@@ -33,7 +33,7 @@ print "Hub: ", $doc->{hub}{name}, "\nSpecies: ", $doc->{species}{tax_id}, "\nAss
 
 =head1 DESCRIPTION
 
-This module encapsulates the process of converting a remove track hub into a
+This module encapsulates the process of converting a remote track hub into a
 set of Elasticsearch JSON documents which represent trackDB data for each
 assembly in the hub. Each trackDB document mirrors the hierarchical structure
 of its source and, in addition to that, adds some metadata (e.g. species, assembly)

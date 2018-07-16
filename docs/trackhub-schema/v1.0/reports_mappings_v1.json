@@ -6,5 +6,33 @@
   },
   "aliases": {
     "reports": {}
+  },
+  "mappings": {
+    "report": {
+      "properties": {
+        "user" : {
+          "type": "keyword"
+        },
+        "report": {
+          "type": "nested",
+          "properties": {
+            "ok": {
+              "type": "object",
+              "enabled": false
+            },
+            "start_time": {
+              "type": "date"
+            },
+            "end_time": {
+              "type": "date"
+            },
+            "ko": {
+              "type": "object",
+              "enabled": false
+            }
+          }
+        }
+      }
+    }
   }
 }

@@ -3,3 +3,5 @@ src/Registry/*.json
 src/Registry/Makefile
 src/Registry/blib
 src/Registry/inc
+src/Registry/t/track_hub/*.json
+inc/Module/*

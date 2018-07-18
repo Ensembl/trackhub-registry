@@ -31,9 +31,14 @@ my $max_requests=$ENV{THR_MAX_REQUESTS} || 10000;
 
 my $log_dir = $ENV{THR_LOG_DIR} || "$root_dir/logs/";
 #my $access_log = Disabled for GDPR reasons
-my $error_log  = $log_dir.'/starman.error.log';
+my $error_log  = $log_dir.'/$ENV{HOSTNAME}.error.log';
 my $pid_file   = $ENV{THR_PID} || "$root_dir/trackhub_registry.pid";
 my $init_config= $ENV{THR_CONFIG} || '~/.bashrc';
+
+print "Starting server with config:\n";
+printf "Application root\t%s\nPSGI config\t%s\nEnvironment\t$init_config\n",$root_dir,$psgi_file,$init_config;
+printf "Server port\t%s\nServer status\t%s\nLog location\t%s\nPID\t%s",$port,$status_file,$log_dir,$pid_file;
+printf "Server error log\t %s\n",$error_log;
 
 Daemon::Control->new(
   {

@@ -68,7 +68,7 @@ sub slurp_file {
   my $string;
   {
     local $/=undef;
-    open my $fh, '<',"$file" or die "Couldn't open file: $!";
+    open my $fh, '<',"$file" or die "Couldn't open file $file: $!";
     $string = <$fh>;
     close $fh;
   }

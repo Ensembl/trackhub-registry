@@ -36,7 +36,7 @@ my $pid_file   = $ENV{THR_PID} || "$root_dir/trackhub_registry.pid";
 my $init_config= $ENV{THR_CONFIG} || '~/.bashrc';
 
 print "Starting server with config:\n";
-printf "Application root\t%s\nPSGI config\t%s\nEnvironment\t$init_config\n",$root_dir,$psgi_file,$init_config;
+printf "Application root\t%s\nPSGI config\t%s\nEnvironment\t%s\n",$root_dir,$psgi_file,$init_config;
 printf "Server port\t%s\nServer status\t%s\nLog location\t%s\nPID\t%s\n",$port,$status_file,$log_dir,$pid_file;
 printf "Server error log\t %s\n",$error_log;
 

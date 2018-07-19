@@ -54,11 +54,7 @@ the user using pagination.
 
 =cut
 
-#
-# TODO: 
-# - Data::SearchEngine::ElasticSearch instance must be initialised
-#   with location of nodes from config file
-#
+
 sub index :Path :Args(0) {
   my ( $self, $c ) = @_;
 

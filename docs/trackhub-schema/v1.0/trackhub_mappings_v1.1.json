@@ -35,7 +35,7 @@
           "type": "object",
           "properties": {
             "name": {
-              "type": "text",
+              "type": "keyword",
               "index": true
             },
             "url": {

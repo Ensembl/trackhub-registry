@@ -62,7 +62,7 @@
           <div id="species-facet" class="panel-collapse collapse">
             <div class="panel-body">
               <ul class="list-group"> <!--class="nav nav-list">-->
-	        [% FOR species IN facets.species %]
+	        [% FOR species IN aggregations.species %]
 		  [% p = { } %]
 		  [% p.import(filters) %]
 		  [% p.species = species.value %]
@@ -86,7 +86,7 @@
           <div id="assembly-facet" class="panel-collapse collapse">
             <div class="panel-body">
               <ul class="list-group"> <!--class="nav nav-list">-->
-	        [% FOR assembly IN facets.assembly %]
+	        [% FOR assembly IN aggregations.assembly %]
 		  [% p = { } %]
 		  [% p.import(filters) %]
 		  [% p.assembly_name = assembly.value %]
@@ -105,7 +105,7 @@
           <div id="hub-facet" class="panel-collapse collapse">
             <div class="panel-body">
               <ul class="list-group">
-	        [% FOR hub IN facets.hub %]
+	        [% FOR hub IN aggregations.hub %]
 		  [% p = { } %]
 		  [% p.import(filters) %]
 		  [% p.hub = hub.value %]
@@ -123,7 +123,7 @@
           <div id="type-facet" class="panel-collapse collapse">
             <div class="panel-body">
               <ul class="list-group">
-	        [% FOR type IN facets.type %]
+	        [% FOR type IN aggregations.type %]
 		  [% p = { } %]
 		  [% p.import(filters) %]
 		  [% p.type = type.value %]

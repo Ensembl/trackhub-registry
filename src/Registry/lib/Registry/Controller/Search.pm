@@ -63,17 +63,16 @@ sub index :Path :Args(0) {
   # Basic query check: if empty query params, matches all document
   my ($query_type, $query_body) = ('match_all', {});
   if ($params->{q}) {
-    # $query_type = 'match';
-    # $query_body = { _all => $params->{q} };
+
     $query_type = 'query_string';
     $query_body = { query => $params->{q} }; # default field is _all
   } 
   my $facets = 
     {
-     species  => { terms => { field => 'species.scientific_name', size => 20 } },
-     assembly => { terms => { field => 'assembly.name', size => 20 } },
-     hub      => { terms => { field => 'hub.name', size => 20 } },
-     type     => { terms => { field => 'type', size => 20 } },
+     species  => { terms => { field => 'species.scientific_name' } },
+     assembly => { terms => { field => 'assembly.name' } },
+     hub      => { terms => { field => 'hub.name' } },
+     type     => { terms => { field => 'type'} },
     };
 
   my $page = $params->{page} || 1;
@@ -85,13 +84,13 @@ sub index :Path :Args(0) {
 
   my $query_args = 
     {
-     index     => $index,
-     data_type => $type,
-     page      => $page,
-     count     => $entries_per_page, 
-     type      => $query_type,
-     query     => $query_body,
-     facets    => $facets
+     index            => $index,
+     data_type        => $type,
+     page             => $page,
+     count            => $entries_per_page, 
+     type             => $query_type,
+     query            => $query_body,
+     aggregations     => $facets
     };
 
   # pass extra (i.e. besides query) parameters as ANDed filters
@@ -224,30 +223,12 @@ sub index :Path :Args(0) {
 
   };
   
-  # check hub is available for each search result
-  #
-  # NOTE:
-  # this is introducing a delay in the showing of the search
-  # results. Moreover, need to pass the ok status to the view_trackhub
-  # action otherwise it will rely on the actual content of the document
-  # to show the trackDB status
-  #
-  # foreach my $item (@{$results->items}) {
-  #   my $hub = $item->get_value('hub');
-
-  #   $hub->{ok} = 1;
-  #   my $response = file_exists($hub->{url}, { nice => 1 });
-  #   $hub->{ok} = 0 if $response->{error};
-    
-  #   $item->set_value('hub', $hub);
-  # }
 
   if($results){
     $c->stash(query_string    => $params->{q},
               filters         => $params,
               items           => $results->items,
-              facets          => $results->facets,
-              # aggregations    => $results->{aggregations},
+              aggregations    => $results->aggregations,
               pager           => $results->pager,
               template        => 'search/results.tt');
   }

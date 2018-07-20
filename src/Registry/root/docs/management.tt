@@ -13,15 +13,15 @@
   <div class="col-sm-3" style="margin-top: 25px;">
     <div id="search-sidebar-left">
         <div class="panel panel-primary">
-	  <div class="panel-heading">TrackHub Provider Docs</div>
+          <div class="panel-heading">TrackHub Provider Docs</div>
           <div class="panel-body">
-	    <ul class="nav nav-list">
-	      <li><a href="[% c.uri_for('/docs/registration') %]">Registration</a></li>
-	      <li><a style="font-weight: bold;">TrackHub Management</a></li>
-	      <li><a href="[% c.uri_for('/docs/dashboard') %]">Dashboard</a></li>
-	    </ul>
+            <ul class="nav nav-list">
+              <li><a href="[% c.uri_for('/docs/registration') %]">Registration</a></li>
+              <li><a style="font-weight: bold;">TrackHub Management</a></li>
+              <li><a href="[% c.uri_for('/docs/dashboard') %]">Dashboard</a></li>
+            </ul>
           </div> 
-	</div>
+        </div>
     </div> <!-- sidebar -->
   </div>
 
@@ -35,8 +35,8 @@
       Using this API, you can:
       <ul>
         <li>register a track data hub with the registry;</li>
-	<li>list all your registered track hubs or data bases;</li>
-	<li>get/update/delete a particular track data base.</li>
+        <li>list all your registered track hubs or data bases;</li>
+        <li>get/update/delete a particular track data base.</li>
       </ul>
     </p>
 

@@ -13,21 +13,21 @@
   <div class="col-sm-3" style="margin-top: 25px;">
     <div id="search-sidebar-left">
         <div class="panel panel-primary">
-	  <div class="panel-heading">Track Hub Management Docs</div>
+          <div class="panel-heading">Track Hub Management Docs</div>
           <div class="panel-body">
-	    <ul class="nav nav-list">
-	      <li><a href="[% c.uri_for('/docs/management/overview') %]">Overview</a></li>
-	      <li><a style="font-weight: bold;">Supported Genome Assemblies</a>
-	        <ul>
-		  <li><a href="#mapping">Mapping Track Hub Assembly Names to INSDC Accessions</a></li>
-		</ul>
-	      </li>
-	      <li><a href="[% c.uri_for('/docs/management/modelling') %]">Modelling Track Hubs</a></li>
-	      <li><a href="[% c.uri_for('/docs/api/registration') %]">REST API</a></li>
-	      <li><a href="[% c.uri_for('/docs/management/dashboard') %]">Dashboard</a></li>
-	    </ul>
+            <ul class="nav nav-list">
+              <li><a href="[% c.uri_for('/docs/management/overview') %]">Overview</a></li>
+              <li><a style="font-weight: bold;">Supported Genome Assemblies</a>
+                <ul>
+                  <li><a href="#mapping">Mapping Track Hub Assembly Names to INSDC Accessions</a></li>
+                </ul>
+              </li>
+              <li><a href="[% c.uri_for('/docs/management/modelling') %]">Modelling Track Hubs</a></li>
+              <li><a href="[% c.uri_for('/docs/api/registration') %]">REST API</a></li>
+              <li><a href="[% c.uri_for('/docs/management/dashboard') %]">Dashboard</a></li>
+            </ul>
           </div> 
-	</div>
+        </div>
     </div> <!-- sidebar -->
   </div>
 

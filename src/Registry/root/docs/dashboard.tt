@@ -13,21 +13,21 @@
   <div class="col-sm-3" style="margin-top: 25px;">
     <div id="search-sidebar-left">
         <div class="panel panel-primary">
-	  <div class="panel-heading">TrackHub Provider Docs</div>
+          <div class="panel-heading">TrackHub Provider Docs</div>
           <div class="panel-body">
-	    <ul class="nav nav-list">
-	      <li><a href="[% c.uri_for('/docs/registration') %]">Registration</a></li>
-	      <li><a href="[% c.uri_for('/docs/management') %]">TrackHub Management</a></li>
-	      <li><a style="font-weight: bold;">Dashboard</a>
-	        <ul>
-		  <li><a href="#profile">Updating Profile</a></li>
-		  <li><a href="#status">Viewing/Editing THs</a></li>
-		  <li><a href="#monitoring">Automatic TH Monitoring</a></li>
-		</ul>
-	      </li>
-	    </ul>
+            <ul class="nav nav-list">
+              <li><a href="[% c.uri_for('/docs/registration') %]">Registration</a></li>
+              <li><a href="[% c.uri_for('/docs/management') %]">TrackHub Management</a></li>
+              <li><a style="font-weight: bold;">Dashboard</a>
+                <ul>
+                  <li><a href="#profile">Updating Profile</a></li>
+                  <li><a href="#status">Viewing/Editing THs</a></li>
+                  <li><a href="#monitoring">Automatic TH Monitoring</a></li>
+                </ul>
+              </li>
+            </ul>
           </div> 
-	</div>
+        </div>
     </div> <!-- sidebar -->
   </div>
 

@@ -13,27 +13,27 @@
   <div class="col-sm-3" style="margin-top: 25px;">
     <div id="search-sidebar-left">
         <div class="panel panel-primary">
-	  <div class="panel-heading">API Docs</div>
+          <div class="panel-heading">API Docs</div>
           <div class="panel-body">
-	    <ul class="nav nav-list">
-	      <li><a style="font-weight: bold;">TH Registry APIs</a>
-	        <ul>
-		  <li><a href="#request">API Requests</a>
-		    <ul>
-		      <li><a href="#auth">Authentication</a></li>
-		      <li><a href="#requestheaders">Request Headers</a></li>
-		      <li><a href="#requestbodies">Request Bodies</a></li>
-		    </ul>
-		  </li>
-		  <li><a href="#response">API Responses</a></li>
-		</ul>
-	      </li>
-	      <li><a href="[% c.uri_for('/docs/api/info') %]">Info API</a></li>
-	      <li><a href="[% c.uri_for('/docs/api/registration') %]">Registration API</a></li>
-	      <li><a href="[% c.uri_for('/docs/api/search') %]">Search API</a></li>
-	    </ul>
+            <ul class="nav nav-list">
+              <li><a style="font-weight: bold;">TH Registry APIs</a>
+                <ul>
+                  <li><a href="#request">API Requests</a>
+                    <ul>
+                      <li><a href="#auth">Authentication</a></li>
+                      <li><a href="#requestheaders">Request Headers</a></li>
+                      <li><a href="#requestbodies">Request Bodies</a></li>
+                    </ul>
+                  </li>
+                  <li><a href="#response">API Responses</a></li>
+                </ul>
+              </li>
+              <li><a href="[% c.uri_for('/docs/api/info') %]">Info API</a></li>
+              <li><a href="[% c.uri_for('/docs/api/registration') %]">Registration API</a></li>
+              <li><a href="[% c.uri_for('/docs/api/search') %]">Search API</a></li>
+            </ul>
           </div> 
-	</div>
+        </div>
     </div> <!-- sidebar -->
   </div>
 
@@ -66,30 +66,30 @@
     <table class="table">
       <tbody>
         <tr>
-	  <th>HTTP Verb</th>
-	  <th>Type</th>
-	  <th>Summary</th>
-	</tr>
+          <th>HTTP Verb</th>
+          <th>Type</th>
+          <th>Summary</th>
+        </tr>
         <tr>
-	  <td>POST</td>
-	  <td>Creates</td>
-	  <td>Create new object</td>
-	</tr>
+          <td>POST</td>
+          <td>Creates</td>
+          <td>Create new object</td>
+        </tr>
         <tr>
-	  <td>GET</td>
-	  <td>Retrieve</td>
-	  <td>Retrieve object representation</td>
-	</tr>
+          <td>GET</td>
+          <td>Retrieve</td>
+          <td>Retrieve object representation</td>
+        </tr>
         <tr>
-	  <td>PUT</td>
-	  <td>Update</td>
-	  <td>Modifies existing object</td>
-	</tr>
+          <td>PUT</td>
+          <td>Update</td>
+          <td>Modifies existing object</td>
+        </tr>
         <tr>
-	  <td>DELETE</td>
-	  <td>Delete</td>
-	  <td>Delete existing object</td>
-	</tr>
+          <td>DELETE</td>
+          <td>Delete</td>
+          <td>Delete existing object</td>
+        </tr>
       </tbody>
     </table>
   </p>
@@ -105,25 +105,25 @@
     <table class="table">
       <tbody>
         <tr>
-	  <th>Header</th>
-	  <th>Description</th>
-	</tr>
+          <th>Header</th>
+          <th>Description</th>
+        </tr>
         <tr>
-	  <td>Authorization</td>
-	  <td>Login requests to the <a href="">Registration API</a> must include an Authorization header, as specified in RFC 1421. Credentials must be supplied in a MIME Base64 encoding.</td>
-	</tr>
+          <td>Authorization</td>
+          <td>Login requests to the <a href="">Registration API</a> must include an Authorization header, as specified in RFC 1421. Credentials must be supplied in a MIME Base64 encoding.</td>
+        </tr>
         <tr>
-	  <td>User</td>
-	  <td>Requests to the Registration API from authenticated clients must include a User header.</td>
-	</tr>
+          <td>User</td>
+          <td>Requests to the Registration API from authenticated clients must include a User header.</td>
+        </tr>
         <tr>
-	  <td>Auth-Token</td>
-	  <td>Requests to the Registration API from authenticated clients must include an API-key in the form of an Auth-Token header.</td>
-	</tr>
+          <td>Auth-Token</td>
+          <td>Requests to the Registration API from authenticated clients must include an API-key in the form of an Auth-Token header.</td>
+        </tr>
         <tr>
-	  <td>Content-Type</td>
-	  <td>Requests that include a body (i.e. POST/PUT) must start with the appropriate HTTP Content-Type header set to <strong>application/json</strong></td>
-	</tr>
+          <td>Content-Type</td>
+          <td>Requests that include a body (i.e. POST/PUT) must start with the appropriate HTTP Content-Type header set to <strong>application/json</strong></td>
+        </tr>
       </tbody>
     </table>    
   </p>
@@ -145,50 +145,50 @@
     <table class="table">
       <tbody>
         <tr>
-	  <th>Status Code</th>
-	  <th>Status Name</th>
-	  <th>Description</th>
-	</tr>
+          <th>Status Code</th>
+          <th>Status Name</th>
+          <th>Description</th>
+        </tr>
         <tr>
-	  <td>200</td>
-	  <td>OK</td>
-	  <td>The request is valid and was completed. The response includes a document body</td>
-	</tr>
+          <td>200</td>
+          <td>OK</td>
+          <td>The request is valid and was completed. The response includes a document body</td>
+        </tr>
         <tr>
-	  <td>201</td>
-	  <td>Created</td>
-	  <td>The request is valid. The requested object was created and can be found at the URL specified in the Location header</td>
-	</tr>
+          <td>201</td>
+          <td>Created</td>
+          <td>The request is valid. The requested object was created and can be found at the URL specified in the Location header</td>
+        </tr>
         <tr>
-	  <td>400</td>
-	  <td>Bad Request</td>
-	  <td>The request body is malformed, incomplete, or otherwise invalid</td>
-	</tr>
+          <td>400</td>
+          <td>Bad Request</td>
+          <td>The request body is malformed, incomplete, or otherwise invalid</td>
+        </tr>
         <tr>
-	  <td>401</td>
-	  <td>Unauthorized</td>
-	  <td>HTTP basic authentication failed (an Authorization header was expected but not found, or invalid user credentials), or token based authorisation failed (User/Auth-Token headers were expected but not found or invalid auth-token)</td>
-	</tr>
+          <td>401</td>
+          <td>Unauthorized</td>
+          <td>HTTP basic authentication failed (an Authorization header was expected but not found, or invalid user credentials), or token based authorisation failed (User/Auth-Token headers were expected but not found or invalid auth-token)</td>
+        </tr>
         <tr>
-	  <td>404</td>
-	  <td>Not Found</td>
-	  <td>One or more objects specified in the request could not be found in the specified container</td>
-	</tr>
+          <td>404</td>
+          <td>Not Found</td>
+          <td>One or more objects specified in the request could not be found in the specified container</td>
+        </tr>
         <tr>
-	  <td>405</td>
-	  <td>Method Not Allowed</td>
-	  <td>The method specified in the Request-Line is not allowed for the resource identified by the Request-URI (<mark>NOTE: the response MUST include an Allow header containing a list of valid methods for the requested resource</mark>)</td>
-	</tr>
+          <td>405</td>
+          <td>Method Not Allowed</td>
+          <td>The method specified in the Request-Line is not allowed for the resource identified by the Request-URI (<mark>NOTE: the response MUST include an Allow header containing a list of valid methods for the requested resource</mark>)</td>
+        </tr>
         <tr>
-	  <td>500</td>
-	  <td>Internal Server Error</td>
-	  <td>The request was received but could not be completed because of an internal error at the server</td>
-	</tr>
+          <td>500</td>
+          <td>Internal Server Error</td>
+          <td>The request was received but could not be completed because of an internal error at the server</td>
+        </tr>
         <tr>
-	  <td>503</td>
-	  <td>Service Unavailable</td>
-	  <td>The server is currently unable to handle the request due to a temporary overloading or maintenance of the server. The implication is that this is a temporary condition which will be alleviated after some delay. If known, the length of the delay MAY be indicated in a <mark>Retry-After</mark> header. If no <mark>Retry-After</mark> is given, the client SHOULD handle the response as it would for a 500 response</td>
-	</tr>
+          <td>503</td>
+          <td>Service Unavailable</td>
+          <td>The server is currently unable to handle the request due to a temporary overloading or maintenance of the server. The implication is that this is a temporary condition which will be alleviated after some delay. If known, the length of the delay MAY be indicated in a <mark>Retry-After</mark> header. If no <mark>Retry-After</mark> is given, the client SHOULD handle the response as it would for a 500 response</td>
+        </tr>
       </tbody>
     </table>    
   </p>

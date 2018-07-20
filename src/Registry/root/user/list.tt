@@ -9,63 +9,36 @@
     <table class="table table-condensed table-hover table-striped" summary="The list of all trackhub providers">
       <thead>
         <tr>
-	  <th>Id</th>
-	  <th>Username</th>
-	  <th>Password</th>
+          <th>Id</th>
+          <th>Username</th>
+          <th>Password</th>
           <th>First Name</th>
           <th>Last Name</th>
-	  <th>Full Name</th>
-	  <th>Email</th>
-	  <th>Affiliation</th>
-	  <th></th>
+          <th>Full Name</th>
+          <th>Email</th>
+          <th>Affiliation</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
       [% FOR user IN users %]
         <tr>
-	  <td style="word-wrap: break-word;" >[% user.id %]</td>
-	  <td style="word-wrap: break-word;" >[% user.username %]</td>
-	  <td style="word-wrap: break-word;" >[% user.password %]</td>
-	  <td style="word-wrap: break-word;" >[% user.first_name %]</td>
-	  <td style="word-wrap: break-word;" >[% user.last_name %]</td>
-	  <td style="word-wrap: break-word;" >[% user.fullname %]</td>
-	  <td style="word-wrap: break-word;" >[% user.email %]</td>
-	  <td style="word-wrap: break-word;" >[% user.affiliation %]</td>
-	  <td>
+          <td style="word-wrap: break-word;" >[% user.id %]</td>
+          <td style="word-wrap: break-word;" >[% user.username %]</td>
+          <td style="word-wrap: break-word;" >[% user.password %]</td>
+          <td style="word-wrap: break-word;" >[% user.first_name %]</td>
+          <td style="word-wrap: break-word;" >[% user.last_name %]</td>
+          <td style="word-wrap: break-word;" >[% user.fullname %]</td>
+          <td style="word-wrap: break-word;" >[% user.email %]</td>
+          <td style="word-wrap: break-word;" >[% user.affiliation %]</td>
+          <td>
             <div class="btn-group">
               <a class="btn btn-default btn-xs" href="[% c.uri_for(c.controller.action_for('delete'), ['admin',user.id]) %]" rel="tooltip" title="Delete TrackHub provider"><span class="glyphicon glyphicon-trash"></span></a>
             </div>
-	  </td>
-	</tr>
+          </td>
+        </tr>
       [% END %]
       </tbody>
     </table>
   </div>
 </div>
-
-<!--
-  <table id="users" class="table table-bordered table-striped tablesorter" summary="The list of all trackhub providers">
-    <thead>
-      <tr>
-        [% FOR column IN columns %]
-        <th scope="col">[% column %]</th>
-        [% END %]
-      </tr>
-    </thead>
-    <tbody>
-      [% FOR user IN users %]
-      <tr>
-        [% FOR column IN columns %]
-        <td>[% user.$column | html %]</td>
-        [% END %]
-        <td>
-          <div class="btn-group">
-          <a class="btn btn-default btn-xs" href="[% c.uri_for(c.controller.action_for('delete'), ['admin',user.id]) %]" rel="tooltip" title="Delete TrackHub provider"><span class="glyphicon glyphicon-trash"></span></a>
-          </div>
-        </td>
-      </tr>
-      [% END %]
-    </tbody>
-  </table>
-</div>
--->

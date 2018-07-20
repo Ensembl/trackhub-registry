@@ -11,7 +11,6 @@
 [% # title, set "$c->stash(title => $something)" in the controller).     -%]
 [% META title = 'Search Results' %]
 
-<!--<div class="page-header">-->
 <div class="row">
   <div class="col-sm-12">
     <ul class="breadcrumb">
@@ -33,102 +32,87 @@
           <div id="current-filters" class="panel-collapse collapse in">
             <div class="panel-body">
               <ul class="nav nav-list">
-	        [% filters.delete('page') %]
-	        [% FOREACH key IN filters.keys.sort %]
-		  [% NEXT UNLESS filters.$key %]
-		  [% p = {} %]
-		  [% p.import(filters) %]
-		  [% p.delete(key) %]
-		  <!--
-		  [%# HACK %]
-		  [%# show the scientific name instead of the species %]
-		  [% IF key == 'species' %]
-                <li><a rel="nofollow" href="[% c.uri_for('/search', p ) %]">[% taxid2name.item(filters.$key) %]<span class="close">&times</span></a></li>
-		  [% ELSE %]
+                [% filters.delete('page') %]
+                [% FOREACH key IN filters.keys.sort %]
+                  [% NEXT UNLESS filters.$key %]
+                  [% p = {} %]
+                  [% p.import(filters) %]
+                  [% p.delete(key) %]
+
                 <li><a rel="nofollow" href="[% c.uri_for('/search', p ) %]">[% filters.$key %]<span class="close">&times</span></a></li>
-		  [% END %]
-		  -->
-		<li><a rel="nofollow" href="[% c.uri_for('/search', p ) %]">[% filters.$key %]<span class="close">&times</span></a></li>
-		[% END %]   
+                [% END %]   
               </ul>
             </div> <!-- panel-body -->
           </div> <!-- current-filters -->
-	</div>
+        </div>
 
-	<div class="panel panel-primary">
+        <div class="panel panel-primary">
           <div class="panel-heading">
             <a class="panel-title" data-toggle="collapse" href="#species-facet"><i style="float:right" class="glyphicon glyphicon-chevron-right"></i>Species</a>
           </div>
           <div id="species-facet" class="panel-collapse collapse">
             <div class="panel-body">
-              <ul class="list-group"> <!--class="nav nav-list">-->
-	        [% FOR species IN aggregations.species %]
-		  [% p = { } %]
-		  [% p.import(filters) %]
-		  [% p.species = species.value %]
-		  <!--
-		  [%# HACK %]
-		  [%# show the scientific name  instead of the taxid %]
-                <li class="list-group-item"><span class="badge">[% species.count %]</span><a rel="nofollow" href="[% c.uri_for('/search', p) %]"><em>[% taxid2name.item(species.value) %]</em></a></li>
-		  -->
+              <ul class="list-group">
+                [% FOR species IN aggregations.species %]
+                  [% p = { } %]
+                  [% p.import(filters) %]
+                  [% p.species = species.value %]
                 <li class="list-group-item"><span class="badge">[% species.count %]</span><a rel="nofollow" href="[% c.uri_for('/search', p) %]"><em>[% species.value %]</em></a></li>
-		<!--<li><a rel="nofollow" href="[% c.uri_for('/search', p) %]">[% species.value %]<span class="facet-count">[% species.count %]</span></a></li>-->
-		[% END %]      
+                [% END %]      
               </ul>
             </div>
           </div> <!-- species-facet -->
         </div>
 
-	<div class="panel panel-primary">
+        <div class="panel panel-primary">
           <div class="panel-heading">
             <a class="panel-title" data-toggle="collapse" href="#assembly-facet"><i style="float:right" class="glyphicon glyphicon-chevron-right"></i>Assembly</a>
           </div>
           <div id="assembly-facet" class="panel-collapse collapse">
             <div class="panel-body">
-              <ul class="list-group"> <!--class="nav nav-list">-->
-	        [% FOR assembly IN aggregations.assembly %]
-		  [% p = { } %]
-		  [% p.import(filters) %]
-		  [% p.assembly_name = assembly.value %]
-		<li class="list-group-item"><span class="badge">[% assembly.count %]</span><a rel="nofollow" href="[% c.uri_for('/search', p ) %]">[% assembly.value %]</a></li>
-                <!--<li><a rel="nofollow" href="[% c.uri_for('/search', p ) %]">[% assembly.value %]<span class="facet-count">[% assembly.count %]</span></a></li>-->
-		[% END %]      
+              <ul class="list-group">
+                [% FOR assembly IN aggregations.assembly %]
+                  [% p = { } %]
+                  [% p.import(filters) %]
+                  [% p.assembly_name = assembly.value %]
+                <li class="list-group-item"><span class="badge">[% assembly.count %]</span><a rel="nofollow" href="[% c.uri_for('/search', p ) %]">[% assembly.value %]</a></li>
+                [% END %]      
               </ul>
             </div>
           </div> <!-- assembly-facet -->
         </div>
 
-	<div class="panel panel-primary">
+        <div class="panel panel-primary">
           <div class="panel-heading">
             <a class="panel-title" data-toggle="collapse" href="#hub-facet"><i style="float:right" class="glyphicon glyphicon-chevron-right"></i>Hub</a>
           </div>
           <div id="hub-facet" class="panel-collapse collapse">
             <div class="panel-body">
               <ul class="list-group">
-	        [% FOR hub IN aggregations.hub %]
-		  [% p = { } %]
-		  [% p.import(filters) %]
-		  [% p.hub = hub.value %]
-		<li class="list-group-item"><span class="badge">[% hub.count %]</span><a rel="nofollow" href="[% c.uri_for('/search', p ) %]">[% hub.value %]</a></li>
-		[% END %]      
+                [% FOR hub IN aggregations.hub %]
+                  [% p = { } %]
+                  [% p.import(filters) %]
+                  [% p.hub = hub.value %]
+                <li class="list-group-item"><span class="badge">[% hub.count %]</span><a rel="nofollow" href="[% c.uri_for('/search', p ) %]">[% hub.value %]</a></li>
+                [% END %]      
               </ul>
             </div>
           </div> <!-- hub-facet -->
         </div>
 
-	<div class="panel panel-primary">
+        <div class="panel panel-primary">
           <div class="panel-heading">
             <a class="panel-title" data-toggle="collapse" href="#type-facet"><i style="float:right" class="glyphicon glyphicon-chevron-right"></i>Data Type</a>
           </div>
           <div id="type-facet" class="panel-collapse collapse">
             <div class="panel-body">
               <ul class="list-group">
-	        [% FOR type IN aggregations.type %]
-		  [% p = { } %]
-		  [% p.import(filters) %]
-		  [% p.type = type.value %]
-		<li class="list-group-item"><span class="badge">[% type.count %]</span><a rel="nofollow" href="[% c.uri_for('/search', p ) %]">[% type.value %]</a></li>
-		[% END %]      
+                [% FOR type IN aggregations.type %]
+                  [% p = { } %]
+                  [% p.import(filters) %]
+                  [% p.type = type.value %]
+                <li class="list-group-item"><span class="badge">[% type.count %]</span><a rel="nofollow" href="[% c.uri_for('/search', p ) %]">[% type.value %]</a></li>
+                [% END %]      
               </ul>
             </div>
           </div> <!-- type-facet -->
@@ -143,216 +127,170 @@
       <!-- Nav tabs -->
       <ul class="nav nav-tabs" role="tablist">
         <li role="presentation" class="active"><a href="#tracks" aria-controls="tracks" role="tab" data-toggle="tab">Search Results</a></li>
-	<!--
-        <li role="presentation"><a href="#tracks_by_hub" aria-controls="tracks_by_hub" role="tab" data-toggle="tab">Tracks by Hub</a></li>
-        <li role="presentation"><a href="#tracks_by_type" aria-controls="tracks_by_type" role="tab" data-toggle="tab">Tracks by type</a></li>
-	-->
       </ul>
 
       <!-- Tab panes -->
       <div class="tab-content">
         <div role="tabpanel" class="tab-pane fade in active" id="tracks" style="margin-top: 20px;">
-	  [% IF items.size > 0 %]
-	    [% from = (pager.current_page - 1) * pager.entries_per_page + 1 %]
-	    [% to = pager.current_page * pager.entries_per_page %]
-	    [% IF (pager.current_page == pager.last_page) %]
-	      [% to = pager.total_entries %]
-	    [% END %]
-	  <p>Track Collections [% from %] to [% to %] of [% pager.total_entries %]</p>
+          [% IF items.size > 0 %]
+            [% from = (pager.current_page - 1) * pager.entries_per_page + 1 %]
+            [% to = pager.current_page * pager.entries_per_page %]
+            [% IF (pager.current_page == pager.last_page) %]
+              [% to = pager.total_entries %]
+            [% END %]
+          <p>Track Collections [% from %] to [% to %] of [% pager.total_entries %]</p>
 
-	  [% FOREACH item = items %]
-	    [% status = item.get_value('status').message %]
-	    [% h = item.get_value('hub'); %]
-	    [% urls = h.browser_links %]
-	    [% IF h.ok == 0 %]
-	      [% status = 'Remote Data Unavailable' %]
-	    [% END %]
-	    [% s = item.get_value('species'); %]
-	    [% a = item.get_value('assembly'); %]
-	    [% IF status == 'All is Well' %]
+          [% FOREACH item = items %]
+            [% status = item.get_value('status').message %]
+            [% h = item.get_value('hub'); %]
+            [% urls = h.browser_links %]
+            [% IF h.ok == 0 %]
+              [% status = 'Remote Data Unavailable' %]
+            [% END %]
+            [% s = item.get_value('species'); %]
+            [% a = item.get_value('assembly'); %]
+            [% IF status == 'All is Well' %]
             <div class="panel panel-info">
-	      <a target="_blank" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [ item.id ]) %]"><h3 class="panel-title">[% h.shortLabel %]</h3></a>
-	      <h4 style="padding-left: 10px;">[% h.longLabel %]</h4>
+              <a target="_blank" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [ item.id ]) %]"><h3 class="panel-title">[% h.shortLabel %]</h3></a>
+              <h4 style="padding-left: 10px;">[% h.longLabel %]</h4>
               <div class="panel-body">
-	        <div class="btn-group  btn-group-xs" style="float: right;">
-		  [% IF urls %]
-		  <div class="btn-group btn-group-xs">
+                <div class="btn-group  btn-group-xs" style="float: right;">
+                  [% IF urls %]
+                  <div class="btn-group btn-group-xs">
                     <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">View in Genome Browser <span class="caret"></span></button>
                     <ul class="dropdown-menu" role="menu">
-		      [% IF urls.ensembl %]
+                      [% IF urls.ensembl %]
                       <li><a target="_blank" href="[% urls.ensembl %]">Ensembl</a></li>
-		      [% END %]
-		      [% IF urls.biodalliance %]
+                      [% END %]
+                      [% IF urls.biodalliance %]
                       <li><a target="_blank" href="[% urls.biodalliance %]">Embedded View (Biodalliance)</a></li>
-		      [% END %]
-		      [% IF urls.vectorbase %]
+                      [% END %]
+                      [% IF urls.vectorbase %]
                       <li><a target="_blank" href="[% urls.vectorbase %]">VectorBase</a></li>
-		      [% END %]
-		      [% IF urls.ucsc %]
+                      [% END %]
+                      [% IF urls.ucsc %]
                       <li><a target="_blank" href="[% urls.ucsc %]">UCSC</a></li>
-		      [% END %]
+                      [% END %]
                     </ul>
                   </div>
-		  [% END %]
-		  <a role="button" class="btn btn-lg btn-default" data-toggle="popover" title="More info about this collection" data-content="" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [ item.id ]) %]">View Info</a><br/><br/>
-		  <span class="label label-success"><a href="[% c.uri_for(c.controller('docs').action_for('results_page')) %]#status" style="text-decoration: none; color: inherit;" data-toggle="tooltip" title="Hub has been checked: all tracks available">Remote Data Available</a></span>
-		</div>
-	        <p>
-		  <!--<strong>Hub</strong>: [% h.shortLabel %]<br/>-->
-		  <strong>Species</strong>: [% s.tax_id %] - <em>[% s.scientific_name %]</em><br/>
-		  <strong>Assembly</strong>: [% a.accession %] - [% a.name %]
-		</p>
+                  [% END %]
+                  <a role="button" class="btn btn-lg btn-default" data-toggle="popover" title="More info about this collection" data-content="" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [ item.id ]) %]">View Info</a><br/><br/>
+                  <span class="label label-success"><a href="[% c.uri_for(c.controller('docs').action_for('results_page')) %]#status" style="text-decoration: none; color: inherit;" data-toggle="tooltip" title="Hub has been checked: all tracks available">Remote Data Available</a></span>
+                </div>
+                <p>
+                  <strong>Species</strong>: [% s.tax_id %] - <em>[% s.scientific_name %]</em><br/>
+                  <strong>Assembly</strong>: [% a.accession %] - [% a.name %]
+                </p>
               </div>
             </div>
-	    [% ELSIF status.match('Unavailable') %]
+            [% ELSIF status.match('Unavailable') %]
             <div class="panel panel-danger">
-	      <a target="_blank" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [ item.id ]) %]"><h3 class="panel-title">[% h.shortLabel %]</h3></a>
-	      <h4 style="padding-left: 10px;">[% h.longLabel %]</h4>
+              <a target="_blank" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [ item.id ]) %]"><h3 class="panel-title">[% h.shortLabel %]</h3></a>
+              <h4 style="padding-left: 10px;">[% h.longLabel %]</h4>
               <div class="panel-body">
-	        <div style="float: right;">
-	          <span class="label label-danger"><a href="[% c.uri_for(c.controller('docs').action_for('results_page')) %]#status" style="text-decoration: none; color: inherit;" data-toggle="tooltip" title="The registry has verified this hub is not reachable">[% status %]</a></span>
-		  <a role="button" class="btn btn-xs btn-default" data-toggle="popover" title="More info about this collection" data-content="" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [ item.id ]) %]">View Info</a>
-		</div>
-	        <p>
-  		  <!--<strong>Hub</strong>: [% h.shortLabel %]<br/>-->
-		  <strong>Species</strong>: [% s.tax_id %] - <em>[% s.scientific_name %]</em><br/>
-		  <strong>Assembly</strong>: [% a.accession %] - [% a.name %]
-		</p>
+                <div style="float: right;">
+                  <span class="label label-danger"><a href="[% c.uri_for(c.controller('docs').action_for('results_page')) %]#status" style="text-decoration: none; color: inherit;" data-toggle="tooltip" title="The registry has verified this hub is not reachable">[% status %]</a></span>
+                  <a role="button" class="btn btn-xs btn-default" data-toggle="popover" title="More info about this collection" data-content="" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [ item.id ]) %]">View Info</a>
+                </div>
+                <p>
+                  <strong>Species</strong>: [% s.tax_id %] - <em>[% s.scientific_name %]</em><br/>
+                  <strong>Assembly</strong>: [% a.accession %] - [% a.name %]
+                </p>
               </div>
             </div>
-	    [% ELSE %]
+            [% ELSE %]
             <div class="panel panel-warning">
-	      <a target="_blank" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [ item.id ]) %]"><h3 class="panel-title">[% h.shortLabel %]</h3></a>
-	      <h4 style="padding-left: 10px;">[% h.longLabel %]</h4>
+              <a target="_blank" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [ item.id ]) %]"><h3 class="panel-title">[% h.shortLabel %]</h3></a>
+              <h4 style="padding-left: 10px;">[% h.longLabel %]</h4>
               <div class="panel-body">
-	        <div class="btn-group  btn-group-xs" style="float: right;">
-		  [% IF urls %]
-		  <div class="btn-group btn-group-xs">
+                <div class="btn-group  btn-group-xs" style="float: right;">
+                  [% IF urls %]
+                  <div class="btn-group btn-group-xs">
                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">View in Genome Browser <span class="caret"></span></button>
                     <ul class="dropdown-menu" role="menu">
-		      [% IF urls.ensembl %]
+                      [% IF urls.ensembl %]
                       <li><a target="_blank" href="[% urls.ensembl %]">Ensembl</a></li>
-		      [% END %]
-		      [% IF urls.biodalliance %]
+                      [% END %]
+                      [% IF urls.biodalliance %]
                       <li><a target="_blank" href="[% urls.biodalliance %]">Embedded View (Biodalliance)</a></li>
-		      [% END %]
-		      [% IF urls.vectorbase %]
+                      [% END %]
+                      [% IF urls.vectorbase %]
                       <li><a target="_blank" href="[% urls.vectorbase %]">VectorBase</a></li>
-		      [% END %]
-		      [% IF urls.ucsc %]
+                      [% END %]
+                      [% IF urls.ucsc %]
                       <li><a target="_blank" href="[% urls.ucsc %]">UCSC</a></li>
-		      [% END %]
+                      [% END %]
                     </ul>
                   </div>
-		  [% END %]
-		  <a role="button" class="btn btn-lg btn-default" data-toggle="popover" title="More info about this collection" data-content="" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [ item.id ]) %]">View Info</a><br/><br/>
-	          <span class="label label-warning"><a href="[% c.uri_for(c.controller('docs').action_for('results_page')) %]#status" style="text-decoration: none; color: inherit;" data-toggle="tooltip" title="The registry is not aware of whether this hub works or not">[% status %]</a></span>
-		</div>
-	        <p>
-  		  <!--<strong>Hub</strong>: [% h.shortLabel %]<br/>-->
-		  <strong>Species</strong>: [% s.tax_id %] - <em>[% s.scientific_name %]</em><br/>
-		  <strong>Assembly</strong>: [% a.accession %] - [% a.name %]
-		</p>
+                  [% END %]
+                  <a role="button" class="btn btn-lg btn-default" data-toggle="popover" title="More info about this collection" data-content="" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [ item.id ]) %]">View Info</a><br/><br/>
+                  <span class="label label-warning"><a href="[% c.uri_for(c.controller('docs').action_for('results_page')) %]#status" style="text-decoration: none; color: inherit;" data-toggle="tooltip" title="The registry is not aware of whether this hub works or not">[% status %]</a></span>
+                </div>
+                <p>
+                  <strong>Species</strong>: [% s.tax_id %] - <em>[% s.scientific_name %]</em><br/>
+                  <strong>Assembly</strong>: [% a.accession %] - [% a.name %]
+                </p>
               </div>
-            </div>	    
-	    [% END %]
-	  [% END %]
-	      [%# bootstrap simple pagination %]
+            </div>            
+            [% END %]
+          [% END %]
+              [%# bootstrap simple pagination %]
     <div align="center">
       <nav>
         <ul class="pagination">
-	[% IF pager.previous_page %]
-	  [% filters.page = pager.previous_page %]
+        [% IF pager.previous_page %]
+          [% filters.page = pager.previous_page %]
           <li><a href="[% c.uri_for('/search', filters)%]" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
-	[% ELSE %]
-	  <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
-	[% END %]
+        [% ELSE %]
+          <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+        [% END %]
 
         [% IF pager.current_page != pager.first_page %] [%# AND pager.first_page != pager.previous_page %]
           [% filters.page = pager.first_page %]
           <li><a href="[% c.uri_for('/search', filters) %]">[% pager.first_page %]</a></li>
         [% END %]
 
-	[% IF pager.previous_page AND pager.first_page != pager.previous_page %]
-	  [% filters.page = pager.previous_page %]
-	  [% IF pager.previous_page != 2 %]
-	  <li><a>...</a></li>
-	  [% END %]
-	  <li><a href="[% c.uri_for('/search', filters) %]">[% pager.previous_page %]</a></li>
-	[% END %]
+        [% IF pager.previous_page AND pager.first_page != pager.previous_page %]
+          [% filters.page = pager.previous_page %]
+          [% IF pager.previous_page != 2 %]
+          <li><a>...</a></li>
+          [% END %]
+          <li><a href="[% c.uri_for('/search', filters) %]">[% pager.previous_page %]</a></li>
+        [% END %]
 
-	  <li class="active"><a>[% pager.current_page %]<span class="sr-only">(current)</span></a></li>
+          <li class="active"><a>[% pager.current_page %]<span class="sr-only">(current)</span></a></li>
 
-	[% IF  pager.next_page AND pager.last_page != pager.next_page %]
-	  [% filters.page = pager.next_page %]
-	  [% x = pager.last_page; x = x - 1 %]
-	  [% IF pager.next_page != x %]
-	  [% END %]
-	  <li><a href="[% c.uri_for('/search', filters) %]">[% pager.next_page %]</a></li>
-	  <li><a>...</a></li>
-	[% END %]
+        [% IF  pager.next_page AND pager.last_page != pager.next_page %]
+          [% filters.page = pager.next_page %]
+          [% x = pager.last_page; x = x - 1 %]
+          [% IF pager.next_page != x %]
+          [% END %]
+          <li><a href="[% c.uri_for('/search', filters) %]">[% pager.next_page %]</a></li>
+          <li><a>...</a></li>
+        [% END %]
 
         [% IF pager.current_page != pager.last_page %] [%# AND pager.last_page != pager.next_page %]
           [% filters.page = pager.last_page %]
           <li><a href="[% c.uri_for('/search', filters) %]">[% pager.last_page %]</a></li>
         [% END %]
 
-	[% IF pager.next_page %]
-	  [% filters.page = pager.next_page %]
+        [% IF pager.next_page %]
+          [% filters.page = pager.next_page %]
           <li><a href="[% c.uri_for('/search', filters)%]" aria-label="Previous"><span aria-hidden="true">&raquo;</span></a></li>
-	[% ELSE %]
-	  <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&raquo;</span></a></li>
-	[% END %]
+        [% ELSE %]
+          <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&raquo;</span></a></li>
+        [% END %]
         </ul>
       </nav>
     </div>
 
-	  [% ELSE %]
-	  <div class="alert alert-danger" role="alert">
-	    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> No results. 
-	    <p>Try with another query.</p>
+          [% ELSE %]
+          <div class="alert alert-danger" role="alert">
+            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> No results. 
+            <p>Try with another query.</p>
           </div>
-	  [% END %]
-	</div>
-
-	<!--
-        <div role="tabpanel" class="tab-pane fade" id="tracks_by_hub" style="margin-top: 20px;">
-	  <table class="table table-striped table-hover">
-            <tbody>
-	    [% FOREACH hub_agg IN aggregations %]
-	      <tr>
-	        <td>
-		  <div class="hub-summary-compact">
-                    <div class="hub-summary-box hub-summary-score">		
-		      [% hub_agg.count %]
-		      <div class="hub-summary-caption">
-		        [% IF hub_agg.count == 1 %]
-			collection
-			[% ELSE %]
-			collections
-			[% END %]
-		      </div>
-		    </div>
-		    <span class="hub-title">
-		      [% p = { } %]
-		      [% p.import(filters) %]
-		      [% p.delete('page') %]
-		      [% p.hub = hub_agg.value %]
-		      <a href="[% c.uri_for('/search', p ) %]">[% hub_agg.value %]</a>
-		    </span>
-		    <p><div style="clear: both"></div></p>
-                  </div>
-	        </td>
-	      </tr>
-	    [% END %]
-	    </tbody>
-	  </table>
-	</div>
-
-        <div role="tabpanel" class="tab-pane fade" id="tracks_by_type" style="margin-top: 20px;">
-	  And here we show the results organised by data type, e.g. genomics, epigenomics, proteomics etc.
-	</div>
-	-->
+          [% END %]
+        </div>
       </div>
     </div>
 

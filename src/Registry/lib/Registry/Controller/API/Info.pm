@@ -242,8 +242,6 @@ sub hubs_per_assembly_GET {
                                                }
                                             });
 
-  # facets counts are the number of trackDBs per assembly, which is the same as the same
-  # as the number of hubs as each hub as one trackDB per assembly
   my $hubs = 0;
   map { $hubs = $_->{doc_count} if lc $_->{key} eq lc $assembly } @{$results->{aggregations}{assembly}{buckets}};
 

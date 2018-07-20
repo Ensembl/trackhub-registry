@@ -13,22 +13,22 @@
   <div class="col-sm-3" style="margin-top: 25px;">
     <div id="search-sidebar-left">
         <div class="panel panel-primary">
-	  <div class="panel-heading">API Docs</div>
+          <div class="panel-heading">API Docs</div>
           <div class="panel-body">
-	    <ul class="nav nav-list">
-	      <li><a href="[% c.uri_for('/docs/apis') %]">TH Registry APIs</a>
-	      </li>
-	      <li><a style="font-weight: bold;">Modelling TrackHUbs</a>
-	        <ul>
-		  <li><a href="#schema">Schema</a></li>
-		</ul>
-	      </li>
-	      <li><a href="[% c.uri_for('/docs/api/info') %]">Info API</a></li>
-	      <li><a href="[% c.uri_for('/docs/api/registration') %]">Registration API</a></li>
-	      <li><a href="[% c.uri_for('/docs/api/search') %]">Search API</a></li>
-	    </ul>
+            <ul class="nav nav-list">
+              <li><a href="[% c.uri_for('/docs/apis') %]">TH Registry APIs</a>
+              </li>
+              <li><a style="font-weight: bold;">Modelling TrackHUbs</a>
+                <ul>
+                  <li><a href="#schema">Schema</a></li>
+                </ul>
+              </li>
+              <li><a href="[% c.uri_for('/docs/api/info') %]">Info API</a></li>
+              <li><a href="[% c.uri_for('/docs/api/registration') %]">Registration API</a></li>
+              <li><a href="[% c.uri_for('/docs/api/search') %]">Search API</a></li>
+            </ul>
           </div> 
-	</div>
+        </div>
     </div> <!-- sidebar -->
   </div>
 

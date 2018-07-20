@@ -13,15 +13,15 @@
   <div class="col-sm-3" style="margin-top: 25px;">
     <div id="search-sidebar-left">
         <div class="panel panel-primary">
-	  <div class="panel-heading">Track Hub Provider Docs</div>
+          <div class="panel-heading">Track Hub Provider Docs</div>
           <div class="panel-body">
-	    <ul class="nav nav-list">
-	      <li><a style="font-weight: bold;">Registration</a></li>
-	      <li><a href="[% c.uri_for('/docs/management') %]">Track Hub Management</a></li>
-	      <li><a href="[% c.uri_for('/docs/dashboard') %]">Dashboard</a></li>
-	    </ul>
+            <ul class="nav nav-list">
+              <li><a style="font-weight: bold;">Registration</a></li>
+              <li><a href="[% c.uri_for('/docs/management') %]">Track Hub Management</a></li>
+              <li><a href="[% c.uri_for('/docs/dashboard') %]">Dashboard</a></li>
+            </ul>
           </div> 
-	</div>
+        </div>
     </div> <!-- sidebar -->
   </div>
 

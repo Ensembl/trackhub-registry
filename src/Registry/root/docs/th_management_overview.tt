@@ -13,23 +13,23 @@
   <div class="col-sm-3" style="margin-top: 25px;">
     <div id="search-sidebar-left">
         <div class="panel panel-primary">
-	  <div class="panel-heading">Track Hub Management Docs</div>
+          <div class="panel-heading">Track Hub Management Docs</div>
           <div class="panel-body">
-	    <ul class="nav nav-list">
-	      <li><a style="font-weight: bold;">Overview</a>
-	        <ul>
-		  <li><a href="#registration">Client Registration</a></li>
-		  <li><a href="#management">Track Hub Management</a></li>
-		  <li><a href="#submission">The Submission Process</a></li>
-		</ul>
-	      </li>
-	      <li><a href="[% c.uri_for('/docs/management/assembly_support') %]">Supported Genome Assemblies</a></li>
-	      <li><a href="[% c.uri_for('/docs/management/modelling') %]">Modelling Track Hubs</a></li>
-	      <li><a href="[% c.uri_for('/docs/api/registration') %]">REST API</a></li>
-	      <li><a href="[% c.uri_for('/docs/management/dashboard') %]">Dashboard</a></li>
-	    </ul>
+            <ul class="nav nav-list">
+              <li><a style="font-weight: bold;">Overview</a>
+                <ul>
+                  <li><a href="#registration">Client Registration</a></li>
+                  <li><a href="#management">Track Hub Management</a></li>
+                  <li><a href="#submission">The Submission Process</a></li>
+                </ul>
+              </li>
+              <li><a href="[% c.uri_for('/docs/management/assembly_support') %]">Supported Genome Assemblies</a></li>
+              <li><a href="[% c.uri_for('/docs/management/modelling') %]">Modelling Track Hubs</a></li>
+              <li><a href="[% c.uri_for('/docs/api/registration') %]">REST API</a></li>
+              <li><a href="[% c.uri_for('/docs/management/dashboard') %]">Dashboard</a></li>
+            </ul>
           </div> 
-	</div>
+        </div>
     </div> <!-- sidebar -->
   </div>
 
@@ -70,8 +70,8 @@
       Using this API, you can:
       <ul>
           <li><a href="[% c.uri_for('/docs/api/registration/workflow/thregister') %]">register track data hubs</a> with the registry;</li>
-	  <li><a href="[% c.uri_for('/docs/api/registration/workflow/thlist') %]">list</a> the all your registered track hubs or data bases;</li>
-	  <li><a href="[% c.uri_for('/docs/api/registration/reference') %]">get/update/delete</a> a given track hub in the registry</li>
+          <li><a href="[% c.uri_for('/docs/api/registration/workflow/thlist') %]">list</a> the all your registered track hubs or data bases;</li>
+          <li><a href="[% c.uri_for('/docs/api/registration/reference') %]">get/update/delete</a> a given track hub in the registry</li>
       </ul>
     </p>
 

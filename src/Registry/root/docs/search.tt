@@ -13,15 +13,15 @@
   <div class="col-sm-3" style="margin-top: 25px;">
     <div id="search-sidebar-left">
         <div class="panel panel-primary">
-	  <div class="panel-heading">Search Docs</div>
+          <div class="panel-heading">Search Docs</div>
           <div class="panel-body">
-	    <ul class="nav nav-list">
-	      <li><a style="font-weight: bold;">Basic Track Hub Search</a></li>
-	      <li><a href="[% c.uri_for('/docs/search/results') %]">Search Results Page</a></li>
-	      <li><a href="[% c.uri_for('/docs/search/advanced') %]">Advanced Search</a></li>
-	    </ul>
+            <ul class="nav nav-list">
+              <li><a style="font-weight: bold;">Basic Track Hub Search</a></li>
+              <li><a href="[% c.uri_for('/docs/search/results') %]">Search Results Page</a></li>
+              <li><a href="[% c.uri_for('/docs/search/advanced') %]">Advanced Search</a></li>
+            </ul>
           </div> 
-	</div>
+        </div>
     </div> <!-- sidebar -->
   </div>
 

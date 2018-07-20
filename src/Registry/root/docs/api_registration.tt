@@ -14,22 +14,22 @@
   <div class="col-sm-3" style="margin-top: 25px;">
     <div id="search-sidebar-left">
         <div class="panel panel-primary">
-	  <div class="panel-heading">API Docs</div>
+          <div class="panel-heading">API Docs</div>
           <div class="panel-body">
-	    <ul class="nav nav-list">
-	      <li><a href="[% c.uri_for('/docs/apis') %]">TH Registry APIs</a></li>
-	      <li><a href="[% c.uri_for('/docs/api/info') %]">Info API</a></li>
-	      <li><a style="font-weight: bold;"">Registration API</a>
-	        <ul>
-		  <li><a href="#authentication">Authentication</a></li>
-		  <li><a href="#workflow">A simplified RESTful workflow</a></li>
-		  <li><a href="[% c.uri_for('/docs/api/registration/reference') %]">API Reference</a></li>
-		</ul>
-	      </li>
-	      <li><a href="[% c.uri_for('/docs/api/search') %]">Search API</a></li>
-	    </ul>
+            <ul class="nav nav-list">
+              <li><a href="[% c.uri_for('/docs/apis') %]">TH Registry APIs</a></li>
+              <li><a href="[% c.uri_for('/docs/api/info') %]">Info API</a></li>
+              <li><a style="font-weight: bold;"">Registration API</a>
+                <ul>
+                  <li><a href="#authentication">Authentication</a></li>
+                  <li><a href="#workflow">A simplified RESTful workflow</a></li>
+                  <li><a href="[% c.uri_for('/docs/api/registration/reference') %]">API Reference</a></li>
+                </ul>
+              </li>
+              <li><a href="[% c.uri_for('/docs/api/search') %]">Search API</a></li>
+            </ul>
           </div> 
-	</div>
+        </div>
     </div> <!-- sidebar -->
   </div>
 

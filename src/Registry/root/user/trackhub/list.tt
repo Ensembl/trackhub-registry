@@ -9,14 +9,14 @@
     <table class="table table-condensed table-hover table-striped">
       <thead>
         <tr>
-	  <th>#</th>
+          <th>#</th>
           <th>Hub</th>
           <th>Assembly</th>
-	  <th>Schema</th>
-	  <th>Created</th>
-	  <th>Updated</th>
-	  <th>Status</th>
-	  <th></th>
+          <th>Schema</th>
+          <th>Created</th>
+          <th>Updated</th>
+          <th>Status</th>
+          <th></th>
         </tr>
     </thead>
     <tbody>
@@ -24,34 +24,31 @@
       [% FOR trackdb IN trackdbs %]
       <tr>
         <td style="word-wrap: break-word;">[% i = i + 1; i %]</td>
-	<td style="word-wrap: break-word;">[% trackdb.doc.hub.name %]</td>
-	<td style="word-wrap: break-word;">[% trackdb.doc.assembly.name %]</td>
-	<td style="word-wrap: break-word;">[% trackdb.doc.version %]</td>
-	<td style="word-wrap: break-word;">[% trackdb.created(1) %]</td>
-	<td style="word-wrap: break-word;">[% trackdb.updated(1) %]</td>
-	<td style="word-wrap: break-word;">
-	[% status = trackdb.status_message; %]
-	[% status_last_update = trackdb.status_last_update(1); %]
-	[% label_class = 'label-success' %]
-	[% IF status == 'Unchecked' %]
-	[%   label_class = 'label-warning' %]
-	[% ELSIF status.match('Unavailable') %]
-	[%   label_class = 'label-danger' %]
-	[% END %]
-	  <span class="label [% label_class %]" style="padding-bottom: 1px;">[% status %]</span>
-	[% IF status != 'Unchecked' %]
-	  <br/><small>[% status_last_update %]</small>
-	[% END %]
-	</td>
-	<td>
-	  <div class="btn-group">
-	    <a class="btn btn-default btn-xs" href="[% c.uri_for(c.controller.action_for('view_trackhub_status'), [c.user.username, trackdb.id]) %]" rel="tooltip" title="View Track Collection Status"><span class="glyphicon glyphicon-search"></a>
-	    <!--
-            <a class="btn btn-default btn-xs" href="[% c.uri_for(c.controller.action_for('refresh_trackhub_status'), [c.user.username, trackdb.id]) %]" rel="tooltip" title="Refresh Track Collection Status"><span class="glyphicon glyphicon-refresh"></a>
-	    -->
-            <a class="btn btn-default btn-xs" href="[% c.uri_for(c.controller.action_for('delete_trackhub'), [c.user.username, trackdb.id]) %]" rel="tooltip" title="Delete Track Collection"><span class="glyphicon glyphicon-trash"></a>	    
-	  </div>
-	</td>
+        <td style="word-wrap: break-word;">[% trackdb.doc.hub.name %]</td>
+        <td style="word-wrap: break-word;">[% trackdb.doc.assembly.name %]</td>
+        <td style="word-wrap: break-word;">[% trackdb.doc.version %]</td>
+        <td style="word-wrap: break-word;">[% trackdb.created(1) %]</td>
+        <td style="word-wrap: break-word;">[% trackdb.updated(1) %]</td>
+        <td style="word-wrap: break-word;">
+        [% status = trackdb.status_message; %]
+        [% status_last_update = trackdb.status_last_update(1); %]
+        [% label_class = 'label-success' %]
+        [% IF status == 'Unchecked' %]
+        [%   label_class = 'label-warning' %]
+        [% ELSIF status.match('Unavailable') %]
+        [%   label_class = 'label-danger' %]
+        [% END %]
+          <span class="label [% label_class %]" style="padding-bottom: 1px;">[% status %]</span>
+        [% IF status != 'Unchecked' %]
+          <br/><small>[% status_last_update %]</small>
+        [% END %]
+        </td>
+        <td>
+          <div class="btn-group">
+            <a class="btn btn-default btn-xs" href="[% c.uri_for(c.controller.action_for('view_trackhub_status'), [c.user.username, trackdb.id]) %]" rel="tooltip" title="View Track Collection Status"><span class="glyphicon glyphicon-search"/></a>
+            <a class="btn btn-default btn-xs" href="[% c.uri_for(c.controller.action_for('delete_trackhub'), [c.user.username, trackdb.id]) %]" rel="tooltip" title="Delete Track Collection"><span class="glyphicon glyphicon-trash"/></a>            
+          </div>
+        </td>
       </tr>
       [% END %]
     </tbody>

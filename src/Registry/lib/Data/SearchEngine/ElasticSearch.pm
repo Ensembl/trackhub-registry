@@ -245,11 +245,6 @@ sub search {
     $options->{body}{filter} = $query_filter; 
   }
 
-  
-  # and this one too
-  # See http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-facets.html
-  # "Facets are deprecated and will be removed in a future release. You are encouraged to migrate 
-  #  to aggregations instead"
   if ($query->has_facets) {
     # Copy filters used in the overall query into each facet, thereby
     # limiting the facets to only counting against the filtered bits.

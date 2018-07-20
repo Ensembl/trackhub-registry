@@ -1,4 +1,4 @@
-	<div class="row">
+        <div class="row">
   <div class="col-sm-12">
     <ul class="breadcrumb">
       <li><a href="/">Home</a></li>
@@ -25,11 +25,11 @@
           <th>Common Name</th><th>Scientific Name</th><th>Taxon ID</th><th>Assembly Name</th><th>INSDC Accession</th><th>UCSC synonym</th>
         </tr>
         <tr>
-	  <td></td><td></td><td></td><td></td><td></td><td></td>
-	</tr>
-	<tr>
-	  <td></td><td></td><td></td><td></td><td></td><td></td>
-	</tr>
+          <td></td><td></td><td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td></td><td></td><td></td><td></td><td></td><td></td>
+        </tr>
       </tbody>
     </table>
     </p>

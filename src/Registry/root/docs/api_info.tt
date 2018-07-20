@@ -14,26 +14,26 @@
   <div class="col-sm-3" style="margin-top: 25px;">
     <div id="search-sidebar-left">
         <div class="panel panel-primary">
-	  <div class="panel-heading">API Docs</div>
+          <div class="panel-heading">API Docs</div>
           <div class="panel-body">
-	    <ul class="nav nav-list">
-	      <li><a href="[% c.uri_for('/docs/apis') %]">TH Registry APIs</a></li>
-	      <li><a style="font-weight: bold;"">Info API</a>
-	        <ul>
-		  <li><a href="#version">GET /api/info/version</a></li>
-		  <li><a href="#ping">GET /api/info/ping</a></li>
-		  <li><a href="#species">GET /api/info/species</a></li>
-		  <li><a href="#assemblies">GET /api/info/assemblies</a></li>
-		  <li><a href="#hubassemblies">GET /api/info/hubs_per_assembly</a></li>
-		  <li><a href="#tracksassemblies">GET /api/info/tracks_per_assembly</a></li>
-		  <li><a href="#trackhubs">GET /api/info/trackhubs</a></li>
-		</ul>
-	      </li>
-	      <li><a href="[% c.uri_for('/docs/api/registration') %]">Registration API</a></li>
-	      <li><a href="[% c.uri_for('/docs/api/search') %]">Search API</a></li>
-	    </ul>
+            <ul class="nav nav-list">
+              <li><a href="[% c.uri_for('/docs/apis') %]">TH Registry APIs</a></li>
+              <li><a style="font-weight: bold;"">Info API</a>
+                <ul>
+                  <li><a href="#version">GET /api/info/version</a></li>
+                  <li><a href="#ping">GET /api/info/ping</a></li>
+                  <li><a href="#species">GET /api/info/species</a></li>
+                  <li><a href="#assemblies">GET /api/info/assemblies</a></li>
+                  <li><a href="#hubassemblies">GET /api/info/hubs_per_assembly</a></li>
+                  <li><a href="#tracksassemblies">GET /api/info/tracks_per_assembly</a></li>
+                  <li><a href="#trackhubs">GET /api/info/trackhubs</a></li>
+                </ul>
+              </li>
+              <li><a href="[% c.uri_for('/docs/api/registration') %]">Registration API</a></li>
+              <li><a href="[% c.uri_for('/docs/api/search') %]">Search API</a></li>
+            </ul>
           </div> 
-	</div>
+        </div>
     </div> <!-- sidebar -->
   </div>
 
@@ -53,15 +53,15 @@
     <tbody>
       <tr>
         <th>Response formats</th>
-	<td>JSON</td>
+        <td>JSON</td>
       </tr>
       <tr>
         <th>Authentication</th>
-	<td>No</td>
+        <td>No</td>
       </tr>
       <tr>
         <th>Rate Limited</th>
-	<td>No</td>
+        <td>No</td>
       </tr>
     </tbody>
   </table>
@@ -107,15 +107,15 @@
     <tbody>
       <tr>
         <th>Response formats</th>
-	<td>JSON</td>
+        <td>JSON</td>
       </tr>
       <tr>
         <th>Authentication</th>
-	<td>No</td>
+        <td>No</td>
       </tr>
       <tr>
         <th>Rate Limited</th>
-	<td>No</td>
+        <td>No</td>
       </tr>
     </tbody>
   </table>
@@ -162,15 +162,15 @@
     <tbody>
       <tr>
         <th>Response formats</th>
-	<td>JSON</td>
+        <td>JSON</td>
       </tr>
       <tr>
         <th>Authentication</th>
-	<td>No</td>
+        <td>No</td>
       </tr>
       <tr>
         <th>Rate Limited</th>
-	<td>No</td>
+        <td>No</td>
       </tr>
     </tbody>
   </table>
@@ -214,15 +214,15 @@
     <tbody>
       <tr>
         <th>Response formats</th>
-	<td>JSON</td>
+        <td>JSON</td>
       </tr>
       <tr>
         <th>Authentication</th>
-	<td>No</td>
+        <td>No</td>
       </tr>
       <tr>
         <th>Rate Limited</th>
-	<td>No</td>
+        <td>No</td>
       </tr>
     </tbody>
   </table>
@@ -272,15 +272,15 @@
     <tbody>
       <tr>
         <th>Response formats</th>
-	<td>JSON</td>
+        <td>JSON</td>
       </tr>
       <tr>
         <th>Authentication</th>
-	<td>No</td>
+        <td>No</td>
       </tr>
       <tr>
         <th>Rate Limited</th>
-	<td>No</td>
+        <td>No</td>
       </tr>
     </tbody>
   </table>
@@ -328,15 +328,15 @@
     <tbody>
       <tr>
         <th>Response formats</th>
-	<td>JSON</td>
+        <td>JSON</td>
       </tr>
       <tr>
         <th>Authentication</th>
-	<td>No</td>
+        <td>No</td>
       </tr>
       <tr>
         <th>Rate Limited</th>
-	<td>No</td>
+        <td>No</td>
       </tr>
     </tbody>
   </table>
@@ -393,15 +393,15 @@
     <tbody>
       <tr>
         <th>Response formats</th>
-	<td>JSON</td>
+        <td>JSON</td>
       </tr>
       <tr>
         <th>Authentication</th>
-	<td>No</td>
+        <td>No</td>
       </tr>
       <tr>
         <th>Rate Limited</th>
-	<td>No</td>
+        <td>No</td>
       </tr>
     </tbody>
   </table>

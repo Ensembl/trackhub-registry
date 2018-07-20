@@ -13,24 +13,24 @@
   <div class="col-sm-3" style="margin-top: 25px;">
     <div id="search-sidebar-left">
         <div class="panel panel-primary">
-	  <div class="panel-heading">Search Docs</div>
+          <div class="panel-heading">Search Docs</div>
           <div class="panel-body">
-	    <ul class="nav nav-list">
-	      <li><a href="[% c.uri_for('/docs/search') %]">Basic Track Hub Search</a></li>
-	      <li><a href="[% c.uri_for('/docs/search/results') %]">Search Results Page</a></li>
-	      <li><a style="font-weight: bold;">Advanced Search</a>
-	        <ul>
-		  <li><a href="#wildcards">Wildcards</a></li>
-		  <li><a href="#regex">Regular Expressions</a></li>
-		  <li><a href="#logical">Logical Operators</a></li>
-		  <li><a href="#grouping">Grouping</a></li>
-		  <li><a href="#fuzzy">Fuzzy Operator</a></li>
-		  <li><a href="#proximity">Proximity Searches</a></li>
-		</ul>
-	      </li>
-	    </ul>
+            <ul class="nav nav-list">
+              <li><a href="[% c.uri_for('/docs/search') %]">Basic Track Hub Search</a></li>
+              <li><a href="[% c.uri_for('/docs/search/results') %]">Search Results Page</a></li>
+              <li><a style="font-weight: bold;">Advanced Search</a>
+                <ul>
+                  <li><a href="#wildcards">Wildcards</a></li>
+                  <li><a href="#regex">Regular Expressions</a></li>
+                  <li><a href="#logical">Logical Operators</a></li>
+                  <li><a href="#grouping">Grouping</a></li>
+                  <li><a href="#fuzzy">Fuzzy Operator</a></li>
+                  <li><a href="#proximity">Proximity Searches</a></li>
+                </ul>
+              </li>
+            </ul>
           </div> 
-	</div>
+        </div>
     </div> <!-- sidebar -->
   </div>
 
@@ -64,8 +64,8 @@
       States that:
       <ul>
         <li>rnaseq must be present</li>
-    	<li>srna must not be present</li>
-    	<li>homo and sapiens are optional — their presence increases the relevance</li>
+            <li>srna must not be present</li>
+            <li>homo and sapiens are optional — their presence increases the relevance</li>
       </ul>
     </p>
     <p>

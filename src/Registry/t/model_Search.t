@@ -89,8 +89,6 @@ SKIP: {
   $doc = $es->get_trackhub_by_id(2);
   is(scalar @{$doc->{data}}, 4, "Fetch correct document");
 
-  is($es->next_trackdb_id, 5, "Correct next document ID");
-
   # getting document by non-existant ID
   throws_ok { $es->get_trackhub_by_id(5) }
     qr/Missing/, "Request document by incorrect ID";

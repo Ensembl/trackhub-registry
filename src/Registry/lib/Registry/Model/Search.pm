@@ -159,61 +159,6 @@ sub get_trackhub_by_id {
   
 }
 
-=head2 next_trackdb_id
-
-  Arg[1]      : None
-  Example     : my $nextid = $model->next_trackdb_id;
-  Description : Return the next available ES ID, to be used when inserting a new trackDB
-                doc created when submitting a hub
-  Returntype  : Scalar - an Elasticsearch ID
-  Exceptions  : None
-  Caller      : Registry::Controller::API::Registration
-  Status      : Stable
-
-=cut
-
-sub next_trackdb_id {
-  my ($self) = @_;
-
-  my $config = Registry->config()->{'Model::Search'};
-  # my %args = 
-  #   (
-  #    index => $config->{trackhub}{index},
-  #    type  => $config->{trackhub}{type},
-  #    size  => 1,
-  #    body  => {
-  # 	       fields => [ '_id' ],
-  # 	       query  => { match_all => {} },
-  # 	       # sorting on the _id field doesn't work, it does on the _uid one.
-  # 	       # http://stackoverflow.com/questions/29667212/whats-the-different-between-id-and-uid-in-elasticsearch
-  # 	       # _id and _uid are not the same thing.
-  # 	       # the internal _uid field is the unique identifier of a document within an index and is composed of the 
-  # 	       # type and the id (meaning that different types can have the same id and still maintain uniqueness).
-  # 	       # The _uid field is automatically used when _type is not indexed to perform type based filtering, and does 
-  # 	       # not require the _id to be indexed.
-  # 	       # https://www.elastic.co/guide/en/elasticsearch/reference/1.3/mapping-uid-field.html
-  # 	       sort   => [ { _uid => { order => 'desc' } } ]
-  # 	      }
-  #   );
-  # return $self->search(%args)->{hits}{hits}[0]{_id}+1;
-
-  my %args =
-    (
-     index => $config->{trackhub}{index},
-     type  => $config->{trackhub}{type},
-     body  => { query => { match_all => {} } },
-     search_type => 'scan'
-    );
-
-  my $max_id = -1;
-  my $scroll = $self->_es->scroll_helper(%args);
-  while (my $trackdb = $scroll->next) {
-    $max_id = $trackdb->{_id} if $max_id < $trackdb->{_id};
-  }
-
-  return $max_id>0?$max_id+1:1;
-}
-
 =head2 get_trackdbs
 
   Arg[1]      : Hash - hash of query parameters

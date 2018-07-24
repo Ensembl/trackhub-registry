@@ -241,7 +241,7 @@ sub trackdb_create_POST {
       }
     };
     $c->go('ReturnError', 'custom', ["Cannot submit: a document with the same hub/assembly exists"])
-      if $c->model('Search')->count_trackhubs(query => $query)->{count};
+      if $c->model('Search')->count_trackhubs(query => $query);
 	
     my $config = Registry->config()->{'Model::Search'};
     $id = $c->model('Search')->index(index   => $config->{trackhub}{index},

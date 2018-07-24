@@ -59,6 +59,53 @@ SKIP: {
   $indexer->index_users();
   $indexer->index_trackhubs();
 
+  # Test pager functionality
+  my $list = $es->pager({ 
+    body => { query => { match_all => {} } }, 
+    index => $config->{trackhub}{index}, 
+    type => $config->{trackhub}{type}
+  });
+  cmp_ok(scalar @$list, '==', 4, 'Get the standard four documents');
+
+  $list = $es->pager({ 
+    body => { query => { match_all => {} } }, 
+    index => $config->{trackhub}{index}, 
+    type => $config->{trackhub}{type}
+  }, sub {
+      my $doc = shift;
+      $doc->{_source}{_injected_stuff} = 1;
+      return $doc;
+    }
+  );
+  cmp_ok(scalar @$list, '==', 4, 'Still getting the standard four documents');
+  is($list->[-1]->{_source}{_injected_stuff},1,'Callback has added dynamic content to each response');
+  is($list->[1]->{_source}{_injected_stuff},1,'Callback has added dynamic content to each response');
+
+
+  #
+  # Now try with size limit smaller than data set
+  #
+  $list = $es->pager({ 
+    body => { query => { match_all => {} } }, 
+    index => $config->{trackhub}{index}, 
+    type => $config->{trackhub}{type},
+    size => 1
+  });
+
+  cmp_ok(scalar @$list, '==', 4, 'Get all 4 docs despite limited search size');
+
+  #
+  # and size limit coincidentally the same size as the data set
+  #
+  $list = $es->pager({ 
+    body => { query => { match_all => {} } }, 
+    index => $config->{trackhub}{index}, 
+    type => $config->{trackhub}{type},
+    size => 4
+  });
+
+  cmp_ok(scalar @$list, '==', 4, 'Get all 4 docs with precise search size');
+
   #
   # Test search getting all documents
   #
@@ -92,6 +139,13 @@ SKIP: {
   # getting document by non-existant ID
   throws_ok { $es->get_trackhub_by_id(5) }
     qr/Missing/, "Request document by incorrect ID";
+
+  # Test count_trackhubs (see Registry::Indexer for test data)
+  my $count = $es->count_trackhubs();
+  cmp_ok($count, '==', 4, 'Retrieve count of ALL trackhubs');
+  $count = $es->count_trackhubs(query => {term => {owner => 'trackhub1'}});
+  cmp_ok($count, '==', 2, 'Only one hub belongs to trackhub1');
+
 }
 
 done_testing();

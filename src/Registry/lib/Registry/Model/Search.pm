@@ -50,9 +50,11 @@ controller.
 
 package Registry::Model::Search;
 
-use Carp;
 use Moose;
+use Carp;
 use namespace::autoclean;
+use Catalyst::Exception qw/throw/;
+
 extends 'Catalyst::Model::ElasticSearch';
 
 =head1 METHODS
@@ -121,11 +123,12 @@ sub count_trackhubs {
   $args{index} = $config->{trackhub}{index};
   $args{type}  = $config->{trackhub}{type};
 
-  # this is what Search::Elasticsearch expect 
+  # this is what Search::Elasticsearch expects
   $args{body} = { query => $args{query} };
   delete $args{query};
 
-  return $self->_es->count(%args);
+  my $result = $self->_es->count(%args);
+  return $result->{count};
 }
 
 =head2 get_trackhub_by_id
@@ -169,7 +172,7 @@ sub get_trackhub_by_id {
   Description : Search over the trackDB docs using a Search::Elasticsearch compatible query arg,
                 should be equivalent to search_trackhubs but implemented with the scan&scroll API,
                 so presumably faster. 
-  Returntype  : HashRef - the Search::Elasticsearch compatible result
+  Returntype  : ListRef - the Search::Elasticsearch compatible list of results
   Exceptions  : None
   Caller      : Registry::Controller::API::Registration
   Status      : Stable
@@ -192,25 +195,69 @@ sub get_trackdbs {
   delete $args{query};
 
   # use scan & scroll API
+  # Note that this is not compatible with ES6 and the Perl client library
+  # Maybe it's fixed by the time you read this?
+  
   # see https://metacpan.org/pod/Search::Elasticsearch::Scroll
   # use scan search type to disable sorting for efficient scrolling
-  $args{search_type} = 'scan';
-  my $scroll = $self->_es->scroll_helper(%args);
+  # $args{search_type} = 'scan';
+  # my $scroll = $self->_es->scroll_helper(%args);
   
-  my @trackdbs;
-  while (my $trackdb = $scroll->next) {
-    $trackdb->{_source}{_id} = $trackdb->{_id};
-    push @trackdbs, $trackdb->{_source};
-  }
-
   # my @trackdbs;
-  # $args{size} = 10000;
-  # foreach my $doc (@{$self->_es->search(%args)->{hits}{hits}}) {
-  #   $doc->{_source}{_id} = $doc->{_id};
-  #   push @trackdbs, $doc->{_source};
+  # while (my $trackdb = $scroll->next) {
+  #   $trackdb->{_source}{_id} = $trackdb->{_id};
+  #   push @trackdbs, $trackdb->{_source};
   # }
+
+  my @trackdbs = $self->pager(\%args, sub { 
+    my $result = shift;
+    $result->{_source}{_id} = $result->{_id};
+    return $result;
+  });
   
   return \@trackdbs;
+}
+
+=head2 pager
+  Arg[1]      : Hashref - containing query elements appropriate to Search::Elasticsearch
+                body => { query => $query }, index => $index_name, type => $type
+  Arg[2]      : Callback - code to post-process each of the documents in the result
+  Examples    : my $result_list = $model->pager({query => { match => { ... } }, });
+  Description : Fetches all the results for the query and buffers any paging that is required
+  Returntype  : ListRef - A list of all the results for a large query
+
+=cut
+
+sub pager {
+  my ($self, $query, $callback) = @_;
+
+  my $from = 0;
+  my $total_expected = -1;
+  my @result_buffer = ();
+
+  until (scalar @result_buffer == $total_expected) {
+
+    $query->{size} ||= 10000; # Get the biggest chunks possible (restricted server-side)
+    $from = scalar @result_buffer;
+    $query->{from} = $from;
+
+    my $result = $self->_es->search($query);
+    if ($result->{timed_out}) {
+      throw('Backend time out. Incomplete result obtained');
+    }
+    $total_expected = $result->{hits}{total} if $total_expected == -1;
+
+    my $hits = $result->{hits}{hits};
+    while (my $hit = shift @$hits) {
+      if ($callback) {
+        $hit = $callback->($hit);
+      }
+      push @result_buffer,$hit;
+    }
+    
+  }
+
+  return \@result_buffer;
 }
 
 __PACKAGE__->meta->make_immutable;

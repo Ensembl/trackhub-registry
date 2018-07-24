@@ -209,8 +209,6 @@ Implement POST method for /api/search/biosample endpoint
 sub biosample_search_POST {
   my ($self, $c) = @_;
 
-  use Data::Dumper;
-
   return $self->status_bad_request($c, message => "Missing list of biosample IDs")
     unless defined $c->req->data;
   my $biosample_ids = $c->req->data->{ids};
@@ -248,8 +246,10 @@ sub biosample_search_POST {
   my $results;
   try {
     # do not care about scoring, use scan&scroll for efficient querying
-    my $scroll = $c->model('Search')->_es->scroll_helper(%args);
-    while (my $result = $scroll->next) {
+    # when it is available via Perl interface for ES 6.x
+    my $hits = $c->model('Search')->_se->search(%args);
+
+    while (my $result = shift @$hits) {
       # find which IDs this trackdb refers to
       my %match_ids;
       foreach my $track_metadata (@{$result->{_source}{data}}) {

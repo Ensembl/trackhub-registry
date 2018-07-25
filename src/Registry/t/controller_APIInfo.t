@@ -101,7 +101,7 @@ SKIP: {
       ok($response->is_success, 'Request successful 2xx for '.$hub->{name}.' hub');
       is($response->content_type, 'application/json', 'JSON content type');
     } else{
-      note sprintf "WARN: Skipping hub %s ", $hub->{name}, " Please remove it from the public_hubs list"; 
+      note sprintf "WARN: Skipping hub %s %s", $hub->{name}, " Please remove it from the public_hubs list"; 
     }
   }
 
@@ -114,6 +114,7 @@ SKIP: {
          { name => 'GRCh38', synonyms => [ 'hg38' ], accession => 'GCA_000001405.15' }
         ],
       'Danio rerio'          => [
+         { name => 'GRCz11', synonyms => [ 'danrer11' ], accession => 'GCA_000002035.4' },
          { name => 'GRCz10', synonyms => [ 'danrer10' ], accession => 'GCA_000002035.3' },
          { name => 'Zv9', synonyms => [ 'danrer7' ], accession => 'GCA_000002035.2' }
         ],

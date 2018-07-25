@@ -560,6 +560,7 @@ $ucscdb2insdc =
    # taegut2 => '', # not found
    taegut1 => 'GCA_000151805.2', # 'Taeniopygia_guttata-3.2.4',
    # zebrafish
+   danrer11 => 'GCA_000002035.4', # GRCz11
    danrer10 => 'GCA_000002035.3', # 'GRCz10', no syn on on NCBI
    danrer7 => 'GCA_000002035.2', # 'Zv9'
    danrer6 => 'GCA_000002035.1', # 'Zv8', no syn on on NCBI

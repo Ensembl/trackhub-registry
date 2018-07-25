@@ -63,7 +63,11 @@
             "name": {
               "type": "keyword",
               "index": true
-            }
+            },
+            "synonyms": {
+              "type": "keyword",
+              "index": true
+            }            
           }
         },
         "configuration": {

@@ -31,7 +31,7 @@ BEGIN {
   $Catalyst::Authentication::Store::ElasticSearch::VERSION = '0.001';
 }
 
-use Moose 2.00;
+use Moose;
 use Catalyst::Exception;
 
 has 'store_user_class'  => (is => 'ro', isa => 'Str', default => 'Catalyst::Authentication::Store::ElasticSearch::User', );
@@ -316,7 +316,5 @@ the same terms as the Perl 5 programming language system itself.
 
 =cut
 
-
-__END__
 
 __END__

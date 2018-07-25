@@ -19,9 +19,6 @@ limitations under the License.
 Please email comments or questions to the Trackhub Registry help desk
 at C<< <http://www.trackhubregistry.org/help> >>
 
-Questions may also be sent to the public Trackhub Registry list at
-C<< <https://listserver.ebi.ac.uk/mailman/listinfo/thregistry-announce> >>
-
 =head1 NAME
 
 Catalyst::Authentication::Store::ElasticSearch::User
@@ -29,14 +26,6 @@ Catalyst::Authentication::Store::ElasticSearch::User
 =head1 DESCRIPTION
 
 The backing user class for the Catalyst::Authentication::Store::ElasticSearch storage module.
-
-=head1 AUTHOR
-
-Alessandro Vullo, C<< <avullo at ebi.ac.uk> >>
-
-=head1 BUGS
-
-No known bugs at the moment. Development in progress.
 
 =cut
 
@@ -49,14 +38,14 @@ BEGIN {
   $Catalyst::Authentication::Store::ElasticSearch::User::VERSION = '0.001';
 }
 
-use Moose 2.000;
-use MooseX::NonMoose 0.20;
+use Moose;
+use MooseX::NonMoose;
 use Catalyst::Exception;
 use Catalyst::Utils;
 
 use LWP;
-use JSON 2.17 qw ();
-use Try::Tiny 0.09;
+use JSON qw ();
+use Try::Tiny;
 use Search::Elasticsearch;
 
 use namespace::autoclean;
@@ -94,13 +83,13 @@ around BUILDARGS => sub {
   Catalyst::Exception->throw("user type required in configuration")
       unless $config->{type};
 
-  $es->indices->exists_type(index => $config->{index},
-			    type  => $config->{type})
-    or Catalyst::Exception->throw("Type does not exist");
+  # $es->indices->exists_type(index => $config->{index},
+                            # type  => $config->{type})
+    # or Catalyst::Exception->throw("Type does not exist");
 
   return $class->$orig(_es    => $es,
-		       _index => $config->{index},
-		       _type  => $config->{type});
+                       _index => $config->{index},
+                       _type  => $config->{type});
 };
 
 
@@ -113,10 +102,10 @@ sub load {
   }
 
   my $user_search = $self->_es->search(index => $self->_index,
-				       type  => $self->_type,
-				       # # term filter: exact value
-				       # body  => { query => { term => { username => $username } } });
-				       body => { query => $query });
+                                       type  => $self->_type,
+                                       # # term filter: exact value
+                                       # body  => { query => { term => { username => $username } } });
+                                       body => { query => $query });
 
   return unless $user_search;
   # no user found
@@ -135,9 +124,9 @@ sub supported_features {
   my $self = shift;
 
   return {
-	  session => 1,
-	  roles   => 1,
-	 };
+          session => 1,
+          roles   => 1,
+         };
 }
 
 =head2 id
@@ -186,9 +175,9 @@ sub delete {
 
   # reindex/refresh user to persist change
   $self->_es->index(index => $self->_index,
-		    type  => $self->_type,
-		    id    => $self->id,
-		    body  => $self->_user->{_source});
+                    type  => $self->_type,
+                    id    => $self->id,
+                    body  => $self->_user->{_source});
   $self->_es->indices->refresh(index => $self->_index);
 
   return;
@@ -244,9 +233,9 @@ sub AUTOLOAD {
     
     # update (i.e. reindex) the whole doc with the new attribute
     $self->_es->index(index => $self->_index,
-		      type  => $self->_type,
-		      id    => $self->id,
-		      body  => $self->_user->{_source});
+                      type  => $self->_type,
+                      id    => $self->id,
+                      body  => $self->_user->{_source});
 
     # refresh is needed to immediately see the change
     $self->_es->indices->refresh(index => $self->_index);  

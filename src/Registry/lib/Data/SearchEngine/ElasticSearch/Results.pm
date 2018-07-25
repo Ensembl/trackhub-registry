@@ -21,10 +21,10 @@ limitations under the License.
 # That's why I put it here.
 
 package Data::SearchEngine::ElasticSearch::Results;
+use Moose;
 {
   $Data::SearchEngine::ElasticSearch::Results::VERSION = '0.21';
 }
-use Moose;
 
 # ABSTRACT: Search Results
 

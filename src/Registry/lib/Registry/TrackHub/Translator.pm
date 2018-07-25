@@ -287,9 +287,8 @@ sub _make_configuration_object_1_0 {
   
   # add the configuration attributes as they are specified
   my $node_conf = {};
-  # map { $node_conf->{$_} = $node->data->{$_} } keys %{$node->data};
+
   map { $node->data->{$_} and $node_conf->{$_} = $node->data->{$_} } keys %{$node->data};
-  # delete $node_conf->{track};
 
   # now add the configuration of the children, if any
   for my $child (@{$node->child_nodes}) {
@@ -1116,7 +1115,7 @@ sub _add_genome_browser_links {
   defined $species or die "Couldn't get species to build Ensembl URL";
 
   my @species_fields = split(/\s/, $species);
-  $species = join('_', map { $_ =~ s/\W+//g; $_ } @species_fields[0..1]);
+  $species = join('_', map { my $field = $_ =~ s/\W+//rg; $field } @species_fields[0..1]);
   $species =~ /^\w+_\w+?/ or die "$species: Couldn't get the required species name to build the Ensembl URL";
   
   my $division;

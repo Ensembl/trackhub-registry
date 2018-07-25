@@ -40,7 +40,7 @@
             },
             "url": {
               "type": "keyword",
-              "index": false
+              "index": true
             }
           }
         },

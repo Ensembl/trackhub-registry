@@ -129,7 +129,7 @@ sub species_GET {
 					    body => 
 					    {
 					     aggs => {
-						      species   => { terms => { field => 'species.scientific_name', size  => 0 } },
+						      species   => { terms => { field => 'species.scientific_name' } },
 						     }
 					    });
 
@@ -166,18 +166,18 @@ sub assemblies_GET {
     {
       aggs => {
         public => {
-          filter => { term => { public => 1 } },
+          filter => { term => { public => "true" } },
             aggs => {
               species => {
-                terms => { field => 'species.scientific_name', size  => 0 },
+                terms => { field => 'species.scientific_name' },
                 aggs  => {
                   ass_name => {
-                    terms => { field => 'assembly.name', size => 0 },
+                    terms => { field => 'assembly.name' },
                     aggs => {
                       ass_syn => {
-                        terms => { field => 'assembly.synonyms', size => 0 },
+                        terms => { field => 'assembly.synonyms' },
                         aggs => {
-                          ass_acc => { terms => { field => 'assembly.accession', size => 0 } }
+                          ass_acc => { terms => { field => 'assembly.accession' } }
                         }
                       }
                     }

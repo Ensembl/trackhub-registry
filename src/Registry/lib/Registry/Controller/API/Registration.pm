@@ -361,17 +361,13 @@ sub trackhub_POST {
   # prevent submission of a hub submitted by another user
   #
   my $query = {
-    filtered => {
-      filter => {
-        bool => {
-          must => [
-            { term => { 'hub.url' => $url } }
-          ],
-          must_not => [
-            { term => { owner => $c->stash->{user} } }
-          ]
-        }
-      }
+    bool => {
+      must => [
+        { term => { 'hub.url' => $url } }
+      ],
+      must_not => [
+        { term => { owner => $c->stash->{user} } }
+      ]
     }
   };
   my $registered_trackdbs = $c->model('Search')->search_trackhubs(query => $query);
@@ -383,15 +379,11 @@ sub trackhub_POST {
   # delete, if it exists, any trackDB in the document store belonging
   # to the TrackHub
   $query = {
-    filtered => {
-      filter => {
-        bool => {
-          must => [
-            { term => { owner => $c->stash->{user} } },
-            { term => { 'hub.url' => $url } }
-          ]
-        }
-      }
+    bool => {
+      must => [
+        { term => { owner => $c->stash->{user} } },
+        { term => { 'hub.url' => $url } }
+      ]
     }
   };
   # TODO
@@ -429,7 +421,7 @@ sub trackhub_POST {
     foreach my $json_doc (@{$trackdbs_docs}) {
       my $doc = from_json($json_doc);
       
-      $doc->{public} = $public;
+      $doc->{public} = ($public == 1)? "true":"false";
 
       # add type
       $doc->{type} = $trackdb_type;

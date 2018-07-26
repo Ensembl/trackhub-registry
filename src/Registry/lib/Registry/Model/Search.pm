@@ -209,13 +209,13 @@ sub get_trackdbs {
   #   push @trackdbs, $trackdb->{_source};
   # }
 
-  my @trackdbs = $self->pager(\%args, sub { 
+  my $trackdbs = $self->pager(\%args, sub { 
     my $result = shift;
     $result->{_source}{_id} = $result->{_id};
     return $result;
   });
   
-  return \@trackdbs;
+  return $trackdbs;
 }
 
 =head2 pager
@@ -245,6 +245,7 @@ sub pager {
     if ($result->{timed_out}) {
       throw('Backend time out. Incomplete result obtained');
     }
+
     $total_expected = $result->{hits}{total} if $total_expected == -1;
 
     my $hits = $result->{hits}{hits};

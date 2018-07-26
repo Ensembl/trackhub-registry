@@ -332,14 +332,15 @@ sub trackhubs_GET {
 
   my $trackhubs;
   foreach my $trackdb (@{$trackdbs}) {
-    my $hub = $trackdb->{hub}{name};
-    $trackhubs->{$hub} = $trackdb->{hub} unless exists $trackhubs->{$hub};
+    my $hub = $trackdb->{_source}{hub}{name};
+
+    $trackhubs->{$hub} = $trackdb->{_source}{hub} unless exists $trackhubs->{$hub};
 
     push @{$trackhubs->{$hub}{trackdbs}},
       {
-       species  => $trackdb->{species}{tax_id},
-       assembly => $trackdb->{assembly}{accession},
-       uri      => $c->uri_for('/api/search/trackdb/' . $trackdb->{_id})->as_string
+       species  => $trackdb->{_source}{species}{tax_id},
+       assembly => $trackdb->{_source}{assembly}{accession},
+       uri      => $c->uri_for('/api/search/trackdb/' . $trackdb->{_source}{_id})->as_string
       };
   }
   

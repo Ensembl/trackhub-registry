@@ -221,7 +221,6 @@ sub _get_hub_info {
 
   (my $genome_file = $content) =~ s/\r//g;
   my $genomes;
-  my @lines = split /\n/, $genome_file;
   my ($genome, $file, %ok_genomes);
   foreach (split /\n/, $genome_file) {
     my ($k, $v) = split(/\s/, $_);

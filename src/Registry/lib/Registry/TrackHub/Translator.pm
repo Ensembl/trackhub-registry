@@ -151,7 +151,7 @@ sub translate {
   my $trackhub = Registry::TrackHub->new(url => $url, permissive => $self->permissive);
   
   my $docs;
-  unless ($assembly) { 
+  unless ($assembly) {
     # assembly not specified
     # translate tracksDB conf for all assemblies stored in the Hub
     foreach my $assembly ($trackhub->assemblies) {

@@ -68,6 +68,16 @@ SKIP: {
                  );
   $indexer->index_users();
 
+
+  $request = GET('/api/login');
+  $request->headers->authorization_basic('trackhub1', 'trackhub1');
+  ok($response = request($request), 'Request to log in');
+  $content = from_json($response->content);
+  ok(exists $content->{auth_token}, 'Logged in');
+  my $auth_token = $content->{auth_token};
+
+  $ua->timeout(10);
+
   # submit some public hubs
   my @public_hubs = (
          # { name => 'polyA', url => 'http://johnlab.org/xpad/Hub/UCSC.txt' },
@@ -80,29 +90,16 @@ SKIP: {
          { name => 'sanger', url => 'http://ngs.sanger.ac.uk/production/grit/track_hub/hub.txt' },
          # NA any more { name => 'thornton', url => 'http://devlaeminck.bio.uci.edu/RogersUCSC/hub.txt' }, 
         );
-
-  $request = GET('/api/login');
-  $request->headers->authorization_basic('trackhub1', 'trackhub1');
-  ok($response = request($request), 'Request to log in');
-  $content = from_json($response->content);
-  ok(exists $content->{auth_token}, 'Logged in');
-  my $auth_token = $content->{auth_token};
-
-  $ua->timeout(10);
   foreach my $hub (@public_hubs) {
-    if (head($hub->{url})) {
-      note sprintf "Submitting hub %s", $hub->{name};
-      $request = POST('/api/trackhub?permissive=1',
-          'Content-type' => 'application/json',
-          'Content'      => to_json({ url => $hub->{url} }));
-      $request->headers->header(user       => 'trackhub1');
-      $request->headers->header(auth_token => $auth_token);
-      ok($response = request($request), 'POST request to /api/trackhub');
-      ok($response->is_success, 'Request successful 2xx for '.$hub->{name}.' hub');
-      is($response->content_type, 'application/json', 'JSON content type');
-    } else{
-      note sprintf "WARN: Skipping hub %s %s", $hub->{name}, " Please remove it from the public_hubs list"; 
-    }
+    note sprintf "Submitting hub %s", $hub->{name};
+    $request = POST('/api/trackhub?permissive=1',
+        'Content-type' => 'application/json',
+        'Content'      => to_json({ url => $hub->{url} }));
+    $request->headers->header(user       => 'trackhub1');
+    $request->headers->header(auth_token => $auth_token);
+    ok($response = request($request), 'POST request to /api/trackhub');
+    ok($response->is_success, 'Request successful 2xx for '.$hub->{name}.' hub');
+    is($response->content_type, 'application/json', 'JSON content type');
   }
 
   #
@@ -114,8 +111,8 @@ SKIP: {
          { name => 'GRCh38', synonyms => [ 'hg38' ], accession => 'GCA_000001405.15' }
         ],
       'Danio rerio'          => [
-         { name => 'GRCz11', synonyms => [ 'danrer11' ], accession => 'GCA_000002035.4' },
          { name => 'GRCz10', synonyms => [ 'danrer10' ], accession => 'GCA_000002035.3' },
+         { name => 'GRCz11', synonyms => [ 'danrer11' ], accession => 'GCA_000002035.4' },
          { name => 'Zv9', synonyms => [ 'danrer7' ], accession => 'GCA_000002035.2' }
         ],
       'Mus musculus'         => [

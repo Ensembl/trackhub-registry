@@ -48,7 +48,7 @@ requires 'Digest::MD5';
 requires 'File::Temp';
 requires 'List::Util';
 requires 'String::Random';
-requires 'Search::Elasticsearch' => 2.03;
+requires 'Search::Elasticsearch';
 requires 'Clone';
 requires 'Data::SearchEngine';
 requires 'Encode';
@@ -101,9 +101,10 @@ recommends 'WWW::Form::UrlEncoded';
 recommends 'Daemon::Control';
 
 
-test_requires 'Test::More' => '0.88';
+test_requires 'Test::More';
 test_requires 'Email::MIME';
 test_requires 'Email::Sender::Simple';
+test_requires 'Test::Deep';
 
 catalyst;
 

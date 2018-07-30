@@ -15,6 +15,7 @@
 use strict;
 use warnings;
 use Test::More;
+use Test::Deep;
 
 use JSON;
 use List::Util qw( first );
@@ -106,19 +107,19 @@ SKIP: {
   # /api/info/species endpoint
   #
   my %species_assemblies = 
-    ( 'Homo sapiens'         => [
+    ( 'Homo sapiens'         => bag (
          { name => 'GRCh37', synonyms => [ 'hg19' ], accession => 'GCA_000001405.1' },
          { name => 'GRCh38', synonyms => [ 'hg38' ], accession => 'GCA_000001405.15' }
-        ],
-      'Danio rerio'          => [
+       ),
+      'Danio rerio'          => bag (
          { name => 'GRCz10', synonyms => [ 'danrer10' ], accession => 'GCA_000002035.3' },
          { name => 'GRCz11', synonyms => [ 'danrer11' ], accession => 'GCA_000002035.4' },
          { name => 'Zv9', synonyms => [ 'danrer7' ], accession => 'GCA_000002035.2' }
-        ],
-      'Mus musculus'         => [
+       ),
+      'Mus musculus'         => bag(
          { name => 'GRCm38', synonyms => [ 'mm10' ], accession => 'GCA_000001635.2' },
          { name => 'MGSCv37', synonyms => [ 'mm9' ], accession => 'GCA_000001635.1' }
-        ], 
+        ), 
       'Arabidopsis thaliana' => [ { name => 'TAIR10', synonyms => [ 'aratha1' ], accession => 'GCA_000001735.1' } ],
       'Brassica rapa'        => [ { name => 'Brapa_1.0', synonyms => [ 'brarap1' ], accession => 'GCA_000309985.1' } ],
       #'Drosophila simulans'  => ['GCA_000754195.2'], 
@@ -128,7 +129,7 @@ SKIP: {
   ok($response = request($request), 'GET request to /api/info/species');
   ok($response->is_success, 'Request successful');
   $content = from_json($response->content);
-  is_deeply([ sort @{$content} ], [ sort keys %species_assemblies ], 'List of species');
+  cmp_deeply($content, bag(keys %species_assemblies), 'List of species returned from /api/info/species');
 
   #
   # /api/info/assemblies endpoint
@@ -137,10 +138,7 @@ SKIP: {
   ok($response = request($request), 'GET request to /api/info/assemblies');
   ok($response->is_success, 'Request successful');
   $content = from_json($response->content);
-  is_deeply([ sort keys %{$content} ], [ sort keys %species_assemblies ], 'List of species');
-  foreach my $species (keys %{$content}) {
-    is_deeply($content->{$species}, $species_assemblies{$species}, "Assemblies for species $species");
-  }
+  cmp_deeply( $content, \%species_assemblies, 'List of species returned from /api/info/assemblies');
 
   #
   # /api/info/trackhubs
@@ -191,17 +189,17 @@ SKIP: {
   #
   # test with accession
   $request = GET('/api/info/tracks_per_assembly/GCA_000001405.15');
-  ok($response = request($request), 'GET request to /api/info/tracks_per_assembly');
-  ok($response->is_success, 'Request successful');
+  ok($response = request($request), 'GET request to /api/info/tracks_per_assembly for human via GCA');
+  ok($response->is_success, 'Request successful. Hubs found for Human assembly');
   $content = from_json($response->content);
-  is($content->{tot}, 166, 'Number of tracks per assembly');
+  is($content->{tot}, 166, 'Number of tracks relating to human');
   #
   # test with assembly name
   $request = GET('/api/info/tracks_per_assembly/GRCh38');
-  ok($response = request($request), 'GET request to /api/info/tracks_per_assembly');
-  ok($response->is_success, 'Request successful');
+  ok($response = request($request), 'GET request to /api/info/tracks_per_assembly via assembly name');
+  ok($response->is_success, 'Request successful. Human hubs found via assembly name');
   $content = from_json($response->content);
-  is($content->{tot}, 166, 'Number of tracks per assembly');
+  is($content->{tot}, 166, 'Same number of tracks for human found as via GCA');
 }
 
 done_testing();

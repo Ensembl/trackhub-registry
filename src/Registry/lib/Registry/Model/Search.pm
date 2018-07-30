@@ -82,16 +82,8 @@ sub search_trackhubs {
   $args{query} = { match_all => {} }
     unless exists $args{query};
 
-  # add required (by Search::Elasticsearch)
-  # index and type parameter
-  my $config = Registry->config()->{'Model::Search'};
-  $args{index} = $config->{trackhub}{index};
-  $args{type}  = $config->{trackhub}{type};
-
-  # this is what Search::Elasticsearch expect 
-  $args{body} = { query => $args{query} };
-  delete $args{query};
-
+  %args = $self->_decorate_query(%args);
+  
   return $self->_es->search(%args);
 }
 
@@ -117,15 +109,7 @@ sub count_trackhubs {
   $args{query} = { match_all => {} }
     unless exists $args{query};
 
-  # add required (by Search::Elasticsearch)
-  # index and type parameter
-  my $config = Registry->config()->{'Model::Search'};
-  $args{index} = $config->{trackhub}{index};
-  $args{type}  = $config->{trackhub}{type};
-
-  # this is what Search::Elasticsearch expects
-  $args{body} = { query => $args{query} };
-  delete $args{query};
+  %args = $self->_decorate_query(%args);
 
   my $result = $self->_es->count(%args);
   return $result->{count};
@@ -186,13 +170,7 @@ sub get_trackdbs {
   $args{query} = { match_all => {} }
     unless exists $args{query};
 
-  my $config = Registry->config()->{'Model::Search'};
-  $args{index} = $config->{trackhub}{index};
-  $args{type}  = $config->{trackhub}{type};
-
-  # this is what Search::Elasticsearch expect 
-  $args{body} = { query => $args{query} };
-  delete $args{query};
+  %args = $self->_decorate_query(%args);
 
   # use scan & scroll API
   # Note that this is not compatible with ES6 and the Perl client library
@@ -259,6 +237,31 @@ sub pager {
   }
 
   return \@result_buffer;
+}
+
+sub _decorate_query {
+  my ($self, %args) = @_;
+
+  my $config = Registry->config()->{'Model::Search'};
+  $args{index} = $config->{trackhub}{index};
+  $args{type}  = $config->{trackhub}{type};
+
+  # Search::Elasticsearch expects the query and any aggregations to be in the body
+  # of the request.
+  $args{body} = { query => $args{query} };
+  delete $args{query};
+
+  # homologate allowed aggregation names
+  if (exists $args{aggs}) {
+    $args{aggregations} = $args{aggs};
+    delete $args{aggs};
+  }
+
+  if (exists $args{aggregations}) {
+    $args{body}{aggs} = $args{aggregations};
+    delete $args{aggregations};
+  }
+  return %args;
 }
 
 __PACKAGE__->meta->make_immutable;

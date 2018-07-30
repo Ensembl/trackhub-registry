@@ -158,36 +158,32 @@ sub assemblies_GET {
   my ($self, $c) = @_;
 
   # get the list of unique assemblies, with name, synonyms and accession, grouped by species
-  my $config = Registry->config()->{'Model::Search'};
-  my $results = $c->model('Search')->search(
-    index => $config->{trackhub}{index},
-    type  => $config->{trackhub}{type},
-    body => 
-    {
-      aggs => {
-        public => {
-          filter => { term => { public => "true" } },
-            aggs => {
-              species => {
-                terms => { field => 'species.scientific_name' },
-                aggs  => {
-                  ass_name => {
-                    terms => { field => 'assembly.name' },
-                    aggs => {
-                      ass_syn => {
-                        terms => { field => 'assembly.synonyms' },
-                        aggs => {
-                          ass_acc => { terms => { field => 'assembly.accession' } }
-                        }
+
+  my $results = $c->model('Search')->search_trackhubs(
+    aggs => {
+      public => {
+        filter => { term => { public => "true" } },
+          aggs => {
+            species => {
+              terms => { field => 'species.scientific_name' },
+              aggs  => {
+                ass_name => {
+                  terms => { field => 'assembly.name' },
+                  aggs => {
+                    ass_syn => {
+                      terms => { field => 'assembly.synonyms' },
+                      aggs => {
+                        ass_acc => { terms => { field => 'assembly.accession' } }
                       }
                     }
                   }
                 }
-              },
-            }
+              }
+            },
           }
-       }
-    });
+        }
+     }
+  );
 
   my $assemblies;
   foreach my $species_agg (@{$results->{aggregations}{public}{species}{buckets}}) {
@@ -233,19 +229,11 @@ sub hubs_per_assembly_GET {
   $term_field = 'assembly.accession' if $assembly =~ /^GCA/;
   
   my $config = Registry->config()->{'Model::Search'};
-  my $results = $c->model('Search')->search(index => $config->{trackhub}{index},
-                                            type  => $config->{trackhub}{type},
-                                            body => 
-                                            {
-                                             aggs => {
-                                                assembly => { terms => { field => $term_field, size  => 0 } },
-                                               }
-                                            });
+  my $results = $c->model('Search')->count_trackhubs(
+                                              query => { match => { $term_field => $assembly }}
+                                            );
 
-  my $hubs = 0;
-  map { $hubs = $_->{doc_count} if lc $_->{key} eq lc $assembly } @{$results->{aggregations}{assembly}{buckets}};
-
-  $self->status_ok($c, entity => { tot => $hubs });
+  $self->status_ok($c, entity => { tot => $results });
 }
 
 =head2 tracks_per_assembly
@@ -265,44 +253,22 @@ GET method for /api/info/tracks_per_assembly endpoint
 sub tracks_per_assembly_GET {
   my ($self, $c, $assembly) = @_;
 
-  my $term_field = 'name';
-  $term_field = 'accession' if $assembly =~ /^GCA/;
+  # Switch key based on the format of the assembly name requested
+  my $term_field = 'assembly.name';
+  $term_field = 'assembly.accession' if $assembly =~ /^GCA/;
 
-  
-  my $config = Registry->config()->{'Model::Search'};
-
-  # Can't do with simple term filter or query, as the endpoint 
-  # should support case insensitive search, but the assembly.name
-  # field is not analysed 
-  # my $query = {
-  # 	       filtered => {
-  # 	       		    filter => {
-  # 	       			       term => { 
-  # 	       			       		 'assembly.name' => $assembly_name
-  # 	       				       }
-  # 	       			      }
-  # 	       		   }
-  # 	      };
-  # my %args =
-  #   (
-  #    index => $config->{trackhub}{index},
-  #    type  => $config->{trackhub}{type},
-  #    body  => { query => $query },
-  #    search_type => 'scan'
-  #   );
-  
-  # my $tracks = 0;
-  # try {
-  #   my $scroll = $c->model('Search')->_es->scroll_helper(%args);
-  #   while (my $result = $scroll->next) {
-  #     $tracks += scalar @{$result->{_source}{data}};
-  #   }
-  # } catch {
-  #   $c->go('ReturnError', 'custom', [qq{$_}]);
-  # };
-  my $trackdbs = $c->model('Search')->get_trackdbs();
+  my $trackdbs = $c->model('Search')->search_trackhubs(
+    query => {
+      match => {
+        $term_field => $assembly 
+      }
+    }
+  );
   my $tracks = 0;
-  map { $tracks += scalar @{$_->{data}} if lc $_->{assembly}{$term_field} eq lc $assembly } @{$trackdbs};
+
+  foreach my $hub (@{ $trackdbs->{hits}{hits} }) {
+    $tracks += scalar @{$hub->{_source}{data}}
+  }
 
   $self->status_ok($c, entity => { tot => $tracks });
 }

@@ -25,7 +25,6 @@ BEGIN {
 
 use LWP;
 use JSON;
-use Data::Dumper;
 
 use Registry;
 use Registry::Utils; # slurp_file, es_running
@@ -113,6 +112,7 @@ SKIP: {
   #
   my $docs = $es->search_trackhubs();
   is(scalar @{$docs->{hits}{hits}}, 4, "Doc counts when requesting all documents match");
+
   #
   # - getting docs for a certain user: use term filter
   $docs = $es->search_trackhubs(query => { term => { owner => 'trackhub1' } });
@@ -145,6 +145,33 @@ SKIP: {
   cmp_ok($count, '==', 4, 'Retrieve count of ALL trackhubs');
   $count = $es->count_trackhubs(query => {term => {owner => 'trackhub1'}});
   cmp_ok($count, '==', 2, 'Only one hub belongs to trackhub1');
+
+
+  # 
+  # Test canned queries for pre-existing hubs
+  # 
+
+  $count = $es->count_existing_hubs('trackhub1','Blueprint_Hub','GCA_000001405.15');
+  cmp_ok($count, '==', 1, 'Count instances of a hub owned by a known user');
+
+  $count = $es->count_existing_hubs('trackhub2','Blueprint_Hub','GCA_000001405.15');
+  cmp_ok($count, '==', 0, 'Count instances of a hub owned by a different user');
+  # these counts are inaccurate. Can't/won't figure out why
+
+  $count = $es->count_existing_hubs('trackhub1','totallynothere','GCA_000001405.15');
+  cmp_ok($count, '==', 0, 'Count instances of a non-existant hub from the same user');
+
+  $list = $es->get_existing_hubs('trackhub1','Blueprint_Hub','GCA_000001405.15');
+  cmp_ok(scalar @$list, '==', 1, 'The list of results is still one long');
+
+  is($list->[0]->{_id},2, "Document ID of trackhub1's blueprint hub is consistent");
+  is($list->[0]->{_source}{owner},'trackhub1', "Owner of trackhub1's blueprint hub is correct");
+
+  $list = $es->get_hub_by_url('file:///test/blueprint1');
+  cmp_ok(@{$list}, '==', 2, 'Test data deliberately fakes up two instances of the same hub by different users');
+
+  is($list->[0]->{_id},1, "Same result, but via trackhub URL. Hub is consistent");
+  is($list->[0]->{_source}{owner},'trackhub1', "Same result, but via trackhub URL. Owner is correct");
 
 }
 

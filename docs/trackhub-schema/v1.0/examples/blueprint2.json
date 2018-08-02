@@ -3,7 +3,8 @@
   "hub": {
     "name": "Blueprint_Hub",
     "shortLabel": "Blueprint Hub",
-    "longLabel": "Blueprint Epigenomics Data Hub"
+    "longLabel": "Blueprint Epigenomics Data Hub",
+    "url": "file:///test/blueprint2"
   },
   "description": "An example of trackhub DB from the Blueprint project (4 tracks)",
   "version": "v1.0",

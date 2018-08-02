@@ -196,6 +196,125 @@ sub get_trackdbs {
   return $trackdbs;
 }
 
+
+
+=head2 count_existing_hubs
+
+  Arg[1]  : String - User name
+  Arg[2]  : String - Hub name
+  Arg[3]  : String - Assembly accession, e.g. GCA00301030
+  Description: Counts the number of hubs which match the supplied user details
+  Returntype: Integer - number of hubs matching constraints
+
+=cut
+
+sub count_existing_hubs {
+  my ($self, $user, $hub, $assembly_acc) = @_;
+
+  my $query = $self->_existing_hub_query($user,$hub,$assembly_acc);
+  return $self->count_trackhubs(query => $query);
+}
+
+
+=head2 get_existing_hubs
+
+  Arg[1]  : String - User name
+  Arg[2]  : String - Hub name
+  Arg[3]  : String - Assembly accession, e.g. GCA00301030
+  Description: Searches for matching hubs, and returns them
+  Returntype: Listref - A list of elasticsearch results from the query
+
+=cut
+
+sub get_existing_hubs {
+  my ($self, $user, $hub, $assembly_acc) = @_;
+
+  my $query = $self->_existing_hub_query($user,$hub,$assembly_acc);
+  my $result = $self->search_trackhubs(query => $query);
+  if ($result->{hits}{total} == 0) {
+    return [];
+  }
+  return $result->{hits}{hits};
+}
+
+=head2 _existing_hub_query
+
+  Arg[1]  : String - User name
+  Arg[2]  : String - Hub name
+  Arg[3]  : String - Assembly accession, e.g. GCA00301030
+  Description: Generates an ES6-compatible query to retrieve a hub for a named user
+  Returntype: Hashref - formatted for Search::Elasticsearch
+
+=cut
+
+sub _existing_hub_query {
+  my ($self, $user, $hub, $assembly_acc) = @_;
+
+  my $query = {
+    bool => {
+      must => [
+        { term => { owner => $user } },
+        { term => { 'hub.name' => $hub } },
+        { term => { 'assembly.accession' => $assembly_acc } }
+      ]
+    }
+  };
+
+  return $query;
+}
+
+sub get_hub_by_url {
+  my ($self, $url) = @_;
+
+  my $query = {
+    bool => {
+      must => [
+        { term => { 'hub.url' => $url } }
+      ]
+    }
+  };
+
+  my $result = $self->search_trackhubs(query => $query);
+  if ($result->{hits}{total} == 0) {
+    return [];
+  }
+  return $result->{hits}{hits};
+}
+
+sub delete_hub_by_id {
+  my ($self, $id) = @_;
+
+  my $config = Registry->config()->{'Model::Search'};
+ 
+  $self->delete(
+    index => $config->{trackhub}{index},
+    type => $config->{trackhub}{type},
+    id => $id
+  );
+}
+
+sub refresh_trackhub_index {
+  my ($self) = @_;
+  my $config = Registry->config()->{'Model::Search'};
+  $self->indices->refresh(index => $config->{trackhub}{index})
+}
+
+sub create_trackdb {
+  my ($self, $doc) = @_;
+  my $config = Registry->config()->{'Model::Search'};
+
+  my $response = $self->index(
+    index   => $config->{trackhub}{index},
+    type    => $config->{trackhub}{type},
+    body    => $doc
+  );
+
+  my $new_id = $response->{_id};
+  return $new_id
+}
+
+
+
 =head2 pager
   Arg[1]      : Hashref - containing query elements appropriate to Search::Elasticsearch
                 body => { query => $query }, index => $index_name, type => $type

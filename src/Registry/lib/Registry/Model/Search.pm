@@ -83,7 +83,7 @@ sub search_trackhubs {
     unless exists $args{query};
 
   %args = $self->_decorate_query(%args);
-  
+  print Dumper %args;
   return $self->_es->search(%args);
 }
 
@@ -170,22 +170,10 @@ sub get_trackdbs {
   $args{query} = { match_all => {} }
     unless exists $args{query};
 
-  %args = $self->_decorate_query(%args);
-
-  # use scan & scroll API
-  # Note that this is not compatible with ES6 and the Perl client library
-  # Maybe it's fixed by the time you read this?
+  # use scan & scroll API from ES client 5 with v6 scroll API component added
+  # Maybe it's tidied up into a single install by the time you read this?
   
   # see https://metacpan.org/pod/Search::Elasticsearch::Scroll
-  # use scan search type to disable sorting for efficient scrolling
-  # $args{search_type} = 'scan';
-  # my $scroll = $self->_es->scroll_helper(%args);
-  
-  # my @trackdbs;
-  # while (my $trackdb = $scroll->next) {
-  #   $trackdb->{_source}{_id} = $trackdb->{_id};
-  #   push @trackdbs, $trackdb->{_source};
-  # }
 
   my $trackdbs = $self->pager(\%args, sub { 
     my $result = shift;
@@ -314,6 +302,91 @@ sub create_trackdb {
 }
 
 
+sub api_search {
+  my ($self, $user_query, $page, $per_page, $species, $assembly, $accession, $hub, $type) = @_;
+
+  printf("query: %s page: %s per-page:%s species:%s assembly:%s hub:%s type:%s\n",$user_query, $page, $per_page, $species, $assembly, $hub, $type);
+
+  my %query = (
+    from => ($page-1) * $per_page,
+    size => $per_page
+  );
+
+  my @extra_clauses;
+  my @optional_clauses;
+  if ($user_query ne '') { push @extra_clauses,{ match => $user_query } ; }
+  push @extra_clauses, {public => "true" }; # present only 'public' hubs
+  push @extra_clauses, { "species.scientific_name.lowercase" => $species } if $species;
+  # if assembly is provided extend the search to both the name and synonyms to allow fetching
+
+  # ENSCORESW-2039
+  # put assembly parameter as query string, otherwise cannot find some assemblies
+  # due to the way assembly.synonyms and assembly.name are (not) indexed in combination
+  # with the use of a filter
+  if ($assembly) {
+    push @optional_clauses, { "assembly.name" => $assembly };
+    push @optional_clauses, { "assembly.synonyms" => $assembly };
+    push @optional_clauses, { "assembly.accession" => $assembly };
+  }
+  push @extra_clauses, { "assembly.accession" => $accession } if $accession;
+  push @extra_clauses, { "hub.name" => $hub } if $hub;
+  push @extra_clauses, { type => $type } if $type;
+
+  foreach my $clause (@extra_clauses) {
+    push @{ $query{query}{bool}{must} }, { term => $clause};
+  }
+  foreach my $clause (@optional_clauses) {
+    push @{ $query{query}{bool}{should}}, { term => $clause};
+  }
+  if (@optional_clauses) {
+    $query{query}{bool}{minimum_should_match} = 1;
+  }
+
+
+
+use Data::Dumper;
+  print "Processed user query\n";
+  print Dumper 'Here is the thing',\%query;
+  print "\n";
+  my $response = $self->search_trackhubs(%query);
+  $response = $self->clean_results($response);
+  print "Post cleaning results\n";
+  print Dumper $response;
+  # Format for return to user
+  my $hits = {
+    total_entries => $response->{hits}{total},
+    items => $response->{hits}{hits}
+  };
+  return $hits;
+}
+
+sub clean_results {
+  my ($self,$hits) = @_;
+
+  # delete $response_item->{status}{tracks}; # [ENSCORESW-2551]
+
+  # strip away the metadata/configuration field from each search result
+  # this will save bandwidth
+  # when a trackdb is chosen the client will request all the details by id
+  return {hits => { total => 0, hits => []},} if ($hits->{hits}{total} == 0);
+  for (my $i = 0; $i < scalar @{ $hits->{hits}{hits} }; $i++ ) {
+    for my $good_key (qw/version status hub species type assembly/) {
+      # Move expected result keys out of _source document and into the item block, to match existing interface
+      $hits->{hits}{hits}->[$i]->{$good_key} = $hits->{hits}{hits}->[$i]->{_source}{$good_key};
+    }
+    # Older Elasticsearch versions did not have underscores. Change to match output from older implmentation
+    for my $corrected_key (qw/id score/) {
+      $hits->{hits}{hits}->[$i]{$corrected_key} = $hits->{hits}{hits}->[$i]{'_'.$corrected_key};
+    }
+    # Clean up any remaining artifacts of the search result
+    for my $bad_key (qw/_type _source _index _version created data configuration/) {
+      delete $hits->{hits}{hits}->[$i]{$bad_key};
+    }
+  }
+
+  return $hits;
+}
+
 
 =head2 pager
   Arg[1]      : Hashref - containing query elements appropriate to Search::Elasticsearch
@@ -328,31 +401,22 @@ sub create_trackdb {
 sub pager {
   my ($self, $query, $callback) = @_;
 
-  my $from = 0;
-  my $total_expected = -1;
   my @result_buffer = ();
+  $query->{query} ||= { match_all => {} };
+  $query->{size} ||= 10000; # Get the biggest chunks possible (restricted server-side)
+  $query->{sort} = '_doc'; # optimisation for ES
 
-  until (scalar @result_buffer == $total_expected) {
+  my %prepped_query = $self->_decorate_query(%$query);
 
-    $query->{size} ||= 10000; # Get the biggest chunks possible (restricted server-side)
-    $from = scalar @result_buffer;
-    $query->{from} = $from;
+  my $iterator = $self->_es->scroll_helper(
+    %prepped_query
+  );
 
-    my $result = $self->_es->search($query);
-    if ($result->{timed_out}) {
-      throw('Backend time out. Incomplete result obtained');
+  while (my $hit = $iterator->next) {
+    if ($callback) {
+      $hit = $callback->($hit);
     }
-
-    $total_expected = $result->{hits}{total} if $total_expected == -1;
-
-    my $hits = $result->{hits}{hits};
-    while (my $hit = shift @$hits) {
-      if ($callback) {
-        $hit = $callback->($hit);
-      }
-      push @result_buffer,$hit;
-    }
-    
+    push @result_buffer,$hit;
   }
 
   return \@result_buffer;

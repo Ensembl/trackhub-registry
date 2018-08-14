@@ -39,7 +39,8 @@ SKIP: {
 
   note 'Preparing data for test (indexing users)';
   my $config = Registry->config()->{'Model::Search'};
-  my $indexer = Registry::Indexer->new(dir   => "$Bin/trackhub-examples/",
+  my $indexer = Registry::Indexer->new(
+            dir   => "$Bin/trackhub-examples/",
             trackhub => {
               index => $config->{trackhub}{index},
               type  => $config->{trackhub}{type},
@@ -124,11 +125,12 @@ SKIP: {
   $request = POST('/api/search',
       'Content-type' => 'application/json',
       'Content'      => to_json({ query => '' }));
-  ok($response = request($request), 'POST request to /api/search');
+  ok($response = request($request), 'POST request to /api/search with blank query');
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
-  is($content->{total_entries}, 7, 'Number of search results');
+  is($content->{total_entries}, 8, 'Number of search results');
+
   is(scalar @{$content->{items}}, 5, 'Number of search results per page');
   map { is($_->{status}{message}, "Unchecked", "Search result has status") } @{$content->{items}};
   ok($content->{items}[0]{id}, 'Search result item has ID');
@@ -164,8 +166,8 @@ SKIP: {
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
-  is($content->{total_entries}, 7, 'Number of search results');
-  is(scalar @{$content->{items}}, 7, 'Number of search results per page');
+  is($content->{total_entries}, 9, 'Number of search results');
+  is(scalar @{$content->{items}}, 9, 'Number of search results per page');
 
   note("when asking for all results, the other parameters should be ignored");
   $request = POST('/api/search?all=1&page=2&entries_per_page=10',
@@ -175,8 +177,8 @@ SKIP: {
   ok($response->is_success, 'Request successful');
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
-  is($content->{total_entries}, 7, 'Number of search results');
-  is(scalar @{$content->{items}}, 7, 'Number of search results per page');
+  is($content->{total_entries}, 9, 'Number of search results');
+  is(scalar @{$content->{items}}, 9, 'Number of search results per page');
 
   note("Test query strings for something that isn't there");
   $request = POST('/api/search?page=2',
@@ -188,6 +190,10 @@ SKIP: {
   $content = from_json($response->content);
   is(scalar @{$content->{items}}, 0, 'Number of search results');
   
+
+### From here things get gnarly. The analyser in Elasticsearch to create a lowercase field for species name
+#   does not seem to operate on the test data, but works in a more regular environment
+
   note("test with filter on species");
   $request = POST('/api/search',
       'Content-type' => 'application/json',
@@ -288,12 +294,10 @@ SKIP: {
   is($response->content_type, 'application/json', 'JSON content type');
   $content = from_json($response->content);
   is($content->{hub}{name}, 'VBRNAseq_group_SRP014756', 'TrackDB hub name');
-  use Data::Dumper;
-  print Dumper $content->{configuration};
   is($content->{configuration}{'VBRNAseq_group_SRP014756_bigwig'}{members}{'001_VBRNAseq_track_138.bigwig'}{bigDataUrl}, 'ftp://ftp.vectorbase.org/public_data/rnaseq_alignments/hubs/anopheles_gambiae/VBRNAseq_group_SRP014756/AgamP4/../../../../bigwig/anopheles_gambiae/SRP014756_AgamP4.bw', 'TrackDB configuration');
   # shouldn't have the metadata
   ok(!$content->{data}, 'No metadata');
-  
+
 }
 
 done_testing();

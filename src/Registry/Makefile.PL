@@ -48,7 +48,8 @@ requires 'Digest::MD5';
 requires 'File::Temp';
 requires 'List::Util';
 requires 'String::Random';
-requires 'Search::Elasticsearch';
+requires 'Search::Elasticsearch' => '5.02'; # v6 release does not seem to work quite right
+requires 'DRTECH/Search-Elasticsearch-Client-5_0-6.00.tar.gz'; # Make sure we get the v6 scroll API client for the v5 library
 requires 'Clone';
 requires 'Data::SearchEngine';
 requires 'Encode';

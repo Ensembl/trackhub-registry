@@ -60,14 +60,14 @@ SKIP: {
 
   # Test pager functionality
   my $list = $es->pager({ 
-    body => { query => { match_all => {} } }, 
+    query => { match_all => {} } , 
     index => $config->{trackhub}{index}, 
     type => $config->{trackhub}{type}
   });
   cmp_ok(scalar @$list, '==', 4, 'Get the standard four documents');
 
   $list = $es->pager({ 
-    body => { query => { match_all => {} } }, 
+    query => { match_all => {} }, 
     index => $config->{trackhub}{index}, 
     type => $config->{trackhub}{type}
   }, sub {
@@ -85,7 +85,7 @@ SKIP: {
   # Now try with size limit smaller than data set
   #
   $list = $es->pager({ 
-    body => { query => { match_all => {} } }, 
+    query => { match_all => {} }, 
     index => $config->{trackhub}{index}, 
     type => $config->{trackhub}{type},
     size => 1
@@ -97,7 +97,7 @@ SKIP: {
   # and size limit coincidentally the same size as the data set
   #
   $list = $es->pager({ 
-    body => { query => { match_all => {} } }, 
+    query => { match_all => {} }, 
     index => $config->{trackhub}{index}, 
     type => $config->{trackhub}{type},
     size => 4

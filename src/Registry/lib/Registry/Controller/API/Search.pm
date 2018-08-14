@@ -37,9 +37,6 @@ use namespace::autoclean;
 use JSON;
 use Try::Tiny;
 
-use Data::SearchEngine::ElasticSearch::Query;
-use Data::SearchEngine::ElasticSearch;
-
 BEGIN { extends 'Catalyst::Controller::REST'; }
 
 __PACKAGE__->config(
@@ -64,11 +61,15 @@ sub search :Path('/api/search') Args(0) ActionClass('REST') {
   my $page = $params->{page} || 1;
   $page = 1 if $page !~ /^\d+$/;
   my $entries_per_page = $params->{entries_per_page} || 5;
+  print "Per page value request: $entries_per_page\n";
+  if ( $params->{entries_per_page} * $page > 10000 ) {
+    $c->status_bad_request($c, message => "Search result too large. Use the ?all parameter to fetch large amounts of data");
+  }
 
   if ($params->{all}) {
-    $page = 1;
-    $entries_per_page = 10000;
+    $c->stash->{all} = 1;
   }
+
   
   $c->stash( page => $page, entries_per_page => $entries_per_page );
 }
@@ -82,114 +83,53 @@ POST method implementation for /api/search endpoint
 sub search_POST {
   my ($self, $c) = @_;
 
-  return $self->status_bad_request($c, message => "Missing data")
-    unless defined $c->req->data;
-
-  my $params = $c->req->params;
+  if (! defined $c->req->data) {
+    return $self->status_bad_request($c, message => "Missing message body in request");
+  }
   my $data = $c->req->data;
 
-  my ($query_type, $query_body) = ('match_all', {});
-  my $query = $data->{query};
-  
-  if ($query) {
-    # $query_type = 'match';
-    # $query_body = { _all => $query };
-    $query_type = 'query_string';
-    $query_body = { query => $query }; # default field is _all
-  }
-
-  my $config = Registry->config()->{'Model::Search'};
-  my ($index, $type) = ($config->{trackhub}{index}, $config->{trackhub}{type});
-
-  # process filters, i.e. species, assembly, hub
-  my $filter_combine =
-    {
-     public => 'and' 
-    };
-  my $filters = { public => 1 }; # present only 'public' hubs
-  
-  $filters->{'species.scientific_name'} = $data->{species} and $filter_combine->{'species.scientific_name'} = 'and'
-    if $data->{species};
-
-  # if assembly is provided extend the search to both the
-  # name and synonyms to allow fetching 
-  if ($data->{assembly}) {
-    # $filters->{'assembly.name'} = $data->{assembly};
-    # $filters->{'assembly.synonyms'} = $data->{assembly};
-
-    # # change the logical operator to OR so that search is
-    # # capable of fetching results in either cases
-    # $filter_combine->{'assembly.name'} = 'or';
-    # $filter_combine->{'assembly.synonyms'} = 'or';
-    
-    # ENSCORESW-2039
-    # put assembly parameter as query string, otherwise cannot find some assemblies
-    # due to the way assembly.synonyms and assembly.name are (not) indexed in combination
-    # with the use of a filter
-    if ($query) {
-      $query_body->{query} .= sprintf " AND %s", $data->{assembly};
-    } else {
-      $query_type = 'query_string';
-      $query_body = { query => $data->{assembly} };
-    }
-  }
-  $filters->{'assembly.accession'} = $data->{accession} and $filter_combine->{'assembly.accession'} = 'and'
-    if $data->{accession};
-  $filters->{'hub.name'} = $data->{hub} and $filter_combine->{'hub.name'} = 'and'
-    if $data->{hub};
-  $filters->{type} = $data->{type} and $filter_combine->{'type'} = 'and'
-    if $data->{type};
-
-  my $query_args = 
-    {
-     index     => $index,
-     data_type => $type,
-     page      => $c->stash->{page},
-     count     => $c->stash->{entries_per_page}, 
-     type      => $query_type,
-     query     => $query_body,
-    };  
-  $query_args->{filters} = $filters if $filters;
+  my $query_body = {};
 
   # do the search
   my $results;
-  my $se = Data::SearchEngine::ElasticSearch->new(nodes => $config->{nodes});
-  
-  try {
-    $results = $se->search(Data::SearchEngine::ElasticSearch::Query->new($query_args), $filter_combine);
-  } catch {
-    $c->go('ReturnError', 'custom', [qq{$_}]);
-  };
 
-  # build the JSON response
-  my $response = { total_entries => $results->pager->total_entries };
+  if ($c->stash->{all} == 1) {
 
-  # On recent installations, we cannot simply assign the response items to the array 
-  # of Data::SearchEngine::Item search results.
-  # Catalyst::Action::Serialize::JSON complains it cannot deal with blessed references.
-  # Build the response items as an array of simple hash references.
-  foreach my $item (@{$results->items}) {
-    my $response_item = $item->{values};
-    $response_item->{id} = $item->{id};
-    $response_item->{score} = $item->{score};
-    # delete $response_item->{status}{tracks}; # [ENSCORESW-2551]
+    my $result_list = $c->model('Search')->pager(
+      undef, 
+      sub {
+        my $thing = shift;
+        for my $corrected_key (qw/id score type/) {
+          $thing->{$corrected_key} = $thing->{'_'.$corrected_key};
+          delete $thing->{'_'.$corrected_key}
+        }
+        for my $unpacked_key (qw/hub status species assembly/) {
+          $thing->{$unpacked_key} = $thing->{_source}{$unpacked_key};
+        }
+        for my $discarded_key (qw/_index sort _source/) {
+          delete $thing->{$discarded_key};
+        }
+        return $thing;
+      });
 
-    # strip away the metadata/configuration field from each search result
-    # this will save bandwidth
-    # when a trackdb is chosen the client will request all the details by id
-    # remove also other fields the user is not interested in
-    map { delete $response_item->{$_} } qw ( source _index owner _version created data configuration );
-
-    push @{$response->{items}}, $response_item;
+    $results = { 
+      total_entries => scalar @$result_list,
+      items => $result_list
+    };
+  } else {
+    $results = $c->model('Search')->api_search(
+      $data->{query},
+      $c->stash->{page},
+      $c->stash->{entries_per_page},
+      $data->{species},
+      $data->{assembly},
+      $data->{accession},
+      $data->{hub},
+      $data->{type}
+    );
   }
-  $response->{items} = [] unless scalar @{$results->items};
 
-  # strip away the metadata/configuration field from each search result
-  # this will save bandwidth
-  # when a trackdb is chosen the client will request all the details by id
-  # map { delete $_->{values}{data}; delete $_->{values}{configuration} } @{$response->{items}};
-
-  $self->status_ok($c, entity => $response);
+  $self->status_ok($c, entity => $results);
 }
 
 =head2 biosample_search
@@ -226,13 +166,9 @@ sub biosample_search_POST {
   $_ = lc for @{$biosample_ids};
 
   my $query = {
-    filtered => {
-      filter => {
-        terms => { 
+    terms => { 
           biosample_id => $biosample_ids
-        }
-      }
-    }
+        }    
   };
   my $config = Registry->config()->{'Model::Search'};
   my %args =

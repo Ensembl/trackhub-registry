@@ -228,7 +228,7 @@ sub _get_hub_info {
 
     if ($k =~ /genome/) {
       $genome = $v;
-      $genomes->{$genome} = Registry::TrackHub::Genome->new(assembly => lc $genome);
+      $genomes->{$genome} = Registry::TrackHub::Genome->new(assembly => $genome);
       ## Check if any of these genomes are available on this site,
       ## because we don't want to waste time parsing them if not!
       # if ($assembly_lookup && $assembly_lookup->{$genome}) {

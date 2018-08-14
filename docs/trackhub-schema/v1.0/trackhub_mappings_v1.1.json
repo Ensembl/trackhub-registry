@@ -1,8 +1,16 @@
-// This is trackhub_mappings_v1.json adapted for Elasticsearch v6.3
-{
+ {
+  "_comment": "This is trackhub_mappings_v1.json adapted for Elasticsearch v6.3",
   "settings": {
     "number_of_shards": 3,
-    "number_of_replicas": 2
+    "number_of_replicas": 2,
+    "analysis": {
+      "analyzer": {
+        "case_insensitive_keywords": {
+          "tokenizer": "keyword",
+          "filter": "lowercase"
+        }
+      }
+    }
   },
   "aliases": {
     "trackhubs": {}
@@ -36,7 +44,13 @@
           "properties": {
             "name": {
               "type": "keyword",
-              "index": true
+              "index": true,
+              "fields": {
+                "lowercase": {
+                  "type": "text",
+                  "analyzer": "case_insensitive_keywords"
+                }
+              }
             },
             "url": {
               "type": "keyword",
@@ -49,7 +63,19 @@
           "properties": {
             "scientific_name": {
               "type": "keyword",
-              "index": true
+              "index": true,
+              "fields": {
+                "lowercase": {
+                  "type": "text",
+                  "analyzer": "case_insensitive_keywords"
+                }
+              }
+            },
+            "tax_id": {
+              "type": "integer"
+            },
+            "common_name": {
+              "type": "text"
             }
           }
         },

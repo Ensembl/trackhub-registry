@@ -30,10 +30,10 @@
 
       "properties": {
         "name": { "type": "string" },
-	"shortLabel": { "type": "string" },
-	"longLabel": { "type": "string" },
-	"url": { "type": "string", "format": "uri" },
-	"assembly": { "type": "number" }
+        "shortLabel": { "type": "string" },
+        "longLabel": { "type": "string" },
+        "url": { "type": "string", "format": "uri" },
+        "assembly": { "type": "number" }
       },
 
       "additionalProperties": true,
@@ -58,7 +58,7 @@
 
       "properties": {
         "url": { "type": "string", "format": "uri" },
-	"checksum": { "type": "string" }
+        "checksum": { "type": "string" }
       },
 
       "required": [ "url" ]
@@ -72,13 +72,13 @@
 
       "properties": {
         "tax_id": {
-	  "oneOf": [
-	    { "type": "integer", "minimum": 0, "exclusiveMinimum": true },
-	    { "type": "string", "pattern": "^[1-9][0-9]+?$" }
-   	  ]
-	},
-	"scientific_name": { "type": "string" },
-	"common_name": { "type": "string" }
+          "oneOf": [
+            { "type": "integer", "minimum": 0, "exclusiveMinimum": true },
+            { "type": "string", "pattern": "^[1-9][0-9]+?$" }
+          ]
+        },
+        "scientific_name": { "type": "string" },
+        "common_name": { "type": "string" }
       },
 
       "additionalProperties": false,
@@ -95,20 +95,20 @@
 
       "properties": {
         "accession": {
-	  "type": "string",
+          "type": "string",
 
-	  "title": "NCBI Assembly accession ID",
+          "title": "NCBI Assembly accession ID",
 
           "description": "The NCBI assembly identifier (accession and version)",
 
           "pattern": "^G(CA|CF)_[0-9]+.[0-9]+$|^NA$"
-	},
+        },
 
-	"name": { "type": "string" },
+        "name": { "type": "string" },
 
-	"long_name": { "type": "string" },
+        "long_name": { "type": "string" },
 
-	"synonyms": { "type": "string" }
+        "synonyms": { "type": "string" }
       },
 
       "additionalProperties": false,
@@ -126,7 +126,7 @@
       "items": { "$ref": "#/definitions/track_metadata" },
 
       "minItems": 1,
-	  
+          
       "uniqueItems": true
     },
 
@@ -173,32 +173,32 @@
 
       "properties": {
         "members": { 
-	  "type": "object",
-	  
-	  "patternProperties": { 
-	     "^[a-zA-z][a-zA-Z0-9_-]*?$": { "$ref": "#/definitions/track_configuration" }
-	   }
-	}
+          "type": "object",
+          
+          "patternProperties": { 
+             "^[a-zA-z][a-zA-Z0-9_-]*?$": { "$ref": "#/definitions/track_configuration" }
+           }
+        }
       },
 
       "additionalProperties": true,
 
       "patternProperties": {
         "^[a-zA-z][a-zA-Z0-9_-]*?$": {
-	  "oneOf": [
-	     { "type": "string" },
-	     { "type": "number" },
-	     { "type": "array",
-	       "items": {
-	         "oneOf": [
-		   { "type": "string" },
-		   { "type": "number" }
-		 ]
-	       }
-	     },
-	     { "type": "object" }
-	   ]
-	}
+          "oneOf": [
+             { "type": "string" },
+             { "type": "number" },
+             { "type": "array",
+               "items": {
+                 "oneOf": [
+                   { "type": "string" },
+                   { "type": "number" }
+                 ]
+               }
+             },
+             { "type": "object" }
+           ]
+        }
       },
 
       "additionalProperties": true

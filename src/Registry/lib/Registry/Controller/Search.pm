@@ -77,8 +77,8 @@ sub index :Path :Args(0) {
   my $entries_per_page = $params->{entries_per_page} || 5;
 
   my %query_args = (
-    page             => $page,
-    count            => $entries_per_page, 
+    from             => $page,
+    size             => $entries_per_page, 
     query            => $query_body,
     aggregations     => $facets
   );

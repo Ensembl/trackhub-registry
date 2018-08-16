@@ -83,7 +83,7 @@ sub search_trackhubs {
     unless exists $args{query};
 
   %args = $self->_decorate_query(%args);
-  print Dumper %args;
+
   return $self->_es->search(%args);
 }
 
@@ -155,7 +155,7 @@ sub get_trackhub_by_id {
   Example     : my $docs = $model->get_trackdbs();
   Description : Search over the trackDB docs using a Search::Elasticsearch compatible query arg,
                 should be equivalent to search_trackhubs but implemented with the scan&scroll API,
-                so presumably faster. 
+                so size uncapped.
   Returntype  : ListRef - the Search::Elasticsearch compatible list of results
   Exceptions  : None
   Caller      : Registry::Controller::API::Registration
@@ -284,7 +284,7 @@ sub delete_hub_by_id {
 sub refresh_trackhub_index {
   my ($self) = @_;
   my $config = Registry->config()->{'Model::Search'};
-  $self->indices->refresh(index => $config->{trackhub}{index})
+  $self->indices->refresh(index => $config->{trackhub}{index});
 }
 
 sub create_trackdb {
@@ -298,7 +298,7 @@ sub create_trackdb {
   );
 
   my $new_id = $response->{_id};
-  return $new_id
+  return $new_id;
 }
 
 
@@ -342,16 +342,9 @@ sub api_search {
     $query{query}{bool}{minimum_should_match} = 1;
   }
 
-
-
-use Data::Dumper;
-  print "Processed user query\n";
-  print Dumper 'Here is the thing',\%query;
-  print "\n";
   my $response = $self->search_trackhubs(%query);
   $response = $self->clean_results($response);
-  print "Post cleaning results\n";
-  print Dumper $response;
+
   # Format for return to user
   my $hits = {
     total_entries => $response->{hits}{total},

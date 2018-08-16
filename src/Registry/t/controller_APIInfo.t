@@ -112,18 +112,18 @@ SKIP: {
          { name => 'GRCh38', synonyms => [ 'hg38' ], accession => 'GCA_000001405.15' }
        ),
       'Danio rerio'          => bag (
-         { name => 'GRCz10', synonyms => [ 'danrer10' ], accession => 'GCA_000002035.3' },
-         { name => 'GRCz11', synonyms => [ 'danrer11' ], accession => 'GCA_000002035.4' },
-         { name => 'Zv9', synonyms => [ 'danrer7' ], accession => 'GCA_000002035.2' }
+         { name => 'GRCz10', synonyms => [ 'danRer10' ], accession => 'GCA_000002035.3' },
+         { name => 'GRCz11', synonyms => [ 'danRer11' ], accession => 'GCA_000002035.4' },
+         { name => 'Zv9', synonyms => [ 'danRer7' ], accession => 'GCA_000002035.2' }
        ),
       'Mus musculus'         => bag(
          { name => 'GRCm38', synonyms => [ 'mm10' ], accession => 'GCA_000001635.2' },
          { name => 'MGSCv37', synonyms => [ 'mm9' ], accession => 'GCA_000001635.1' }
         ), 
-      'Arabidopsis thaliana' => [ { name => 'TAIR10', synonyms => [ 'aratha1' ], accession => 'GCA_000001735.1' } ],
-      'Brassica rapa'        => [ { name => 'Brapa_1.0', synonyms => [ 'brarap1' ], accession => 'GCA_000309985.1' } ],
+      'Arabidopsis thaliana' => [ { name => 'TAIR10', synonyms => [ 'araTha1' ], accession => 'GCA_000001735.1' } ],
+      'Brassica rapa'        => [ { name => 'Brapa_1.0', synonyms => [ 'braRap1' ], accession => 'GCA_000309985.1' } ],
       #'Drosophila simulans'  => ['GCA_000754195.2'], 
-      'Ricinus communis'     => [ { name => 'JCVI_RCG_1.1', synonyms => [ 'riccom1' ], accession => 'GCA_000151685.2' } ]);
+      'Ricinus communis'     => [ { name => 'JCVI_RCG_1.1', synonyms => [ 'ricCom1' ], accession => 'GCA_000151685.2' } ]);
 
   $request = GET('/api/info/species');
   ok($response = request($request), 'GET request to /api/info/species');

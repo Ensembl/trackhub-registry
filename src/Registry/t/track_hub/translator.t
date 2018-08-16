@@ -138,7 +138,7 @@ SKIP: {
 
   my $i = 1;
   for my $doc (@{$json_docs}) {
-    open $FH, ">$Bin/plant$i.json" or die "Cannot open plant$i.json: $!\n";
+    open $FH, '>',"$Bin/plant$i.json" or die "Cannot open plant$i.json: $!\n";
     print $FH $doc;
     close $FH;
     $i++;
@@ -277,7 +277,7 @@ SKIP: {
   is($doc->{hub}{url}, $URL, 'Hub URL');
   is($doc->{source}{url}, Registry::TrackHub->new(url => $URL, permissive => 1)->get_genome('mm10')->trackDb->[0], "TrackDB source URL");
 
-  open $FH, ">$Bin/meth.json" or die "Cannot open meth.json: $!\n";
+  open $FH, '>',"$Bin/meth.json" or die "Cannot open meth.json: $!\n";
   print $FH $json_docs->[0];
   close $FH;
 
@@ -331,7 +331,7 @@ SKIP: {
   $json_docs = $translator->translate($URL);
   is(scalar @{$json_docs}, 1, "Number of translated track dbs");
 
-  open $FH, ">$Bin/vizhub.json" or die "Cannot open vizhub.json: $!\n";
+  open $FH, '>',"$Bin/vizhub.json" or die "Cannot open vizhub.json: $!\n";
   print $FH $json_docs->[0];
   close $FH;
 

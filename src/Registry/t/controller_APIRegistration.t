@@ -406,7 +406,7 @@ SKIP: {
   # like($content->{error}, qr/check the source/i, 'Correct error response');
   
   # test with some public hubs
-  $URL = "http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants";
+  $URL = "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants";
   #
   # should fail if wrong schema version is specified
   $request = POST('/api/trackhub?version=dummy',
@@ -483,12 +483,12 @@ SKIP: {
   my $mech = Test::WWW::Mechanize::Catalyst->new(catalyst_app => 'Registry');
   $mech->get_ok('/', 'Requested main page');
   $mech->submit_form_ok({
-         form_number => 1,
-         fields      => {
-             q => 'hub.shortLabel:plants'
-            },
-        }, 'Submit search query for plants hub'
-             );
+      form_number => 1,
+      fields      => {
+          q => 'hub.shortLabel:plants'
+      },
+    }, 'Submit search query for plants hub'
+  );
   $mech->content_like(qr/Track Collections 1 to 3 of 3/, 'Got original Plants trackDBs');
   #
   #
@@ -514,7 +514,8 @@ SKIP: {
   #
   $request = POST('/api/trackhub?permissive=1',
       'Content-type' => 'application/json',
-      'Content'      => to_json({ url => 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt',
+      'Content'      => to_json(
+              { url => 'http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/hub.txt',
                 assemblies => {
                    araTha1 => 'GCA_000001735.1',
                    ricCom1 => 'GCA_000151685.2',

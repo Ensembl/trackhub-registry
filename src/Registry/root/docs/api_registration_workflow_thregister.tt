@@ -74,7 +74,7 @@
 
   <h4>Example: registration request and response</h4>
   <p>
-    In this example, we are going to register the <a target="_blank" href="http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt">CSHL Biology of Genomes meeting 2013 demonstration assembly hub</a>. For this, we are obviously assuming we are those who have published this data and are in control of it. The Registry does not make any effort to check this kind of information: you are responsible for your own actions which will be eventually visible by everyone on the Registry itself.
+    In this example, we are going to register the <a target="_blank" href="http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/hub.txt">CSHL Biology of Genomes meeting 2013 demonstration assembly hub</a>. For this, we are obviously assuming we are those who have published this data and are in control of it. The Registry does not make any effort to check this kind of information: you are responsible for your own actions which will be eventually visible by everyone on the Registry itself.
   </p>
   <p>
     Any request to the Registration API must supply the user's credentials with the following headers:
@@ -95,7 +95,7 @@
       User: exampleuser
       Auth-Token: 6l5/GuIiOSCywuSI9HF1VU97clwb/CXPDFS0MyAB/HCZuxtjQBj4uORZL8NY3Yhi
       {
-        "url": "http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt",
+        "url": "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/hub.txt",
         "assemblies": {
           "araTha1": 'GCA_000001735.1',
           "ricCom1": 'GCA_000151685.2',
@@ -130,12 +130,12 @@
           'owner': 'exampleuser',
           'source': {
                         'checksum': 'f9561ae6f7883add3698fad7abab7e13',
-                        'url': 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/ricCom1/trackDb.txt'
+                        'url': 'http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/ricCom1/trackDb.txt'
                       },
           'hub': {
                      'shortLabel': 'Plants',
                      'name': 'cshl2013',
-                     'url': 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt',
+                     'url': 'http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/hub.txt',
                      'longLabel': 'CSHL Biology of Genomes meeting 2013 demonstration assembly hub'
                    },
           'species': {
@@ -164,7 +164,7 @@
           'hub': {
                      'shortLabel': 'Plants',
                      'name': 'cshl2013',
-                     'url': 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt',
+                     'url': 'http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/hub.txt',
                      'longLabel': 'CSHL Biology of Genomes meeting 2013 demonstration assembly hub'
                    },
           ...
@@ -175,7 +175,7 @@
           'hub': {
                      'shortLabel': 'Plants',
                      'name': 'cshl2013',
-                     'url': 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt',
+                     'url': 'http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/hub.txt',
                      'longLabel': 'CSHL Biology of Genomes meeting 2013 demonstration assembly hub'
                    },
           ...
@@ -221,7 +221,7 @@ use LWP::UserAgent;
 
 my $ua = LWP::UserAgent->new(ssl_opts => { verify_hostname => 0 });
 my $server = 'https://www.trackhubregistry.org';
-my $HUB_URL = 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt';
+my $HUB_URL = 'http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/hub.txt';
 my ($user, $pass, $auth_token) = ('exampleuser', 'examplepass');
 
 $auth_token = login($server, $user, $pass);
@@ -284,7 +284,7 @@ sub logout {
 import requests, sys
 
 server = 'https://www.trackhubregistry.org'
-hub_url = 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt'
+hub_url = 'http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/hub.txt'
 user = 'exampleuser'
 password = 'examplepass'
 
@@ -323,7 +323,7 @@ logout(server, user, auth_token)
 import requests, sys
 
 server = 'https://www.trackhubregistry.org'
-hub_url = 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt'
+hub_url = 'http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/hub.txt'
 user = 'exampleuser'
 password = 'examplepass'
 
@@ -367,7 +367,7 @@ require 'rubygems'
 require 'json'
 
 server = 'https://www.trackhubregistry.org'
-hub_url = 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt'
+hub_url = 'http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/hub.txt'
 user = 'exampleuser'
 pass = 'examplepass'
 
@@ -428,7 +428,7 @@ logout(user, auth_token)
 curl 'https://www.trackhubregistry.org/api/trackhub' \
     -H 'User: exampleuser' \
     -H 'Auth-Token: 6l5/GuIiOSCywuSI9HF1VU97clwb/CXPDFS0MyAB/HCZuxtjQBj4uORZL8NY3Yhi'\
-    -X POST -d '{ "url": "http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt", "assemblies": { "araTha1": "GCA_000001735.1", "ricCom1": "GCA_000151685.2", "braRap1": "GCA_000309985.1" } }' \
+    -X POST -d '{ "url": "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/hub.txt", "assemblies": { "araTha1": "GCA_000001735.1", "ricCom1": "GCA_000151685.2", "braRap1": "GCA_000309985.1" } }' \
     --header "Content-Type:application/json"
       
       

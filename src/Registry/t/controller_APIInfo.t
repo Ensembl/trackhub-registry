@@ -84,7 +84,7 @@ SKIP: {
          # { name => 'polyA', url => 'http://johnlab.org/xpad/Hub/UCSC.txt' },
          { name => 'mRNA', url => 'http://www.mircode.org/ucscHub/hub.txt' },
          # { name => 'blueprint', url => 'ftp://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub' },
-         { name => 'plants', url => 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt' },
+         { name => 'plants', url => 'http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/hub.txt' },
          { name => 'ensembl', url => 'http://ngs.sanger.ac.uk/production/ensembl/regulation/hub.txt' },
          { name => 'rnaseq', url => 'http://web.stanford.edu/~htilgner/2012_454paper/data/hub.txt' },
          { name => 'zebrafish', url => 'http://research.nhgri.nih.gov/manuscripts/Burgess/zebrafish/downloads/NHGRI-1/hub.txt' },

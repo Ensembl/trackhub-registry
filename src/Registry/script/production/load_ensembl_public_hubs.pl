@@ -116,7 +116,7 @@ my $hubs =
     url => 'http://gengastro.1med.uni-kiel.de/suppl/footprint/Hub/tisHub.txt'
    },
    { # Ultra conserved Elements in the Human Genome Science 304(5675) pp.1321-1325 (2004)
-    url => 'http://genome-test.cse.ucsc.edu/~hiram/hubs/GillBejerano/hub.txt'
+    url => 'http://genome-test.gi.ucsc.edu/~hiram/hubs/GillBejerano/hub.txt'
    },
    # NOT FOUND
    # { # UMassMed H3K4me3 ChIP-seq data for Autistic brains

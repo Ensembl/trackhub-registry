@@ -72,7 +72,7 @@
 
   <h4>Example: track hub update</h4>
   <p>
-    This example updates the registration of the <a target="_blank" href="http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt">CSHL Biology of Genomes meeting 2013 demonstration assembly hub</a>. This time we don't specify a data type, hence it will default to "genomics":
+    This example updates the registration of the <a target="_blank" href="http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/hub.txt">CSHL Biology of Genomes meeting 2013 demonstration assembly hub</a>. This time we don't specify a data type, hence it will default to "genomics":
   </p>
   <p>
     Request:
@@ -81,7 +81,7 @@
       User: exampleuser
       Auth-Token: 6l5/GuIiOSCywuSI9HF1VU97clwb/CXPDFS0MyAB/HCZuxtjQBj4uORZL8NY3Yhi
       {
-        "url": "http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt"
+        "url": "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/hub.txt"
       }
     </pre>
     The response is similar to that already seen in <a href="[% c.uri_for('/docs/api/registration/workflow/thregister') %]">Registering Track Hubs</a> which we don't report here.

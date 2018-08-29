@@ -108,7 +108,7 @@
           'name': 'cshl2013',
           'shortLabel': 'Plants',
           'longLabel': 'CSHL Biology of Genomes meeting 2013 demonstration assembly hub',
-          'url': 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt',
+          'url': 'http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/hub.txt',
           'trackdbs': [
                             {
                               'species': '3988',
@@ -129,7 +129,7 @@
         }
       ]
     </pre>
-    In our example, the client had previously registered one single hub, the <a target="_blank" href="http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt">CSHL Biology of Genomes meeting 2013 demonstration assembly hub</a>, so the response body is an array with one component representing this hub. The track hub object has some string attributes derived from parsing the remote hub URL specified in the url attribute.
+    In our example, the client had previously registered one single hub, the <a target="_blank" href="http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/hub.txt">CSHL Biology of Genomes meeting 2013 demonstration assembly hub</a>, so the response body is an array with one component representing this hub. The track hub object has some string attributes derived from parsing the remote hub URL specified in the url attribute.
   </p>
   <p>
     As can be seen from the response output, the track hub object contains an array, trackdbs, which is a list of objects containing information for each trackDb (i.e. assembly specific data files) associated with the track hub: the species NCBI tax id and assembly accession, and the URI of the JSON representation of the stored trackDb entity which can be retrieved from the Registry by making a GET request to the <a href="[% c.uri_for('/docs/api/registration/reference#get_trackdb') %]">/api/trackdb/:id</a> endpoint.

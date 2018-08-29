@@ -71,7 +71,7 @@
 
   <h4>Example: track hub deletion request and response</h4>
   <p>
-    In this example, we follow the pattern of the previous steps where we have registered and updated the <a target="_blank" href="http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt">CSHL Biology of Genomes meeting 2013 demonstration assembly hub</a>. We now want to delete its records in the Registry, corresponding to three trackDbs associated to the an equivalent number of plant assemblies. 
+    In this example, we follow the pattern of the previous steps where we have registered and updated the <a target="_blank" href="http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/hub.txt">CSHL Biology of Genomes meeting 2013 demonstration assembly hub</a>. We now want to delete its records in the Registry, corresponding to three trackDbs associated to the an equivalent number of plant assemblies. 
   </p>
 
   <p>
@@ -129,7 +129,7 @@
 
   <h4>Example: track hub deletion request and response</h4>
   <p>
-    In this example, we follow the pattern of the previous steps where we have registered and updated the <a target="_blank" href="http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt">CSHL Biology of Genomes meeting 2013 demonstration assembly hub</a>. We now want to delete its records in the Registry, corresponding to three trackDbs associated to the an equivalent number of plant assemblies. In the following we assume you've already got the URIs of these entities. We then make three independent requests to <a href="[% c.uri_for('/docs/api/registration/reference#delete_trackdb') %]">DELETE /api/trackhub/:id</a> endpoint, each one with a different trackDb ID:
+    In this example, we follow the pattern of the previous steps where we have registered and updated the <a target="_blank" href="http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/hub.txt">CSHL Biology of Genomes meeting 2013 demonstration assembly hub</a>. We now want to delete its records in the Registry, corresponding to three trackDbs associated to the an equivalent number of plant assemblies. In the following we assume you've already got the URIs of these entities. We then make three independent requests to <a href="[% c.uri_for('/docs/api/registration/reference#delete_trackdb') %]">DELETE /api/trackhub/:id</a> endpoint, each one with a different trackDb ID:
   </p>
 
   <p>

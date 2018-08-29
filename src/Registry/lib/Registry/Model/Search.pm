@@ -63,8 +63,6 @@ extends 'Catalyst::Model::ElasticSearch';
 
   Arg[1]      : Hash - hash of query parameters
                   - query - HashRef, the Search::Elasticsearch compatible query parameter
-                  - index - Scalar, elasticsearch index with trackDB JSON docs
-                  - type  - Scalar, the ES type of the trackDB JSON docs
   Example     : my $docs = $model->search_trackhubs(query = > { match_all = {} });
   Description : Search over the trackDB docs using a Search::Elasticsearch compatible query arg
   Returntype  : HashRef - the Search::Elasticsearch compatible result
@@ -91,8 +89,6 @@ sub search_trackhubs {
 
   Arg[1]      : Hash - hash of query parameters
                   - query - HashRef, the Search::Elasticsearch compatible query parameter
-                  - index - Scalar, elasticsearch index with trackDB JSON docs
-                  - type  - Scalar, the ES type of the trackDB JSON docs
   Example     : my $hits = $model->count_trackhubs(query = > { match_all = {} });
   Description : Count the number of trackDB docs matching a given Search::Elasticsearch compatible query arg
   Returntype  : Scalar - the hits count
@@ -150,8 +146,6 @@ sub get_trackhub_by_id {
 
   Arg[1]      : Hash - hash of query parameters
                   - query - HashRef, the Search::Elasticsearch compatible query parameter
-                  - index - Scalar, elasticsearch index with trackDB JSON docs
-                  - type  - Scalar, the ES type of the trackDB JSON docs
   Example     : my $docs = $model->get_trackdbs();
   Description : Search over the trackDB docs using a Search::Elasticsearch compatible query arg,
                 should be equivalent to search_trackhubs but implemented with the scan&scroll API,

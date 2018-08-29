@@ -7,7 +7,7 @@ use LWP::UserAgent;
 
 my $ua = LWP::UserAgent->new(ssl_opts => { verify_hostname => 0 });
 my $server = 'http://127.0.0.1:3000';
-my $HUB_URL = 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt';
+my $HUB_URL = 'http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/hub.txt';
 my ($user, $pass, $auth_token) = ('trackhub1', 'trackhub1');
 
 $auth_token = login($server, $user, $pass);

@@ -90,11 +90,11 @@ SKIP: {
      sdsu    => 'http://bioinformatics.sdstate.edu/datasets/2012-NAT/hub.txt', # empty type
      blueprint => 'ftp://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub',
      # cemt      => 'http://www.bcgsc.ca/downloads/edcc/data/CEMT/hub/bcgsc_datahub.txt', # redirects to another location
-     plants    => 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt',
+     plants    => 'http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/hub.txt',
      # broad     => 'https://www.broadinstitute.org/ftp/pub/vgb/dog/trackHub/hub.txt', # parent track is missing
      ensembl   => 'http://ngs.sanger.ac.uk/production/ensembl/regulation/hub.txt',
      mcgill    => 'http://epigenomesportal.ca/hub/hub.txt',
-     ultracons => 'http://genome-test.cse.ucsc.edu/~hiram/hubs/GillBejerano/hub.txt',
+     ultracons => 'http://genome-test.gi.ucsc.edu/~hiram/hubs/GillBejerano/hub.txt',
      # fantom5   => 'http://fantom.gsc.riken.jp/5/datahub/hub.txt', # parent track missing
      washu     => 'http://vizhub.wustl.edu/VizHub/RoadmapIntegrative.txt', # empty type
      rnaseq    => 'http://web.stanford.edu/~htilgner/2012_454paper/data/hub.txt',

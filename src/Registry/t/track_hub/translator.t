@@ -132,7 +132,7 @@ SKIP: {
   # Test other public Track Data Hubs
   #
   note "Checking translation of Plants trackhub";
-  $URL = "http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants";
+  $URL = "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants";
   $json_docs = $translator->translate($URL);
   is(scalar @{$json_docs}, 3, "Number of translated track dbs");
 
@@ -178,7 +178,7 @@ SKIP: {
       my $conf = $doc->{configuration}{lastzBraRap1};
       ok($conf, "Configuration object exists");
       is($conf->{visibility}, 'dense', "Visibility attribute");
-      is($conf->{bigDataUrl}, 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/araTha1/bbi/lastzAraTha1ToBraRap1.bb', "bigDataUrl attribute");
+      is($conf->{bigDataUrl}, 'http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/araTha1/bbi/lastzAraTha1ToBraRap1.bb', "bigDataUrl attribute");
 
       $conf = $doc->{configuration}{repeatMasker_};
       ok($conf, "Configuration object exists");
@@ -187,7 +187,7 @@ SKIP: {
       is(scalar keys %{$conf->{members}}, 9, "Number of composite members");
       my $member = $conf->{members}{repeatMaskerSimple_};
       is($member->{longLabel}, 'Simple Repeating Elements by RepeatMasker', 'Member longLable attr');
-      is($member->{bigDataUrl}, 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/araTha1/bbi/araTha1.rmsk.Simple.bb', 'Member bigDataUrl');
+      is($member->{bigDataUrl}, 'http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/araTha1/bbi/araTha1.rmsk.Simple.bb', 'Member bigDataUrl');
 
     } elsif ($doc->{species}{tax_id} == 3988) {
       is($doc->{source}{url}, Registry::TrackHub->new(url => $URL, permissive => 1)->get_genome('ricCom1')->trackDb->[0], "TrackDB source URL");
@@ -215,7 +215,7 @@ SKIP: {
       my $conf = $doc->{configuration}{simpleRepeat_};
       ok($conf, "Configuration object exists");
       is($conf->{priority}, 149.3, "Priority attribute");
-      is($conf->{bigDataUrl}, 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/ricCom1/bbi/ricCom1.simpleRepeat.bb', "bigDataUrl attribute");
+      is($conf->{bigDataUrl}, 'http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/ricCom1/bbi/ricCom1.simpleRepeat.bb', "bigDataUrl attribute");
 
       $conf = $doc->{configuration}{repeatMasker_};
       ok($conf, "Configuration object exists");
@@ -224,7 +224,7 @@ SKIP: {
       is(scalar keys %{$conf->{members}}, 4, "Number of composite members");
       my $member = $conf->{members}{repeatMaskerRNA_};
       is($member->{maxWindowToDraw}, 10000000, 'Member maxWindowToDraw attr');
-      is($member->{bigDataUrl}, 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/ricCom1/bbi/ricCom1.rmsk.RNA.bb', 'Member bigDataUrl');
+      is($member->{bigDataUrl}, 'http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/ricCom1/bbi/ricCom1.rmsk.RNA.bb', 'Member bigDataUrl');
 
     } else {
       is($doc->{source}{url}, Registry::TrackHub->new(url => $URL, permissive => 1)->get_genome('braRap1')->trackDb->[0], "TrackDB source URL");
@@ -251,7 +251,7 @@ SKIP: {
       my $conf = $doc->{configuration}{gc5Base_};
       ok($conf, "Configuration object exists");
       is($conf->{type}, 'bigwig', "Type attribute");
-      is($conf->{bigDataUrl}, 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/braRap1/bbi/braRap1.gc5Base.bw', "bigDataUrl attribute");
+      is($conf->{bigDataUrl}, 'http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/braRap1/bbi/braRap1.gc5Base.bw', "bigDataUrl attribute");
 
       $conf = $doc->{configuration}{repeatMasker_};
       ok($conf, "Configuration object exists");
@@ -260,7 +260,7 @@ SKIP: {
       is(scalar keys %{$conf->{members}}, 5, "Number of composite members");
       my $member = $conf->{members}{repeatMaskerLTR_};
       is($member->{type}, 'bigbed', 'Member type attr');
-      is($member->{bigDataUrl}, 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/braRap1/bbi/braRap1.rmsk.LTR.bb', 'Member bigDataUrl');
+      is($member->{bigDataUrl}, 'http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/braRap1/bbi/braRap1.rmsk.LTR.bb', 'Member bigDataUrl');
       
     }
   }

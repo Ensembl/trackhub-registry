@@ -101,7 +101,7 @@ SKIP: {
   my $auth_token = $content->{auth_token};
 
   note "Checking Plants trackhub";
-  my $URL = "http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants";  
+  my $URL = "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants";  
   $request = POST('/api/trackhub?version=v1.0',
   		  'Content-type' => 'application/json',
   		  'Content'      => to_json({ url => $URL }));

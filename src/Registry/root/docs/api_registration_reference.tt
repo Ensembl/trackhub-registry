@@ -181,7 +181,7 @@
                           ],
         'shortLabel': 'Plants',
         'name': 'cshl2013',
-        'url': 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt',
+        'url': 'http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/hub.txt',
         'longLabel': 'CSHL Biology of Genomes meeting 2013 demonstration assembly hub'
       },
       {
@@ -307,7 +307,7 @@
         <td>
           <pre>
             { 
-              "url" : "http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt", 
+              "url" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/hub.txt", 
               "assemblies": {
                 "araTha1": 'GCA_000001735.1',
                 "ricCom1": 'GCA_000151685.2',

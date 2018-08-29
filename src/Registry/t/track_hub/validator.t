@@ -71,7 +71,7 @@ SKIP: {
 
   # test validation of other aspects with other public hubs
   note "Validating translation of Plants trackhub";
-  $URL = "http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants";
+  $URL = "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants";
   $json_docs = $translator->translate($URL);
   $filename = to_temp_file($json_docs->[0]);
   ok($validator->validate($filename), "Validate correct document");

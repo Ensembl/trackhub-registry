@@ -666,7 +666,7 @@ $ucscdb2insdc =
    # tair10 => 'GCA_000001735.1', # TAIR10
    # tair9  => 'GCA_000001735.1', # TAIR9
    #
-   # http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt
+   # http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/hub.txt
    #
    # Arabidopsis thaliana
    aratha1 => 'GCA_000001735.1', # TAIR10
@@ -675,8 +675,8 @@ $ucscdb2insdc =
    # brassica rapa
    brarap1 => 'GCA_000309985.1', # Brapa_1.0
    #
-   # http://genome-test.cse.ucsc.edu/~nknguyen/ecoli/publicHubs/pangenome/hub.txt
-   # http://genome-test.cse.ucsc.edu/~nknguyen/ecoli/publicHubs/pangenomeWithDups/hub.txt
+   # http://genome-test.gi.ucsc.edu/~nknguyen/ecoli/publicHubs/pangenome/hub.txt
+   # http://genome-test.gi.ucsc.edu/~nknguyen/ecoli/publicHubs/pangenomeWithDups/hub.txt
    #
    # Escherichia coli 042
    escherichiaColi042Uid161985 => 'GCA_000027125.1', # ASM2712v1

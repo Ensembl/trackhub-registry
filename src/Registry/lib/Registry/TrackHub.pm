@@ -173,7 +173,7 @@ sub _hub_check {
       # which is not related to some deprecated feature
       next if $line =~ /deprecated/;
 
-      die "hubCheck report:\n$output\n\nPlease refer to the (versioned) spec document: http://genome-test.cse.ucsc.edu/goldenPath/help/trackDb/trackDbHub.html";
+      die "hubCheck report:\n$output\n\nPlease refer to the (versioned) spec document: http://genome-test.gi.ucsc.edu/goldenPath/help/trackDb/trackDbHub.html";
     }
   }
 }

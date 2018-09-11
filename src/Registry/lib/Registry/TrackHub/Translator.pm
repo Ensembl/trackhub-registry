@@ -1127,7 +1127,7 @@ sub _add_genome_browser_links {
   # - fruitfly (Release 6 up-to-date, Release 5 from Dec 2014 backward)
   # - rat (Rnor_6.0 up-to-date, Rnor_5.0 from Mar 2015 backward)
   # - zebrafish (GRCz10 up-to-date, Zv9 from Mar 2015 backward)
-  # - Triticum aestivum (IWGSC1+popseq, archive plant)
+  # - Triticum aestivum (IWGSC1+popseq/TGACv1, archive plant)
   # - Zea mays (AGPv3, archive plant)
   #
   # The division for other assemblies is determined by looking up
@@ -1176,7 +1176,9 @@ sub _add_genome_browser_links {
   } elsif ($species =~ /triticum_aestivum/i) {
     if ($assembly_name =~ /IWGSC1\+popseq/) {
       $division = 'archive.plants';
-    } elsif ($assembly_name =~ /TGAC/) { # TGCAv1 is new assembly and has accession, but
+    } elsif ($assembly_name =~ /TGAC/) { # TGACv1 is the 'newest' old assembly
+      $division = 'oct2017-plants';
+    } elsif ($assembly_name =~ /IWGSC/) { # IWGSC is new assembly and has accession, but
       # as said above EG interface cannot fetch entry from genome shared db
       # this is weird as same code elsewhere using EG interface works
       $division = 'plants';

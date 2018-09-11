@@ -132,24 +132,19 @@
       <!-- Tab panes -->
       <div class="tab-content">
         <div role="tabpanel" class="tab-pane fade in active" id="tracks" style="margin-top: 20px;">
-          [% IF items.size > 0 %]
-            [% from = (pager.current_page - 1) * pager.entries_per_page + 1 %]
-            [% to = pager.current_page * pager.entries_per_page %]
-            [% IF (pager.current_page == pager.last_page) %]
-              [% to = pager.total_entries %]
-            [% END %]
-          <p>Track Collections [% from %] to [% to %] of [% pager.total_entries %]</p>
+          [% IF size > 0 -%]
+          <p>Track Collections [% from %] to [% to %] of [% total %]</p>
 
-          [% FOREACH item = items %]
-            [% status = item.get_value('status').message %]
-            [% h = item.get_value('hub'); %]
-            [% urls = h.browser_links %]
-            [% IF h.ok == 0 %]
-              [% status = 'Remote Data Unavailable' %]
-            [% END %]
-            [% s = item.get_value('species'); %]
-            [% a = item.get_value('assembly'); %]
-            [% IF status == 'All is Well' %]
+          [% FOREACH item = items -%]
+            [% status = item.get_value('status').message -%]
+            [% h = item.get_value('hub'); -%]
+            [% urls = h.browser_links -%]
+            [% IF h.ok == 0 -%]
+              [% status = 'Remote Data Unavailable' -%]
+            [% END -%]
+            [% s = item.get_value('species'); -%]
+            [% a = item.get_value('assembly'); -%]
+            [% IF status == 'All is Well' -%]
             <div class="panel panel-info">
               <a target="_blank" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [ item.id ]) %]"><h3 class="panel-title">[% h.shortLabel %]</h3></a>
               <h4 style="padding-left: 10px;">[% h.longLabel %]</h4>
@@ -159,21 +154,21 @@
                   <div class="btn-group btn-group-xs">
                     <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">View in Genome Browser <span class="caret"></span></button>
                     <ul class="dropdown-menu" role="menu">
-                      [% IF urls.ensembl %]
+                      [% IF urls.ensembl -%]
                       <li><a target="_blank" href="[% urls.ensembl %]">Ensembl</a></li>
-                      [% END %]
-                      [% IF urls.biodalliance %]
+                      [% END -%]
+                      [% IF urls.biodalliance -%]
                       <li><a target="_blank" href="[% urls.biodalliance %]">Embedded View (Biodalliance)</a></li>
-                      [% END %]
-                      [% IF urls.vectorbase %]
+                      [% END -%]
+                      [% IF urls.vectorbase -%]
                       <li><a target="_blank" href="[% urls.vectorbase %]">VectorBase</a></li>
-                      [% END %]
-                      [% IF urls.ucsc %]
+                      [% END -%]
+                      [% IF urls.ucsc -%]
                       <li><a target="_blank" href="[% urls.ucsc %]">UCSC</a></li>
-                      [% END %]
+                      [% END -%]
                     </ul>
                   </div>
-                  [% END %]
+                  [% END -%]
                   <a role="button" class="btn btn-lg btn-default" data-toggle="popover" title="More info about this collection" data-content="" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [ item.id ]) %]">View Info</a><br/><br/>
                   <span class="label label-success"><a href="[% c.uri_for(c.controller('docs').action_for('results_page')) %]#status" style="text-decoration: none; color: inherit;" data-toggle="tooltip" title="Hub has been checked: all tracks available">Remote Data Available</a></span>
                 </div>
@@ -183,7 +178,7 @@
                 </p>
               </div>
             </div>
-            [% ELSIF status.match('Unavailable') %]
+            [% ELSIF status.match('Unavailable') -%]
             <div class="panel panel-danger">
               <a target="_blank" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [ item.id ]) %]"><h3 class="panel-title">[% h.shortLabel %]</h3></a>
               <h4 style="padding-left: 10px;">[% h.longLabel %]</h4>
@@ -208,21 +203,21 @@
                   <div class="btn-group btn-group-xs">
                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">View in Genome Browser <span class="caret"></span></button>
                     <ul class="dropdown-menu" role="menu">
-                      [% IF urls.ensembl %]
+                      [% IF urls.ensembl -%]
                       <li><a target="_blank" href="[% urls.ensembl %]">Ensembl</a></li>
-                      [% END %]
-                      [% IF urls.biodalliance %]
+                      [% END -%]
+                      [% IF urls.biodalliance -%]
                       <li><a target="_blank" href="[% urls.biodalliance %]">Embedded View (Biodalliance)</a></li>
-                      [% END %]
-                      [% IF urls.vectorbase %]
+                      [% END -%]
+                      [% IF urls.vectorbase -%]
                       <li><a target="_blank" href="[% urls.vectorbase %]">VectorBase</a></li>
-                      [% END %]
-                      [% IF urls.ucsc %]
+                      [% END -%]
+                      [% IF urls.ucsc -%]
                       <li><a target="_blank" href="[% urls.ucsc %]">UCSC</a></li>
-                      [% END %]
+                      [% END -%]
                     </ul>
                   </div>
-                  [% END %]
+                  [% END -%]
                   <a role="button" class="btn btn-lg btn-default" data-toggle="popover" title="More info about this collection" data-content="" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [ item.id ]) %]">View Info</a><br/><br/>
                   <span class="label label-warning"><a href="[% c.uri_for(c.controller('docs').action_for('results_page')) %]#status" style="text-decoration: none; color: inherit;" data-toggle="tooltip" title="The registry is not aware of whether this hub works or not">[% status %]</a></span>
                 </div>
@@ -232,64 +227,64 @@
                 </p>
               </div>
             </div>            
-            [% END %]
-          [% END %]
-              [%# bootstrap simple pagination %]
-    <div align="center">
-      <nav>
-        <ul class="pagination">
-        [% IF pager.previous_page %]
-          [% filters.page = pager.previous_page %]
-          <li><a href="[% c.uri_for('/search', filters)%]" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
-        [% ELSE %]
-          <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
-        [% END %]
+            [% END -%]
+          [% END -%]
 
-        [% IF pager.current_page != pager.first_page %] [%# AND pager.first_page != pager.previous_page %]
-          [% filters.page = pager.first_page %]
-          <li><a href="[% c.uri_for('/search', filters) %]">[% pager.first_page %]</a></li>
-        [% END %]
+          <div align="center">
+            <nav>
+              <ul class="pagination">
 
-        [% IF pager.previous_page AND pager.first_page != pager.previous_page %]
-          [% filters.page = pager.previous_page %]
-          [% IF pager.previous_page != 2 %]
-          <li><a>...</a></li>
-          [% END %]
-          <li><a href="[% c.uri_for('/search', filters) %]">[% pager.previous_page %]</a></li>
-        [% END %]
+              [% SET prev_page = page - 1;
+                 SET next_page = page + 1
+              -%]
 
-          <li class="active"><a>[% pager.current_page %]<span class="sr-only">(current)</span></a></li>
+              [% IF page != 1 -%]
+                [% SET filters.page = prev_page -%]
+                <li><a href="[% c.uri_for('/search', filters)%]" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+              [% ELSE -%]
+                <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+              [% END -%]
 
-        [% IF  pager.next_page AND pager.last_page != pager.next_page %]
-          [% filters.page = pager.next_page %]
-          [% x = pager.last_page; x = x - 1 %]
-          [% IF pager.next_page != x %]
-          [% END %]
-          <li><a href="[% c.uri_for('/search', filters) %]">[% pager.next_page %]</a></li>
-          <li><a>...</a></li>
-        [% END %]
+              [% IF page > 1 -%]
+                [% filters.page = 1 -%]
+                <li><a href="[% c.uri_for('/search', filters) %]">[% 1 %]</a></li>
+                [% SET filters.page = 1 -%]
 
-        [% IF pager.current_page != pager.last_page %] [%# AND pager.last_page != pager.next_page %]
-          [% filters.page = pager.last_page %]
-          <li><a href="[% c.uri_for('/search', filters) %]">[% pager.last_page %]</a></li>
-        [% END %]
+                [% IF page > 2 -%]
+                <li><a>...</a></li>
+                [% END -%]
+                <li><a href="[% c.uri_for('/search', filters) %]">[% prev_page %]</a></li>
+              [% END -%]
 
-        [% IF pager.next_page %]
-          [% filters.page = pager.next_page %]
-          <li><a href="[% c.uri_for('/search', filters)%]" aria-label="Previous"><span aria-hidden="true">&raquo;</span></a></li>
-        [% ELSE %]
-          <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&raquo;</span></a></li>
-        [% END %]
-        </ul>
-      </nav>
-    </div>
+                <li class="active"><a>[% page %]<span class="sr-only">(current)</span></a></li>
 
-          [% ELSE %]
+              [% IF page != last_page -%]
+                [% SET filters.page = next_page -%]
+                <li><a href="[% c.uri_for('/search', filters) %]">[% next_page %]</a></li>
+                <li><a>...</a></li>
+              [% END -%]
+
+              [% IF page != last_page -%]
+                [% filters.page = last_page -%]
+                <li><a href="[% c.uri_for('/search', filters) %]">[% last_page %]</a></li>
+              [% END -%]
+
+              [% IF page != last_page -%]
+                [% filters.page = next_page -%]
+                <li><a href="[% c.uri_for('/search', filters)%]" aria-label="Previous"><span aria-hidden="true">&raquo;</span></a></li>
+              [% ELSE -%]
+                <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&raquo;</span></a></li>
+              [% END -%]
+              </ul>
+            </nav>
+          </div>
+
+          [% ELSE -%]
           <div class="alert alert-danger" role="alert">
             <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> No results. 
             <p>Try with another query.</p>
           </div>
-          [% END %]
+          [% END -%]
         </div>
       </div>
     </div>

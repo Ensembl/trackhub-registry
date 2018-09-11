@@ -137,7 +137,7 @@ SKIP: {
                          },
                         }, 'Submit wrong character as search query'
                              );
-  $mech->content_like(qr/An unexpected error happened.*?No results/s, 'Query parsing failed');
+  $mech->content_like(qr/Unintelligible query string/s, 'Query parsing failed');
 
 }
 

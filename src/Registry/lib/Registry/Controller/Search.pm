@@ -33,6 +33,7 @@ use namespace::autoclean;
 
 use Try::Tiny;
 use Catalyst::Exception;
+use POSIX;
 
 use Registry::Utils::URL qw(file_exists);
 use Registry::TrackHub::TrackDB;
@@ -58,11 +59,22 @@ sub index :Path :Args(0) {
   my $params = $c->req->params;
 
   # Basic query check: if empty query params, matches all document
-  my ($query_type, $query_body) = ('match_all', {});
+  my ($query_body, $query_field);
   if ($params->{q}) {
-
-    $query_type = 'query_string';
-    $query_body = { query => $params->{q} }; # default field is _all
+    ($query_field,$query_body) = split ':',$params->{q};
+    if ($query_body !~ /\w/) {
+      $c->stash(error_msg => 'Unintelligible query string - your query must contain something resembling words or named fields', template => 'index.tt');
+      return;
+    }
+  } else {
+    $query_body = {};
+    $query_field = 'match_all';
+  }
+  my $first_constraint;
+  if (! defined $query_field) {
+    $first_constraint = { query_string => { query => $params->{q}}};
+  } else {
+    $first_constraint = { term => {$query_field => $query_body}};
   } 
   my $facets = 
     {
@@ -75,17 +87,21 @@ sub index :Path :Args(0) {
   my $page = $params->{page} || 1;
   $page = 1 if $page !~ /^\d+$/;
   my $entries_per_page = $params->{entries_per_page} || 5;
+  my $from = 0; # zero-based. one excludes the first result
+  if ($page != 1) {
+    $from = $page * $entries_per_page;
+  }
 
   my %query_args = (
-    from             => $page,
+    from             => $from,
     size             => $entries_per_page, 
-    query            => $query_body,
+    query            => { bool => { must => [ $first_constraint ]}},
     aggregations     => $facets
   );
 
-  # pass extra (i.e. besides query) parameters as ANDed filters
-  my $filters = { public => 1 }; # present only 'public' trackDbs
-  
+  # pass extra (i.e. besides query) parameters as additional constraints to the user query
+  my @filters; # present only 'public' trackDbs
+  push @filters, { term => { public => 'true' }};
   foreach my $param (keys %{$params}) {
     next if $param eq 'q' or $param eq 'page' or $param eq 'entries_per_page';
     
@@ -101,9 +117,9 @@ sub index :Path :Args(0) {
     } else {
       Catalyst::Exception->throw("Unrecognised parameter: $param");
     }
-    $filters->{$filter} = $params->{$param};
+    push @filters, { term => { $filter => $params->{$param} } };
   }
-  $query_args{filters} = $filters if $filters;
+  push @{ $query_args{query}->{bool}->{must}}, @filters;
 
   my ($results, $results_by_hub);
 
@@ -111,24 +127,27 @@ sub index :Path :Args(0) {
   try {
     $results = $c->model('Search')->search_trackhubs(%query_args);
   } catch {
-    if($_->{'msg'} =~ /SearchPhaseExecutionException/gi){
-      $c->stash(error_msg => "An unexpected error happened, query parsing failed. Please check your query and try again", template => 'search/results.tt');
-    }else{
-      Catalyst::Exception->throw( qq/$_/ );
-    }
-
+    Catalyst::Exception->throw( qq/$_/ );
   };
-  
+
+  # User form doesn't want to handle Elasticsearch annotation of results
+  my @clean_results = map { $_->{_source} } @{ $results->{hits}{hits}};
 
   if($results){
-    $c->stash(query_string    => $params->{q},
-              filters         => $params,
-              items           => $results->items,
-              aggregations    => $results->aggregations,
-              pager           => $results->pager,
-              template        => 'search/results.tt');
+    $c->stash(
+      query_string    => $params->{q},
+      filters         => $params,
+      items           => \@clean_results,
+      aggregations    => $results->{aggregations},
+      template        => 'search/results.tt',
+      total           => $results->{hits}{total},
+      page            => $page,
+      last_page       => ceil( $results->{hits}{total} / $entries_per_page ),
+      size            => scalar @clean_results,
+      from            => $from + 1, # This is offset because users are not Elasticsearch
+      to              => scalar(@clean_results) - $from
+    );
   }
-
 }
 
 =head2 view_trackhub

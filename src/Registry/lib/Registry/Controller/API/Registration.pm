@@ -248,6 +248,7 @@ sub trackdb_create_POST {
 
 =head2 trackhub
 
+Return the track data hubs for the requesting user.
 Actions for /api/trackhub (GET|POST)
 
 =cut 
@@ -283,20 +284,23 @@ sub trackhub_GET {
   # get all docs for the given user
   my $trackdbs = $c->model('Search')->get_trackdbs(query => { term => { owner => $c->stash->{user} } });
 
-  my $trackhubs;
+  my $results;
   foreach my $trackdb (@{$trackdbs}) {
-    my $hub = $trackdb->{hub}{name};
-    $trackhubs->{$hub} = $trackdb->{hub} unless exists $trackhubs->{$hub};
+    use Data::Dumper;
+    my $hub = $trackdb->{_source}{hub}{name};
+    # print "!!!!!!!!!!!!!!!!!!!!! HUB NAME $hub\n";
+    # print Dumper $trackdb;
+    $results->{$hub} = $trackdb->{_source}{hub} unless exists $results->{$hub};
 
-    push @{$trackhubs->{$hub}{trackdbs}},
+    push @{$results->{$hub}{trackdbs}},
       {
-       species  => $trackdb->{species}{tax_id},
-       assembly => $trackdb->{assembly}{accession},
-       uri      => $c->uri_for('/api/trackdb/' . $trackdb->{_id})->as_string
+       species  => $trackdb->{_source}{species}{tax_id},
+       assembly => $trackdb->{_source}{assembly}{accession},
+       uri      => $c->uri_for('/api/trackdb/' . $trackdb->{_source}{_id})->as_string
       };
   }
 
-  my @trackhubs = values %{$trackhubs};
+  my @trackhubs = values %{$results};
   $self->status_ok($c, entity => \@trackhubs);
 }
 
@@ -344,31 +348,18 @@ sub trackhub_POST {
   # prevent submission of a hub submitted by another user
   #
 
-  my $hits = $c->model('Search')->get_hub_by_url($url);
-  if (scalar @$hits > 0 && $hits->[0]{owner} ne $c->stash->{user}) {
+  my $previous_instances = $c->model('Search')->get_hub_by_url($url);
+
+  if (scalar(@$previous_instances) > 0 && $previous_instances->[0]{_source}{owner} ne $c->stash->{user}) {
     $c->go('ReturnError', 'custom', [qq{Cannot submit a track hub registered by another user}]);
   }
 
-  # call might be a request to update an already registered TrackHub.
-  # Delete it if it exists, along with any trackDBs in the document store belonging
-  # to the TrackHub
-
-  my $updated = 0;
+  # Grab a representative created time from a prior hub.
   my $created;
-  my @deleted_docs;
-  if (scalar @{$hits}) {
-    # This is not in compliance with HTTP standards. Replacing a document should be done with PUT or PATCH
-    # The correct response here is to say: "You've already created that document"
-    $c->log->info("TrackHub already registered. Deleting existing trackDBs");
-    foreach my $doc (@{$hits}) {
-      $created = $doc->{_source}{created}; # remember created time for later
-      $c->model('Search')->delete_hub_by_id($doc->{_id});
-      $c->log->info(sprintf "Deleted trackDb [%s]", $doc->{_id});
-      push @deleted_docs, $doc;
-    }
-    $c->model('Search')->refresh_trackhub_index;
-    $updated = 1;
-  }
+  $created = $previous_instances->[0]->{_source}{created} if (scalar @$previous_instances);
+  my @docs_to_insert;
+  
+  # Validate the submitted hub
 
   my ($location, $entity); # Return values for submitter
   try {
@@ -397,48 +388,46 @@ sub trackhub_POST {
       # set the owner of the doc as the current user
       $doc->{owner} = $c->stash->{user};
       # set creation/update date/status 
-      unless ($updated) {
+      unless ($created) {
         $doc->{created} = time();
       } else {
         $doc->{created} = $created;
         $doc->{updated} = time();
       }
 
-      my $id = $c->model('Search')->create_trackdb($doc);
-      $c->model('Search')->refresh_trackhub_index;
-
-      $c->log->info(sprintf "Created trackDb [%s] (%s)", $id, $doc->{assembly}{name});
-
-      push @{$location}, $c->uri_for( '/api/trackdb/' . $id )->as_string;
-      push @{$entity}, $c->model('Search')->get_trackhub_by_id($id);
+      push @docs_to_insert,$doc;
     }
   } catch {
-    # TODO: roll back and delete any doc which has been indexed prior to the error
-    # NOTE: not sure this is the correct way, since /api/trackhub/:id (GET|POST|DELETE)
-    #       all expect the trackhub doc to be loaded in the stash
-    # map { $c->forward("trackdb_DELETE", $id) } @indexed;
+    # Validation error has occurred.
+    # Do not delete prior track, and complain to submitter
 
-    # When submitter resubmits a hub, the API first deletes the existing track dbs and then
-    # parse/translate/resubmit the hub again. Problems occur when resubmission generates an
-    # error, e.g. a wrong assembly specified. In these cases, the hub is deleted from the
-    # registry while the correct result should be the hub remains untouched.
-    #
-    # Resubmit the original deleted documents
-    if (@deleted_docs) {
-      $c->log->info("An error occurred while resubmitting the hub. Roll-back to previous content.");
-      foreach my $doc (@deleted_docs) {
-        $c->log->info(sprintf "Reindexing doc %s", $doc->{_id});
-        $c->model('Search')->index(
-          index   => $config->{trackhub}{index},
-          type    => $config->{trackhub}{type},
-          id      => $doc->{_id},
-          body    => $doc->{_source});
-      }
-      $c->model('Search')->indices->refresh(index => $config->{trackhub}{index});
-    }
-    
     $c->go('ReturnError', 'custom', [qq{$_}]);
+
   };
+
+  # Now all submitted items are validated, delete anything with the same URL
+
+  if (scalar @{$previous_instances}) {
+    # This is not in compliance with HTTP standards. Replacing a document should be done with PUT or PATCH
+    # The correct response here is to say: "You've already created that document"
+    $c->log->info("TrackHub already registered: $url. Deleting existing trackDBs");
+    foreach my $doc (@{$previous_instances}) {
+      $c->model('Search')->delete_hub_by_id($doc->{_id});
+      $c->log->info(sprintf "Deleted trackDb [%s]", $doc->{_id});
+    }
+  }
+  
+  # Insert the new documents
+
+  foreach my $new_doc (@docs_to_insert) {
+    my $id = $c->model('Search')->create_trackdb($new_doc);
+    $c->log->info(sprintf "Created trackDb [%s] (%s)", $id, $new_doc->{assembly}{name});
+  
+    $c->model('Search')->refresh_trackhub_index;
+
+    push @{$location}, $c->uri_for( '/api/trackdb/' . $id )->as_string;
+    push @{$entity}, $c->model('Search')->get_trackhub_by_id($id);
+  }
 
   # location in status_created can be either a scalar or a blessed reference
   bless($location, 'Location');
@@ -495,14 +484,14 @@ sub trackhub_by_name_GET {
   my $trackhub;
   foreach my $trackdb (@{$trackdbs}) {
     # record trackhub attributes
-    map { $trackhub->{$_} = $trackdb->{hub}{$_} } qw / name shortLabel longLabel url /
+    map { $trackhub->{$_} = $trackdb->{_source}{hub}{$_} } qw / name shortLabel longLabel url /
       unless defined $trackhub;
 
     push @{$trackhub->{trackdbs}},
       {
-       species  => $trackdb->{species},
-       assembly => $trackdb->{assembly},
-       uri      => $c->uri_for('/api/trackdb/' . $trackdb->{_id})->as_string
+       species  => $trackdb->{_source}{species},
+       assembly => $trackdb->{_source}{assembly},
+       uri      => $c->uri_for('/api/trackdb/' . $trackdb->{_source}{_id})->as_string
       };
   }
 
@@ -672,10 +661,10 @@ sub trackdb_PUT {
     defined $hub and defined $assembly_acc or
       $c->go('ReturnError', 'custom', ["Unable to find hub/assembly information"]);
     
-    my $duplicate_docs = $c->model('Search')->get_existing_hubs($c->stash->{user},$hub,$assembly_acc)->{hits};
-    if ($duplicate_docs->{total}) {
-      foreach my $doc (@{$duplicate_docs->{hits}}) {
-        $c->go('ReturnError', 'custom', ["Cannot submit: a document with the same hub/assembly exists"])
+    my $duplicate_docs = $c->model('Search')->get_existing_hubs($c->stash->{user},$hub,$assembly_acc);
+    if (@$duplicate_docs) {
+      foreach my $doc (@$duplicate_docs) {
+        $c->go('ReturnError', 'custom', ["Cannot submit: a document when the same hub/assembly exists"])
         if $doc->{_id} != $doc_id;
       }
     }

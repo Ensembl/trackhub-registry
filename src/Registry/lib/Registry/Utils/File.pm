@@ -42,7 +42,7 @@ use strict;
 use Compress::Zlib qw//;
 use Compress::Bzip2;
 use IO::Uncompress::Bunzip2;
-
+use Carp qw/confess/;
 use Exporter qw(import);
 our @EXPORT_OK = qw(slurp_file sanitise_filename get_filename get_extension get_compression uncompress);
 our %EXPORT_TAGS = (all => [@EXPORT_OK]);
@@ -63,12 +63,12 @@ our %EXPORT_TAGS = (all => [@EXPORT_OK]);
 
 sub slurp_file {
   my $file = shift;
-  defined $file or die "Undefined file";
+  defined $file or confess "Undefined file";
 
   my $string;
   {
     local $/=undef;
-    open my $fh, '<',"$file" or die "Couldn't open file $file: $!";
+    open my $fh, '<',"$file" or confess "Couldn't open file $file: $!";
     $string = <$fh>;
     close $fh;
   }

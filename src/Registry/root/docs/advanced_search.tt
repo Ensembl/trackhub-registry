@@ -20,6 +20,7 @@
               <li><a href="[% c.uri_for('/docs/search/results') %]">Search Results Page</a></li>
               <li><a style="font-weight: bold;">Advanced Search</a>
                 <ul>
+                  <li><a href='Field queries'>Field-specific queries</a></li>
                   <li><a href="#wildcards">Wildcards</a></li>
                   <li><a href="#regex">Regular Expressions</a></li>
                   <li><a href="#logical">Logical Operators</a></li>
@@ -39,7 +40,13 @@
     <p>
       Complex queries can be made for more specific and customised searches, by entering terms and operators according to the simple query language understood by the search application. The language supports the use of wildcards, regular expressions, logical and fuzzy operators, proximity searches and grouping.
     </p>
-    
+
+    <h4 is="Field queries">Field-specific queries</h4>
+    <p>
+      Searches can be confined to specific fields, i.e. those visible in the individual hub pages. The indexed fields are defined by the TrackHub specification, but some useful examples include species.scientific_name, assembly.accession, hub.shortLabel and hub.longLabel.
+
+      These are specified in the query string followed by a colon. If the search term in that field is comprised of more than one word, they must be grouped together with brackets, e.g. <pre>species.scientific_name:(Zea mays)</pre>. Then use Logical Operators below to add additional search terms as and when you need them.
+    </p>
     <h4 id="wildcards">Wildcards</h4>
     <p>
       Sometimes it may be useful to match records based on a query pattern. Wildcard searches can be run on individual terms, using ? to replace a single character, and * to replace zero or more characters:

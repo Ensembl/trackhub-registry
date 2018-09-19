@@ -86,7 +86,7 @@ sub search_trackhubs {
     my $result = $self->_es->search(%args);
     return $result;
   } catch {
-    throw("Backend query problem:\n $_");
+    Catalyst::Exception->throw("Backend query problem:\n $_");
   };
 }
 

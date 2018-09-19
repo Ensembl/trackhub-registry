@@ -87,7 +87,7 @@ SKIP: {
          { name => 'plants', url => 'http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/hub.txt' },
          { name => 'ensembl', url => 'http://ngs.sanger.ac.uk/production/ensembl/regulation/hub.txt' },
          { name => 'rnaseq', url => 'http://web.stanford.edu/~htilgner/2012_454paper/data/hub.txt' },
-         { name => 'zebrafish', url => 'http://research.nhgri.nih.gov/manuscripts/Burgess/zebrafish/downloads/NHGRI-1/hub.txt' },
+         # { name => 'zebrafish', url => 'http://research.nhgri.nih.gov/manuscripts/Burgess/zebrafish/downloads/NHGRI-1/hub.txt' },
          { name => 'sanger', url => 'http://ngs.sanger.ac.uk/production/grit/track_hub/hub.txt' },
          # NA any more { name => 'thornton', url => 'http://devlaeminck.bio.uci.edu/RogersUCSC/hub.txt' }, 
         );
@@ -148,7 +148,7 @@ SKIP: {
   ok($response->is_success, 'Request successful');
   $content = from_json($response->content);
   #is(scalar @{$content}, scalar @public_hubs, 'Number of hubs'); #excluding polyA and thornton
-  is(scalar @{$content}, 6, 'Number of hubs');
+  is(scalar @{$content}, 5, 'Number of hubs');
 
   # test a couple of hubs
   my $hub = first { $_->{name} eq 'EnsemblRegulatoryBuild' } @{$content};
@@ -159,13 +159,13 @@ SKIP: {
   map { like($_->{assembly}, qr/GCA_000001405|GCA_000001635/, 'trackDb assembly') } @{$hub->{trackdbs}};
   map { like($_->{uri}, qr/api\/search\/trackdb/, 'trackDb uri') } @{$hub->{trackdbs}};
 
-  $hub = first { $_->{name} eq 'NHGRI-1' } @{$content};
-  ok($hub, 'Zebrafish hub');
-  is($hub->{shortLabel}, 'ZebrafishGenomics', 'Hub shortLabel');
-  is(scalar @{$hub->{trackdbs}}, 2, 'Number of trackDbs');
-  is($hub->{trackdbs}[0]{species}, 7955, 'trackDb species');
-  like($hub->{trackdbs}[0]{assembly}, qr/^GCA_000002035.\d$/, 'trackDb assembly');
-  like($hub->{trackdbs}[0]{uri}, qr/api\/search\/trackdb/, 'trackDb uri');
+  # $hub = first { $_->{name} eq 'NHGRI-1' } @{$content};
+  # ok($hub, 'Zebrafish hub');
+  # is($hub->{shortLabel}, 'ZebrafishGenomics', 'Hub shortLabel');
+  # is(scalar @{$hub->{trackdbs}}, 2, 'Number of trackDbs');
+  # is($hub->{trackdbs}[0]{species}, 7955, 'trackDb species');
+  # like($hub->{trackdbs}[0]{assembly}, qr/^GCA_000002035.\d$/, 'trackDb assembly');
+  # like($hub->{trackdbs}[0]{uri}, qr/api\/search\/trackdb/, 'trackDb uri');
 
   #
   # /api/info/hubs_per_assembly

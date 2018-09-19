@@ -169,6 +169,15 @@ SKIP: {
   # Note capitalisation of species is critical. An additional analysed field is created called 
   # species.scientific_name.lowercase for case-insensitive searches
   $mech->content_like(qr/mm9/s, 'Results contain some useful representative hits');
+
+  # Try a query with no text. Should match all public hubs.
+  $mech->submit_form_ok({
+      form_number => 1,
+      fields => {
+        q => undef
+      }
+    }, 'match_all query fires when no query is provided');
+  $mech->content_like(qr/Track Collections 1 to 5 of 7/s, 'Results of match_all are correct in number and pagination');
 }
 
 done_testing();

@@ -53,6 +53,7 @@ package Registry::Model::Search;
 use Moose;
 use Carp;
 use namespace::autoclean;
+use Try::Tiny;
 use Catalyst::Exception qw/throw/;
 
 extends 'Catalyst::Model::ElasticSearch';
@@ -81,8 +82,12 @@ sub search_trackhubs {
     unless exists $args{query};
 
   %args = $self->_decorate_query(%args);
-
-  return $self->_es->search(%args);
+  try {
+    my $result = $self->_es->search(%args);
+    return $result;
+  } catch {
+    throw("Backend query problem:\n $_");
+  };
 }
 
 =head2 count_trackhubs

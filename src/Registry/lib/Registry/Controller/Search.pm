@@ -73,7 +73,7 @@ sub index :Path :Args(0) {
     $c->log->debug('Using the most lame default query');
     $query_body = {};
     $query_field = 'match_all';
-    $first_constraint = { query => { $query_field => $query_body }};
+    $first_constraint = { $query_field => $query_body };
   }
   
   my $facets = 

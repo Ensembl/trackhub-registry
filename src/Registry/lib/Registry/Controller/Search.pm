@@ -59,23 +59,23 @@ sub index :Path :Args(0) {
   my $params = $c->req->params;
 
   # Basic query check: if empty query params, matches all document
+  # This should all be refactored into a query-builder model
+  my $first_constraint;
   my ($query_body, $query_field);
   if ($params->{q}) {
-    ($query_field,$query_body) = split ':',$params->{q};
-    if ($query_body !~ /\w/) {
+    if ($params->{q} !~ /\w/) {
       $c->stash(error_msg => 'Unintelligible query string - your query must contain something resembling words or named fields', template => 'index.tt');
       return;
+    } else {
+      $first_constraint = { query_string => { query => $params->{q} }};
     }
   } else {
+    $c->log->debug('Using the most lame default query');
     $query_body = {};
     $query_field = 'match_all';
+    $first_constraint = { term => { $query_field => $query_body }};
   }
-  my $first_constraint;
-  if (! defined $query_field) {
-    $first_constraint = { query_string => { query => $params->{q}}};
-  } else {
-    $first_constraint = { term => {$query_field => $query_body}};
-  } 
+  
   my $facets = 
     {
      species  => { terms => { field => 'species.scientific_name' } },
@@ -122,7 +122,8 @@ sub index :Path :Args(0) {
   push @{ $query_args{query}->{bool}->{must}}, @filters;
 
   my ($results, $results_by_hub);
-
+  # use Data::Dumper;
+  # print Dumper \%query_args;
   # do the search
   try {
     $results = $c->model('Search')->search_trackhubs(%query_args);

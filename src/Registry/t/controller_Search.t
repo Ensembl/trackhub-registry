@@ -110,21 +110,21 @@ SKIP: {
     );
 
   $ua->timeout(10);
-  # foreach my $hub (keys %public_hubs) {
-  #   note "Submitting hub $hub";
-  #   if (head($public_hubs{$hub})) {
-  #     my $request = POST('/api/trackhub?permissive=1',
-  #              'Content-type' => 'application/json',
-  #              'Content'      => to_json({ url => $public_hubs{$hub} }));
-  #     $request->headers->header(user       => 'trackhub1');
-  #     $request->headers->header(auth_token => $auth_token);
-  #     ok($response = request($request), 'POST request to /api/trackhub/create');
-  #     ok($response->is_success, 'Request successful 2xx');
-  #     is($response->content_type, 'application/json', 'JSON content type');
-  #   }else{
-  #      note "Submitting hub $hub timed out. Please check the url $public_hubs{$hub})\n";
-  #   }
-  # }
+  foreach my $hub (qw/sanger/) {
+    note "Submitting hub $hub";
+    if (head($public_hubs{$hub})) {
+      my $request = POST('/api/trackhub?permissive=1',
+               'Content-type' => 'application/json',
+               'Content'      => to_json({ url => $public_hubs{$hub} }));
+      $request->headers->header(user       => 'trackhub1');
+      $request->headers->header(auth_token => $auth_token);
+      ok($response = request($request), 'POST request to /api/trackhub/create');
+      ok($response->is_success, 'Request successful 2xx');
+      is($response->content_type, 'application/json', 'JSON content type');
+    }else{
+       note "Submitting hub $hub timed out. Please check the url $public_hubs{$hub})\n";
+    }
+  }
 
   # [ENSCORESW-2121]
   # check unexpected characters in query are appropriately handled
@@ -138,7 +138,37 @@ SKIP: {
                         }, 'Submit wrong character as search query'
                              );
   $mech->content_like(qr/Unintelligible query string/s, 'Query parsing failed');
+  # Submit with a plain search string
+  $mech->submit_form_ok({
+      form_number => 1,
+      fields => {
+        q => 'GRC ALT align'
+      }
+    }, 'Plain text query for something in the Sanger trackhub');
+  $mech->content_like(qr/GRC Genome Issues under Review/s, 'Results contain some useful representative hits');
 
+  # Submit with a qualified search string
+  # It would be really great if we could get rid of these brackets without needing to rebuild the query object
+  $mech->submit_form_ok({
+      form_number => 1,
+      fields => {
+        q => 'species.scientific_name:(Mus musculus)'
+      }
+    }, 'Qualified species constraint query for something in the Sanger trackhub');
+  # Note capitalisation of species is critical. An additional analysed field is created called 
+  # species.scientific_name.lowercase for case-insensitive searches
+  $mech->content_like(qr/GRC Genome Issues under Review/s, 'Results contain some useful representative hits');
+  
+  # Try a mixed query, of named fields and general text strings
+  $mech->submit_form_ok({
+      form_number => 1,
+      fields => {
+        q => 'species.scientific_name:(Mus musculus) AND GRC Genome Issues under Review'
+      }
+    }, 'Qualified species constraint query for something in the Sanger trackhub');
+  # Note capitalisation of species is critical. An additional analysed field is created called 
+  # species.scientific_name.lowercase for case-insensitive searches
+  $mech->content_like(qr/mm9/s, 'Results contain some useful representative hits');
 }
 
 done_testing();

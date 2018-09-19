@@ -53,11 +53,11 @@
           <div id="species-facet" class="panel-collapse collapse">
             <div class="panel-body">
               <ul class="list-group">
-                [% FOR species IN aggregations.species %]
+                [% FOR species IN aggregations.species.buckets %]
                   [% p = { } %]
                   [% p.import(filters) %]
-                  [% p.species = species.value %]
-                <li class="list-group-item"><span class="badge">[% species.count %]</span><a rel="nofollow" href="[% c.uri_for('/search', p) %]"><em>[% species.value %]</em></a></li>
+                  [% p.species = species.key %]
+                <li class="list-group-item"><span class="badge">[% species.doc_count %]</span><a rel="nofollow" href="[% c.uri_for('/search', p) %]"><em>[% species.key %]</em></a></li>
                 [% END %]      
               </ul>
             </div>
@@ -71,11 +71,11 @@
           <div id="assembly-facet" class="panel-collapse collapse">
             <div class="panel-body">
               <ul class="list-group">
-                [% FOR assembly IN aggregations.assembly %]
+                [% FOR assembly IN aggregations.assembly.buckets %]
                   [% p = { } %]
                   [% p.import(filters) %]
-                  [% p.assembly_name = assembly.value %]
-                <li class="list-group-item"><span class="badge">[% assembly.count %]</span><a rel="nofollow" href="[% c.uri_for('/search', p ) %]">[% assembly.value %]</a></li>
+                  [% p.assembly_name = assembly.key %]
+                <li class="list-group-item"><span class="badge">[% assembly.odc_count %]</span><a rel="nofollow" href="[% c.uri_for('/search', p ) %]">[% assembly.key %]</a></li>
                 [% END %]      
               </ul>
             </div>
@@ -89,11 +89,11 @@
           <div id="hub-facet" class="panel-collapse collapse">
             <div class="panel-body">
               <ul class="list-group">
-                [% FOR hub IN aggregations.hub %]
+                [% FOR hub IN aggregations.hub.buckets %]
                   [% p = { } %]
                   [% p.import(filters) %]
-                  [% p.hub = hub.value %]
-                <li class="list-group-item"><span class="badge">[% hub.count %]</span><a rel="nofollow" href="[% c.uri_for('/search', p ) %]">[% hub.value %]</a></li>
+                  [% p.hub = hub.key %]
+                <li class="list-group-item"><span class="badge">[% hub.doc_count %]</span><a rel="nofollow" href="[% c.uri_for('/search', p ) %]">[% hub.key %]</a></li>
                 [% END %]      
               </ul>
             </div>
@@ -107,11 +107,11 @@
           <div id="type-facet" class="panel-collapse collapse">
             <div class="panel-body">
               <ul class="list-group">
-                [% FOR type IN aggregations.type %]
+                [% FOR type IN aggregations.type.buckets %]
                   [% p = { } %]
                   [% p.import(filters) %]
-                  [% p.type = type.value %]
-                <li class="list-group-item"><span class="badge">[% type.count %]</span><a rel="nofollow" href="[% c.uri_for('/search', p ) %]">[% type.value %]</a></li>
+                  [% p.type = type.key %]
+                <li class="list-group-item"><span class="badge">[% type.doc_count %]</span><a rel="nofollow" href="[% c.uri_for('/search', p ) %]">[% type.key %]</a></li>
                 [% END %]      
               </ul>
             </div>
@@ -136,14 +136,14 @@
           <p>Track Collections [% from %] to [% to %] of [% total %]</p>
 
           [% FOREACH item = items -%]
-            [% status = item.get_value('status').message -%]
-            [% h = item.get_value('hub'); -%]
+            [% status = item.status.message -%]
+            [% h = item.hub; -%]
             [% urls = h.browser_links -%]
             [% IF h.ok == 0 -%]
               [% status = 'Remote Data Unavailable' -%]
             [% END -%]
-            [% s = item.get_value('species'); -%]
-            [% a = item.get_value('assembly'); -%]
+            [% s = item.species; -%]
+            [% a = item.assembly; -%]
             [% IF status == 'All is Well' -%]
             <div class="panel panel-info">
               <a target="_blank" href="[% c.uri_for(c.controller.action_for('view_trackhub'), [ item.id ]) %]"><h3 class="panel-title">[% h.shortLabel %]</h3></a>

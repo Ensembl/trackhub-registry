@@ -203,7 +203,7 @@ ok($response->is_success, 'Request successful');
 is($response->content_type, 'application/json', 'JSON content type');
 $content = from_json($response->content);
 is(scalar @{$content->{items}}, 3, 'Number of search results');
-my @track_summaries = sort { $a->{id} cmp $b->{id} } @{$content->{items}}; # Deal with random order of return values
+my @track_summaries = sort { $a->{assembly}{name} cmp $b->{assembly}{name} } @{$content->{items}}; # Deal with random order of return values
 is($track_summaries[0]{species}{tax_id}, '7955', 'Search result species');
 is($track_summaries[0]{hub}{shortLabel}, 'GRC Genome Issues under Review', 'First Zebrafish label correct'); 
 is($track_summaries[1]{assembly}{name}, 'GRCz11','Search result assembly');

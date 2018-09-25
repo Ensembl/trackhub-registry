@@ -315,7 +315,7 @@ sub api_search {
   my @optional_clauses;
   if ($user_query ne '') { push @extra_clauses,{ match => $user_query } ; }
   push @extra_clauses, {public => "true" }; # present only 'public' hubs
-  push @extra_clauses, { "species.scientific_name.lowercase" => $species } if $species;
+  push @extra_clauses, { "species.scientific_name.lowercase" => lc $species } if $species;
   # if assembly is provided extend the search to both the name and synonyms to allow fetching
 
   # ENSCORESW-2039

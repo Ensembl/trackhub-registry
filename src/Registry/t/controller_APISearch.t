@@ -298,4 +298,16 @@ is($content->{configuration}{'VBRNAseq_group_SRP014756_bigwig'}{members}{'001_VB
 # shouldn't have the metadata
 ok(!$content->{data}, 'No metadata');
 
+# Test the unpublicised endpoint for trackhub metadata miners
+$request = GET('api/search/all');
+ok($response = request($request), 'GET request to /api/search/all');
+ok($response->is_success, 'Request successful');
+is($response->content_type, 'application/json', 'JSON content type');
+$content = from_json($response->content);
+
+cmp_ok(@$content, '==', 8, 'All hubs retrieved via /api/search/all');
+my @order_hits = sort { $a->{_source}{hub}{shortLabel} cmp $b->{_source}{hub}{shortLabel}} @$content;
+is( $order_hits[0]->{_source}{hub}{shortLabel}, 'GRC Genome Issues under Review', 'First response is always the same');
+is( $order_hits[-1]->{_source}{hub}{shortLabel}, 'Male adult (Tu 2012)', 'Last response is also always the same'); # Proof of sorting
+
 done_testing();

@@ -243,6 +243,42 @@ sub trackdb_GET {
   }
 }
 
+=head2 trackdb_all 
+
+/api/search/all
+
+Used by trackfind to mine the Trackhub Registry for metadata. Public hubs only
+Not publicised for general use as it will place stress on the web server if widely used.
+Previous loading on servers has not come close to stressing the host, hence no efforts made
+to page the outputs for the consumer.
+
+=cut
+
+sub trackdb_all :Path('/api/search/all') ActionClass('REST') {
+
+}
+
+sub trackdb_all_GET {
+  my ($self, $c) = @_;
+
+  my $trackdbs = $c->model('Search')->get_trackdbs(
+    query => { 
+      term => { public => "true"}
+    }, 
+    sort => ["_doc"]
+  );
+
+  # Clean out some keys we don't want/need to leak to users
+  for (my $i ==0; $i < scalar @$trackdbs; $i++) {
+    delete $trackdbs->[$i]->{_source}{owner}; # Anonymise output data.
+    delete $trackdbs->[$i]->{_index};
+    delete $trackdbs->[$i]->{_type};
+    delete $trackdbs->[$i]->{_score};
+    delete $trackdbs->[$i]->{sort};
+  }
+  $self->status_ok($c, entity => $trackdbs);
+}
+
 __PACKAGE__->meta->make_immutable;
 
 1;

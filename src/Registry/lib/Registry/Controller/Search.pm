@@ -122,8 +122,7 @@ sub index :Path :Args(0) {
   push @{ $query_args{query}->{bool}->{must}}, @filters;
 
   my ($results, $results_by_hub);
-  # use Data::Dumper;
-  # print Dumper \%query_args;
+  
   # do the search
   try {
     $results = $c->model('Search')->search_trackhubs(%query_args);
@@ -132,7 +131,7 @@ sub index :Path :Args(0) {
   };
 
   # User form doesn't want to handle Elasticsearch annotation of results
-  my @clean_results = map { $_->{_source} } @{ $results->{hits}{hits}};
+  my @clean_results = map { $_->{_source}{id} = $_->{_id}; $_->{_source} } @{ $results->{hits}{hits}};
 
   if($results){
     $c->stash(

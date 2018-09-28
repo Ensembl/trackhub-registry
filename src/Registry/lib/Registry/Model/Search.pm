@@ -300,7 +300,7 @@ sub create_trackdb {
   return $new_id;
 }
 
-
+# Search routine for API clients, no aggregations by default, just a combination of search constraints
 sub api_search {
   my ($self, $user_query, $page, $per_page, $species, $assembly, $accession, $hub, $type) = @_;
 
@@ -386,6 +386,7 @@ sub clean_results {
   Arg[2]      : Callback - code to post-process each of the documents in the result
   Examples    : my $result_list = $model->pager({query => { match => { ... } }, });
   Description : Fetches all the results for the query and buffers any paging that is required
+                i.e. to extract more than 10000 records from Elasticsearch in a single request.
   Returntype  : ListRef - A list of all the results for a large query
 
 =cut

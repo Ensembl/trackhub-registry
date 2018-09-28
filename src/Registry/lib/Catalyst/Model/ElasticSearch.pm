@@ -112,7 +112,7 @@ has '_additional_opts' => (
   is      => 'rw',
   lazy    => 1,
   isa     => 'HashRef',
-  default => sub { { send_get_body_as => 'POST'} },
+  default => sub { { send_get_body_as => 'POST', cxn_pool => 'Static'} },
 );
 
 =head2 _es

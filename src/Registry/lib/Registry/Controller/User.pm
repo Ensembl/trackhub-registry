@@ -366,7 +366,12 @@ sub register :Path('register') Args(0) {
       # user with the provided username does not exist, proceed with registration
     
       # get the max user ID to assign the ID to the new user
-      my $users = $c->model('Search')->search(index => $config->{user}{index}, type => $config->{user}{type}, size => 100000);
+      my $users = $c->model('Search')->search(
+        index => $config->{user}{index}, 
+        type => $config->{user}{type}, 
+        size => 100000
+        body => query => { match_all => {}}
+      );
       my $current_max_id = max( map { $_->{_id} } @{$users->{hits}{hits}} );
 
       # add default user role to user 

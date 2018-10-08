@@ -1,0 +1,46 @@
+{
+  "user": {
+    "_comment": "This is authentication_mappings_v1.json adapted for Elasticsearch v6.3",
+    "aliases": {
+      "users": {}
+    },
+    "mappings": {
+      "users": {
+        "properties": {
+          "username": {
+            "type": "keyword",
+            "index": true
+          },
+          "first_name": {
+            "type": "keyword",
+            "index": true
+          },
+          "last_name": {
+            "type": "keyword",
+            "index": true
+          },
+          "email": {
+            "type": "keyword",
+            "index": true
+          },
+          "password": {
+            "type": "keyword",
+            "index": false
+          },
+          "continuous_alert": {
+            "type": "boolean",
+            "index": true
+          },
+          "affiliation": {
+            "type": "keyword",
+            "index": true
+          },
+          "check_interval": {
+            "type": "integer",
+            "index": false
+          }
+        }
+      }
+    }
+  }
+}

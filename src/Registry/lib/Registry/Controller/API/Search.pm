@@ -269,7 +269,7 @@ sub trackdb_all_GET {
   );
 
   # Clean out some keys we don't want/need to leak to users
-  for (my $i ==0; $i < scalar @$trackdbs; $i++) {
+  for (my $i=0; $i < scalar @$trackdbs; $i++) {
     delete $trackdbs->[$i]->{_source}{owner}; # Anonymise output data.
     delete $trackdbs->[$i]->{_index};
     delete $trackdbs->[$i]->{_type};

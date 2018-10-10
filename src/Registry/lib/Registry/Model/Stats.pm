@@ -21,7 +21,7 @@ at C<< <http://www.trackhubregistry.org/help> >>
 
 =head1 NAME
 
-Registry::Controller::API::Info - Endpoints for retrieving service and track hub information
+Registry::Model::Stats - Endpoints for retrieving service and track hub information
 
 =head1 DESCRIPTION
 
@@ -44,11 +44,9 @@ extends 'Catalyst::Model';
 
 has summary_json => (
                      isa => 'ArrayRef',
-                     # isa => 'HashRef',	     
                      is => 'rw',
                      lazy => 1,
                      builder  => '_build_summary_json',
-                     # default => sub { {} }
                     );
 
 =head1 METHODS
@@ -74,14 +72,6 @@ sub _build_summary_json {
   my $source_file = Registry->config()->{'Model::Stats'}{summary};
   return from_json(slurp_file($source_file));
 }
-
-
-# sub BUILD {
-#   my $self = shift;
-
-#   my $source_file = Registry->config()->{'Model::Stats'}{file};
-#   $self->json(from_json(slurp_file($source_file)));
-# }
 
 __PACKAGE__->meta->make_immutable;
 

@@ -38,8 +38,9 @@ isa_ok($es, 'Registry::Model::Search');
 is($es->nodes, 'localhost:9200', 'Correct default nodes');
 
 SKIP: {
-  skip "Launch an elasticsearch instance for the tests to run fully",
-    6 unless &Registry::Utils::es_running();
+  unless (&Registry::Utils::es_running()) {
+    plan skip_all => "Launch an elasticsearch instance for the tests to run fully";
+  }
 
   my $config = Registry->config()->{'Model::Search'};
   my $indexer = Registry::Indexer->new(

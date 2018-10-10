@@ -39,7 +39,6 @@ use namespace::autoclean;
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 
 use Data::Dumper;
-use List::Util 'max';
 use Try::Tiny;
 use Registry::Form::User::Registration;
 use Registry::Form::User::Profile;
@@ -81,12 +80,10 @@ sub base : Chained('/login/required') PathPrefix CaptureArgs(1) {
 
   my $config = Registry->config()->{'Model::Search'};
   my $query = { term => { username => $username } };
-  my $user_search = $c->model('Search')->search( index => $config->{user}{index},
-                                                 type  => $config->{user}{type},
-                                                 body => { query => $query } );
+  my $user_search = $c->model('Users')->get_user($username);
 
-  $c->stash(user => $user_search->{hits}{hits}[0]{_source},
-            id   => $user_search->{hits}{hits}[0]{_id});
+  $c->stash(user => $user_search,
+            id   => $user_search->{id});
 
 }
 
@@ -118,13 +115,7 @@ sub profile : Chained('base') :Path('profile') Args(0) {
   map { $new_user_profile->{$_} = $profile_form->value->{$_} } keys %{$profile_form->value};
   
   # update user profile on the backend
-  my $config = Registry->config()->{'Model::Search'};
-  $c->model('Search')->index(index   => $config->{user}{index},
-                             type    => $config->{user}{type},
-                             id      => $c->stash->{id},
-                             body    => $new_user_profile);
-
-  $c->model('Search')->indices->refresh(index => $config->{user}{index});
+  $c->model('Users')->update_profile($c->stash->{id},$new_user_profile);
 
   $c->stash(status_msg => 'Profile updated');
 }
@@ -139,48 +130,34 @@ a user having the specified ID.
 sub delete : Chained('base') Path('delete') Args(1) Does('ACL') RequiresRole('admin') ACLDetachTo('denied') {
   my ($self, $c, $id) = @_;
 
-  Catalyst::Exception->throw("Unable to find user id")
-      unless defined $id;
-
-  my $config = Registry->config()->{'Model::Search'};
+  Catalyst::Exception->throw("No user ID specified") unless defined $id;
 
   #
   # delete all trackDBs which belong to the user
   #
   # find username
-  my $username = $c->model('Search')->search(index => $config->{user}{index},
-                                             type  => $config->{user}{type},
-                                             body  => {
-                                                 query => { filtered => { filter => { bool => { must => [ { term => { _id => $id } } ] } } } }
-                                                }
-                                            )->{hits}{hits}[0]{_source}{username};
+
+  my $username = $c->model('Users')->get_user_by_id($id);
   Catalyst::Exception->throw("Unable to find user $id information")
       unless defined $username;
 
   # find trackDBs which belong to user
   my $query = { term => { owner => $username } };
-  # my $query = { filtered => { filter => { bool => { must => [ { term => { owner => lc $username } } ] } } } };
+
   my $user_trackdbs = $c->model('Search')->search_trackhubs(query => $query, size => 100000);
-  # my $user_trackdbs = grep { $_->{_source}{owner} eq $username } @{$c->model('Search')->search_trackhubs(query => $query, size => 100000)};
 
   $c->log->debug(sprintf "Found %d trackDBs for user %s (%s)", scalar @{$user_trackdbs->{hits}{hits}}, $id, $username);
   # delete user trackDBs
   foreach my $trackdb (@{$user_trackdbs->{hits}{hits}}) {
-    $c->model('Search')->delete(index   => $config->{trackhub}{index},
-                                type    => $config->{trackhub}{type},
-                                id      => $trackdb->{_id});
+    $c->model('Search')->delete_hub_by_id($trackdb->{_id});
     $c->log->debug(sprintf "Document %s deleted", $trackdb->{_id});
   }
-  $c->model('Search')->indices->refresh(index => $config->{trackhub}{index});
+  $c->model('Search')->refresh_trackhub_index;
 
-  # delete the user
-  $c->model('Search')->delete(index   => $config->{user}{index},
-                              type    => $config->{user}{type},
-                              id      => $id);
-  $c->model('Search')->indices->refresh(index => $config->{user}{index});
+  # delete the user by ID
+  $c->model('Users')->delete_user($id);
 
   # redirect to the list of providers page
-  # $c->detach('list_providers', [$c->stash->{user}{username}]);
   $c->res->redirect($c->uri_for($c->controller->action_for('list_providers', [$c->stash->{user}{username}])));
 }
 
@@ -277,14 +254,10 @@ sub delete_trackhub : Chained('base') :Path('delete') Args(1) {
     # TODO: this should be redundant, but just to be sure
     if ($doc->{owner} eq $c->user->username) {
       my $config = Registry->config()->{'Model::Search'};
-      # try { # TODO: this is not working for some reason
-      $c->model('Search')->delete(index   => $config->{trackhub}{index},
-                                  type    => $config->{trackhub}{type},
-                                  id      => $id);
-	$c->model('Search')->indices->refresh(index => $config->{trackhub}{index});
-      # } catch {
-      # 	Catalyst::Exception->throw($_);
-      # };
+      
+      $c->model('Search')->delete_hub_by_id($id);
+      $c->model('Search')->refresh_trackhub_index;
+      
       $c->stash(status_msg => "Deleted track collection [$id]");
     } else {
       $c->stash(error_msg => "Cannot delete collection [$id], does not belong to you");
@@ -307,21 +280,8 @@ users who have submitted trackhubs to the system.
 sub list_providers : Chained('base') Path('providers') Args(0) Does('ACL') RequiresRole('admin') ACLDetachTo('denied') {
   my ($self, $c) = @_;
 
-  # get all user info, attach id
-  my $users;
-  # map { push @{$users}, $_->{_source} }
-  #   @{$c->model('Search')->query(index => 'test', type => 'user')->{hits}{hits}};
-
-  my $config = Registry->config()->{'Model::Search'};
-  foreach my $user_data (@{$c->model('Search')->search(index => $config->{user}{index}, 
-                                                       type  => $config->{user}{type},
-                                                       size => 100000)->{hits}{hits}}) {
-    my $user = $user_data->{_source};
-    # don't want to show admin user to himself
-    next if $user->{username} eq 'admin';
-    $user->{id} = $user_data->{_id};
-    push @{$users}, $user;
-  }
+  # get all user info. Don't want to show admin user to himself
+  my $users = [ grep { $_->{username} ne 'admin' } @{$c->model('Users')->get_all_users()} ];
 
   my $columns = [ 'username', 'first_name', 'last_name', 'fullname', 'email', 'affiliation' ];
 
@@ -354,37 +314,17 @@ sub register :Path('register') Args(0) {
   if ($username =~ /[A-Z]/) {
     $c->stash(error_msg => "Username should not contain upper case characters.");
   } else {
-    my $config = Registry->config()->{'Model::Search'};
+    my $user_exists = $c->model('Users')->get_user($username);
 
-    my $query = { term => { username => $username } };
-    my $user_exists = 
-      $c->model('Search')->count(index    => $config->{user}{index},
-                                 type     => $config->{user}{type},
-                                 body => { query => $query } )->{count};
-  
     unless ($user_exists) {
       # user with the provided username does not exist, proceed with registration
     
-      # get the max user ID to assign the ID to the new user
-      my $users = $c->model('Search')->search(
-        index => $config->{user}{index}, 
-        type => $config->{user}{type}, 
-        size => 100000
-        body => query => { match_all => {}}
-      );
-      my $current_max_id = max( map { $_->{_id} } @{$users->{hits}{hits}} );
-
+           
       # add default user role to user 
       my $user_data = $self->registration_form->value;
       $user_data->{roles} = [ 'user' ];
 
-      $c->model('Search')->index(index => $config->{user}{index},
-                                 type  => $config->{user}{type},
-                                 id      => $current_max_id?$current_max_id + 1:1,
-                                 body    => $user_data);
-
-      # refresh the index
-      $c->model('Search')->indices->refresh(index => $config->{user}{index});
+      $c->model('Users')->update_profile($c->model('Users')->generate_new_user_id,$user_data);
 
       # authenticate and redirect to the user profile page
       if ($c->authenticate({ username => $username,
@@ -405,27 +345,6 @@ sub register :Path('register') Args(0) {
   }
 
 }
-
-# sub admin : Chained('base') PathPart('') CaptureArgs(0) Does('ACL') RequiresRole('admin') ACLDetachTo('denied') {}
-
-# sub list : Chained('admin') PathPart('user/list') Args(0) {
-#   my ($self, $c) = @_;
- 
-#   # my $users = $c->model('DB::User')->search(
-#   # 					    { active => 'Y'},
-#   # 					    {
-#   # 					     order_by => ['username'],
-#   # 					     page     => ($c->req->param('page') || 1),
-#   # 					     rows     => 20,
-#   # 					    }
-#   # 					   );
-  
-#   $c->stash(
-#   	    users => $users,
-#   	    pager => $users->pager,
-#   	   );
-  
-# }
 
 =head2 denied
 

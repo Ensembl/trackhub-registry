@@ -258,15 +258,15 @@ sub create_indices {
   #
   # create the authentication/authorisation mapping
   #
-  # Note: we might/might not store user data on the same index as that of the trackhubs
-  #       do not delete/recreate the index if it exists
   ($index, $type, $mapping) = ($self->{auth}{index}, $self->{auth}{type}, $self->{auth}{mapping});
   defined $index && defined $type && defined $mapping or
     croak "Missing trackhub parameters (index|type|mapping)";
-  unless ($indices->exists(index => $index)) {
-    carp "Creating index $index";
-    $indices->create(index => $index);  
+  if ($indices->exists(index => $index)) {
+    $indices->delete(index => $index);
+    carp "Deleting index $index";
   }
+  carp "Creating index $index";
+  $indices->create(index => $index);  
 
   $indices->put_mapping(
     index => $index,

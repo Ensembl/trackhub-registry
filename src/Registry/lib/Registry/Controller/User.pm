@@ -71,14 +71,7 @@ sub base : Chained('/login/required') PathPrefix CaptureArgs(1) {
   # Yes, but if the user changes its profile, then switches between 
   # the various tabs, and then comes back to the profile, session
   # data kicks in and it will show information before the update
-  #
-  # Catalyst::Exception->throw("Unable to find logged in user info")
-  #     unless $c->user_exists;
 
-  # $c->stash(user => $c->user->get_object()->{_source},
-  # 	    id   => $c->user->id);
-
-  my $config = Registry->config()->{'Model::Search'};
   my $query = { term => { username => $username } };
   my $user_search = $c->model('Users')->get_user($username);
 
@@ -253,7 +246,6 @@ sub delete_trackhub : Chained('base') :Path('delete') Args(1) {
   if ($doc) {
     # TODO: this should be redundant, but just to be sure
     if ($doc->{owner} eq $c->user->username) {
-      my $config = Registry->config()->{'Model::Search'};
       
       $c->model('Search')->delete_hub_by_id($id);
       $c->model('Search')->refresh_trackhub_index;

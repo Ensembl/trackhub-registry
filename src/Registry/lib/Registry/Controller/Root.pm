@@ -159,6 +159,8 @@ sub stats_test :Path('stats') {
 
 =head2 login
 
+Follows Catalyst::Plugin::Authentication mode of operation
+
 =cut
 
 sub login :Path('/api/login') Args(0) {

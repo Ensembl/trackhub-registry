@@ -59,7 +59,7 @@ sub index :Path :Args(0) {
   my $params = $c->req->params;
 
   # Basic query check: if empty query params, matches all document
-  # This should all be refactored into a query-builder model
+  # This should all be refactored into a Search model.
   my $first_constraint;
   my ($query_body, $query_field);
   if ($params->{q}) {
@@ -76,11 +76,13 @@ sub index :Path :Args(0) {
     $first_constraint = { $query_field => $query_body };
   }
   
+  # Elasticsearch recommend using composite aggregation for getting the full list of facets
+  # We could conceivably paginate the facets.
   my $facets = 
     {
-     species  => { terms => { field => 'species.scientific_name' } },
-     assembly => { terms => { field => 'assembly.name' } },
-     hub      => { terms => { field => 'hub.name' } },
+     species  => { terms => { field => 'species.scientific_name', size => 100, order => {"_key" => "asc" }} },
+     assembly => { terms => { field => 'assembly.name', size => 50 } },
+     hub      => { terms => { field => 'hub.name',size => 30 } },
      type     => { terms => { field => 'type'} },
     };
 

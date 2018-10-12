@@ -38,6 +38,10 @@
           "check_interval": {
             "type": "integer",
             "index": false
+          },
+          "auth_key": {
+            "type": "keyword",
+            "index": true
           }
         }
       }

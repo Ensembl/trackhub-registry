@@ -266,12 +266,16 @@ sub create_indices {
     carp "Deleting index $index";
   }
   carp "Creating index $index";
-  $indices->create(index => $index);  
+  $schema = from_json(&Registry::Utils::slurp_file($mapping));
+
+
+  $indices->create(index => $index, body => { settings => $schema->{settings}});
 
   $indices->put_mapping(
     index => $index,
     type  => $type,
-    body  => from_json(&Registry::Utils::slurp_file($mapping)));
+    body  => $schema->{mappings}{users}
+  );
   $mapping_json = $indices->get_mapping(index => $index, type  => $type);
   exists $mapping_json->{$index}{mappings}{$type} or croak "Authentication/authorisation mapping not created";
   carp "Authentication/authorisation mapping created";

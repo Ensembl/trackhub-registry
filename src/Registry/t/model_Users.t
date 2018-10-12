@@ -81,8 +81,11 @@ note "New ID = $id\n";
 $es->update_profile($id, $backup);
 is_deeply([qw/admin trackhub1 trackhub2 trackhub3/] ,[sort map { $_->{username} } @{$es->get_all_users}], 'trackhub3 has been reinstated');
 
-
-
+# Check for regression with non-boolean continuous_alert property
+$backup->{continuous_alert} = 1;
+$es->update_profile($id, $backup);
+$hit = $es->get_user('trackhub3');
+cmp_ok($hit->{continuous_alert}, '==', 1, 'Continuous alert property is set as a number, stored as boolean, and then used as a number again');
 
 
 done_testing();

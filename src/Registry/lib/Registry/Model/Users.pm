@@ -100,6 +100,12 @@ sub delete_user {
 
 sub update_profile {
   my ($self,$id,$profile) = @_;
+  if ( exists $profile->{continuous_alert} 
+       && ( $profile->{continuous_alert} == 1 || ref $profile->{continuous_alert} eq 'JSON::true')) {
+    $profile->{continuous_alert} = JSON::true;
+  } else {
+    $profile->{continuous_alert} = JSON::false;
+  }
   my %request = $self->_decorate_query(id => $id, body => $profile);
   $self->_es->index(%request);
   $self->_refresh_index;

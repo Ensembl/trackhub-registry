@@ -41,7 +41,7 @@ Registry::Controller::Root - Root Controller for Registry
 
 =head1 DESCRIPTION
 
-[enter your description here]
+Provides functionality for login, help and some other defaults
 
 =head1 METHODS
 

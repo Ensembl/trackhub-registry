@@ -57,7 +57,7 @@ in the stash which can be used by the following methods in the chain.
 
 =cut
 
-sub base : Chained('/login/required') PathPrefix CaptureArgs(1) {
+sub base : Chained('/login/required') PathPrefix CaptureArgs(1) ACLDetachTo('denied') {
   my ($self, $c, $username) = @_;
 
   # retrieve user's data to show the profile
@@ -71,10 +71,8 @@ sub base : Chained('/login/required') PathPrefix CaptureArgs(1) {
   # Yes, but if the user changes its profile, then switches between 
   # the various tabs, and then comes back to the profile, session
   # data kicks in and it will show information before the update
-
-  my $query = { term => { username => $username } };
   my $user_search = $c->model('Users')->get_user($username);
-
+  $c->detach() if ! defined $user_search;
   $c->stash(user => $user_search,
             id   => $user_search->{id});
 

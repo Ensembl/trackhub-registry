@@ -65,9 +65,6 @@ around BUILDARGS => sub {
 
   Catalyst::Exception->throw("Elasticsearch nodes required in configuration")
       unless $config->{nodes};
-
-  # Catalyst::Exception->throw("Elasticsearch transport required in configuration")
-  #     unless $config->{transport};
     
   my $es = 
     Search::Elasticsearch->new(nodes => $config->{nodes}); # transport => $config->{transport});
@@ -103,8 +100,6 @@ sub load {
 
   my $user_search = $self->_es->search(index => $self->_index,
                                        type  => $self->_type,
-                                       # # term filter: exact value
-                                       # body  => { query => { term => { username => $username } } });
                                        body => { query => $query });
 
   return unless $user_search;
@@ -211,15 +206,6 @@ sub from_session {
   return $self;
 }
 
-# sub AUTOLOAD {
-#   my ($self) = @_;
-
-#   (my $method) = (our $AUTOLOAD =~ /([^:]+)$/);
-#   return if $method eq "DESTROY";
-
-#   return $self->get($method);
-# }
-
 sub AUTOLOAD {
   my $self = shift;
   our $AUTOLOAD;
@@ -324,8 +310,6 @@ None known, but there are bound to be some.  Please email the author.
 =head1 AUTHOR
 
 Colin Bradford <cjbradford@gmail.com>
-
-=head1 COPYRIGHT AND LICENSE
 
 =cut
 

@@ -32,6 +32,4 @@ sub new {
   return $class->SUPER::new( $config, $app );
 }
 
-__PACKAGE__;
-
 __END__

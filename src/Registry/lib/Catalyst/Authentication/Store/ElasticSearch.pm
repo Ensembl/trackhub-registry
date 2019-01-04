@@ -71,7 +71,7 @@ around BUILDARGS => sub {
 sub from_session {
   my ($self, $c, $frozenuser) = @_;
 
-  my $user = $self->store_user_class->new($self->{'config'}, $c);
+  my $user = $self->store_user_class->new($self->config, $c);
   return $user->from_session($frozenuser);
 }
 
@@ -84,7 +84,7 @@ sub for_session {
 sub find_user {
   my ($self, $authinfo, $c) = @_;
 
-  my $user = $self->store_user_class->new($self->{'config'}, $c);
+  my $user = $self->store_user_class->new($self->config, $c);
 
   return $user->load($authinfo, $c);
 }

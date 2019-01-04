@@ -1,6 +1,7 @@
 #!/usr/bin/env perl
 # IMPORTANT: if you delete this file your app will not work as
 # expected.  You have been warned.
+use strict;
 use inc::Module::Install 1.02;
 use Module::Install::Catalyst; # Complain loudly if you don't have
                                # Catalyst::Devel installed or haven't said
@@ -46,6 +47,7 @@ requires 'Try::Tiny';
 requires 'Capture::Tiny';
 requires 'Digest::MD5';
 requires 'File::Temp';
+requires 'File::Spec';
 requires 'List::Util';
 requires 'String::Random';
 requires 'Search::Elasticsearch' => '5.02'; # v6 release does not seem to work quite right

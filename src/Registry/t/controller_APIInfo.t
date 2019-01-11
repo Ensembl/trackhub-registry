@@ -47,10 +47,10 @@ unless (&Registry::Utils::es_running() and Registry::Utils::internet_connection_
 }
 
 # /api/info/ping
-my $request = GET('/api/info/ping');
-ok(my $response = request($request), 'GET request to /api/info/ping');
+$request = GET('/api/info/ping');
+ok($response = request($request), 'GET request to /api/info/ping');
 ok($response->is_success, 'Request successful');
-my $content = from_json($response->content);
+$content = from_json($response->content);
 ok($content->{ping}, 'Service available');
 
 note 'Preparing data for test (indexing users)';

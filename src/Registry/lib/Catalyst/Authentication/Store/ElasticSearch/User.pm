@@ -26,6 +26,7 @@ Catalyst::Authentication::Store::ElasticSearch::User
 =head1 DESCRIPTION
 
 The backing user class for the Catalyst::Authentication::Store::ElasticSearch storage module.
+It knows how to turn query results into users, and how to save sessions
 
 =cut
 

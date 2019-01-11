@@ -18,7 +18,7 @@ limitations under the License.
 
 package TestApp::Controller::Root;
 
-use Moose 2.00;
+use Moose;
 
 BEGIN { extends 'Catalyst::Controller' }
 
@@ -29,9 +29,10 @@ sub user_login : Global {
 
   ## this allows anyone to login regardless of status.
   eval {
-    $c->authenticate({ username => $c->request->params->{'username'},
-		       password => $c->request->params->{'password'}
-		     });
+    $c->authenticate({
+      username => $c->request->params->{username},
+      password => $c->request->params->{password}
+    });
     1;
   } or do {
     return $c->res->body($@);
@@ -114,16 +115,20 @@ sub get_usersession : Global {
 sub get_auth_key : Global {
   my ($self, $c) = @_;
 
-  $c->user->auth_key( $c->request->params->{'auth_token'} );
+  $c->user->auth_key( $c->request->params->{auth_token} );
   $c->res->body( $c->user->get('auth_key') );
 }
 
 sub auth_key_access : Global {
   my ($self, $c) = @_;
 
-  if ($c->authenticate({ username => $c->request->params->{'username'},
-			 auth_key => $c->request->params->{'auth_key'}
-		       }, 'usersauthkey')) {
+  if ($c->authenticate(
+    {
+      username => $c->request->params->{username},
+      auth_key => $c->request->params->{auth_key}
+    },
+    'usersauthkey')
+  ) {
     $c->res->body( $c->user->get('username') . ' authenticated with key' );
   } else {
     $c->res->body( 'user not key authenticated' );

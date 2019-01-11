@@ -1,4 +1,3 @@
-#!/usr/bin/env perl
 # Copyright [2015-2018] EMBL-European Bioinformatics Institute
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,8 +36,8 @@ BEGIN {
                     },
                     store => {
                         class => 'ElasticSearch',
-			index => 'test',
-			type  => 'user'
+                        index => 'test',
+                        type  => 'user'
                     },
                 },
                 usersauthkey => {
@@ -48,8 +47,8 @@ BEGIN {
                     },
                     store => {
                         class => 'ElasticSearch',
-			index => 'test',
-			type  => 'user'
+                        index => 'test',
+                        type  => 'user'
                     },
                 },
 

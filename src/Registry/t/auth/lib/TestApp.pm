@@ -19,7 +19,8 @@ limitations under the License.
 package TestApp;
 
 use strict;
-use Catalyst 5.80032;
+use warnings;
+use Catalyst;
 
 TestApp->config( $ENV{TESTAPP_CONFIG} );
 

@@ -1,4 +1,3 @@
-#!/usr/bin/env perl
 # Copyright [2015-2018] EMBL-European Bioinformatics Institute
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -39,32 +38,33 @@ BEGIN {
 
 
   $ENV{TESTAPP_CONFIG} = {
-			  name => 'TestApp',	
-			  authentication => {
-					     default_realm => "users",
-					     realms => {
-							users => {
-								  credential => {
-										 'class' => 'Password',
-										 'password_field' => 'password',
-										},
-								  store => {
-									    class => 'Person',
-									    index => 'test',
-									    type  => 'user'
-									   },
-								 },
-						       },
-					    },
-			 };
+  name => 'TestApp',	
+  authentication => {
+    default_realm => "users",
+      realms => {
+        users => {
+          credential => {
+            'class' => 'Password',
+            'password_field' => 'password',
+          },
+          store => {
+            class => 'Person',
+            index => 'test',
+            type  => 'user'
+          },
+        },
+      },
+    },
+  };
 
   $ENV{TESTAPP_PLUGINS} = [
-			   qw/Authentication
-			      Session
-			      Session::Store::Dummy		   
-			      Session::State::Cookie				 
-			     /
-			  ];
+    qw/
+      Authentication
+      Session
+      Session::Store::Dummy		   
+      Session::State::Cookie				 
+    /
+  ];
 }
 
 use Test::WWW::Mechanize::Catalyst 'TestApp';

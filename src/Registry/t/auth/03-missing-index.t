@@ -1,4 +1,3 @@
-#!perl
 # Copyright [2015-2018] EMBL-European Bioinformatics Institute
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -39,7 +38,7 @@ BEGIN {
                     },
                     store => {
                         class  => 'ElasticSearch',
-			type   => 'user'
+                        type   => 'user'
                     },
                 },
             },
@@ -47,7 +46,7 @@ BEGIN {
     };
 
     $ENV{TESTAPP_PLUGINS} = [
-        qw/Authentication/
+        q/Authentication/
     ];
 }
 

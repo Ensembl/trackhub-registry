@@ -1,4 +1,3 @@
-#!/usr/bin/env perl
 # Copyright [2015-2018] EMBL-European Bioinformatics Institute
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -39,8 +38,8 @@ BEGIN {
                     store => {
                         class  => 'ElasticSearch',
                         nodes  => 'localhost:65530', # Note - hopefully there's nothing listening on this port.
-			index  => 'test',
-			type   => 'user'
+                        index  => 'test',
+                        type   => 'users'
                     },
                 },
             },

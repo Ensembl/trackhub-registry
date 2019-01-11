@@ -72,10 +72,6 @@ extends 'Catalyst::Model';
 
     }
 
-=head1 WARNING
-
-This is in very alpha stages.  More testing and production use are coming up, but be warned until then.
-
 =head1 CONFIGURATION PARAMETERS AND ATTRIBUTES
 
 =head2 nodes
@@ -117,23 +113,13 @@ has '_additional_opts' => (
 
 =head2 _es
 
-The L<Search::Elasticsearch|Search::Elasticsearch> object.
+The L<Search::Elasticsearch> object.
 
-- NOTE: 
-  This is not true!
-  The Search::Elasticsearch constrctor returns an instance
-  of Search::Elasticsearch::Client::Direct.
-  The list of methods assigned to handles is incomplete and/or
-  wrong, as there are missing methods and methods which
-  this oject does not provide.
-
-From: https://metacpan.org/pod/Search::Elasticsearch#Bulk-methods-and-scrolled_search
-
-Bulk indexing has changed a lot in the new client. The helper methods, eg bulk_index() and reindex() have been removed from the main client, and the bulk() method itself now simply returns the response from Elasticsearch. It doesn't interfere with processing at all.
-
-These helper methods have been replaced by the Search::Elasticsearch::Bulk class. Similarly, scrolled_search() has been replaced by the Search::Elasticsearch::Scroll. These helper classes are accessible as:
-$bulk   = $e->bulk_helper( %args_to_new );
-$scroll = $e->scroll_helper( %args_to_new );
+The follwing helper methods have been replaced by the Search::Elasticsearch::Bulk
+class. Similarly, scrolled_search() has been replaced by the Search::Elasticsearch::Scroll.
+These helper classes are accessible as: 
+  $bulk   = $e->bulk_helper( %args_to_new );
+  $scroll = $e->scroll_helper( %args_to_new );
 
 ==> 
  - remove bulk_(index|create|delete) and reindex
@@ -183,7 +169,7 @@ around BUILDARGS => sub {
   # NOTE: also update this: other stuff deprecated?
   # See https://metacpan.org/pod/Search::Elasticsearch#MIGRATING-FROM-ElasticSearch.pm
   if (defined $params->{servers}) {
-    warn("Passing 'servers' is deprecated, use 'nodes' now");
+    carp "Passing 'servers' is deprecated, use 'nodes' now";
     $params->{nodes} = delete $params->{servers};
   }
   my %additional_opts = %{$params};

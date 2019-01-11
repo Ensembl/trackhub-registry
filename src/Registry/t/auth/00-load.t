@@ -1,4 +1,3 @@
-#!/usr/bin/env perl 
 # Copyright [2015-2018] EMBL-European Bioinformatics Institute
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +13,7 @@
 # limitations under the License.
 
 
-use Test::More 0.98 tests => 2;
+use Test::More tests => 2;
 
 BEGIN {
   use FindBin qw/$Bin/;

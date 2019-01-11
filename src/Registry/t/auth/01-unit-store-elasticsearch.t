@@ -1,4 +1,3 @@
-#!/usr/bin/env perl 
 # Copyright [2015-2018] EMBL-European Bioinformatics Institute
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,10 +15,8 @@
 
 use strict;
 use warnings;
-use FindBin 1.49;
-use lib "$FindBin::Bin/lib";
-
-use Test::More 0.98;
+use FindBin '$Bin';
+use Test::More;
 
 BEGIN {
   use FindBin qw/$Bin/;
@@ -29,33 +26,33 @@ BEGIN {
   use_ok( 'Catalyst::Authentication::Store::ElasticSearch::User' );
 }
 
-
-
 my $config = {
-	      nodex => 'localhost:9200',
-	      index => 'test',
-	      type  => 'user',
-	     };
+  nodes => 'localhost:9200',
+  index => 'test',
+  type  => 'users',
+};
 
 my $store_es = Catalyst::Authentication::Store::ElasticSearch->new($config);
 isa_ok($store_es, 'Catalyst::Authentication::Store::ElasticSearch');
 
 # sub find_user
+my ($response, $context) = ctx_request('/');
 
-my $good_user = $store_es->find_user({ username => 'test' });
+
+my $good_user = $store_es->find_user({ username => 'test' }, $context);
 ok($good_user, 'User correctly found');
 
 isa_ok($good_user, 'Catalyst::Authentication::Store::ElasticSearch::User');
-my $missing_user = $store_es->find_user({ username => 'testmissing' });
+my $missing_user = $store_es->find_user({ username => 'testmissing' }, $context);
 ok(!defined $missing_user, 'Missing user not found');
 
 # sub for_session
 
-my $session_data = $store_es->for_session(undef, $good_user);
+my $session_data = $store_es->for_session($context, $good_user);
 is(ref $session_data, '', 'Got a scalar back from for_session');
 
 # sub from_session
-my $good_user2 = $store_es->from_session(undef, $session_data);
+my $good_user2 = $store_es->from_session($context, $session_data);
 
 is($good_user2->id, $good_user->id, 'User from session id matches original');
 
@@ -66,7 +63,7 @@ my $supports = $store_es->user_supports();
 ok($supports->{roles}, 'Store supports roles');
 ok($supports->{session}, 'Store supports session');
 
-# AUTOLOAD
+# AUTOLOAD of accessors on returned items
 
 is($good_user->username, 'test', 'AUTOLOAD for username field works');
 is($good_user->missing, undef, 'AUTOLOAD for missing field returns undef');

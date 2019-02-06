@@ -33,6 +33,7 @@ requires 'Catalyst::Controller::ActionRole';
 requires 'Catalyst::ActionRole::ACL';
 requires 'Module::Install::Catalyst';
 requires 'Test::WWW::Mechanize::Catalyst';
+requires 'Catalyst::Authentication::Realm::SimpleDB';
 
 requires 'Moose';
 requires 'MooseX::NonMoose';

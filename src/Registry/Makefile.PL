@@ -10,7 +10,7 @@ use Module::Install::Catalyst; # Complain loudly if you don't have
 name 'Registry';
 all_from 'lib/Registry.pm';
 
-requires 'Catalyst::Runtime' => '5.90071';
+requires 'Catalyst::Runtime';
 requires 'Catalyst::Plugin::ConfigLoader';
 requires 'Catalyst::Plugin::Static::Simple';
 requires 'Catalyst::Plugin::StackTrace';
@@ -23,7 +23,7 @@ requires 'Log::Log4perl::Catalyst';
 # http://www.catalystframework.org/calendar/2007/5
 requires 'Catalyst::Plugin::Authentication';
 requires 'Catalyst::Plugin::Authorization::Roles';
-requires 'Catalyst::Authentication::Credential::HTTP';
+requires 'Catalyst::Authentication::Store::DBIx::Class';
 requires 'Catalyst::Plugin::Session';
 requires 'Catalyst::Plugin::Session::State::Cookie';
 requires 'Catalyst::Plugin::Session::Store::FastMmap';
@@ -33,7 +33,6 @@ requires 'Catalyst::Controller::ActionRole';
 requires 'Catalyst::ActionRole::ACL';
 requires 'Module::Install::Catalyst';
 requires 'Test::WWW::Mechanize::Catalyst';
-requires 'Catalyst::Authentication::Realm::SimpleDB';
 
 requires 'Moose';
 requires 'MooseX::NonMoose';

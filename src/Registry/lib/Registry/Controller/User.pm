@@ -71,6 +71,7 @@ sub base : Chained('/login/required') PathPrefix CaptureArgs(1) ACLDetachTo('den
   # Yes, but if the user changes its profile, then switches between 
   # the various tabs, and then comes back to the profile, session
   # data kicks in and it will show information before the update
+  $c->log->debug("Validate user $username has logged in");
   my $user_search = $c->model('Users')->get_user($username);
   $c->detach() if ! defined $user_search;
   $c->stash(user => $user_search,
@@ -167,8 +168,10 @@ sub list_trackhubs : Chained('base') :Path('trackhubs') Args(0) {
     push @{$trackdbs}, Registry::TrackHub::TrackDB->new($trackdb->{_id});
   }
 
-  $c->stash(trackdbs => $trackdbs,
-            template  => "user/trackhub/list.tt");
+  $c->stash(
+    trackdbs => $trackdbs,
+    template  => "user/trackhub/list.tt"
+  );
 }
 
 =head2 submit_trackhubs
@@ -275,9 +278,11 @@ sub list_providers : Chained('base') Path('providers') Args(0) Does('ACL') Requi
 
   my $columns = [ 'username', 'first_name', 'last_name', 'fullname', 'email', 'affiliation' ];
 
-  $c->stash(users     => $users,
-            columns   => $columns,
-            template  => "user/list.tt");
+  $c->stash(
+    users     => $users,
+    columns   => $columns,
+    template  => "user/list.tt"
+  );
 
 }
 

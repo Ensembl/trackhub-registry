@@ -41,7 +41,7 @@ use Moose;
 use namespace::autoclean;
 use Log::Log4perl::Catalyst;
 
-use Catalyst::Runtime 5.80;
+use Catalyst::Runtime;
 
 # Set flags and add plugins for the application.
 #
@@ -109,8 +109,7 @@ __PACKAGE__->config(
             ignore_extensions => [ qw/tmpl tt tt2 xhtml/ ],
         },
         'Model::ElasticSearch' => {
-            schema_location => __PACKAGE__->path_to('./../docs/trackhub-schema/v1.0/'),
-            wtf => __PACKAGE__->path_to('.')
+            schema_location => __PACKAGE__->path_to('./../../../docs/trackhub-schema/v1.0/'),
         }
         # The rest of the server config comes from the catalyst config file
         # See for registry.conf or similar for controller specific settings

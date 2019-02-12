@@ -19,11 +19,10 @@ limitations under the License.
 package Registry::GenomeAssembly::Schema::Result::GCAssemblySet;
 use strict;
 use warnings;
-use base qw/DBIx::Class::Core/;
+use parent qw/DBIx::Class::Core/;
 
 __PACKAGE__->table('gc_assembly_set');
 __PACKAGE__->add_columns(qw/ set_acc set_chain set_version name long_name is_patch tax_id common_name scientific_name file_md5 filesafename audit_time audit_user audit_osuser status_id genome_representation assembly_level first_created last_updated center_name /);
 __PACKAGE__->set_primary_key('set_acc');
-# __PACKAGE__->has_many(cds => 'MyApp::Schema::Result::CD', 'artistid');
 
 1;

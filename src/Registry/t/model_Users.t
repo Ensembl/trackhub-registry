@@ -47,7 +47,7 @@ my $admin_user = $model->schema->resultset('User')->create({
   first_name => 'Rooty',
   last_name => 'McRootFace',
   email => 'dev@null',
-  password => 'god',
+  password => 'god', # Note that this would normally be encrypted in the DB
   continuous_alert => 0,
   affiliation => 'you'
 });

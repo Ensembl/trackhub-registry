@@ -88,6 +88,12 @@ has_field 'continuous_alert' => (
     checkbox_value   => 1
 );
 
+has_field 'submit'  => (
+    type => 'Submit',
+    value => 'Update',
+    element_class => ['btn']
+);
+
 =head1 METHODS
 
 =head2 validate
@@ -97,20 +103,13 @@ Executed after the user presses submit, checks whether password and password con
 =cut
 
 sub validate {
-  my $self = shift;
+    my $self = shift;
 
-  if ($self->field('password_conf')->value ne
-      $self->field('password')->value )
-    {
-      $self->field('password_conf')
-        ->add_error('Passwords do not match. Please try again.');
+    if ($self->field('password_conf')->value ne $self->field('password')->value ) {
+        $self->field('password_conf')->add_error('Passwords do not match. Please try again.');
     }
 };
-    
-has_field 'submit'  => ( type => 'Submit', value => 'Update', element_class => ['btn'] );
 
 __PACKAGE__->meta->make_immutable;
-
-no HTML::FormHandler::Moose;
 
 1;

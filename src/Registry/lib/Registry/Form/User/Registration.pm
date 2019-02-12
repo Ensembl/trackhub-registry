@@ -34,65 +34,16 @@ package Registry::Form::User::Registration;
 use Moose;
 use HTML::FormHandler::Moose;
 use namespace::autoclean;
-extends 'HTML::FormHandler';
+
+extends 'Registry::Form::User::Profile';
 
 has '+name' => ( default => 'registration_form' );
-
-has_field 'first_name' => (
-    label            => 'First name',
-    type             => 'Text',
-);
- 
-has_field 'last_name' => (
-    label            => 'Last name',
-    type             => 'Text',
-);
- 
-has_field 'affiliation' => (
-    label            => 'Affiliation',
-    type             => 'Text',
-);
-
-has_field 'email' => (
-    label            => 'Email',
-    type             => 'Email',
-    required         => 1,
-    required_message => 'Please enter the contact email.',
-);
 
 has_field 'username' => (
     label            => 'Username',
     type             => 'Text',
     required         => 1,
     required_message => 'Please enter your username.',
-);
-
-has_field 'password' => (
-    label            => 'Password',
-    type             => 'Password',
-    required         => 1,
-    required_message => 'Please enter your password.',
-    minlength        => 5
-);
-
-has_field 'password_conf' => (
-    label            => 'Password (again)',
-    type             => 'Password',
-    required         => 1,
-    required_message => 'Confirm your password.',
-    minlength        => 5
-);
-
-has_field 'check_interval' => (
-    type             => 'Select',
-    options          => [{ value => 0, label => 'Automatic'}, { value => 1, label => 'Weekly'}, { value => 2, label => 'Monthly'} ]
-);
-
-has_field 'continuous_alert' => (
-    label            => 'Receive continuous alerts',
-    type             => 'Checkbox',
-    input_without_param => 0,
-    checkbox_value   => 1
 );
 
 has_field 'gdpr_accept' => (
@@ -102,29 +53,6 @@ has_field 'gdpr_accept' => (
     checkbox_value   => 1
 );
 
-=head1 METHODS
-
-=head2 validate
-
-Executed after the user press submit, checks whether password and password confirmation fields match.
-
-=cut
-
-sub validate {
-  my $self = shift;
-
-  if ($self->field('password_conf')->value ne
-      $self->field('password')->value )
-    {
-      $self->field('password_conf')
-        ->add_error('Passwords do not match. Please try again.');
-    }
-};
-    
-has_field 'submit'  => ( type => 'Submit', value => 'Register', element_class => ['btn'] );
-
 __PACKAGE__->meta->make_immutable;
-
-no HTML::FormHandler::Moose;
 
 1;

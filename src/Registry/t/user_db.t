@@ -20,8 +20,7 @@ use Registry::User::TestDB;
 
 my $test_db = Registry::User::TestDB->new(
   config => {
-    driver => 'SQLite',
-    file   => './test.db'
+    driver => 'SQLite'
   }
 );
 

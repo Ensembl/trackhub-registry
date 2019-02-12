@@ -21,11 +21,16 @@ at C<< <http://www.trackhubregistry.org/help> >>
 
 =head1 NAME
 
-Registry::Model::Users - Functionality for retrieving user information and trackhub lists
+Registry::Model::Users - Functionality for authentication, retrieving user
+                         information and trackhub lists
 
 =head1 DESCRIPTION
 
-For fetching user profiles from Elasticsearch
+Inheriting functionality from Catalyst::Model::DBIC::Schema allows this module
+to perform authentication. A few utility functions provide syntactic sugar for
+user admin/info pages.
+
+Catalyst::Model::DBIC::Schema provides the DBIC schema interface
 
 =cut
 
@@ -33,34 +38,28 @@ package Registry::Model::Users;
 
 use Moose;
 use namespace::autoclean;
-use Catalyst::Exception qw(throw);
-use List::Util 'max';
-use JSON;
-use Registry;
 
-extends 'Catalyst::Model::ElasticSearch';
+extends 'Catalyst::Model::DBIC::Schema';
+
+__PACKAGE__->config(
+    schema_class => 'Registry::User::Schema',
+);
 
 =head1 METHODS
 
 =head2 get_user
 
-Retrieve a user by their username
+Retrieve a user Result by their username
 
 =cut
 
 sub get_user {
   my ($self,$username) = @_;
-  my %query = ( query => { term => { username => $username} });
-  %query = $self->_decorate_query(%query);
-  my $response = $self->_es->search(%query);
-  my $hit;
-  if ($response->{hits}{total} == 0) {
-    return;
-  } else {
-    $hit = $response->{hits}{hits}[0]{_source};
-    $hit->{id} = $response->{hits}{hits}[0]{_id};
-    return $hit;
-  }
+  
+  my $user = $self->schema->resultset('User')->find(
+    { username => $username }
+  );
+  return $user;
 }
 
 =head2 get_user_by_id
@@ -71,116 +70,40 @@ Get a user name from its ID. Returns a string, not a result object
 
 sub get_user_by_id {
   my ($self,$id) = @_;
-  my %query = ( query => { term => {_id => $id}});
-  %query = $self->_decorate_query(%query);
-  my $response = $self->_es->search(%query);
-  if ($response->{hits}{total} == 1) {
-    return $response->{hits}{hits}[0]{_source}{username};  
+  my $user = $self->schema->resultset('User')->find(
+    { user_id => $id }
+  );
+  if ($user) {
+    return $user->username;
   }
   return;
 }
 
+=head2 get_all_users
+
+Fetch a list of User Result instances from the DB
+
+=cut
+
 sub get_all_users {
   my ($self) = @_;
-  # Don't need to worry about size for a few hundred users, but let's be generous
-  my %query = ( query => { match_all => {}}, size => 10000); 
-  %query  = $self->_decorate_query(%query);
-  my $response = $self->_es->search(%query);
-  my @users = map { $_->{_source} } @{$response->{hits}{hits}};
-  return \@users;
+
+  my @user_list = $self->schema->resultset('User')->search()->all;
+  
+  return \@user_list;
 }
+
+=head2 delete_user
+
+Given a user object previously returned from this model, tell it to delete itself
+
+=cut
 
 sub delete_user {
-  my ($self,$id) = @_;
-  my $config = Registry->config()->{'Model::Search'}; # Configs are all bundled together
-  my %query = (id => $id, index => $config->{user}{index}, type => $config->{user}{type});
-  $self->_es->delete(%query);
-  $self->_refresh_index;
+  my ($self,$user) = @_;
+  $user->delete();
+  return;
 }
-
-sub update_profile {
-  my ($self,$id,$profile) = @_;
-  if ( exists $profile->{continuous_alert} 
-       && ( $profile->{continuous_alert} == 1 || ref $profile->{continuous_alert} eq 'JSON::true')) {
-    $profile->{continuous_alert} = JSON::true;
-  } else {
-    $profile->{continuous_alert} = JSON::false;
-  }
-  my %request = $self->_decorate_query(id => $id, body => $profile);
-  $self->_es->index(%request);
-  $self->_refresh_index;
-}
-
-=head2 generate_new_user_id
-
-Create an ID outside the pre-existing ID range to assign to a new user profile
-
-=cut
-
-sub generate_new_user_id {
-  my ($self) = @_;
-  #my $config = Registry->config()->{'Model::Search'};
-  #my %query = (
-  #  body => {
-  #    query => { 
-  #      match_all => {}
-  #    },
-  #    size => 1,
-  #    
-  #  },
-  #  sort => [ { "username" => "desc"} ],
-  #  index => $config->{user}{index},
-  #  type => $config->{user}{type}
-  #);
-
-  # Ok, let's do this the stupid way since the client library does not seem to 
-  # properly support descending sorts. Select all users and find the highest one
-  # We're totally fine until we're popular. It's how the previous iteration worked too
-  my %query = (
-    query => {
-      match_all => {}
-    },
-    size => 10000,
-  );
-  %query = $self->_decorate_query(%query);
-  my $response = $self->search(%query);
-  if ($response->{hits}{total} == 0) {
-    return 1;
-  }
-  my $current_max_id = max( map { $_->{_id} } @{$response->{hits}{hits}} );
-
-  return $current_max_id + 1;
-}
-
-=head2 _decorate_query
-
-Modifies a bare-bones Elasticsearch query document to include the correct
-Index alias and type. 
-
-=cut
-
-sub _refresh_index {
-  my ($self) = shift;
-  my $config = Registry->config()->{'Model::Search'};
-  $self->indices->refresh(index => $config->{user}{index});
-}
-
-sub _decorate_query {
-  my ($self, %args) = @_;
-
-  my $config = Registry->config()->{'Model::Search'}; # Configs are all bundled together
-  $args{index} = $config->{user}{index};
-  $args{type}  = $config->{user}{type};
-  #$args{body}{sort} = $args{sort};
-  $args{body}{query} = $args{query};
-  delete $args{query};
-  #delete $args{sort};
-
-  # Perform any necessary query cleanup here:
-  
-  return %args;
-}
-
 
 __PACKAGE__->meta->make_immutable;
 

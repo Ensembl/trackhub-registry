@@ -33,8 +33,11 @@ has reuse => (
 around '_init_db' => sub {
   my ($sub, $self, @args) = @_;
   my $config = $self->config;
-  if (! exists $self->config->{db}) {
+  if ($self->config->{driver} eq 'MySQL' && !exists $self->config->{db}) {
     $config->{db} = sprintf '%s_thr_user_test_%s',$ENV{USER},int(rand(100000));
+    $config->{create} = 1;
+  } elsif ($self->config->{driver} eq 'SQLite' && !exists $self->config->{file}) {
+    $config->{file} = 'test.db';
     $config->{create} = 1;
   }
   $self->config($config);

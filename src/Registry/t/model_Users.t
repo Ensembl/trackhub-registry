@@ -20,72 +20,80 @@ use Test::Exception;
 BEGIN {
   use FindBin qw/$Bin/;
   use lib "$Bin/../lib";
-  $ENV{CATALYST_CONFIG} = "$Bin/../registry_testing.conf";
 }
 
-use JSON;
-use Registry;
+# use Registry;
 use Registry::Utils; # slurp_file, es_running
-use Registry::Indexer;
+use Registry::User::TestDB;
+
+my $db = Registry::User::TestDB->new(
+  config => {
+    driver => 'SQLite',
+    file => 'thr_users.db',
+    create => 1
+  },
+);
+$db->schema; # Force a lazy DB create so that $db->dsn gets populated
 
 use_ok 'Registry::Model::Users';
 
-my $es = Registry::Model::Users->new();
-
-my $config = Registry->config()->{'Model::Search'};
-
-my $indexer = Registry::Indexer->new(
-  dir   => "$Bin/trackhub-examples/",
-  trackhub => {
-    index => $config->{trackhub}{index},
-    type  => $config->{trackhub}{type},
-    mapping => 'trackhub_mappings.json'
-  },
-  authentication => {
-    index => $config->{user}{index},
-    type  => $config->{user}{type},
-    mapping => 'authentication_mappings.json'
-  }
+my $model = Registry::Model::Users->new(
+  # This should come from server config outside of model testing
+  connect_info => { dsn => $db->dsn }
 );
 
-$indexer->index_users();
-$indexer->index_trackhubs();
+my $admin_user = $model->schema->resultset('User')->create({
+  username => 'admin',
+  first_name => 'Rooty',
+  last_name => 'McRootFace',
+  email => 'dev@null',
+  password => 'god',
+  continuous_alert => 0,
+  affiliation => 'you'
+});
+$admin_user->add_to_roles({ name => 'user'});
+$admin_user->add_to_roles({ name => 'admin'});
 
-my $hit = $es->get_user('trackhub1');
-is($hit->{username},'trackhub1','Test user can be fetched by username');
-my $id = $hit->{id};
-$hit = $es->get_user_by_id($id);
-is($hit,'trackhub1','Same user doc retrieved using ID as username');
+my $sacrificial_user = $model->schema->resultset('User')->create({
+  username => 'sacrifice',
+  first_name => 'Dr',
+  last_name => 'Doomed',
+  email => 'dev@null',
+  password => 'help',
+  continuous_alert => 0,
+  affiliation => 'The void'
+});
+$sacrificial_user->add_to_roles({ name => 'user'});
 
-$hit = $es->get_user('gerbil');
-ok(! defined $hit, 'Try getting a non-existing user');
 
-$hit = $es->get_user_by_id(500000);
-ok(! defined $hit, 'Try getting a non-existing user');
+my $user_copy = $model->get_user('admin');
+is($user_copy->username,'admin','Test user can be fetched by username');
+my $id = $user_copy->id;
+my $username = $model->get_user_by_id($id);
+is($username,$user_copy->username,'Same username ID retrieved');
 
-my $users = $es->get_all_users;
+$user_copy = $model->get_user('gerbil');
+ok(! defined $user_copy, 'Try getting a non-existing user');
 
-cmp_ok(scalar @$users, '==', 4, 'All four test users fetched at once, including administrator');
-is_deeply([sort map { $_->{username} } @$users],[qw/admin trackhub1 trackhub2 trackhub3/], 'All three test users fetched at once, including administrator');
+$username = $model->get_user_by_id(500000);
+ok(! defined $username, 'Try getting a non-existing user');
 
-my ($backup) = grep { $_->{username} eq 'trackhub3'} @$users; # Save a copy of trackhub3
+my $users = $model->get_all_users;
 
-$es->delete_user($backup->{id});
-$users = $es->get_all_users();
-cmp_ok(scalar @$users, '==', 3, 'Total user count has decreased');
-is_deeply([sort map { $_->{username} } @{ $users }], [qw/admin trackhub1 trackhub2/] , 'trackhub3 has been deleted');
+cmp_ok(scalar @$users, '==', 2, 'All (two) test users fetched at once, including administrator');
+is_deeply([sort map { $_->username } @$users],[qw/admin sacrifice/], 'All (two) test users fetched at once, including administrator');
 
-# Now put trackhub3 back
-$id = $es->generate_new_user_id;
-note "New ID = $id\n";
-$es->update_profile($id, $backup);
-is_deeply([qw/admin trackhub1 trackhub2 trackhub3/] ,[sort map { $_->{username} } @{$es->get_all_users}], 'trackhub3 has been reinstated');
+$model->delete_user($sacrificial_user);
+$users = $model->get_all_users();
+cmp_ok(scalar @$users, '==', 1, 'Total user count has decreased');
+is($users->[0]->username, 'admin', 'sacrifice has been deleted');
 
 # Check for regression with non-boolean continuous_alert property
-$backup->{continuous_alert} = 1;
-$es->update_profile($id, $backup);
-$hit = $es->get_user('trackhub3');
-cmp_ok($hit->{continuous_alert}, '==', 1, 'Continuous alert property is set as a number, stored as boolean, and then used as a number again');
 
+$admin_user->continuous_alert(1);
+
+$admin_user->update;
+$user_copy = $model->get_user('admin');
+cmp_ok($user_copy->continuous_alert, '==', 1, 'Continuous alert property is set as a number, stored as boolean, and then used as a number again');
 
 done_testing();

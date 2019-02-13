@@ -38,6 +38,7 @@ package Registry::Model::Users;
 
 use Moose;
 use namespace::autoclean;
+use Digest;
 
 extends 'Catalyst::Model::DBIC::Schema';
 
@@ -102,6 +103,25 @@ Given a user object previously returned from this model, tell it to delete itsel
 sub delete_user {
   my ($self,$user) = @_;
   $user->delete();
+  return;
+}
+
+=head2 encode_password
+
+SHA256 plus salting used to obscure password in the database
+It modifies the user object in place, so no return value
+
+=cut
+
+sub encode_password {
+  my ($self, $user) = @_;
+
+  my $salt = $self->config->{salt};
+  
+  my $digest = Digest->new('SHA-256');
+  $digest->add($salt);
+  $digest->add($user->password);
+  $user->password($digest->b64digest);
   return;
 }
 

@@ -38,9 +38,10 @@ $db->schema; # Force a lazy DB create so that $db->dsn gets populated
 use_ok 'Registry::Model::Users';
 
 my $model = Registry::Model::Users->new(
-  # This should come from server config outside of model testing
-  connect_info => { dsn => $db->dsn }
+  # This should come from server config when not testing models
+  connect_info => { dsn => $db->dsn },
 );
+$model->config()->{salt} = 'salz';
 
 my $admin_user = $model->schema->resultset('User')->create({
   username => 'admin',
@@ -95,5 +96,10 @@ $admin_user->continuous_alert(1);
 $admin_user->update;
 $user_copy = $model->get_user('admin');
 cmp_ok($user_copy->continuous_alert, '==', 1, 'Continuous alert property is set as a number, stored as boolean, and then used as a number again');
+
+
+$model->encode_password($admin_user);
+# base-64 encode of 'salz'.'god'
+is($admin_user->password, 'Zx9ldqBNVMpsd/eRE+8veCK3fl7OXFcNTu458u1p2XY', 'Hashing algorithm applied directly to password field');
 
 done_testing();

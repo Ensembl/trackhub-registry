@@ -268,6 +268,24 @@ sub get_hub_by_url {
   return $result->{hits}{hits};
 }
 
+sub get_hubs_by_user_name {
+  my ($self, $user_name) = @_;
+
+  my $query = {
+    query => {
+      term => {
+        owner => $user_name
+      }
+    }
+  };
+
+  my $result = $self->search_trackhubs(%$query);
+  if ($result->{hits}{total} == 0) {
+    return [];
+  }
+  return $result->{hits}{hits};
+}
+
 sub delete_hub_by_id {
   my ($self, $id) = @_;
 

@@ -21,6 +21,10 @@ package Catalyst::Model::ElasticSearch;
 use Moose;
 use namespace::autoclean;
 use Search::Elasticsearch;
+use Registry::Utils::File qw/slurp_file/;
+use Registry;
+use Carp;
+use JSON;
 extends 'Catalyst::Model';
 
 
@@ -150,6 +154,13 @@ has '_es' => (
   },
 );
 
+has schema_location => (
+  is => 'ro',
+  isa => 'Str',
+  required => 1
+);
+
+
 sub _build_es {
   my $self = shift;
   return Search::Elasticsearch->new(
@@ -176,6 +187,35 @@ around BUILDARGS => sub {
   $params->{_additional_opts} = \%additional_opts;
   return $params;
 };
+
+# Automatically deploy schemas to the configured backend if it is required
+around _build_es => sub {
+  my $orig = shift;
+  my $self = shift;
+  
+  my $client = $self->$orig(@_);
+  foreach my $schema_name (qw/reports trackhub/) {
+      
+      my $schema_path = File::Spec->catfile(
+        $self->schema_location, # Defined in Registry.pm
+        $schema_name.'_mappings.json'
+      );
+      print "Creating index '$schema_name' with mapping $schema_path\n";
+      
+      # Create indexes and load mappings if they're not present
+      unless ($client->indices->exists( index => $schema_name.'_v1' ) ) {
+        $client->indices->create(
+          index => $schema_name.'_v1', 
+          # FIXME, this should reflect actual schema version, but is deeply
+          # embedded into deployment
+          body => decode_json( slurp_file( $schema_path ) )
+        );
+        $client->indices->refresh; # If only ES were a proper database
+      }
+  }
+  return $client;
+};
+
 
 =head1 SEE ALSO
 

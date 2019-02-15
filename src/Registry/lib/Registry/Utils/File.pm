@@ -46,6 +46,7 @@ use Carp qw/confess/;
 use Exporter qw(import);
 our @EXPORT_OK = qw(slurp_file sanitise_filename get_filename get_extension get_compression uncompress);
 our %EXPORT_TAGS = (all => [@EXPORT_OK]);
+use File::Spec;
 
 =head1 METHODS
 
@@ -68,7 +69,7 @@ sub slurp_file {
   my $string;
   {
     local $/=undef;
-    open my $fh, '<',"$file" or confess "Couldn't open file $file: $!";
+    open my $fh, '<',"$file" or confess sprintf "Couldn't open file %s: %s", File::Spec->rel2abs($file), $!;
     $string = <$fh>;
     close $fh;
   }

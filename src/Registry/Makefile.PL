@@ -46,6 +46,8 @@ requires 'HTML::FormHandler::Moose';
 requires 'Try::Tiny';
 requires 'Capture::Tiny';
 requires 'Digest::MD5';
+requires 'Digest::SHA';
+requires 'Digest';
 requires 'File::Temp';
 requires 'File::Spec';
 requires 'List::Util';

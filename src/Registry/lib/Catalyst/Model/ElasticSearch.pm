@@ -140,7 +140,6 @@ grouped according to category
 has '_es' => (
   is       => 'ro',
   lazy     => 1,
-  required => 1,
   builder  => '_build_es',
   handles  => {
     map { $_ => $_ }

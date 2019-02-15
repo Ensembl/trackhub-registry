@@ -38,14 +38,18 @@ use namespace::autoclean;
 
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 
-use Data::Dumper;
 use Try::Tiny;
 use Registry::Form::User::Registration;
 use Registry::Form::User::Profile;
 use Registry::TrackHub::TrackDB;
 
-has 'registration_form' => ( isa => 'Registry::Form::User::Registration', is => 'rw',
-    lazy => 1, default => sub { Registry::Form::User::Registration->new } );
+
+has registration_form => (
+  isa => 'Registry::Form::User::Registration',
+  is => 'rw',
+  lazy => 1,
+  default => sub { Registry::Form::User::Registration->new }
+);
 
 =head1 METHODS
 
@@ -61,22 +65,14 @@ sub base : Chained('/login/required') PathPrefix CaptureArgs(1) ACLDetachTo('den
   my ($self, $c, $username) = @_;
 
   # retrieve user's data to show the profile
-  #
-  # since the user's logged in, it should be possible to
-  # call Catalyst::Authentication::Store::ElasticSearch::User method, 
-  # i.e. $user->get('..'), $user->id
-  # without looking directly into the persistence engine
-  # 
-  # NOTE
-  # Yes, but if the user changes its profile, then switches between 
-  # the various tabs, and then comes back to the profile, session
-  # data kicks in and it will show information before the update
-  $c->log->debug("Validate user $username has logged in");
-  my $user_search = $c->model('Users')->get_user($username);
-  $c->detach() if ! defined $user_search;
-  $c->stash(user => $user_search,
-            id   => $user_search->{id});
 
+  $c->log->debug("Validate user $username has logged in");
+  my $user = $c->model('Users')->get_user($username);
+  $c->detach() if ! defined $user;
+  $c->stash(
+    user => $user,
+    id   => $user->user_id
+  );
 }
 
 =head2 profile
@@ -170,7 +166,7 @@ sub list_trackhubs : Chained('base') :Path('trackhubs') Args(0) {
 
   $c->stash(
     trackdbs => $trackdbs,
-    template  => "user/trackhub/list.tt"
+    template => "user/trackhub/list.tt"
   );
 }
 
@@ -185,7 +181,7 @@ a form allowing the user to submit/update trackhubs directly from the web.
 sub submit_trackhubs : Chained('base') :Path('submit_trackhubs') Args(0) {
   my ($self, $c) = @_;
 
-  $c->stash(template  => "user/trackhub/submit_update.tt");
+  $c->stash(template => "user/trackhub/submit_update.tt");
 }
 
 =head2 view_trackhub_status
@@ -206,7 +202,7 @@ sub view_trackhub_status : Chained('base') :Path('view_trackhub_status') Args(1)
   };
 
   $trackdb->toggle_search if $c->req->params->{toggle_search};
-  $c->stash(trackdb => $trackdb, template  => "user/trackhub/view.tt");
+  $c->stash(trackdb => $trackdb, template => 'user/trackhub/view.tt');
 }
 
 =head2 refresh_trackhub_status
@@ -230,7 +226,14 @@ sub refresh_trackhub_status : Chained('base') :Path('refresh_trackhub_status') A
     $c->stash(error_msg => $_);
   };
 
-  $c->res->redirect($c->uri_for($c->controller->action_for('list_trackhubs', [$c->user->username])));
+  $c->res->redirect(
+    $c->uri_for(
+      $c->controller->action_for(
+        'list_trackhubs',
+        [$c->user->username]
+      )
+    )
+  );
   $c->detach;
 }
 
@@ -295,10 +298,10 @@ Action for /user/register URL presenting a form for signing up in the system.
 sub register :Path('register') Args(0) {
   my ($self, $c) = @_;
 
-  $c->stash(template => "user/register.tt",
-            form     => $self->registration_form);
-
-  return unless $self->registration_form->process( params => $c->req->parameters );
+  $c->stash(
+    template => "user/register.tt",
+    form     => $self->registration_form  # Keep form state for next page view
+  );
 
   # user input is validated
   # look if there's already a user with the provided username

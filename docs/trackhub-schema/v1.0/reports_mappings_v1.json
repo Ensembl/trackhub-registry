@@ -1,4 +1,3 @@
-// This empty mapping file was not required for old Elasticsearch releases
 {
   "settings": {
     "number_of_shards": 1,

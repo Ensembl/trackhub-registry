@@ -67,6 +67,7 @@ __PACKAGE__->add_columns(
 );
 
 __PACKAGE__->set_primary_key('user_id');
+__PACKAGE__->add_unique_constraint(['username']);
 
 __PACKAGE__->has_many(user_role => 'Registry::User::Schema::Result::UserRole', 'user_id');
 __PACKAGE__->many_to_many(roles => 'user_role', 'role');
@@ -83,7 +84,7 @@ __PACKAGE__->many_to_many(roles => 'user_role', 'role');
 sub sqlt_deploy_hook {
   my ($self, $sqlt_table) = @_;
 
-  $sqlt_table->add_index(name => 'username_idx', fields => ['username', 'password']);
+  # $sqlt_table->add_index(name => 'username_idx', fields => ['username', 'password']);
   $sqlt_table->add_index(name => 'key_idx', fields => ['auth_key','username']);
   $sqlt_table->add_index(name => 'alert_idx', fields => ['continuous_alert', 'username']);
 

@@ -10,6 +10,8 @@ echo "Running test suite"
 export TEST_POD=1
 export CATALYST_DEBUG=0
 export ES_HOME=/usr/share/elasticsearch
+mkdir $HOME/es_conf
+export ES_PATH_CONF=$HOME/es_conf
 
 cd src/Registry
 rm -rf blib

@@ -90,20 +90,14 @@ sub profile : Chained('base') :Path('profile') Args(0) {
       unless defined $c->stash->{user};
 
   # Fill in form with user data
-  my $profile_form = Registry::Form::User::Profile->new(init_object => $c->stash->{user});
+  my $profile_form = Registry::Form::User::Profile->new(item => $c->stash->{user});
 
-  $c->stash(template => "user/profile.tt",
-            form     => $profile_form);
+  $c->stash(
+    template => "user/profile.tt",
+    form     => $profile_form
+  );
   
   return unless $profile_form->process( params => $c->req->parameters );
-
-  # new profile validated, merge old with new profile
-  # when attributes overlap overwrite the old entries with the new ones
-  my $new_user_profile = $c->stash->{user};
-  map { $new_user_profile->{$_} = $profile_form->value->{$_} } keys %{$profile_form->value};
-  
-  # update user profile on the backend
-  $c->model('Users')->update_profile($c->stash->{id},$new_user_profile);
 
   $c->stash(status_msg => 'Profile updated');
 }
@@ -116,37 +110,42 @@ a user having the specified ID.
 =cut
 
 sub delete : Chained('base') Path('delete') Args(1) Does('ACL') RequiresRole('admin') ACLDetachTo('denied') {
-  my ($self, $c, $id) = @_;
+  my ($self, $c, $username) = @_;
 
-  Catalyst::Exception->throw("No user ID specified") unless defined $id;
+  Catalyst::Exception->throw("No user name specified") unless defined $username;
 
   #
   # delete all trackDBs which belong to the user
   #
   # find username
 
-  my $username = $c->model('Users')->get_user_by_id($id);
-  Catalyst::Exception->throw("Unable to find user $id information")
-      unless defined $username;
+  my $user = $c->model('Users')->get_user($username);
+  if (! defined $user ) {
+    Catalyst::Exception->throw("Unable to find user $username information");
+  }
 
-  # find trackDBs which belong to user
-  my $query = { term => { owner => $username } };
+  my $user_trackdbs = $c->model('Search')->get_hubs_by_user_name($username);
 
-  my $user_trackdbs = $c->model('Search')->search_trackhubs(query => $query, size => 100000);
-
-  $c->log->debug(sprintf "Found %d trackDBs for user %s (%s)", scalar @{$user_trackdbs->{hits}{hits}}, $id, $username);
+  $c->log->debug(sprintf 'Found %d trackDBs for user %s', scalar @{$user_trackdbs}, $username);
   # delete user trackDBs
-  foreach my $trackdb (@{$user_trackdbs->{hits}{hits}}) {
+  foreach my $trackdb (@{$user_trackdbs}) {
     $c->model('Search')->delete_hub_by_id($trackdb->{_id});
     $c->log->debug(sprintf "Document %s deleted", $trackdb->{_id});
   }
   $c->model('Search')->refresh_trackhub_index;
 
   # delete the user by ID
-  $c->model('Users')->delete_user($id);
+  $c->model('Users')->delete_user($user);
 
   # redirect to the list of providers page
-  $c->res->redirect($c->uri_for($c->controller->action_for('list_providers', [$c->stash->{user}{username}])));
+  $c->res->redirect(
+    $c->uri_for(
+      $c->controller->action_for(
+        'list_providers',
+        [$c->stash->{user}{username}]
+      )
+    )
+  );
 }
 
 =head2 list_trackhubs
@@ -160,7 +159,9 @@ sub list_trackhubs : Chained('base') :Path('trackhubs') Args(0) {
   my ($self, $c) = @_;
 
   my $trackdbs;
-  foreach my $trackdb (@{$c->model('Search')->get_trackdbs(query => { term => { owner => $c->user->username } })}) {
+  my $hubs_for_user = $c->model('Search')->get_hubs_by_user_name($c->user->username);
+
+  foreach my $trackdb (@{$hubs_for_user}) {
     push @{$trackdbs}, Registry::TrackHub::TrackDB->new($trackdb->{_id});
   }
 
@@ -303,43 +304,37 @@ sub register :Path('register') Args(0) {
     form     => $self->registration_form  # Keep form state for next page view
   );
 
-  # user input is validated
-  # look if there's already a user with the provided username
-  my $username = $self->registration_form->value->{username};
-  # NOTE:
-  # there are problems at the moment with with usernames containing
-  # upper case characters. Deny registration in this case.
-  if ($username =~ /[A-Z]/) {
-    $c->stash(error_msg => "Username should not contain upper case characters.");
-  } else {
-    my $user_exists = $c->model('Users')->get_user($username);
+  my $status = $self->registration_form->process(
+    params => $c->req->parameters
+  );
+  if ($status) {
+    try {
 
-    unless ($user_exists) {
-      # user with the provided username does not exist, proceed with registration
-    
-           
-      # add default user role to user 
-      my $user_data = $self->registration_form->value;
-      $user_data->{roles} = [ 'user' ];
+      my $new_user = $self->model('Users::User')->create($self->registration_form->value);
+      $c->model('Users')->encode_password($new_user);
 
-      $c->model('Users')->update_profile($c->model('Users')->generate_new_user_id,$user_data);
+      $new_user->add_to_roles({ name => 'user' });
 
-      # authenticate and redirect to the user profile page
-      if ($c->authenticate({ username => $username,
-                             password => $self->registration_form->value->{password} } )) {
-        $c->stash(status_msg => sprintf "Welcome user %s", $username);
-        $c->res->redirect($c->uri_for($c->controller('User')->action_for('profile'), [$username]));
+      if ($c->authenticate({ 
+          username => $new_user->username,
+          password => $self->registration_form->value->{password} 
+        })
+      ) {
+        $c->stash(status_msg => 'Welcome user '.$new_user->username);
+        $c->res->redirect(
+          $c->uri_for($c->controller('User')->action_for('profile'), [$new_user->username])
+        );
         $c->detach;
-      } else {
-        # Set an error message
-        $c->stash(error_msg => "Bad username or password.");
       }
-
-    } else {
-      # user with the provided username already exists
-      # present the registration form again with the error message
-      $c->stash(error_msg => "User $username already exists. Please choose a different username.");
-    }    
+    } catch {
+      if ($_ =~ m/already exists/) {
+        $c->stash(error_msg => 'User name is already in use. Please choose a different username.');
+      } else {
+        $c->stash(error_msg => "Failed to register new user account. Contact Trackhub Registry administrators with error: $_");
+      }
+    };
+  } else {
+    $c->stash(error_msg => "Form validation failed in the following fields:\n". join "\n",$self->registration_form->errors);
   }
 
 }

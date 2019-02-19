@@ -78,13 +78,17 @@ SKIP: {
   is($doc->{hub}{url}, $URL, 'Hub URL');
   is($doc->{source}{url}, Registry::TrackHub->new(url => $URL, permissive => 1)->get_genome('hg19')->trackDb->[0], "TrackDB source URL");
   
-  is_deeply($doc->{species}, { tax_id => 9606, 
-  			       scientific_name => 'Homo sapiens', 
-  			       common_name => 'human' }, 'Correct species');
-  is_deeply($doc->{assembly}, { name => 'GRCh37', 
-  				long_name => 'Genome Reference Consortium Human Build 37 (GRCh37)',
-  				accession => 'GCA_000001405.1', 
-  				synonyms => 'hg19' }, 'Correct assembly');
+  is_deeply($doc->{species}, {
+    tax_id => 9606,
+    scientific_name => 'Homo sapiens',
+    common_name => 'human'
+  }, 'Correct species');
+  is_deeply($doc->{assembly}, {
+    name => 'GRCh37',
+    long_name => 'Genome Reference Consortium Human Build 37 (GRCh37)',
+    accession => 'GCA_000001405.1', 
+    synonyms => 'hg19'
+  }, 'Correct assembly');
 
   note "Checking container (bp) metadata";
   my $metadata = first { $_->{id} eq 'bp' } @{$doc->{data}};
@@ -154,12 +158,16 @@ SKIP: {
        "Expected species");
     if ($doc->{species}{tax_id} == 3702) {
       is($doc->{source}{url}, Registry::TrackHub->new(url => $URL, permissive => 1)->get_genome('araTha1')->trackDb->[0], "TrackDB source URL");
-      is_deeply($doc->{species}, { tax_id => 3702, 
-				   scientific_name => 'Arabidopsis thaliana', 
-				   common_name => 'thale cress' }, 'Correct species');
-      is_deeply($doc->{assembly}, { name => 'TAIR10', 
-				    accession => 'GCA_000001735.1', 
-				    synonyms => 'araTha1' }, 'Correct assembly');
+      is_deeply($doc->{species}, {
+        tax_id => 3702, 
+        scientific_name => 'Arabidopsis thaliana', 
+        common_name => 'thale cress'
+      }, 'Correct species');
+      is_deeply($doc->{assembly}, {
+        name => 'TAIR10', 
+        accession => 'GCA_000001735.1', 
+        synonyms => 'araTha1'
+      }, 'Correct assembly');
 
       # check metadata and configuration
       is(scalar @{$doc->{data}}, 23, "Number of tracks");
@@ -191,12 +199,16 @@ SKIP: {
 
     } elsif ($doc->{species}{tax_id} == 3988) {
       is($doc->{source}{url}, Registry::TrackHub->new(url => $URL, permissive => 1)->get_genome('ricCom1')->trackDb->[0], "TrackDB source URL");
-      is_deeply($doc->{species}, { tax_id => 3988, 
-				   scientific_name => 'Ricinus communis', 
-				   common_name => 'castor bean' }, 'Correct species');
-      is_deeply($doc->{assembly}, { name => 'JCVI_RCG_1.1', 
-				    accession => 'GCA_000151685.2', 
-				    synonyms => 'ricCom1' }, 'Correct assembly');
+      is_deeply($doc->{species}, {
+        tax_id => 3988, 
+        scientific_name => 'Ricinus communis', 
+        common_name => 'castor bean'
+      }, 'Correct species');
+      is_deeply($doc->{assembly}, {
+        name => 'JCVI_RCG_1.1', 
+        accession => 'GCA_000151685.2', 
+        synonyms => 'ricCom1'
+      }, 'Correct assembly');
 
       # check metadata and configuration
       is(scalar @{$doc->{data}}, 13, "Number of tracks");
@@ -228,12 +240,16 @@ SKIP: {
 
     } else {
       is($doc->{source}{url}, Registry::TrackHub->new(url => $URL, permissive => 1)->get_genome('braRap1')->trackDb->[0], "TrackDB source URL");
-      is_deeply($doc->{species}, { tax_id => 3711, 
-				   scientific_name => 'Brassica rapa', 
-				   common_name => 'field mustard' }, 'Correct species');
-      is_deeply($doc->{assembly}, { name => 'Brapa_1.0', 
-				    accession => 'GCA_000309985.1', 
-				    synonyms => 'braRap1' }, 'Correct assembly');
+      is_deeply($doc->{species}, {
+        tax_id => 3711, 
+        scientific_name => 'Brassica rapa', 
+        common_name => 'field mustard' 
+      }, 'Correct species');
+      is_deeply($doc->{assembly}, {
+        name => 'Brapa_1.0', 
+        accession => 'GCA_000309985.1', 
+        synonyms => 'braRap1'
+      }, 'Correct assembly');
 
       is(scalar @{$doc->{data}}, 13, "Number of data tracks");
 
@@ -266,7 +282,7 @@ SKIP: {
   }
 
   note "Checking translation of DNA Methylation trackhub";
-  $URL = "http://smithlab.usc.edu/trackdata/methylation";
+  $URL = "http://smithdata.usc.edu/trackdata/methylation";
   $json_docs = $translator->translate($URL, 'mm10');
   is(scalar @{$json_docs}, 1, "Number of translated track dbs");
   $doc = from_json($json_docs->[0]);
@@ -281,13 +297,17 @@ SKIP: {
   print $FH $json_docs->[0];
   close $FH;
 
-  is_deeply($doc->{species}, { tax_id => 10090, 
-			       scientific_name => 'Mus musculus', 
-			       common_name => 'house mouse' }, 'Correct species');
-  is_deeply($doc->{assembly}, { name => 'GRCm38',
-				long_name => 'Genome Reference Consortium Mouse Build 38',
-				accession => 'GCA_000001635.2', 
-				synonyms => 'mm10' }, 'Correct assembly');
+  is_deeply($doc->{species}, {
+    tax_id => 10090, 
+    scientific_name => 'Mus musculus', 
+    common_name => 'house mouse' 
+  }, 'Correct species');
+  is_deeply($doc->{assembly}, {
+    name => 'GRCm38',
+    long_name => 'Genome Reference Consortium Mouse Build 38',
+    accession => 'GCA_000001635.2', 
+    synonyms => 'mm10'
+  }, 'Correct assembly');
 
   # check metadata and configuration
   # is(scalar @{$doc->{data}}, 649, "Number of data tracks");
@@ -307,7 +327,7 @@ SKIP: {
   ok($member_member, "View member exists");
   is($member_member->{type}, "bigbed", "View member type");
   is($member_member->{longLabel}, "Mouse_E13-Male-PGC-Setdb1-KO_AMR", "View member longLabel");
-  is($member_member->{bigDataUrl}, "http://smithlab.usc.edu/methbase/data/Liu-Mouse-2014/Mouse_E13-Male-PGC-Setdb1-KO/tracks_mm10/Mouse_E13-Male-PGC-Setdb1-KO.amr.bb", "View member bigDataUrl");
+  is($member_member->{bigDataUrl}, "http://smithdata.usc.edu/methbase/data/Liu-Mouse-2014/Mouse_E13-Male-PGC-Setdb1-KO/tracks_mm10/Mouse_E13-Male-PGC-Setdb1-KO.amr.bb", "View member bigDataUrl");
 
   $metadata = first { $_->{id} eq 'Lister_Brain_2013' } @{$doc->{data}};
   ok($metadata, "Track metadata exists");
@@ -324,7 +344,7 @@ SKIP: {
   ok($member_member, "View member exists");
   is($member_member->{type}, "bigwig", "View member type");
   is($member_member->{longLabel}, "Mouse_FrontCortexNeuronMale7Wk_Read", "View member longLabel");
-  is($member_member->{bigDataUrl}, "http://smithlab.usc.edu/methbase/data/Lister-Brain-2013/Mouse_FrontCortexNeuronMale7Wk/tracks_mm10/Mouse_FrontCortexNeuronMale7Wk.read.bw", "View member bigDataUrl");
+  is($member_member->{bigDataUrl}, "http://smithdata.usc.edu/methbase/data/Lister-Brain-2013/Mouse_FrontCortexNeuronMale7Wk/tracks_mm10/Mouse_FrontCortexNeuronMale7Wk.read.bw", "View member bigDataUrl");
 
   note "Checking Roadmap Epigenomics Data VizHub";
   $URL = "http://vizhub.wustl.edu/VizHub/RoadmapReleaseAll.txt";
@@ -343,13 +363,17 @@ SKIP: {
   is($doc->{hub}{url}, $URL, 'Hub URL');
   is($doc->{source}{url}, Registry::TrackHub->new(url => $URL, permissive => 1)->get_genome('hg19')->trackDb->[0], "TrackDB source URL");
 
-  is_deeply($doc->{species}, { tax_id => 9606, 
-  			       scientific_name => 'Homo sapiens', 
-  			       common_name => 'human' }, 'Correct species');
-  is_deeply($doc->{assembly}, { name => 'GRCh37', 
-  				long_name => 'Genome Reference Consortium Human Build 37 (GRCh37)',
-  				accession => 'GCA_000001405.1', 
-  				synonyms => 'hg19' }, 'Correct assembly');
+  is_deeply($doc->{species}, {
+    tax_id => 9606,
+    scientific_name => 'Homo sapiens', 
+    common_name => 'human'
+  }, 'Correct species');
+  is_deeply($doc->{assembly}, {
+    name => 'GRCh37',
+    long_name => 'Genome Reference Consortium Human Build 37 (GRCh37)',
+    accession => 'GCA_000001405.1',
+    synonyms => 'hg19'
+  }, 'Correct assembly');
 
   $metadata = first { $_->{id} eq 'BBF_mRNA_71_72' } @{$doc->{data}};
   ok($metadata, "Track metadata exists");

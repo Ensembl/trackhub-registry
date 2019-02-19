@@ -52,7 +52,7 @@ SKIP: {
   # Validate Bluprint Track Data Hub
   note "Testing validation of schema 1.0";
   note "Validating translation of Bluprint trackhub";
-  $URL = "ftp://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub";
+  $URL = "http://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub";
   $json_docs = $translator->translate($URL);
 
   # print the translation to file so we can fire the validator

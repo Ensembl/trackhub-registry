@@ -340,7 +340,7 @@ sub refresh_trackhub_index {
 }
 
 
-=head2 refresh_trackhub_index
+=head2 create_trackdb
   
   Arg[1]      : hashref structure representing a single trackDB entity
   Description : Submit a new document to be indexed

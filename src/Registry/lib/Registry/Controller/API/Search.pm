@@ -258,6 +258,13 @@ sub trackdb_all :Path('/api/search/all') ActionClass('REST') {
 
 }
 
+=head2 track_all_GET
+
+GET handler for /api/search/all
+See also Catalyst::Action::REST
+
+=cut
+
 sub trackdb_all_GET {
   my ($self, $c) = @_;
 

@@ -134,7 +134,7 @@ sub get_trackhub_by_id {
   my ($self, $id, $orig) = @_;
 
   croak "Missing required id parameter"
-    unless defined $id;
+    unless defined $id; # THIS IS NOT THE WAY TO RETURN ERRORS
 
   my $config = Registry->config()->{'Model::Search'};
   return $self->_es->get_source(index => $config->{trackhub}{index}, # add required (by Search::Elasticsearch)
@@ -250,6 +250,15 @@ sub _existing_hub_query {
   return $query;
 }
 
+=head2 get_hub_by_url
+
+  Arg[1]     : String - URL of original trackhub
+  Description: Returns a list of hub documents
+  Returntype : Listref - formatted for Search::Elasticsearch and extracted from search result
+
+=cut
+
+
 sub get_hub_by_url {
   my ($self, $url) = @_;
 
@@ -267,6 +276,15 @@ sub get_hub_by_url {
   }
   return $result->{hits}{hits};
 }
+
+
+=head2 get_hubs_by_user_name
+
+  Arg[1]      : String - username as registered by the user
+  Description : Returns a list of hub documents
+  Returntype  : Listref - formatted for Search::Elasticsearch and extracted from search result
+
+=cut
 
 sub get_hubs_by_user_name {
   my ($self, $user_name) = @_;
@@ -286,6 +304,14 @@ sub get_hubs_by_user_name {
   return $result->{hits}{hits};
 }
 
+=head2 delete_hub_by_id
+
+  Arg[1]      : String - Elasticsearch document id
+  Description : Deletes the requested document from the backend
+  Returntype  : None
+
+=cut
+
 sub delete_hub_by_id {
   my ($self, $id) = @_;
 
@@ -298,11 +324,29 @@ sub delete_hub_by_id {
   );
 }
 
+=head2 refresh_trackhub_index
+
+  Description: Triggers a synchronisation event in the backend cluster so that recently
+               inserted documents will appear in new searches. Otherwise they won't
+               appear until the backend decides on its own to refresh
+  Returntype : None
+
+=cut
+
 sub refresh_trackhub_index {
   my ($self) = @_;
   my $config = Registry->config()->{'Model::Search'};
   $self->indices->refresh(index => $config->{trackhub}{index});
 }
+
+
+=head2 refresh_trackhub_index
+  
+  Arg[1]      : hashref structure representing a single trackDB entity
+  Description : Submit a new document to be indexed
+  Returntype  : String - the unique ID assigned to the new document
+
+=cut
 
 sub create_trackdb {
   my ($self, $doc) = @_;
@@ -317,6 +361,23 @@ sub create_trackdb {
   my $new_id = $response->{_id};
   return $new_id;
 }
+
+
+=head2 api_search
+ 
+  Arg[1]      : String - free text query
+  Arg[2]      : Int - page of paginated results
+  Arg[3]      : Int - number of documents per page to return
+  Arg[4]      : String - species name
+  Arg[5]      : String - assembly name
+  Arg[6]      : String - A INSDC assembly accession, GCA....
+  Arg[7]      : String - Name of a track hub
+  Arg[8]      : String - Type of track hub, e.g. proteomics or whatever
+  Description : Search routine for API clients, no aggregations by default, 
+                just a combination of search constraints
+  Returntype : Listref of hits from the backend
+
+=cut
 
 # Search routine for API clients, no aggregations by default, just a combination of search constraints
 sub api_search {
@@ -369,6 +430,15 @@ sub api_search {
   };
   return $hits;
 }
+
+=head2 clean_results
+  
+  Arg[1]      : listref structure containing raw hits from backend
+  Description : Cleans all the Elasticsearch rubbish from the raw data so users
+                do not need to see irrelevant stuff
+  Returntype  : listref of cleaned hits
+
+=cut
 
 sub clean_results {
   my ($self,$hits) = @_;
@@ -432,6 +502,16 @@ sub pager {
 
   return \@result_buffer;
 }
+
+=head2 _decorate_query
+  
+  Arg[1]      : hash - key value pairs of query constraints
+  Description : Takes a simple query form adds the index name and type,
+                as well as formatting aggregations and such correctly
+                for more stringent later versions of Elasticsearch
+  Returntype  : hash - the augmented query ready to send to the backend
+
+=cut
 
 sub _decorate_query {
   my ($self, %args) = @_;

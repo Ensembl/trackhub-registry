@@ -33,13 +33,13 @@ print "Hub: ", $doc->{hub}{name}, "\nSpecies: ", $doc->{species}{tax_id}, "\nAss
 
 =head1 DESCRIPTION
 
-This module encapsulates the process of converting a remote track hub into a
-set of Elasticsearch JSON documents which represent trackDB data for each
-assembly in the hub. Each trackDB document mirrors the hierarchical structure
-of its source and, in addition to that, adds some metadata (e.g. species, assembly)
-which supports the search/faceting mechanism. Besides this, URLs for linking
-to the UCSC and/or Ensembl browser are computed and added to the document, if
-applicable.
+Converts a remote track hub into a set of Elasticsearch JSON documents. Each
+trackDB document mirrors the hierarchical structure of its source and adds
+some metadata (e.g. species, assembly) for indexing by the backend. URLs for
+linking to the UCSC, Ensembl browser, and BioDalliance are generated.
+
+The links should be generated on the fly rather than at import stage, but too
+late to fix it now.
 
 =cut
 
@@ -73,15 +73,15 @@ sub AUTOLOAD {
 }
 
 my %format_lookup = (
-     'bed'    => 'BED',
-     'bb'     => 'BigBed',
-     'bigBed' => 'BigBed',
-     'bw'     => 'BigWig',
-     'bigWig' => 'BigWig',
-     'bam'    => 'BAM',
-     'gz'     => 'VCFTabix',
-     'cram'   => 'CRAM'
-    );
+  bed    => 'BED',
+  bb     => 'BigBed',
+  bigBed => 'BigBed',
+  bw     => 'BigWig',
+  bigWig => 'BigWig',
+  bam    => 'BAM',
+  gz     => 'VCFTabix', # this is sketchy at best
+  cram   => 'CRAM'
+);
 
 =head1 METHODS
 
@@ -140,8 +140,7 @@ sub new {
 sub translate {
   my ($self, $url, $assembly) = @_;
 
-  my $dispatch = 
-    {
+  my $dispatch = {
      'v1.0' => sub { $self->to_json_1_0(@_) }
     }->{$self->version};
 
@@ -355,7 +354,7 @@ sub _make_configuration_tree {
 # I presume this can be shared across translations
 # to different versions
 #
-$ucscdb2insdc = 
+my $ucscdb2insdc = 
   {
    #
    # These mappings have been derived from the list of UCSC genome releases at:

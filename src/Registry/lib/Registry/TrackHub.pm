@@ -147,7 +147,13 @@ sub get_genome {
   return $self->genomes->{$assembly};
 }
 
-# TODO: finish check
+
+=head2 _hub_check
+  Description : Runs the USCS hubCheck tool found in kent tools on the submitted hub.
+  ReturnType  : Undef
+  Exceptions  : If hubCheck fails, this instance dies
+=cut
+
 sub _hub_check {
   my $self = shift;
   my $url = $self->url;

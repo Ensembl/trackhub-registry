@@ -28,59 +28,29 @@ use JSON;
 extends 'Catalyst::Model';
 
 
-# ABSTRACT: A simple Catalyst model to interface with Search::Elasticsearch
-# Adapted from Catalyst::Model::Search::ElasticSearch
 =head1 SYNOPSIS
+  Adapted from Catalyst::Model::Search::ElasticSearch
 
-    package My::App;
-    use strict;
-    use warnings;
+  package My::App::Model::Search;
+  use Moose;
+  use namespace::autoclean;
+  extends 'Catalyst::Model::Search::ElasticSearch';
 
-    use Catalyst;
+  __PACKAGE__->meta->make_immutable;
+  1;
 
-    our $VERSION = '0.01';
-    __PACKAGE__->config(
-      name            => 'Test::App',
-      'Model::Search' => {
-        nodes           => 'localhost:9200',
-        request_timeout => 30,
-        max_requests    => 10_000
-      }
-    );
+=head1 DESCRIPTION
 
-    __PACKAGE__->setup;
+This base Catalyst::Model is inherited by any models that need to access Elasticsearch
+It provides convenient access to the ES REST API, and auto-populates it with schema as
+necessary.
 
-
-    package My::App::Model::Search;
-    use Moose;
-    use namespace::autoclean;
-    extends 'Catalyst::Model::Search::ElasticSearch';
-
-    __PACKAGE__->meta->make_immutable;
-    1;
-
-    package My::App::Controller::Root;
-    use base 'Catalyst::Controller';
-    __PACKAGE__->config(namespace => '');
-
-    sub search : Local {
-      my ($self, $c) = @_;
-      my $params = $c->req->params;
-      my $search = $c->model('Search');
-      my $results = $search->search(
-        index => 'test',
-        type  => 'test',
-        body  => { query => { term => { schpongle => $params->{'q'} } } }
-      );
-      $c->stash( results => $results );
-
-    }
 
 =head1 CONFIGURATION PARAMETERS AND ATTRIBUTES
 
 =head2 nodes
 
-A list of nodes to connect to.
+A list of nodes to connect the Elasticsearch client to.
 
 =cut
 
@@ -93,6 +63,7 @@ has 'nodes' => (
 =head2 transport
 
 The transport to use to interact with the Elasticsearch API.  See L<Search::Elasticsearch::Transport|Search::Elasticsearch::Transport> for options.
+Rarely needed to be overriden
 
 =cut
 
@@ -113,28 +84,25 @@ has '_additional_opts' => (
   lazy    => 1,
   isa     => 'HashRef',
   default => sub { { send_get_body_as => 'POST', cxn_pool => 'Static'} },
+  # Here POST is used to deal with a restrictive firewall that strips body from GET messages
+  # Elasticsearch is more progressive than firewall vendors
 );
 
 =head2 _es
 
 The L<Search::Elasticsearch> object.
 
-The follwing helper methods have been replaced by the Search::Elasticsearch::Bulk
+Most of the common methods you would call on this instance are proxied by handler methods:
+$self->search() , $self->create() etc.
+Otherwise, $self->_es->search()
+
+Several helper methods have been replaced by the Search::Elasticsearch::Bulk
 class. Similarly, scrolled_search() has been replaced by the Search::Elasticsearch::Scroll.
-These helper classes are accessible as: 
-  $bulk   = $e->bulk_helper( %args_to_new );
-  $scroll = $e->scroll_helper( %args_to_new );
+These helper classes are accessible as:
+  $bulk   = $self->bulk_helper( %args_to_new );
+  $scroll = $self->scroll_helper( %args_to_new );
 
-==> 
- - remove bulk_(index|create|delete) and reindex
- - add bulk_helper, scroll_helper
- - remove searchqs, scrolled_search (not supported)
- - add indices (returns Search::Elasticsearch::Client::Indices
- - add cluster (returns Search::Elasticsearch::Client::Cluster)
- - other?
-
-Given the method returns a Search::Elasticsearch::Client::Direct it's better
-to look at what it now supports.
+Other methods return a Search::Elasticsearch::Client::Direct
 
 See https://metacpan.org/pod/Search::Elasticsearch::Client::Direct for a list of methods
 grouped according to category
@@ -176,8 +144,7 @@ around BUILDARGS => sub {
   my $class  = shift;
 
   my $params = $class->$orig(@_);
-  # NOTE: also update this: other stuff deprecated?
-  # See https://metacpan.org/pod/Search::Elasticsearch#MIGRATING-FROM-ElasticSearch.pm
+
   if (defined $params->{servers}) {
     carp "Passing 'servers' is deprecated, use 'nodes' now";
     $params->{nodes} = delete $params->{servers};

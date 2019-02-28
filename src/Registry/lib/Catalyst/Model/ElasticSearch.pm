@@ -22,7 +22,6 @@ use Moose;
 use namespace::autoclean;
 use Search::Elasticsearch;
 use Registry::Utils::File qw/slurp_file/;
-use Registry;
 use Carp;
 use JSON;
 extends 'Catalyst::Model';

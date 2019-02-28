@@ -136,15 +136,29 @@ sub get_trackhub_by_id {
   croak "Missing required id parameter"
     unless defined $id; # THIS IS NOT THE WAY TO RETURN ERRORS
 
-  my $config = Registry->config()->{'Model::Search'};
-  return $self->_es->get_source(index => $config->{trackhub}{index}, # add required (by Search::Elasticsearch)
-                                type  => $config->{trackhub}{type},  # index and type parameter 
-                                id    => $id) unless $orig;
-
-  return $self->_es->get(index => $config->{trackhub}{index},           
-                         type  => $config->{trackhub}{type},  
-                         id    => $id);
-  
+  my $config = $self->schema->{trackhub};
+  try {
+    if ($orig) {
+      return $self->get_source(
+        index => $config->{index_name},
+        type  => $config->{type},  # index and type parameter 
+        id    => $id
+      );
+    } else {
+      return $self->get(
+        index => $config->{index_name},           
+        type  => $config->{type},  
+        id    => $id
+      );
+    }
+  } catch {
+    # Failed searches return no hits, but getting a document by ID can fail
+    if (m/404/) {
+      Catalyst::Exception->throw('Unable to get hub with id '.$id);
+    } else {
+      Catalyst::Exception->throw('Unexpected error: '.$_);
+    }
+  };
 }
 
 =head2 get_trackdbs
@@ -184,13 +198,12 @@ sub get_trackdbs {
 }
 
 
-
 =head2 count_existing_hubs
 
   Arg[1]  : String - User name
   Arg[2]  : String - Hub name
   Arg[3]  : String - Assembly accession, e.g. GCA00301030
-  Description: Counts the number of hubs which match the supplied user details
+  Description: Counts the number of hubs (as distinct from trackDBs) which match the supplied user details
   Returntype: Integer - number of hubs matching constraints
 
 =cut
@@ -208,7 +221,8 @@ sub count_existing_hubs {
   Arg[1]  : String - User name
   Arg[2]  : String - Hub name
   Arg[3]  : String - Assembly accession, e.g. GCA00301030
-  Description: Searches for matching hubs, and returns them
+  Description: Searches for matching hubs, and returns the number of them.
+               Semi-redundant with the general count methods
   Returntype: Listref - A list of elasticsearch results from the query
 
 =cut
@@ -315,11 +329,11 @@ sub get_hubs_by_user_name {
 sub delete_hub_by_id {
   my ($self, $id) = @_;
 
-  my $config = Registry->config()->{'Model::Search'};
+  my $config = $self->schema->{trackhub};
  
   $self->delete(
-    index => $config->{trackhub}{index},
-    type => $config->{trackhub}{type},
+    index => $config->{index_name},
+    type => $config->{type},
     id => $id
   );
 }
@@ -335,8 +349,7 @@ sub delete_hub_by_id {
 
 sub refresh_trackhub_index {
   my ($self) = @_;
-  my $config = Registry->config()->{'Model::Search'};
-  $self->indices->refresh(index => $config->{trackhub}{index});
+  $self->indices->refresh(index => $self->schema->{trackhub}{index_name});
 }
 
 
@@ -350,11 +363,11 @@ sub refresh_trackhub_index {
 
 sub create_trackdb {
   my ($self, $doc) = @_;
-  my $config = Registry->config()->{'Model::Search'};
+  my $config = $self->schema->{trackhub};
 
   my $response = $self->index(
-    index   => $config->{trackhub}{index},
-    type    => $config->{trackhub}{type},
+    index   => $config->{index_name},
+    type    => $config->{type},
     body    => $doc
   );
 
@@ -489,7 +502,7 @@ sub pager {
 
   my %prepped_query = $self->_decorate_query(%$query);
 
-  my $iterator = $self->_es->scroll_helper(
+  my $iterator = $self->scroll_helper(
     %prepped_query
   );
 
@@ -516,9 +529,9 @@ sub pager {
 sub _decorate_query {
   my ($self, %args) = @_;
 
-  my $config = Registry->config()->{'Model::Search'};
-  $args{index} = $config->{trackhub}{index};
-  $args{type}  = $config->{trackhub}{type};
+  my $config = $self->schema->{trackhub};
+  $args{index} = $config->{index_name};
+  $args{type}  = $config->{type};
 
   # Search::Elasticsearch expects the query and any aggregations to be in the body
   # of the request.
@@ -535,6 +548,7 @@ sub _decorate_query {
     $args{body}{aggs} = $args{aggregations};
     delete $args{aggregations};
   }
+
   return %args;
 }
 

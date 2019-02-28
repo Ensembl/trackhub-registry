@@ -19,161 +19,240 @@ use Test::Exception;
 
 BEGIN {
   use FindBin qw/$Bin/;
-  use lib "$Bin/../lib";
-  $ENV{CATALYST_CONFIG} = "$Bin/../registry_testing.conf";
 }
 
 use LWP;
 use JSON;
 
-use Registry;
 use Registry::Utils; # slurp_file, es_running
-use Registry::Indexer;
+use Search::Elasticsearch::TestServer;
 
 use_ok 'Registry::Model::Search';
 
-my $es = Registry::Model::Search->new();
+my $es_server = Search::Elasticsearch::TestServer->new( es_version => '6_0');
+my $es_nodes = $es_server->start();
 
-isa_ok($es, 'Registry::Model::Search');
-is($es->nodes, 'localhost:9200', 'Correct default nodes');
+my $INDEX_NAME = 'trackhub_test';
+my $INDEX_TYPE = 'trackdb'; # Don't change this. It needs to match the mappings in the mapping_file below
 
-SKIP: {
-  unless (&Registry::Utils::es_running()) {
-    plan skip_all => "Launch an elasticsearch instance for the tests to run fully";
-  }
-
-  my $config = Registry->config()->{'Model::Search'};
-  my $indexer = Registry::Indexer->new(
-    dir   => "$Bin/trackhub-examples/",
+my $model = Registry::Model::Search->new(
+  nodes => $es_nodes,
+  schema => {
     trackhub => {
-      index => $config->{trackhub}{index},
-      type  => $config->{trackhub}{type},
-      mapping => 'trackhub_mappings.json'
-    },
-    authentication => {
-      index => $config->{user}{index},
-      type  => $config->{user}{type},
-      mapping => 'authentication_mappings.json'
+      mapping_file => "$Bin/../../../docs/trackhub-schema/v1.0/trackhub_mappings.json",
+      index_name => $INDEX_NAME,
+      type => $INDEX_TYPE
     }
-  );
-  $indexer->index_users();
-  $indexer->index_trackhubs();
+  },
+  _additional_opts => {
+    send_get_body_as => 'POST',
+    cxn_pool => 'Static',
+    trace_to => 'Stderr'
+  }
+);
 
-  # Test pager functionality
-  my $list = $es->pager({ 
-    query => { match_all => {} } , 
-    index => $config->{trackhub}{index}, 
-    type => $config->{trackhub}{type}
-  });
-  cmp_ok(scalar @$list, '==', 4, 'Get the standard four documents');
+isa_ok($model, 'Registry::Model::Search');
 
-  $list = $es->pager({ 
-    query => { match_all => {} }, 
-    index => $config->{trackhub}{index}, 
-    type => $config->{trackhub}{type}
-  }, sub {
-      my $doc = shift;
-      $doc->{_source}{_injected_stuff} = 1;
-      return $doc;
+my %test_hub_content = (
+  type => 'epigenomics',
+  owner => 'user1',
+  hub => {
+    name => 'Blueprint_Hub',
+    shortLabel => 'Blueprint Hub',
+    longLabel => 'Blueprint Epigenomics Data Hub',
+    url => 'file:///test/blueprint1'
+  },
+  species => {
+    tax_id => 9606,
+    scientific_name => 'Homo sapiens'
+  },
+  assembly => {
+    accession => 'GCA_000001405.1',
+    name => 'GRCh37',
+    synonyms => 'hg19'
+  },
+  data => [{
+    id => 'bob',
+    random_key => 'surprise'
+  }],
+  configuration => {
+    bob => {
+      shortLabel => 'testing',
+      longLabel => 'Example track',
+      visibility => 'full',
+      bigDataUrl => 'http://does.not.matter/',
+      type => 'bigbed',
     }
-  );
-  cmp_ok(scalar @$list, '==', 4, 'Still getting the standard four documents');
-  is($list->[-1]->{_source}{_injected_stuff},1,'Callback has added dynamic content to each response');
-  is($list->[1]->{_source}{_injected_stuff},1,'Callback has added dynamic content to each response');
+  }
+);
 
+my %secondary_test_hub_content = (
+  type => 'epigenomics',
+  owner => 'user2',
+  hub => {
+    name => 'a_hub',
+    shortLabel => 'a',
+    longLabel => 'a contrived test',
+    url => 'file:///test/a'
+  },
+  species => {
+    tax_id => 9606,
+    scientific_name => 'Homo sapiens'
+  },
+  assembly => {
+    accession => 'GCA_000001405.1',
+    name => 'GRCh37',
+    synonyms => 'hg19'
+  },
+  data => [{
+    id => 'trev',
+    random_key => 'surprise'
+  }],
+  configuration => {
+    bob => {
+      shortLabel => 'testing',
+      longLabel => 'Example track',
+      visibility => 'full',
+      bigDataUrl => 'http://does.not.matter/',
+      type => 'bigbed',
+    }
+  }
+);
 
-  #
-  # Now try with size limit smaller than data set
-  #
-  $list = $es->pager({ 
-    query => { match_all => {} }, 
-    index => $config->{trackhub}{index}, 
-    type => $config->{trackhub}{type},
-    size => 1
-  });
+note 'Populate schemas to test DB';
+$model->index(
+  index => $INDEX_NAME,
+  type => $INDEX_TYPE,
+  body => \%test_hub_content
+);
 
-  cmp_ok(scalar @$list, '==', 4, 'Get all 4 docs despite limited search size');
+$model->index(
+  index => $INDEX_NAME,
+  type => $INDEX_TYPE,
+  body => \%secondary_test_hub_content
+);
 
-  #
-  # and size limit coincidentally the same size as the data set
-  #
-  $list = $es->pager({ 
-    query => { match_all => {} }, 
-    index => $config->{trackhub}{index}, 
-    type => $config->{trackhub}{type},
-    size => 4
-  });
+# Any new document is not immediately available for searching without a transaction commit
+$model->indices->refresh;
 
-  cmp_ok(scalar @$list, '==', 4, 'Get all 4 docs with precise search size');
+# Test pager functionality
+my $list = $model->pager({ 
+  query => { match_all => {} }
+});
+cmp_ok(scalar @$list, '==', 2, 'Get both documents via unrestricted search');
 
-  #
-  # Test search getting all documents
-  #
-  # - getting all documents: no args
-  #
-  my $docs = $es->search_trackhubs();
-  is(scalar @{$docs->{hits}{hits}}, 4, "Doc counts when requesting all documents match");
-
-  #
-  # - getting docs for a certain user: use term filter
-  $docs = $es->search_trackhubs(query => { term => { owner => 'trackhub1' } });
-  is(scalar @{$docs->{hits}{hits}}, 2, "Doc counts when requesting docs for a certain user");
-
-  $docs = $es->search_trackhubs(query => { term => { owner => 'trackhub3' } });
-  is(scalar @{$docs->{hits}{hits}}, 1, "Doc counts when requesting docs for a certain user");
-
-
-  #
-  # Test getting documents by IDs
-  #
-  # missing arg throws exception
-  throws_ok { $es->get_trackhub_by_id }
-    qr/Missing/, "Fetch doc without required arguments";
-
-  # getting existing documents
-  my $doc = $es->get_trackhub_by_id(1);
-  is($doc->{data}[0]{id}, "bpDnaseRegionsC0010K46DNaseEBI", "Fetch correct document");
-  
-  $doc = $es->get_trackhub_by_id(2);
-  is(scalar @{$doc->{data}}, 4, "Fetch correct document");
-
-  # getting document by non-existant ID
-  throws_ok { $es->get_trackhub_by_id(5) }
-    qr/Missing/, "Request document by incorrect ID";
-
-  # Test count_trackhubs (see Registry::Indexer for test data)
-  my $count = $es->count_trackhubs();
-  cmp_ok($count, '==', 4, 'Retrieve count of ALL trackhubs');
-  $count = $es->count_trackhubs(query => {term => {owner => 'trackhub1'}});
-  cmp_ok($count, '==', 2, 'Only one hub belongs to trackhub1');
-
-
-  # 
-  # Test canned queries for pre-existing hubs
-  # 
-
-  $count = $es->count_existing_hubs('trackhub1','Blueprint_Hub','GCA_000001405.15');
-  cmp_ok($count, '==', 1, 'Count instances of a hub owned by a known user');
-
-  $count = $es->count_existing_hubs('trackhub2','Blueprint_Hub','GCA_000001405.15');
-  cmp_ok($count, '==', 0, 'Count instances of a hub owned by a different user');
-  # these counts are inaccurate. Can't/won't figure out why
-
-  $count = $es->count_existing_hubs('trackhub1','totallynothere','GCA_000001405.15');
-  cmp_ok($count, '==', 0, 'Count instances of a non-existant hub from the same user');
-
-  $list = $es->get_existing_hubs('trackhub1','Blueprint_Hub','GCA_000001405.15');
-  cmp_ok(scalar @$list, '==', 1, 'The list of results is still one long');
-
-  is($list->[0]->{_id},2, "Document ID of trackhub1's blueprint hub is consistent");
-  is($list->[0]->{_source}{owner},'trackhub1', "Owner of trackhub1's blueprint hub is correct");
-
-  $list = $es->get_hub_by_url('file:///test/blueprint1');
-  cmp_ok(@{$list}, '==', 2, 'Test data deliberately fakes up two instances of the same hub by different users');
-
-  is($list->[0]->{_id},1, "Same result, but via trackhub URL. Hub is consistent");
-  is($list->[0]->{_source}{owner},'trackhub1', "Same result, but via trackhub URL. Owner is correct");
-
+my %relevant_content;
+if ($list->[0]{_source}{hub}{name} eq 'a_hub') {
+  %relevant_content = %secondary_test_hub_content;
+} else {
+  %relevant_content = %test_hub_content;
 }
+
+is_deeply($list->[0]{_source}, \%relevant_content, 'Check fields were stored in the backend');
+
+# Test callback functionality
+$list = $model->pager({
+  query => { match_all => {} }
+}, sub {
+    my $doc = shift;
+    $doc->{_source}{_injected_stuff} = 1;
+    return $doc;
+  }
+);
+cmp_ok(scalar @$list, '==', 2, 'Still getting both documents');
+is($list->[-1]->{_source}{_injected_stuff}, 1, 'Callback has added dynamic content to last response');
+is($list->[1]->{_source}{_injected_stuff}, 1, 'Callback has added dynamic content to first response');
+
+#
+# Now try with size limit smaller than data set
+# The first page of results cannot be properly limited
+$list = $model->pager({ 
+  query => { match_all => {} },
+  size => 1
+});
+
+cmp_ok(scalar @$list, '==', 2, 'Get both docs despite limited search size');
+
+#
+# and size limit coincidentally the same size as the data set
+#
+$list = $model->pager({ 
+  query => { match_all => {} },
+  size => 2
+});
+
+cmp_ok(scalar @$list, '==', 2, 'Get both docs with precise search size');
+
+#
+# Test search model interface for getting all documents
+#
+# - getting all documents: no args
+#
+my $docs = $model->search_trackhubs();
+is(scalar @{$docs->{hits}{hits}}, 2, 'Doc counts when requesting all documents match');
+
+my ($DOC_ID, $DOC_ID2) = sort map { $_->{_id} } @{ $docs->{hits}{hits} };
+
+note 'Pulled out ID: '.$DOC_ID.', '.$DOC_ID2;
+#
+# - getting docs for a certain user: use term filter
+$docs = $model->search_trackhubs(query => { term => { owner => 'user1' } });
+is(scalar @{$docs->{hits}{hits}}, 1, 'user1 owns one hub');
+
+$docs = $model->search_trackhubs(query => { term => { owner => 'user2' } });
+is(scalar @{$docs->{hits}{hits}}, 1, 'user2 owns one hub');
+
+
+#
+# Test getting documents by IDs
+#
+# missing arg throws exception
+throws_ok { $model->get_trackhub_by_id }
+  qr/Missing/, 'Fetch doc without required arguments';
+
+# getting existing documents
+my $doc = $model->get_trackhub_by_id($DOC_ID);
+is($doc->{_source}{data}[0]{id}, 'bob', 'Fetch correct document');
+
+$doc = $model->get_trackhub_by_id($DOC_ID2);
+is($doc->{_source}{data}[0]{id}, 'trev', 'Fetch second document by _id');
+
+# getting document by non-existant ID
+throws_ok { $model->get_trackhub_by_id(5) }
+  qr/Unable to get hub with id 5/, 'Request document by incorrect ID';
+
+# Counting method
+my $count = $model->count_trackhubs();
+cmp_ok($count, '==', 2, 'Retrieve count of ALL trackhubs');
+$count = $model->count_trackhubs(query => {term => {owner => 'user1'}});
+cmp_ok($count, '==', 1, 'Only one hub belongs to user1');
+
+
+# 
+# Test canned queries for pre-existing hubs
+# 
+
+$count = $model->count_existing_hubs('user1','Blueprint_Hub','GCA_000001405.1');
+cmp_ok($count, '==', 1, 'Count instances of a hub owned by a known user');
+
+$count = $model->count_existing_hubs('user2','Blueprint_Hub','GCA_000001405.15');
+cmp_ok($count, '==', 0, 'Count instances of a hub owned by a different user');
+# these counts are inaccurate. Can't/won't figure out why
+
+$count = $model->count_existing_hubs('user1','totallynothere','GCA_000001405.15');
+cmp_ok($count, '==', 0, 'Count instances of a non-existent hub from the same user');
+
+$list = $model->get_existing_hubs('user1','Blueprint_Hub','GCA_000001405.1');
+cmp_ok(scalar @$list, '==', 1, 'The list of results is still one long');
+
+is($list->[0]->{_id},$DOC_ID, "Document ID of trackhub1's blueprint hub is consistent");
+is($list->[0]->{_source}{owner},'user1', "Owner of user1's blueprint hub is correct");
+
+$list = $model->get_hub_by_url('file:///test/blueprint1');
+cmp_ok(@{$list}, '==', 1, 'One hub has the supplied URL');
+
+is($list->[0]->{_id},$DOC_ID, 'Same result, but via trackhub URL. Hub is consistent');
+is($list->[0]->{_source}{owner},'user1', "Same result, but via trackhub URL. Owner is correct");
+
 
 done_testing();

@@ -29,8 +29,7 @@ extends 'Catalyst::Model';
 
 
 =head1 SYNOPSIS
-  Adapted from Catalyst::Model::Search::ElasticSearch
-
+  
   package My::App::Model::Search;
   use Moose;
   use namespace::autoclean;
@@ -40,6 +39,8 @@ extends 'Catalyst::Model';
   1;
 
 =head1 DESCRIPTION
+
+Adapted from Catalyst::Model::Search::ElasticSearch
 
 This base Catalyst::Model is inherited by any models that need to access Elasticsearch
 It provides convenient access to the ES REST API, and auto-populates it with schema as
@@ -88,6 +89,29 @@ has '_additional_opts' => (
   # Elasticsearch is more progressive than firewall vendors
 );
 
+=head2 schema
+
+We need to know both where our backend is, and what the indexes we are using are called
+Takes the form:
+
+schema => {
+  $schema_type => {
+    mapping_file => $path, # A JSON index mapping file for Elasticsearch
+    index_name => $name, # A name for the index we are using
+    type => $type # A type for the index, see ES documentation on index types
+  }
+}
+
+One of the schema types is expected to be called 'trackhub'
+
+=cut
+
+has schema => (
+  is => 'ro',
+  isa => 'HashRef'
+);
+
+
 =head2 _es
 
 The L<Search::Elasticsearch> object.
@@ -122,13 +146,6 @@ has '_es' => (
   },
 );
 
-has schema_location => (
-  is => 'ro',
-  isa => 'Str',
-  required => 1
-);
-
-
 sub _build_es {
   my $self = shift;
   return Search::Elasticsearch->new(
@@ -136,7 +153,6 @@ sub _build_es {
     transport => $self->transport,
     %{ $self->_additional_opts },
   );
-
 }
 
 around BUILDARGS => sub {
@@ -161,24 +177,40 @@ around _build_es => sub {
   my $self = shift;
   
   my $client = $self->$orig(@_);
-  foreach my $schema_name (qw/reports trackhub/) {
+
+  unless (
+    defined $self->schema
+    && exists $self->schema->{trackhub}
+  ) {
+    croak 'Server config file for '.$self.' must have a section defining
+      <schema>
+        <trackhub>
+          mapping_file $hub_mapping_json
+          index_name   $es_hub_index_name
+          type         trackdb
+        </trackhub>
+        <report>
+          mapping_file $report_mapping_json
+          index_name   $es_report_index_name
+          type         report
+        </report>
+      </schema>'
+  }
+
+  while ( my ($schema_name, $config) = each %{ $self->schema } ) {
       
-      my $schema_path = File::Spec->catfile(
-        $self->schema_location, # Defined in Registry.pm
-        $schema_name.'_mappings.json'
+    my $schema_path = $config->{mapping_file};
+    print "Creating index from config '$schema_name' with mapping $schema_path\n";
+    
+    # Create indexes and load mappings if they're not present
+    unless ($client->indices->exists( index => $config->{index_name} ) ) {
+      $client->indices->create(
+        index => $config->{index_name},
+        # type => $config->{type},
+        body => decode_json( slurp_file( $schema_path ) )
       );
-      print "Creating index '$schema_name' with mapping $schema_path\n";
-      
-      # Create indexes and load mappings if they're not present
-      unless ($client->indices->exists( index => $schema_name.'_v1' ) ) {
-        $client->indices->create(
-          index => $schema_name.'_v1', 
-          # FIXME, this should reflect actual schema version, but is deeply
-          # embedded into deployment
-          body => decode_json( slurp_file( $schema_path ) )
-        );
-        $client->indices->refresh; # If only ES were a proper database
-      }
+      $client->indices->refresh; # If only ES were a proper database
+    }
   }
   return $client;
 };

@@ -107,12 +107,7 @@ __PACKAGE__->config(
         },
         'Plugin::Static::Simple' => {
             ignore_extensions => [ qw/tmpl tt tt2 xhtml/ ],
-        },
-        'Model::ElasticSearch' => {
-            schema_location => __PACKAGE__->path_to('./../../../docs/trackhub-schema/v1.0/'),
         }
-        # The rest of the server config comes from the catalyst config file
-        # See for registry.conf or similar for controller specific settings
        );
 
 # Start the application

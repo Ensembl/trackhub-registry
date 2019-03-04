@@ -88,27 +88,26 @@ our $VERSION = '0.01';
 #         Config::General->new->save_file("myapp.conf", MyApp->config);'
 
 __PACKAGE__->config(
-        name => 'Registry',
-        # Disable deprecated behaviour needed by old applications
-        disable_component_resolution_regex_fallback => 1,
-        enable_catalyst_header => 1, # Send X-Catalyst header
-        'Plugin::ConfigLoader' => { 
-            driver => { 
-                General => { 
-                    -ForceArray => 1 #Allow key = [val] to become an array
-                }, 
-            },
+    name => 'Registry',
+    # Disable deprecated behaviour needed by old applications
+    disable_component_resolution_regex_fallback => 1,
+    'Plugin::ConfigLoader' => { 
+        driver => { 
+            General => { 
+                -ForceArray => 1 #Allow key = [val] to become an array
+            }, 
         },
-        'Plugin::Session' => {
-            flash_to_stash => 1
-        },
-        'Controller::Login' => {
-            traits => ['-RenderAsTTTemplate'],
-        },
-        'Plugin::Static::Simple' => {
-            ignore_extensions => [ qw/tmpl tt tt2 xhtml/ ],
-        }
-       );
+    },
+    'Plugin::Session' => {
+        flash_to_stash => 1
+    },
+    'Controller::Login' => {
+        traits => ['-RenderAsTTTemplate'],
+    },
+    'Plugin::Static::Simple' => {
+        ignore_extensions => [ qw/tmpl tt tt2 xhtml/ ],
+    }
+);
 
 # Start the application
 my $log4perl_conf = $ENV{REGISTRY_LOG4PERL} || 'log4perl.conf';

@@ -43,11 +43,6 @@ my $model = Registry::Model::Search->new(
       index_name => $INDEX_NAME,
       type => $INDEX_TYPE
     }
-  },
-  _additional_opts => {
-    send_get_body_as => 'POST',
-    cxn_pool => 'Static',
-    trace_to => 'Stderr'
   }
 );
 

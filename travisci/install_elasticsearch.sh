@@ -1,9 +1,10 @@
 #!/bin/bash
 
-CACHE_DIR=$HOME/elasticsearch/
-
 URL=https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-$ELASTICSEARCH_VERSION.tar.gz
 
-wget $URL
-tar xzf elasticsearch-$ELASTICSEARCH_VERSION.tar.gz
-mv elasticsearch-$ELASTICSEARCH_VERSION/* $ES_HOME/
+if [! -d "$ES_HOME" ]; then
+  wget $URL
+  tar xzf elasticsearch-$ELASTICSEARCH_VERSION.tar.gz
+  mkdir -p $ES_HOME/data
+  mv elasticsearch-$ELASTICSEARCH_VERSION/* $ES_HOME/
+fi

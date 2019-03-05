@@ -8,3 +8,7 @@ if [! -d "$ES_HOME" ]; then
   mkdir -p $ES_HOME/data
   mv elasticsearch-$ELASTICSEARCH_VERSION/* $ES_HOME/
 fi
+# Debugging
+cat $ES_HOME/config/jvm.options
+
+$ES_HOME/bin/elasticsearch -d

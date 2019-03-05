@@ -1,5 +1,9 @@
 language: "perl"
 
+env:
+  - ELASTICSEARCH_VERSION=6.3.1
+  - ES_HOME=$HOME/elasticsearch/$ELASTICSEARCH_VERSION/
+
 perl:
   - "5.16"
 
@@ -7,13 +11,11 @@ before_install:
     - git clone --branch master --depth 1 https://github.com/Ensembl/ensembl.git
     - git clone --branch master --depth 1 https://github.com/EnsemblGenomes/ensemblgenomes-api.git
     - git clone -b release-1-6-924 --depth 1 https://github.com/bioperl/bioperl-live.git
-    - curl -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.3.1.deb && sudo dpkg -i --force-confnew elasticsearch-6.3.1.deb && sudo service elasticsearch restart
+    - ./travisci/install_elasticsearch.sh
     - pip install --user jsonschema
 
 install:
-    - cpanm -n Module::Install::Catalyst DBD::mysql
-    - cpanm --installdeps --with-recommends --notest $PWD/src/Registry
-    - cpanm Search::Elasticsearch
+    - cpanm -n Module::Install::Catalyst
     - cpanm -n Devel::Cover::Report::Coveralls
     - cpanm --installdeps --with-recommends --notest $PWD/src/Registry
 
@@ -21,6 +23,11 @@ before_script:
     - sleep 10
 
 script: "./travisci/harness.sh"
+
+cache:
+  directories:
+    - $HOME/elasticsearch
+    - $HOME/perl5
 
 notifications:
   email:

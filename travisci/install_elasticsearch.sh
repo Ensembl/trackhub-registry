@@ -11,7 +11,8 @@ fi
 # Debugging
 # cat $ES_HOME/config/jvm.options
 
-ls -l $ES_HOME
-ls -l $ES_HOME/config
+ls -l $JAVA_HOME/lib/
+
+sudo echo 'permission javax.management.MBeanTrustPermission "register"' >> $JAVA_HOME/lib/security/java.policy
 
 # $ES_HOME/bin/elasticsearch -d

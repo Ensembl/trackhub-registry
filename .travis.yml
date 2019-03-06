@@ -19,9 +19,6 @@ install:
     - cpanm -n Devel::Cover::Report::Coveralls
     - cpanm --installdeps --with-recommends --notest $PWD/src/Registry
 
-before_script:
-    - sleep 10
-
 script: "./travisci/harness.sh"
 
 cache:

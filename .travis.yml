@@ -7,7 +7,7 @@ perl:
   - "5.16"
 
 before_install:
-    - sudo echo 'permission javax.management.MBeanTrustPermission "register"' >> $JAVA_HOME/jre/lib/security/java.policy
+    - echo 'grant { permission javax.management.MBeanTrustPermission "register"; };' | sudo tee -a $JAVA_HOME/jre/lib/security/java.policy
     - bash ./travisci/install_elasticsearch.sh
     - git clone --branch master --depth 1 https://github.com/Ensembl/ensembl.git
     - git clone --branch master --depth 1 https://github.com/EnsemblGenomes/ensemblgenomes-api.git

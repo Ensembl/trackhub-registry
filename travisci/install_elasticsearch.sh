@@ -13,6 +13,6 @@ fi
 
 ls -l $JAVA_HOME/lib/
 
-sudo echo 'permission javax.management.MBeanTrustPermission "register"' >> $JAVA_HOME/lib/security/java.policy
+sudo echo 'permission javax.management.MBeanTrustPermission "register"' >> $JAVA_HOME/jre/lib/security/java.policy
 
 # $ES_HOME/bin/elasticsearch -d

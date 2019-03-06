@@ -9,10 +9,6 @@ if [ ! -d "$ES_HOME" ]; then
   mv elasticsearch-$ELASTICSEARCH_VERSION/* $ES_HOME/
 fi
 # Debugging
-# cat $ES_HOME/config/jvm.options
-
-ls -l $JAVA_HOME/lib/
-
-sudo echo 'permission javax.management.MBeanTrustPermission "register"' >> $JAVA_HOME/jre/lib/security/java.policy
+# sudo echo 'permission javax.management.MBeanTrustPermission "register"' >> $JAVA_HOME/jre/lib/security/java.policy
 
 # $ES_HOME/bin/elasticsearch -d

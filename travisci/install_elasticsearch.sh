@@ -9,6 +9,9 @@ if [ ! -d "$ES_HOME" ]; then
   mv elasticsearch-$ELASTICSEARCH_VERSION/* $ES_HOME/
 fi
 # Debugging
-cat $ES_HOME/config/jvm.options
+# cat $ES_HOME/config/jvm.options
 
-$ES_HOME/bin/elasticsearch -d
+ls -l $ES_HOME
+ls -l $ES_HOME/config
+
+# $ES_HOME/bin/elasticsearch -d

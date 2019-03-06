@@ -26,6 +26,7 @@ use JSON;
 use HTTP::Headers;
 use HTTP::Request::Common qw/GET POST PUT DELETE/;
 use LWP::Simple qw($ua head);
+use Registry::Utils;
 
 use Test::WWW::Mechanize::Catalyst;
 use Search::Elasticsearch::TestServer;
@@ -39,16 +40,14 @@ my $INDEX_TYPE = 'trackdb';
 
 use Catalyst::Test 'Registry';
 
-use Registry::Utils;
-
 my $es_client = Search::Elasticsearch->new(
   nodes => $es_nodes
 );
-my $hub_content = slurp_file("$Bin/track_hub/plant1.json");
+my $hub_content = Registry::Utils::slurp_file("$Bin/track_hub/plant1.json");
 # Populate some hubs so we can test the search box interface
 $es_client->index(
-  index => $INDEX_TYPE,
-  index_name => $INDEX_TYPE,
+  index => $INDEX_NAME,
+  type => $INDEX_TYPE,
   body => $hub_content
 );
 

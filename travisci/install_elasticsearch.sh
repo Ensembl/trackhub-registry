@@ -1,8 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 URL=https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-$ELASTICSEARCH_VERSION.tar.gz
 
-if [! -d "$ES_HOME" ]; then
+if [ ! -d "$ES_HOME" ]; then
   wget $URL
   tar xzf elasticsearch-$ELASTICSEARCH_VERSION.tar.gz
   mkdir -p $ES_HOME/data

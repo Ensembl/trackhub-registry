@@ -9,7 +9,6 @@ export PYTHONPATH=/usr/local/lib/python2.7/dist-packages/:$PYTHONPATH
 echo "Running test suite"
 export TEST_POD=1
 export CATALYST_DEBUG=0
-export ES_HOME=/usr/share/elasticsearch
 
 cd src/Registry
 rm -rf blib

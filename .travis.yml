@@ -1,7 +1,7 @@
 language: "perl"
 
 env:
-  - ELASTICSEARCH_VERSION=6.3.1 ES_HOME=$HOME/elasticsearch/$ELASTICSEARCH_VERSION/
+  - ELASTICSEARCH_VERSION=6.3.1 ES_HOME=$HOME/elasticsearch/$ELASTICSEARCH_VERSION/ ES_PATH_CONF=$ES_HOME/config
 
 perl:
   - "5.16"

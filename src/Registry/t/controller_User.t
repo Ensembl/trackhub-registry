@@ -65,10 +65,7 @@ $admin_user->add_to_roles({ name => 'admin' });
 
 use Catalyst::Test 'Registry';
 
-### Have an irrelevant ES backend for looking up lists of tracks for a user
-
-my $es_server = Search::Elasticsearch::TestServer->new( es_version => '6_0');
-$es_server->start();
+### Requires ES running in the background on 127.0.0.1:9200
 
 ### Test user login and management interface ###
 

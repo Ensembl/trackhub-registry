@@ -29,9 +29,8 @@ use Search::Elasticsearch::TestServer;
 
 use_ok 'Registry::Model::Search';
 
-my $es_server = Search::Elasticsearch::TestServer->new( es_version => '6_0');
-my $es_nodes = $es_server->start();
 
+my $es_nodes = '127.0.0.1:9200';
 my $INDEX_NAME = 'trackhub_test';
 my $INDEX_TYPE = 'trackdb'; # Don't change this. It needs to match the mappings in the mapping_file below
 

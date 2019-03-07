@@ -29,20 +29,19 @@ use LWP::Simple qw($ua head);
 use Registry::Utils;
 
 use Test::WWW::Mechanize::Catalyst;
-use Search::Elasticsearch::TestServer;
 use Search::Elasticsearch;
 
-my $es_server = Search::Elasticsearch::TestServer->new( es_version => '6_0');
-my $es_nodes = $es_server->start();
+my $es_nodes = '127.0.0.1:9200';
+my $es_client = Search::Elasticsearch->new(
+  nodes => $es_nodes
+);
+ok ($es_client->cluster->info, 'ES server waiting');
 
 my $INDEX_NAME = 'trackhubs'; # Matches registry_testing.conf
 my $INDEX_TYPE = 'trackdb';
 
 use Catalyst::Test 'Registry';
 
-my $es_client = Search::Elasticsearch->new(
-  nodes => $es_nodes
-);
 my $hub_content = Registry::Utils::slurp_file("$Bin/track_hub/plant1.json");
 # Populate some hubs so we can test the search box interface
 $es_client->index(
@@ -50,7 +49,6 @@ $es_client->index(
   type => $INDEX_TYPE,
   body => $hub_content
 );
-
 
 
 # [ENSCORESW-2121]

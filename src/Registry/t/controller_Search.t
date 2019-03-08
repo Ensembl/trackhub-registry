@@ -45,14 +45,22 @@ use Catalyst::Test 'Registry';
 my $mech = Test::WWW::Mechanize::Catalyst->new(catalyst_app => 'Registry');
 $mech->get_ok('/', 'Requested main page');
 
-my $hub_content = Registry::Utils::slurp_file("$Bin/track_hub/plant1.json");
+$mech->submit_form_ok({
+    form_number => 1,
+    fields => {
+      q => undef
+    }
+  }, 'Trigger particularly lazy builds');
+
+my $hub_content = decode_json(Registry::Utils::slurp_file("$Bin/track_hub/plant1.json"));
+$hub_content->{public} = JSON::true;
 # Populate some hubs so we can test the search box interface
 $es_client->index(
   index => $INDEX_NAME,
   type => $INDEX_TYPE,
-  body => decode_json($hub_content)
+  body => $hub_content
 );
-
+$es_client->indices->refresh(index => $INDEX_NAME);
 
 # [ENSCORESW-2121]
 # check unexpected characters in query are appropriately handled
@@ -107,8 +115,9 @@ $mech->submit_form_ok({
       q => undef
     }
   }, 'match_all query fires when no query is provided');
+
 $mech->content_like(qr/Track Collections 1 to 1 of 1/s, 'Results of match_all have correct number and pagination');
 
-es_client->delete(index => $INDEX_NAME);
+$es_client->delete(index => $INDEX_NAME, type => $INDEX_TYPE);
 
 done_testing();

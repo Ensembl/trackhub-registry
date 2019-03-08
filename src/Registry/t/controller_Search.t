@@ -41,20 +41,21 @@ my $INDEX_NAME = 'trackhubs'; # Matches registry_testing.conf
 my $INDEX_TYPE = 'trackdb';
 
 use Catalyst::Test 'Registry';
+# Poke the bear
+my $mech = Test::WWW::Mechanize::Catalyst->new(catalyst_app => 'Registry');
+$mech->get_ok('/', 'Requested main page');
 
 my $hub_content = Registry::Utils::slurp_file("$Bin/track_hub/plant1.json");
 # Populate some hubs so we can test the search box interface
 $es_client->index(
   index => $INDEX_NAME,
   type => $INDEX_TYPE,
-  body => $hub_content
+  body => decode_json($hub_content)
 );
 
 
 # [ENSCORESW-2121]
 # check unexpected characters in query are appropriately handled
-my $mech = Test::WWW::Mechanize::Catalyst->new(catalyst_app => 'Registry');
-$mech->get_ok('/', 'Requested main page');
 $mech->submit_form_ok(
   {
    form_number => 1,
@@ -92,7 +93,7 @@ $mech->content_like(qr/Plants/s, 'Results contain relevant hits');
 $mech->submit_form_ok({
     form_number => 1,
     fields => {
-      q => 'species.scientific_name:(Ricinus communis) AND Biology of Gnomes'
+      q => 'species.scientific_name:(Ricinus communis) AND Biology of Genomes'
     }
   }, 'Qualified species constraint query');
 # Note capitalisation of species is critical. An additional analysed field is created called 
@@ -108,6 +109,6 @@ $mech->submit_form_ok({
   }, 'match_all query fires when no query is provided');
 $mech->content_like(qr/Track Collections 1 to 1 of 1/s, 'Results of match_all have correct number and pagination');
 
-es_client->delete(index => $INDEX_NAME, types => $INDEX_TYPE);
+es_client->delete(index => $INDEX_NAME);
 
 done_testing();

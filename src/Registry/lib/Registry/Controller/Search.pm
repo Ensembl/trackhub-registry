@@ -46,8 +46,8 @@ BEGIN { extends 'Catalyst::Controller'; }
 
 =head2 index
 
-Action for the /search URL which takes a query as specified in the home page or the
-header, queries the Elasticsearch back-end and presents (faceted) results back to 
+Action for the / page after the query form has been submitted, generating ?q options.
+Queries the Elasticsearch back-end and presents (faceted) results back to 
 the user using pagination.
 
 =cut
@@ -124,7 +124,6 @@ sub index :Path :Args(0) {
   push @{ $query_args{query}->{bool}->{must}}, @filters;
 
   my ($results, $results_by_hub);
-  
   # do the search
   try {
     $results = $c->model('Search')->search_trackhubs(%query_args);

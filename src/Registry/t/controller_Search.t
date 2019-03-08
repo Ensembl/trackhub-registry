@@ -35,7 +35,7 @@ my $es_nodes = '127.0.0.1:9200';
 my $es_client = Search::Elasticsearch->new(
   nodes => $es_nodes
 );
-ok ($es_client->cluster->info, 'ES server waiting');
+ok ($es_client->cluster->health, 'ES server waiting');
 
 my $INDEX_NAME = 'trackhubs'; # Matches registry_testing.conf
 my $INDEX_TYPE = 'trackdb';
@@ -55,45 +55,49 @@ $es_client->index(
 # check unexpected characters in query are appropriately handled
 my $mech = Test::WWW::Mechanize::Catalyst->new(catalyst_app => 'Registry');
 $mech->get_ok('/', 'Requested main page');
-$mech->submit_form_ok({
-                       form_number => 1,
-                       fields      => {
-                         q => '/'
-                       },
-                      }, 'Submit wrong character as search query'
-                           );
+$mech->submit_form_ok(
+  {
+   form_number => 1,
+   fields      => {
+     q => '/'
+   },
+  },
+  'Submit a bad character in search box'
+); # Slashes upset the Elasticsearch query parser
 $mech->content_like(qr/Unintelligible query string/s, 'Query parsing failed');
+
 # Submit with a plain search string
 $mech->submit_form_ok({
     form_number => 1,
     fields => {
-      q => 'GRC ALT align'
+      q => 'Biology of Genomes'
     }
-  }, 'Plain text query for something in the Sanger trackhub');
-$mech->content_like(qr/GRC Genome Issues under Review/s, 'Results contain some useful representative hits');
+  }, 'Plain text query for something in the plant1 hub');
+$mech->content_like(qr/Plants/s, 'Results contain relevant hits');
 
 # Submit with a qualified search string
 # It would be really great if we could get rid of these brackets without needing to rebuild the query object
 $mech->submit_form_ok({
     form_number => 1,
     fields => {
-      q => 'species.scientific_name:(Mus musculus)'
+      q => 'species.scientific_name:(Ricinus communis)'
     }
-  }, 'Qualified species constraint query for something in the Sanger trackhub');
+  }, 'Qualified species constraint query for something in the plant1.json hub');
+
 # Note capitalisation of species is critical. An additional analysed field is created called 
 # species.scientific_name.lowercase for case-insensitive searches
-$mech->content_like(qr/GRC Genome Issues under Review/s, 'Results contain some useful representative hits');
+$mech->content_like(qr/Plants/s, 'Results contain relevant hits');
 
 # Try a mixed query, of named fields and general text strings
 $mech->submit_form_ok({
     form_number => 1,
     fields => {
-      q => 'species.scientific_name:(Mus musculus) AND GRC Genome Issues under Review'
+      q => 'species.scientific_name:(Ricinus communis) AND Biology of Gnomes'
     }
-  }, 'Qualified species constraint query for something in the Sanger trackhub');
+  }, 'Qualified species constraint query');
 # Note capitalisation of species is critical. An additional analysed field is created called 
 # species.scientific_name.lowercase for case-insensitive searches
-$mech->content_like(qr/mm9/s, 'Results contain some useful representative hits');
+$mech->content_like(qr/Plants/s, 'Results contain the relevant hub');
 
 # Try a query with no text. Should match all public hubs.
 $mech->submit_form_ok({
@@ -102,6 +106,8 @@ $mech->submit_form_ok({
       q => undef
     }
   }, 'match_all query fires when no query is provided');
-$mech->content_like(qr/Track Collections 1 to 5 of 7/s, 'Results of match_all are correct in number and pagination');
+$mech->content_like(qr/Track Collections 1 to 1 of 1/s, 'Results of match_all have correct number and pagination');
+
+es_client->delete(index => $INDEX_NAME, types => $INDEX_TYPE);
 
 done_testing();

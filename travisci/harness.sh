@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ENSDIR="${ENSDIR:-$PWD}"
 echo $ENSDIR
@@ -14,17 +14,4 @@ cd src/Registry
 rm -rf blib
 prove -vr
 
-ls t
-ls t/track_hub
-
-
-rt=$?
-if [ $rt -eq 0 ]; then
-  # if [ "$COVERALLS" = 'true' ]; then
-  #   echo "Running Devel::Cover coveralls report"
-  #   cover --nosummary -report coveralls
-  # fi
-  exit $?
-else
-  exit $rt
-fi
+exit $?

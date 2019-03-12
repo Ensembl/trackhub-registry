@@ -118,6 +118,6 @@ $mech->submit_form_ok({
 
 $mech->content_like(qr/Track Collections 1 to 1 of 1/s, 'Results of match_all have correct number and pagination');
 
-$es_client->delete(index => $INDEX_NAME, type => $INDEX_TYPE);
+$es_client->indices->delete(index => $INDEX_NAME);
 
 done_testing();

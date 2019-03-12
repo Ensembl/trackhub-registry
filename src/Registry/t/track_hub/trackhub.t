@@ -29,7 +29,7 @@ use_ok 'Registry::TrackHub';
 
 throws_ok { Registry::TrackHub->new() } qr/Undefined/, 'Throws if URL not passed';
 
-my $WRONG_URL = "ftp://ftp.ebi.ac.uk/pub/databases/do_no_exist";
+my $WRONG_URL = "http://ftp.ebi.ac.uk/pub/databases/do_no_exist";
 throws_ok { Registry::TrackHub->new(url => $WRONG_URL, permissive => 1) } qr/check the source URL/, 'Throws with incorrect URL'; 
 
 #
@@ -42,7 +42,7 @@ SKIP: {
   skip "No Internet connection: cannot test TrackHub access", 8
     unless Registry::Utils::internet_connection_ok();
 
-  my $URL = "ftp://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub";
+  my $URL = "http://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub";
   my $th = Registry::TrackHub->new(url => $URL, permissive => 1);
   isa_ok($th, 'Registry::TrackHub');
 

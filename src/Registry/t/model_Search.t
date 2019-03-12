@@ -185,7 +185,10 @@ cmp_ok(scalar @$list, '==', 2, 'Get both docs with precise search size');
 my $docs = $model->search_trackhubs();
 is(scalar @{$docs->{hits}{hits}}, 2, 'Doc counts when requesting all documents match');
 
-my ($DOC_ID, $DOC_ID2) = sort map { $_->{_id} } @{ $docs->{hits}{hits} };
+my ($DOC_ID, $DOC_ID2) =
+  map { $_->{_id} }
+  sort { $a->{_source}{owner} cmp $b->{_source}{owner}}
+  @{ $docs->{hits}{hits} };
 
 note 'Pulled out ID: '.$DOC_ID.', '.$DOC_ID2;
 #
@@ -248,5 +251,111 @@ cmp_ok(@{$list}, '==', 1, 'One hub has the supplied URL');
 is($list->[0]->{_id},$DOC_ID, 'Same result, but via trackhub URL. Hub is consistent');
 is($list->[0]->{_source}{owner},'user1', "Same result, but via trackhub URL. Owner is correct");
 
+
+#
+# Test pagination function
+#
+
+ok ( ! defined (
+    $model->paginate({ hits => { total => 0 }}, 1, 5, 0 )
+  ),
+  'Test a zero hit result'
+);
+
+# Single result with per-page value higher than number of results
+my %paginated = $model->paginate(
+  { 
+    hits => {
+      total => 1,
+      hits => [{ thing => 'here'}]
+    }
+  }, # result set
+  1, # page
+  5, # hits per page
+  0  # offset
+);
+
+ok (! defined $paginated{first_page}, 'First hit, first page, no first page link required');
+ok (! defined $paginated{last_page}, 'First hit, first page AND last page, no last page link required');
+ok (! defined $paginated{prev_page}, 'First hit, first page, no previous page link required');
+ok (! defined $paginated{next_page}, 'Googlewhack, first page, no next page required');
+cmp_ok ($paginated{from}, '==', 1, 'One record starting at one');
+cmp_ok ($paginated{to}, '==', 1, 'One record ends at one');
+cmp_ok ($paginated{page}, '==', 1, 'On page one');
+cmp_ok ($paginated{total}, '==', 1, 'Should only be one thing');
+cmp_ok ($paginated{page_size}, '==', 5, 'Page size goes in and comes out again');
+
+# Three results on second page with one per page
+%paginated = $model->paginate(
+  { 
+    hits => {
+      total => 3,
+      hits => [{ thing => 'here'}]
+    }
+  }, # result set
+  2, # page
+  1, # hits per page
+  1  # offset
+);
+
+cmp_ok ($paginated{first_page}, '==', 1, 'Second hit, second page, first page link required');
+cmp_ok ($paginated{last_page}, '==', 3, 'Second hit, second page, third page is last');
+cmp_ok ($paginated{prev_page}, '==', 1, 'Second hit, second page, previous page link required');
+cmp_ok ($paginated{next_page}, '==', 3, 'Second hit, second page, next page required');
+cmp_ok ($paginated{from}, '==', 2, 'Record starting at two');
+cmp_ok ($paginated{to}, '==', 2, 'Page ends as well as starts at two');
+cmp_ok ($paginated{page}, '==', 2, 'On page two');
+cmp_ok ($paginated{total}, '==', 3, 'Three things this time');
+cmp_ok ($paginated{page_size}, '==', 1, 'Page size goes in and comes out again');
+
+# Three results on third page with one per page
+%paginated = $model->paginate(
+  { 
+    hits => {
+      total => 3,
+      hits => [{ thing => 'here'}]
+    }
+  }, # result set
+  3, # page
+  1, # hits per page
+  2  # offset
+);
+
+cmp_ok ($paginated{first_page}, '==', 1, 'Third hit, third page, first page link required');
+ok (! defined $paginated{last_page}, 'Third hit, third page, no last page');
+cmp_ok ($paginated{prev_page}, '==', 2, 'Third hit, third page, previous page link required');
+ok (! defined $paginated{next_page}, 'Third hit, third page, next page absent');
+cmp_ok ($paginated{from}, '==', 3, 'Record starting at three');
+cmp_ok ($paginated{to}, '==', 3, 'Page ends as well as starts at three');
+cmp_ok ($paginated{page}, '==', 3, 'On page three');
+cmp_ok ($paginated{total}, '==', 3, 'Three things this time');
+cmp_ok ($paginated{page_size}, '==', 1, 'Page size goes in and comes out again');
+
+# Multiple hits per page
+%paginated = $model->paginate(
+  { 
+    hits => {
+      total => 20,
+      hits => [{ thing => 'here'}, { what => 'how?'} ]
+    }
+  }, # result set
+  1, # page
+  2, # hits per page
+  0  # offset
+);
+
+ok (! defined $paginated{first_page}, 'First hits, first page, no first page link required');
+cmp_ok ($paginated{last_page}, '==', 10, 'first hits, page one, tenth page is last');
+ok (! defined $paginated{prev_page}, 'First page, no previous page link required');
+cmp_ok ($paginated{next_page}, '==', 2, 'First page, next page required');
+cmp_ok ($paginated{from}, '==', 1, 'Record starting at one');
+cmp_ok ($paginated{to}, '==', 2, 'Two things in page one');
+cmp_ok ($paginated{page}, '==', 1, 'On page one');
+cmp_ok ($paginated{total}, '==', 20, 'Twenty things this time');
+cmp_ok ($paginated{page_size}, '==', 2, 'Page size goes in and comes out again');
+
+
+# Post-test clean-up
+$model->indices->delete(index => $INDEX_NAME);
 
 done_testing();

@@ -33,7 +33,6 @@ use namespace::autoclean;
 
 use Try::Tiny;
 use Catalyst::Exception;
-use POSIX;
 
 use Registry::Utils::URL qw(file_exists);
 use Registry::TrackHub::TrackDB;
@@ -78,17 +77,16 @@ sub index :Path :Args(0) {
   
   # Elasticsearch recommend using composite aggregation for getting the full list of facets
   # We could conceivably paginate the facets.
-  my $facets = 
-    {
-     species  => { terms => { field => 'species.scientific_name', size => 100, order => {"_key" => "asc" }} },
-     assembly => { terms => { field => 'assembly.name', size => 50 } },
-     hub      => { terms => { field => 'hub.name',size => 30 } },
-     type     => { terms => { field => 'type'} },
-    };
+  my $facets = {
+    species  => { terms => { field => 'species.scientific_name', size => 100, order => {"_key" => "asc" }} },
+    assembly => { terms => { field => 'assembly.name', size => 50 } },
+    hub      => { terms => { field => 'hub.name',size => 30 } },
+    type     => { terms => { field => 'type'} },
+  };
 
-  my $page = $params->{page} || 1;
+  my $page = $params->{page} // 1;
   $page = 1 if $page !~ /^\d+$/;
-  my $entries_per_page = $params->{entries_per_page} || 5;
+  my $entries_per_page = $params->{entries_per_page} // 5;
   my $from = 0; # zero-based. one excludes the first result
   if ($page != 1) {
     $from = $page * $entries_per_page;
@@ -131,22 +129,18 @@ sub index :Path :Args(0) {
     Catalyst::Exception->throw( qq/$_/ );
   };
 
-  # User form doesn't want to handle Elasticsearch annotation of results
+  # User form doesn't want to handle Elasticsearch annotation in the results
   my @clean_results = map { $_->{_source}{id} = $_->{_id}; $_->{_source} } @{ $results->{hits}{hits}};
 
   if($results){
+    my %pagination = $c->model('Search')->paginate($results, $page, $entries_per_page, $from);
     $c->stash(
       query_string    => $params->{q},
       filters         => $params,
       items           => \@clean_results,
       aggregations    => $results->{aggregations},
       template        => 'search/results.tt',
-      total           => $results->{hits}{total},
-      page            => $page,
-      last_page       => ceil( $results->{hits}{total} / $entries_per_page ),
-      size            => scalar @clean_results,
-      from            => $from + 1, # This is offset because users are not Elasticsearch
-      to              => scalar(@clean_results) - $from
+      %pagination
     );
   }
 }

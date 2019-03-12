@@ -132,7 +132,7 @@
       <!-- Tab panes -->
       <div class="tab-content">
         <div role="tabpanel" class="tab-pane fade in active" id="tracks" style="margin-top: 20px;">
-          [% IF size > 0 -%]
+          [% IF page_size.defined && page_size > 0 -%]
           <p>Track Collections [% from %] to [% to %] of [% total %]</p>
 
           [% FOREACH item = items -%]
@@ -234,47 +234,36 @@
             <nav>
               <ul class="pagination">
 
-              [% SET prev_page = page - 1;
-                 SET next_page = page + 1
-              -%]
-
-              [% IF page != 1 -%]
-                [% SET filters.page = prev_page -%]
-                <li><a href="[% c.uri_for('/search', filters)%]" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
-              [% ELSE -%]
-                <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
-              [% END -%]
-
-              [% IF page > 1 -%]
-                [% filters.page = 1 -%]
-                <li><a href="[% c.uri_for('/search', filters) %]">[% 1 %]</a></li>
-                [% SET filters.page = 1 -%]
-
-                [% IF page > 2 -%]
-                <li><a>...</a></li>
+                [% IF first_page.defined -%]
+                  [% SET filters.page = first_page -%]
+                  <li><a href="[% c.uri_for('/search', filters)%]" aria-label="First">[% first_page %]</a></li>  
                 [% END -%]
-                <li><a href="[% c.uri_for('/search', filters) %]">[% prev_page %]</a></li>
-              [% END -%]
+
+                [% IF prev_page.defined && prev_page > 2 -%]
+                  <li><a>...</a></li>
+                [% END -%]
+
+                [% IF prev_page.defined -%]
+                  [% SET filters.page = prev_page -%]
+                  <li><a href="[% c.uri_for('/search', filters)%]" aria-label="Previous">[% prev_page %]</a></li>
+                [% END -%]
 
                 <li class="active"><a>[% page %]<span class="sr-only">(current)</span></a></li>
 
-              [% IF page != last_page -%]
-                [% SET filters.page = next_page -%]
-                <li><a href="[% c.uri_for('/search', filters) %]">[% next_page %]</a></li>
-                <li><a>...</a></li>
-              [% END -%]
+                [% IF next_page.defined -%]
+                  [% filters.page = next_page -%]
+                    <li><a href="[% c.uri_for('/search', filters) %]">[% next_page %]</a></li>
+                [% END -%]
 
-              [% IF page != last_page -%]
-                [% filters.page = last_page -%]
-                <li><a href="[% c.uri_for('/search', filters) %]">[% last_page %]</a></li>
-              [% END -%]
+                [% IF last_page.defined && page < ( last_page - 1 ) -%]
+                    <li><a>...</a></li>
+                [% END -%]
+                
+                [% IF last_page.defined -%]
+                  [% SET filters.page = last_page -%]
+                  <li><a href="[% c.uri_for('/search', filters) %]">[% last_page %]</a></li>
+                [% END -%]
 
-              [% IF page != last_page -%]
-                [% filters.page = next_page -%]
-                <li><a href="[% c.uri_for('/search', filters)%]" aria-label="Previous"><span aria-hidden="true">&raquo;</span></a></li>
-              [% ELSE -%]
-                <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&raquo;</span></a></li>
-              [% END -%]
               </ul>
             </nav>
           </div>

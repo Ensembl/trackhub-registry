@@ -54,6 +54,7 @@ use Moose;
 use Carp;
 use namespace::autoclean;
 use Try::Tiny;
+use POSIX;
 use Catalyst::Exception qw/throw/;
 
 extends 'Catalyst::Model::ElasticSearch';
@@ -550,6 +551,70 @@ sub _decorate_query {
   }
 
   return %args;
+}
+
+=head2 paginate
+
+  Arg[1]      : $result_set, a reference to an Elasticsearch query response
+  Arg[2]      : Page number, the page of data requested
+  Arg[3]      : Entries per page, the number of records expected per page
+  Arg[4]      : Offset, or the 'from' field in Elasticsearch queries.
+
+  Description : Converts result sets into pagination data that the render template can use.
+                Elasticsearch only recognises 'from' (offset) and 'size' (limit) and does 
+                not paginate on its own
+
+  Return type : hash = (
+                  to
+                  from
+                  total
+                  page_size
+                  page_count
+                  first_page
+                  last_page
+                  next_page
+                  prev_page
+                )
+
+=cut
+
+sub paginate {
+  my ($self, $result_set, $page, $entries_per_page, $from) = @_;
+
+  return () if $result_set->{hits}{total} == 0;
+  my %pagination = (
+    from  => $from + 1, # Users are not 0-based
+    page  => $page,
+    total => $result_set->{hits}{total},
+    page_size => $entries_per_page,
+    prev_page => undef,
+    next_page => undef,
+    first_page => undef,
+    last_page => undef
+  );
+
+  my $page_count = ceil( $result_set->{hits}{total} / $entries_per_page );
+  $pagination{page_count} = $page_count;
+
+  # Turn on first/last/next/prev page numbers
+  # If left as undef, they should not appear in the pagination view
+  if ( $page == 1 ) {
+    $pagination{next_page} = $page + 1 if $page_count > 1;
+    $pagination{last_page} = $page_count if $page_count > 1;
+  } elsif ( $page == $page_count ) {
+    # a.k.a. last page
+    $pagination{prev_page} = $page_count -1 if $page != 1;
+    $pagination{first_page} = 1;
+  } else {
+    $pagination{prev_page} = $page - 1;
+    $pagination{next_page} = $page + 1;
+    $pagination{last_page} = $page_count;
+    $pagination{first_page} = 1;
+  }
+
+  $pagination{to} = $from + @{ $result_set->{hits}{hits} };
+
+  return %pagination;
 }
 
 __PACKAGE__->meta->make_immutable;

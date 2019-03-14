@@ -50,7 +50,7 @@ SKIP: {
   skip "No Internet connection: cannot test TrackHub translation on public Track Hubs", 9
     unless Registry::Utils::internet_connection_ok();
 
-  my $WRONG_URL = "ftp://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub/xxx/trackDb.txt";
+  my $WRONG_URL = "http://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub/xxx/trackDb.txt";
   throws_ok { $translator->translate($WRONG_URL, 'hg18') } qr/check the source/, "Throws if translate is given wrong URL";
 
   my ($URL, $json_docs);
@@ -282,7 +282,7 @@ SKIP: {
   }
 
   note "Checking translation of DNA Methylation trackhub";
-  $URL = "http://smithdata.usc.edu/trackdata/methylation";
+  $URL = "http://smithlab.usc.edu/trackdata/methylation";
   $json_docs = $translator->translate($URL, 'mm10');
   is(scalar @{$json_docs}, 1, "Number of translated track dbs");
   $doc = from_json($json_docs->[0]);

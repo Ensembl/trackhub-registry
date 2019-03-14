@@ -57,8 +57,9 @@ use Registry::TrackHub::Parser;
 
 use Bio::EnsEMBL::Utils::MetaData::DBSQL::GenomeInfoAdaptor;
 use HTML::Restrict;
+use Carp;
 
-use vars qw($AUTOLOAD $ucscdb2insdc);
+use vars qw($AUTOLOAD); # Why are we autoloading? No point at all
 
 sub AUTOLOAD {
   my $self = shift;
@@ -103,7 +104,9 @@ my %format_lookup = (
 sub new {
   my ($class, %args) = @_;
   
-  defined $args{version} or die "Undefined version";
+  if (! defined $args{version}) {
+    croak q(Undefined version in supplied hash argument, should be '1.0' or similar);
+  }
 
   my $self = \%args;
 
@@ -144,13 +147,19 @@ sub translate {
      'v1.0' => sub { $self->to_json_1_0(@_) }
     }->{$self->version};
 
-  die sprintf "Version %s not supported", $self->version
-    unless $dispatch;
+  if (! $dispatch) {
+    croak sprintf "Version %s not supported", $self->version;
+  }
 
   my $trackhub = Registry::TrackHub->new(url => $url, permissive => $self->permissive);
   
   my $docs;
-  unless ($assembly) {
+  if ($assembly) {
+    push @{$docs}, $dispatch->(
+      trackhub => $trackhub, 
+      assembly => $assembly
+    );
+  } else {
     # assembly not specified
     # translate tracksDB conf for all assemblies stored in the Hub
     foreach my $assembly ($trackhub->assemblies) {
@@ -158,43 +167,36 @@ sub translate {
         trackhub => $trackhub, 
         assembly => $assembly);
     }
-  } else {
-    push @{$docs}, $dispatch->(
-      trackhub => $trackhub, 
-      assembly => $assembly);
   }
 
-  scalar @{$docs} or 
-    die "Something went wrong. Couldn't get any translated JSON from hub";
+  if (scalar @{$docs} == 0) {
+    confess "Something went wrong. Couldn't get any translated JSON from hub $url";
+  } 
 
   return $docs;
 }
 
 =head2 to_json_1_0
 
-  Arg [1]     : Registry::TrackHub - an object representing a track hub at a given URL
-  Arg [2]     : String - the assembly name whose trackDB file has to be converted
-  Example:    : my $docs = $translator->to_json_1_0($url, $assembly)
+  Arg [1]     : Hashref of named parameters: 
+                  trackhub => Registry::TrackHub - an object representing a track hub at a given URL
+                  assembly => String - the assembly name whose trackDB file has to be converted
+  
+  Example:    : my $docs = $translator->to_json_1_0(trackhub => $url, assembly => $assembly)
   Description : Convert trackDB file for assembly in a hub to a JSON document compliant
                 with version 1.0 trackDB JSON schema specification
   Returntype  : String - A JSON strings representing the trackDB file for the given assembly 
                 in the hub converted into a JSON doc
-  Exceptions  : None
   Caller      : Registry::TrackHub::Translator::translate
-  Status      : Stable
 
 =cut
 
-
-##################################################################################
-#             
-# Version v1.0 
-#
 sub to_json_1_0 {
   my ($self, %args) = @_;
   my ($trackhub, $assembly) = ($args{trackhub}, $args{assembly});
-  defined $trackhub and defined $assembly or
-    die "Undefined trackhub and/or assembly argument";
+  unless (defined $trackhub and defined $assembly) {
+    croak 'Undefined trackhub and/or assembly argument in supplied hash';
+  }
 
   my $genome = $trackhub->get_genome($assembly);
   my $shortLabel_stripped = $trackhub->shortLabel;
@@ -202,23 +204,22 @@ sub to_json_1_0 {
   # strip away all HTML
   $shortLabel_stripped = $hr->process($shortLabel_stripped);
 
-  my $doc = 
-    {
-     version => 'v1.0',
-     hub     => {
-       name       => $trackhub->hub,
-       shortLabel => $trackhub->shortLabel,
-       shortLabel_stripped => $shortLabel_stripped,
-       longLabel  => $trackhub->longLabel,
-       url        => $trackhub->url,
-       assembly   => $genome->twoBitPath?1:0 # detect if it is an assembly hub
-     },
-     # add the original trackDb file as the source
-     source => { 
+  my $doc = {
+    version => 'v1.0',
+    hub     => {
+      name       => $trackhub->hub,
+      shortLabel => $trackhub->shortLabel,
+      shortLabel_stripped => $shortLabel_stripped,
+      longLabel  => $trackhub->longLabel,
+      url        => $trackhub->url,
+      assembly   => $genome->twoBitPath ? 1:0 # detect if it is an assembly hub
+    },
+    # add the original trackDb file as the source
+    source => { 
       url => $genome->trackDb->[0],
       checksum => Registry::Utils::checksum_compute($genome->trackDb->[0])
-     }
-    };
+    }
+  };
 
   # add species/assembly information
   $self->_add_genome_info($genome, $doc);
@@ -229,21 +230,25 @@ sub to_json_1_0 {
   # now the tracks, metadata and display/configuration
   my $tracks = Registry::TrackHub::Parser->new(files => $genome->trackDb)->parse;
 
-  # set each track metadata, prepare the configuration object
+  # Copy and clean metadata for each track
   foreach my $track (keys %{$tracks}) {
-    # 
-    # NOTE: at least a track can be searched by ID and NAME (longLabel)
-    #
+    my $track_data = $tracks->{$track};
     my $metadata = { id => $track }; 
     # longLabel should be present since mandatory for UCSC
     # Do not rely on it, see Blueprint track db
-    $metadata->{name} = $tracks->{$track}{longLabel} || $tracks->{$track}{shortLabel};
-    # we don't want null attribute values, enforced in the schema
-    delete $metadata->{name} unless defined $metadata->{name};
-
-    # add specific metadata, if ever present
-    map { $metadata->{$_} = $tracks->{$track}{metadata}{$_} if defined $tracks->{$track}{metadata}{$_} }
-      keys %{$tracks->{$track}{metadata}};
+    if (defined $track_data->{longLabel}) {
+      $metadata->{name} = $track_data->{longLabel};
+    } elsif (defined $track_data->{shortLabel}) {
+      $metadata->{name} = $track_data->{shortLabel};
+    } 
+    
+    # Copy the rest of the metadata while removing any null fields
+    my $temp = $track_data->{metadata};
+    foreach my $meta_key (keys %$temp) {
+      if (defined $temp->{$meta_key}) {
+        $metadata->{$meta_key} = $temp->{$meta_key};
+      }
+    }
     push @{$doc->{data}}, $metadata;
 
     delete $tracks->{$track}{metadata};
@@ -254,10 +259,10 @@ sub to_json_1_0 {
   my $ctree = Registry::TrackHub::Tree->new({ id => 'root' });
   $self->_make_configuration_tree($ctree, $tracks);
 
-  # now can recursively descend the hierarchy and 
-  # build the configuration object
-  map { $doc->{configuration}{$_->id} = $self->_make_configuration_object_1_0($_) } 
-    @{$ctree->child_nodes};
+  # now can recursively descend the hierarchy and build the configuration object
+  foreach my $node (@{$ctree->child_nodes}) {
+    $doc->{configuration}{$node->id} = $self->_make_configuration_object_1_0($node);
+  }
   
   # collect trackDB stats, i.e. # tracks, # tracks linked to data, file types
   $doc->{status} =
@@ -280,23 +285,44 @@ sub to_json_1_0 {
 }
 
 
+=head2 _make_configuration_object_1_0
+
+Misleading name, for a function which extracts defined values from a node's data
+
+=cut
+
 sub _make_configuration_object_1_0 {
   my ($self, $node) = @_;
-  defined $node or die "Undefined args";
+  
+  if (!defined $node) {
+    confess 'Undefined node argument';
+  }
   
   # add the configuration attributes as they are specified
   my $node_conf = {};
 
-  map { $node->data->{$_} and $node_conf->{$_} = $node->data->{$_} } keys %{$node->data};
+  foreach my $key (keys %{ $node->data} ) {
+    if (defined $node->data->{$key}) {
+      $node_conf->{$key} = $node->data->{$key};
+    }
+  }
 
   # now add the configuration of the children, if any
-  for my $child (@{$node->child_nodes}) {
+  foreach my $child (@{$node->child_nodes}) {
     my $child_conf = $self->_make_configuration_object_1_0($child);
     $node_conf->{members}{$child_conf->{track}} = $child_conf;
   }
 
   return $node_conf;
 }
+
+
+=head2 _collect_track_info
+
+Recurses through a potentially nested hash structure counting up track
+status information and tallying it in the provided $status object
+
+=cut
 
 sub _collect_track_info {
   my ($self, $hash, $status, $file_type) = @_;
@@ -309,17 +335,13 @@ sub _collect_track_info {
         if ($attr eq 'type' and exists $hash->{$track}{bigDataUrl}) {
           $file_type->{$hash->{$track}{type}}++ if $hash->{$track}{type};
           ++$status->{tracks}{with_data}{total};
-        } else {
-          $self->_collect_track_info($hash->{$track}{$attr}, $status, $file_type) if ref $hash->{$track}{$attr} eq 'HASH';
+        } elsif (ref $hash->{$track}{$attr} eq 'HASH') {
+          $self->_collect_track_info($hash->{$track}{$attr}, $status, $file_type);
         } 
       }
     }
   } 
 }
-
-#
-##################################################################################
-
 
 sub _make_configuration_tree {
   my ($self, $tree, $tracks) = @_;
@@ -1115,8 +1137,8 @@ sub _add_genome_browser_links {
   #
   # EnsEMBL browser link
   #
-  my ($domain, $species) = 
-    ('http://### DIVISION ###.ensembl.org', $doc->{species}{scientific_name});
+  my $domain = 'http://### DIVISION ###.ensembl.org';
+  my $species = $doc->{species}{scientific_name};
   defined $species or die "Couldn't get species to build Ensembl URL";
 
   my @species_fields = split(/\s/, $species);

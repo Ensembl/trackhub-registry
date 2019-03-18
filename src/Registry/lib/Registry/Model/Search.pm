@@ -397,8 +397,6 @@ sub create_trackdb {
 sub api_search {
   my ($self, $user_query, $page, $per_page, $species, $assembly, $accession, $hub, $type) = @_;
 
-  printf("query: %s page: %s per-page:%s species:%s assembly:%s hub:%s type:%s\n",$user_query, $page, $per_page, $species, $assembly, $hub, $type);
-
   my %query = (
     from => ($page-1) * $per_page,
     size => $per_page

@@ -1,0 +1,313 @@
+{
+   "source" : {
+      "checksum" : "792d88bccacc240959e357409ccc2069",
+      "url" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/braRap1/trackDb.txt"
+   },
+   "hub" : {
+      "browser_links" : {
+         "ensembl" : "http://plants.ensembl.org/TrackHub?url=http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants;species=Brassica_rapa;name=Plants;registry=1",
+         "ucsc" : "http://genome.ucsc.edu/cgi-bin/hgHubConnect?hgHub_do_redirect=on&hgHubConnect.remakeTrackHub=on&hgHub_do_firstDb=1&hubUrl=http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants"
+      },
+      "shortLabel_stripped" : "Plants",
+      "shortLabel" : "Plants",
+      "url" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants",
+      "name" : "cshl2013",
+      "longLabel" : "CSHL Biology of Genomes meeting 2013 demonstration assembly hub",
+      "assembly" : 1
+   },
+   "status" : {
+      "tracks" : {
+         "with_data" : {
+            "total_ko" : 0,
+            "total" : 12
+         },
+         "total" : 13
+      },
+      "last_update" : "",
+      "message" : "Unchecked"
+   },
+   "version" : "v1.0",
+   "data" : [
+      {
+         "name" : "Repeating Elements by RepeatMasker",
+         "id" : "repeatMasker_"
+      },
+      {
+         "name" : "Assembly",
+         "id" : "assembly_"
+      },
+      {
+         "name" : "Simple Tandem Repeats by TRF",
+         "id" : "simpleRepeat_"
+      },
+      {
+         "name" : "Genomic Intervals Masked by WindowMasker + SDust",
+         "id" : "windowMasker"
+      },
+      {
+         "name" : "Low Complexity Repeating Elements by RepeatMasker",
+         "id" : "repeatMaskerLowComplexity_"
+      },
+      {
+         "name" : "Simple Repeating Elements by RepeatMasker",
+         "id" : "repeatMaskerSimple_"
+      },
+      {
+         "name" : "RNA Repeating Elements by RepeatMasker",
+         "id" : "repeatMaskerRNA_"
+      },
+      {
+         "name" : "Gap",
+         "id" : "gap_"
+      },
+      {
+         "name" : "LTR Repeating Elements by RepeatMasker",
+         "id" : "repeatMaskerLTR_"
+      },
+      {
+         "name" : "DNA Repeating Elements by RepeatMasker",
+         "id" : "repeatMaskerDNA_"
+      },
+      {
+         "name" : "GC Percent in 5-Base Windows",
+         "id" : "gc5Base_"
+      },
+      {
+         "name" : "Genscan Gene Predictions",
+         "id" : "genscan_"
+      },
+      {
+         "name" : "CpG Islands (Islands < 300 Bases are Light Green)",
+         "id" : "cpgIslandExt_"
+      }
+   ],
+   "species" : {
+      "scientific_name" : "Brassica rapa",
+      "common_name" : "field mustard",
+      "tax_id" : "3711"
+   },
+   "file_type" : {
+      "bigbed" : 11,
+      "bigwig" : 1
+   },
+   "configuration" : {
+      "repeatMasker_" : {
+         "priority" : "149.1",
+         "visibility" : "dense",
+         "compositeTrack" : "on",
+         "shortLabel" : "RepeatMasker",
+         "track" : "repeatMasker_",
+         "members" : {
+            "repeatMaskerSimple_" : {
+               "priority" : "5",
+               "spectrum" : "on",
+               "colorByStrand" : "50,50,150 150,50,50",
+               "parent" : "repeatMasker_",
+               "shortLabel" : "Simple",
+               "track" : "repeatMaskerSimple_",
+               "bigDataUrl" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/braRap1/bbi/braRap1.rmsk.Simple.bb",
+               "additional_fields" : 1,
+               "configurable" : 0,
+               "type" : "bigbed",
+               "maxWindowToDraw" : "10000000",
+               "longLabel" : "Simple Repeating Elements by RepeatMasker",
+               "standard_fields" : "6"
+            },
+            "repeatMaskerLTR_" : {
+               "priority" : "3",
+               "spectrum" : "on",
+               "colorByStrand" : "50,50,150 150,50,50",
+               "parent" : "repeatMasker_",
+               "shortLabel" : "LTR",
+               "track" : "repeatMaskerLTR_",
+               "bigDataUrl" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/braRap1/bbi/braRap1.rmsk.LTR.bb",
+               "additional_fields" : 1,
+               "configurable" : 0,
+               "type" : "bigbed",
+               "maxWindowToDraw" : "10000000",
+               "longLabel" : "LTR Repeating Elements by RepeatMasker",
+               "standard_fields" : "6"
+            },
+            "repeatMaskerRNA_" : {
+               "priority" : "8",
+               "spectrum" : "on",
+               "colorByStrand" : "50,50,150 150,50,50",
+               "parent" : "repeatMasker_",
+               "shortLabel" : "RNA",
+               "track" : "repeatMaskerRNA_",
+               "bigDataUrl" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/braRap1/bbi/braRap1.rmsk.RNA.bb",
+               "additional_fields" : 1,
+               "configurable" : 0,
+               "type" : "bigbed",
+               "maxWindowToDraw" : "10000000",
+               "longLabel" : "RNA Repeating Elements by RepeatMasker",
+               "standard_fields" : "6"
+            },
+            "repeatMaskerDNA_" : {
+               "priority" : "4",
+               "spectrum" : "on",
+               "colorByStrand" : "50,50,150 150,50,50",
+               "parent" : "repeatMasker_",
+               "shortLabel" : "DNA",
+               "track" : "repeatMaskerDNA_",
+               "bigDataUrl" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/braRap1/bbi/braRap1.rmsk.DNA.bb",
+               "additional_fields" : 1,
+               "configurable" : 0,
+               "type" : "bigbed",
+               "maxWindowToDraw" : "10000000",
+               "longLabel" : "DNA Repeating Elements by RepeatMasker",
+               "standard_fields" : "6"
+            },
+            "repeatMaskerLowComplexity_" : {
+               "priority" : "6",
+               "spectrum" : "on",
+               "colorByStrand" : "50,50,150 150,50,50",
+               "parent" : "repeatMasker_",
+               "shortLabel" : "Low Complexity",
+               "track" : "repeatMaskerLowComplexity_",
+               "bigDataUrl" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/braRap1/bbi/braRap1.rmsk.Low_complexity.bb",
+               "additional_fields" : 1,
+               "configurable" : 0,
+               "type" : "bigbed",
+               "maxWindowToDraw" : "10000000",
+               "longLabel" : "Low Complexity Repeating Elements by RepeatMasker",
+               "standard_fields" : "6"
+            }
+         },
+         "description_url" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/braRap1/repeatMasker_.html",
+         "group" : "varRep",
+         "html" : "../trackDescriptions/repeatMasker",
+         "noInherit" : "on",
+         "type" : "bed",
+         "longLabel" : "Repeating Elements by RepeatMasker"
+      },
+      "assembly_" : {
+         "priority" : "10",
+         "colorByStrand" : "150,100,30 230,170,40",
+         "visibility" : "pack",
+         "shortLabel" : "Assembly",
+         "bigDataUrl" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/braRap1/bbi/braRap1.assembly.bb",
+         "urlLabel" : "NCBI Nucleotide database",
+         "group" : "map",
+         "color" : "150,100,30",
+         "html" : "assembly",
+         "url" : "http://www.ncbi.nlm.nih.gov/nuccore/$$",
+         "longLabel" : "Assembly",
+         "standard_fields" : "6",
+         "track" : "assembly_",
+         "altColor" : "230,170,40",
+         "additional_fields" : 0,
+         "description_url" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/braRap1/assembly_.html",
+         "configurable" : 0,
+         "type" : "bigbed"
+      },
+      "simpleRepeat_" : {
+         "priority" : "149.3",
+         "visibility" : "dense",
+         "shortLabel" : "Simple Repeats",
+         "track" : "simpleRepeat_",
+         "bigDataUrl" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/braRap1/bbi/braRap1.simpleRepeat.bb",
+         "additional_fields" : 1,
+         "description_url" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/braRap1/simpleRepeat_.html",
+         "group" : "varRep",
+         "configurable" : 0,
+         "html" : "../trackDescriptions/simpleRepeat",
+         "type" : "bigbed",
+         "standard_fields" : "4",
+         "longLabel" : "Simple Tandem Repeats by TRF"
+      },
+      "windowMasker" : {
+         "priority" : "149.26",
+         "visibility" : "dense",
+         "shortLabel" : "WM + SDust",
+         "track" : "windowMasker",
+         "bigDataUrl" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/braRap1/bbi/braRap1.windowMasker.bb",
+         "additional_fields" : 0,
+         "description_url" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/braRap1/windowMasker.html",
+         "group" : "varRep",
+         "configurable" : 1,
+         "html" : "../trackDescriptions/windowMasker",
+         "type" : "bigbed",
+         "standard_fields" : "3",
+         "longLabel" : "Genomic Intervals Masked by WindowMasker + SDust"
+      },
+      "gap_" : {
+         "priority" : "11",
+         "visibility" : "dense",
+         "shortLabel" : "Gap",
+         "track" : "gap_",
+         "bigDataUrl" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/braRap1/bbi/braRap1.gap.bb",
+         "additional_fields" : 0,
+         "color" : "0,0,0",
+         "description_url" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/braRap1/gap_.html",
+         "group" : "map",
+         "configurable" : 0,
+         "html" : "gap",
+         "type" : "bigbed",
+         "standard_fields" : "4",
+         "longLabel" : "Gap"
+      },
+      "gc5Base_" : {
+         "priority" : "23.5",
+         "visibility" : "full",
+         "shortLabel" : "GC Percent",
+         "signal_range" : [
+            "0",
+            "100"
+         ],
+         "bigDataUrl" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/braRap1/bbi/braRap1.gc5Base.bw",
+         "maxHeightPixels" : "128:36:16",
+         "color" : "0,0,0",
+         "group" : "map",
+         "autoScale" : "Off",
+         "html" : "../trackDescriptions/gc5Base",
+         "graphTypeDefault" : "Bar",
+         "longLabel" : "GC Percent in 5-Base Windows",
+         "viewLimits" : "30:70",
+         "track" : "gc5Base_",
+         "gridDefault" : "OFF",
+         "altColor" : "128,128,128",
+         "description_url" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/braRap1/gc5Base_.html",
+         "type" : "bigwig",
+         "windowingFunction" : "Mean"
+      },
+      "genscan_" : {
+         "priority" : "50",
+         "visibility" : "pack",
+         "shortLabel" : "Genscan Genes",
+         "track" : "genscan_",
+         "bigDataUrl" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/braRap1/bbi/braRap1.genscan.bb",
+         "additional_fields" : 0,
+         "color" : "170,100,0",
+         "description_url" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/braRap1/genscan_.html",
+         "group" : "genes",
+         "configurable" : 1,
+         "html" : "../trackDescriptions/genscan",
+         "type" : "bigbed",
+         "standard_fields" : "12",
+         "longLabel" : "Genscan Gene Predictions"
+      },
+      "cpgIslandExt_" : {
+         "priority" : "90",
+         "visibility" : "pack",
+         "shortLabel" : "CpG Islands",
+         "track" : "cpgIslandExt_",
+         "bigDataUrl" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/braRap1/bbi/braRap1.cpgIslandExt.bb",
+         "altColor" : "128,228,128",
+         "additional_fields" : 1,
+         "color" : "0,100,0",
+         "group" : "regulation",
+         "description_url" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/braRap1/cpgIslandExt_.html",
+         "configurable" : 0,
+         "html" : "../trackDescriptions/cpgIslandExt",
+         "type" : "bigbed",
+         "longLabel" : "CpG Islands (Islands < 300 Bases are Light Green)",
+         "standard_fields" : "4"
+      }
+   },
+   "assembly" : {
+      "synonyms" : "braRap1",
+      "name" : "Brapa_1.0",
+      "accession" : "GCA_000309985.1"
+   }
+}

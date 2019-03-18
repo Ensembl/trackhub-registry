@@ -40,11 +40,8 @@ use Try::Tiny;
 BEGIN { extends 'Catalyst::Controller::REST'; }
 
 __PACKAGE__->config(
-    'default'   => 'application/json',
-    # map => {
-    # 	    'text/plain' => ['YAML'],
-    # 	   }
-  );
+  default   => 'application/json',
+);
 
 =head1 METHODS
 
@@ -61,8 +58,8 @@ sub search :Path('/api/search') Args(0) ActionClass('REST') {
   my $page = $params->{page} || 1;
   $page = 1 if $page !~ /^\d+$/;
   my $entries_per_page = $params->{entries_per_page} || 5;
-  print "Per page value request: $entries_per_page\n";
-  if ( $params->{entries_per_page} * $page > 10000 ) {
+
+  if ( exists $params->{entries_per_page} && $params->{entries_per_page} * $page > 10000 ) {
     $c->status_bad_request($c, message => "Search result too large. Use the ?all parameter to fetch large amounts of data");
   }
 
@@ -93,7 +90,7 @@ sub search_POST {
   # do the search
   my $results;
 
-  if ($c->stash->{all} == 1) {
+  if (exists $c->stash->{all} && $c->stash->{all} == 1) {
 
     my $result_list = $c->model('Search')->pager(
       undef, 
@@ -167,23 +164,18 @@ sub biosample_search_POST {
 
   my $query = {
     terms => { 
-          biosample_id => $biosample_ids
-        }    
+      biosample_id => $biosample_ids
+    }    
   };
-  my $config = Registry->config()->{'Model::Search'};
-  my %args =
-    (
-     index => $config->{trackhub}{index},
-     type  => $config->{trackhub}{type},
-     body  => { query => $query },
-     search_type => 'scan'
-    );
 
-  my $results;
+  my %args = (
+    body  => { query => $query },
+    search_type => 'scan'
+  );
+
+  my $results = {};
   try {
-    # do not care about scoring, use scan&scroll for efficient querying
-    # when it is available via Perl interface for ES 6.x
-    my $hits = $c->model('Search')->_se->search(%args);
+    my $hits = $c->model('Search')->(%args);
 
     while (my $result = shift @$hits) {
       # find which IDs this trackdb refers to
@@ -203,7 +195,7 @@ sub biosample_search_POST {
     $c->go('ReturnError', 'custom', [qq{$_}]);
   };
 
-  $self->status_ok($c, entity => $results?$results:{});
+  $self->status_ok($c, entity => $results);
 }
 
 =head2 trackdb

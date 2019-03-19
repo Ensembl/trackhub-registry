@@ -36,7 +36,7 @@ package Registry::Controller::User;
 use Moose;
 use namespace::autoclean;
 
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
+BEGIN { extends 'Catalyst::Controller'; }
 
 use Try::Tiny;
 use Registry::Form::User::Registration;

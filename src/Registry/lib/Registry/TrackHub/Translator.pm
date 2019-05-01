@@ -931,8 +931,9 @@ my $ucscdb2insdc =
 #
 sub _add_genome_info {
   my ($self, $genome, $doc) = @_;
-  defined $genome and defined $doc or
-    die "Undefined genome and/or doc arguments";
+  unless (defined $genome && defined $doc) {
+    Registry::Utils::Exception->throw("Undefined genome and/or doc arguments");
+  }
 
   #
   # Map the (UCSC) assembly synonym to INSDC assembly accession
@@ -1274,7 +1275,7 @@ sub _add_genome_browser_links {
       ('https://www.vectorbase.org', $doc->{species}{scientific_name});
 
     $species = join('_', (split(/\s/, $species))[0 .. 1]);
-    $species =~ /^\w+_\w+$/ or die "Couldn't get the required species name to build the Ensembl URL";
+    $species =~ /^\w+_\w+$/ or Registry::Utils::Exception->throw("Couldn't get the required species name to build the Ensembl URL");
 
     # handle special case: Anopheles stephensi strain Indian (Anopheles_stephensiI in VB) 
     # cannot use species scientific name as it does not have strain

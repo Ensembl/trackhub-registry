@@ -39,6 +39,7 @@ package Registry::TrackHub::Tree;
 use strict;
 use warnings;
 
+use Registry::Utils::Exception;
 use vars qw($AUTOLOAD);
 
 sub AUTOLOAD {
@@ -80,7 +81,7 @@ sub new {
   $self->{$_} = $args->{$_} for keys %{$args || {}};
   bless $self, $class;
 
-  defined $self->{id} or die "Undefined node id";
+  defined $self->{id} or Registry::Utils::Exception->throw("Undefined node id");
   $self->{tree_ids}{$self->{id}} = $self;
 
   return $self;
@@ -101,8 +102,8 @@ sub new {
 
 sub create_node {
   my ($self, $id, $data) = @_;
-  defined $id or die "Undefined id";
-  defined $data or die "Undefined data";
+  defined $id or Registry::Utils::Exception->throw("Undefined id");
+  defined $data or Registry::Utils::Exception->throw("Undefined data");
 
   if (exists $self->tree_ids->{$id}) {
     my $node = $self->get_node($id);

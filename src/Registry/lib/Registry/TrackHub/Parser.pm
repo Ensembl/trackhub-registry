@@ -51,7 +51,9 @@ use warnings;
 use Encode qw(decode_utf8 FB_CROAK);
 
 use Registry::Utils::URL qw(read_file);
+use Registry::Utils::Exception;
 
+# AUTOLOAD is completely unnecessary. It is lazy and just makes it harder to debug
 use vars qw($AUTOLOAD);
 
 =head1 METHODS
@@ -86,7 +88,7 @@ sub AUTOLOAD {
 sub new {
   my ($class, %args) = @_;
 
-  defined $args{files} || die "Undefined files parameter";
+  defined $args{files} || Registry::Utils::Exception->throw("Undefined 'files' parameter in instantiation");
   my $self = \%args || {};
   
   bless $self, $class;
@@ -112,7 +114,7 @@ sub parse {
   my $tracks = {};
   foreach (@{$self->files}) {
     my $response = read_file($_, { 'nice' => 1 });
-    die join("\n", @{$response->{error}})
+    Registry::Utils::Exception->throw(join("\n", @{$response->{error}}) )
       if $response->{error};
     $response->{content} = Encode::decode_utf8($response->{content}, Encode::FB_CROAK);
     $self->_parse_file_content($tracks, $response->{content} =~ s/\r//gr, $_);
@@ -172,20 +174,20 @@ sub _parse_file_content {
       if ($key eq 'type') {
         my @values = split /\s+/, $value;
         my $type   = lc shift @values;
-	# $type   = 'vcf' if $type eq 'vcftabix';
+        # $type   = 'vcf' if $type eq 'vcftabix';
         
         $tracks->{$id}{$key} = $type;
         
         if ($type eq 'bigbed') {
-	  # this does not work for views,
-	  # standard fields remains undefined
+          # this does not work for views,
+          # standard fields remains undefined
           $tracks->{$id}{'standard_fields'}   = shift @values;
-	  if (defined $tracks->{$id}{'standard_fields'}) {
-	    $tracks->{$id}{'additional_fields'} = $values[0] eq '+' ? 1 : 0;
-	    $tracks->{$id}{'configurable'}      = $values[0] eq '.' ? 1 : 0; # Don't really care for now
-	  } else {
-	    delete $tracks->{$id}{'standard_fields'};
-	  }
+          if (defined $tracks->{$id}{'standard_fields'}) {
+            $tracks->{$id}{'additional_fields'} = $values[0] eq '+' ? 1 : 0;
+            $tracks->{$id}{'configurable'}      = $values[0] eq '.' ? 1 : 0; # Don't really care for now
+          } else {
+            delete $tracks->{$id}{'standard_fields'};
+          }
         } elsif ($type eq 'bigwig') {
           $tracks->{$id}{'signal_range'} = \@values;
         }
@@ -217,12 +219,12 @@ sub _parse_file_content {
         # Short and long labels may contain =, but in these cases the value is just a single string
         if ($value =~ /=/ && $key !~ /^(short|long)Label$/) {
 
-	  #
-	  # NOTE
-	  # the following commented fragments do not correctly parse
-	  # metadata when key/value pairs contain text enclosed in double
-	  # quotes separated by spaces.
-	  #
+          #
+          # NOTE
+          # the following commented fragments do not correctly parse
+          # metadata when key/value pairs contain text enclosed in double
+          # quotes separated by spaces.
+          #
           # my ($k, $v);
           # my @pairs = split /\s([^=]+)=/, " $value";
           # shift @pairs;
@@ -251,25 +253,25 @@ sub _parse_file_content {
           #   $tracks->{$id}{$key}{$k} = $v;
           # }
 
-	  # PB with URLs containing =, remove key/value pairs containing them
-	  $value =~ s/\w+?="[^="]+?=[^"]+?"\s//g;
+          # PB with URLs containing =, remove key/value pairs containing them
+          $value =~ s/\w+?="[^="]+?=[^"]+?"\s//g;
 
-	  my @tokens1 = split /=/, $value; 
-	  my @tokens2;
+          my @tokens1 = split /=/, $value; 
+          my @tokens2;
 
-	  for (my $i = 0; $i <= $#tokens1; $i++) {
-	    if ($tokens1[$i] =~ /^[\w:_]+$/) {
-	      push @tokens2, $tokens1[$i];
-	    } elsif ($tokens1[$i] =~ /"|'/) {
-	      push @tokens2, grep { defined $_ } $tokens1[$i] =~ /"(.*)"|'(.*)'|([\w:_]+)/g;;
-	    } else {
-	      push @tokens2, split(/\s+/, $tokens1[$i]);
-	    }
-	  }
+          for (my $i = 0; $i <= $#tokens1; $i++) {
+            if ($tokens1[$i] =~ /^[\w:_]+$/) {
+              push @tokens2, $tokens1[$i];
+            } elsif ($tokens1[$i] =~ /"|'/) {
+              push @tokens2, grep { defined $_ } $tokens1[$i] =~ /"(.*)"|'(.*)'|([\w:_]+)/g;;
+            } else {
+              push @tokens2, split(/\s+/, $tokens1[$i]);
+            }
+          }
 
-	  for (my $i = 0; $i < $#tokens2; $i += 2) {
-	    $tracks->{$id}{$key}{$tokens2[$i]} = $tokens2[$i+1];
-	  }
+          for (my $i = 0; $i < $#tokens2; $i += 2) {
+            $tracks->{$id}{$key}{$tokens2[$i]} = $tokens2[$i+1];
+          }
         } else {
           $tracks->{$id}{$key} = $value;
         }
@@ -304,7 +306,7 @@ sub _parse_file_content {
   
   # Make sure the track hierarchy is ok
   foreach (values %{$tracks}) {
-    die sprintf "File %s: parent track %s is missing", $file, $_->{'parent'}
+    Registry::Utils::Exception->throw(sprintf "File %s: parent track %s is missing", $file, $_->{'parent'})
       if $_->{'parent'} && !$tracks->{$_->{'parent'}};
   }
   

@@ -45,10 +45,11 @@ use warnings;
 
 use POSIX qw(strftime);
 
-# use Registry;
+# TODO: Refactor this crap. A representation of a trackdb does not need to know about the backend
 use Registry::Model::Search;
 use Registry::Utils;
 use Registry::Utils::URL qw(file_exists);
+use Registry::Utils::Exception;
 
 my %format_lookup = (
      'bed'    => 'BED',
@@ -77,10 +78,10 @@ my %format_lookup = (
 
 sub new {
   my ($class, $id) = @_; # arg is the ID of an ES doc
-  defined $id or die "Undefined ID";
+  defined $id or Registry::Utils::Exception->throw("Undefined ID in instantiation");
   
-  # the nodes parameter must be passed passed when we invoke the 
-  # constructor outside the Catalyst loop, since we cannot access
+  # the nodes parameter must be passed when we invoke the 
+  # constructor outside the Catalyst server, since we cannot access
   # the Registry configuration object
   my $config = Registry->config()->{'Model::Search'};
 
@@ -93,13 +94,13 @@ sub new {
       }
    };
   $self->{_doc} = $self->{_es}{client}->get_trackhub_by_id($id);
-  defined $self->{_doc} or die "Unable to get document [$id] from store";
+  defined $self->{_doc} or Registry::Utils::Exception->throw("Unable to get document [$id] from store");
 
   # check the document is in the correct format: ATMO, only v1.0 supported
   my $doc = $self->{_doc};
   exists $doc->{data} and ref $doc->{data} eq 'ARRAY' and
   exists $doc->{configuration} and ref $doc->{configuration} eq 'HASH' or
-    die "TrackDB document doesn't seem to be in the correct format";
+    Registry::Utils::Exception->throw("TrackDB document doesn't seem to be in the correct format");
 
   bless $self, $class;
   return $self;
@@ -279,7 +280,7 @@ sub compute_checksum {
   my $self = shift;
   
   my $source_url = $self->{_doc}{source}{url};
-  defined $source_url or die sprintf "Cannot get source URL for trackDb %s", $self->id;
+  defined $source_url or Registry::Utils::Exception->throw(sprintf "Cannot get source URL for trackDb %s", $self->id);
 
   return Registry::Utils::checksum_compute($source_url);
 }
@@ -408,7 +409,7 @@ sub update_status {
   #
   # TODO? abandon also if doc has been recently checked
   #
-  exists $doc->{status} or die "Unable to read status";
+  exists $doc->{status} or Registry::Utils::Exception->throw("Unable to read trackdb status");
 
   # should not do this as now there's only one process 
   # checking the trackDBs

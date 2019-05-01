@@ -32,6 +32,12 @@ user admin/info pages.
 
 Catalyst::Model::DBIC::Schema provides the DBIC schema interface
 
+Config for this model *must* contain:
+
+1) schema_class, the DBIC schema
+2) salt, the password pre-salt required for secure authentication plugin use
+3) connect_info, the dsn, use and password needed for the authentication backend
+
 =cut
 
 package Registry::Model::Users;
@@ -42,9 +48,13 @@ use Digest;
 
 extends 'Catalyst::Model::DBIC::Schema';
 
-__PACKAGE__->config(
-    schema_class => 'Registry::User::Schema',
+# Password pre-salt so that we can encode passwords for newly registered users
+has salt => (
+  isa => 'Str',
+  is => 'ro',
+  required => 1
 );
+
 
 =head1 METHODS
 
@@ -109,20 +119,20 @@ sub delete_user {
 =head2 encode_password
 
 SHA256 plus salting used to obscure password in the database
-It modifies the user object in place, so no return value
+It returns a hashed and salted password
 
 =cut
 
 sub encode_password {
-  my ($self, $user) = @_;
+  my ($self, $password) = @_;
 
-  my $salt = $self->config->{salt};
+  my $salt = $self->salt;
   
   my $digest = Digest->new('SHA-256');
   $digest->add($salt);
-  $digest->add($user->password);
-  $user->password($digest->b64digest);
-  return;
+  $digest->add($password);
+
+  return $digest->b64digest;
 }
 
 __PACKAGE__->meta->make_immutable;

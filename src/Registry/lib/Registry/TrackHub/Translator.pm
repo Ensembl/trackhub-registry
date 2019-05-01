@@ -57,7 +57,8 @@ use Registry::TrackHub::Parser;
 
 use Bio::EnsEMBL::Utils::MetaData::DBSQL::GenomeInfoAdaptor;
 use HTML::Restrict;
-use Carp;
+
+use Registry::Utils::Exception;
 
 use vars qw($AUTOLOAD); # Why are we autoloading? No point at all
 
@@ -105,7 +106,7 @@ sub new {
   my ($class, %args) = @_;
   
   if (! defined $args{version}) {
-    croak q(Undefined version in supplied hash argument, should be '1.0' or similar);
+    Registry::Utils::Exception->throw(q(Undefined version in supplied hash argument, should be '1.0' or similar) );
   }
 
   my $self = \%args;
@@ -148,7 +149,7 @@ sub translate {
     }->{$self->version};
 
   if (! $dispatch) {
-    croak sprintf "Version %s not supported", $self->version;
+    Registry::Utils::Exception->throw( sprintf "Version %s not supported", $self->version );
   }
 
   my $trackhub = Registry::TrackHub->new(url => $url, permissive => $self->permissive);
@@ -170,7 +171,7 @@ sub translate {
   }
 
   if (scalar @{$docs} == 0) {
-    confess "Something went wrong. Couldn't get any translated JSON from hub $url";
+    Registry::Utils::Exception->throw("Something went wrong. Couldn't get any translated JSON from hub $url");
   } 
 
   return $docs;
@@ -195,7 +196,7 @@ sub to_json_1_0 {
   my ($self, %args) = @_;
   my ($trackhub, $assembly) = ($args{trackhub}, $args{assembly});
   unless (defined $trackhub and defined $assembly) {
-    croak 'Undefined trackhub and/or assembly argument in supplied hash';
+    Registry::Utils::Exception->throw('Undefined trackhub and/or assembly argument in supplied hash');
   }
 
   my $genome = $trackhub->get_genome($assembly);
@@ -295,7 +296,7 @@ sub _make_configuration_object_1_0 {
   my ($self, $node) = @_;
   
   if (!defined $node) {
-    confess 'Undefined node argument';
+    Registry::Utils::Exception->throw('Undefined node argument');
   }
   
   # add the configuration attributes as they are specified
@@ -345,8 +346,8 @@ sub _collect_track_info {
 
 sub _make_configuration_tree {
   my ($self, $tree, $tracks) = @_;
-  defined $tree or die "Undefined tree";
-  defined $tracks or die "Undefined tracks";
+  defined $tree or Registry::Utils::Exception->throw("Undefined tree");
+  defined $tracks or Registry::Utils::Exception->throw("Undefined tracks");
 
   my %redo;
   foreach (sort { !$b->{'parent'} <=> !$a->{'parent'} } values %$tracks) {
@@ -1007,7 +1008,11 @@ sub _add_genome_info {
     if ($assembly_map->{$assembly_syn} =~ /^G(CA|CF)_[0-9]+?\.[0-9]+?$/) {
       $assembly_id = $assembly_map->{$assembly_syn};
     } else {
-      die sprintf "Assembly accession %s for %s does not comply with INSDC format", $assembly_map->{$assembly_syn}, $assembly_syn;
+      Registry::Utils::Exception->throw(
+        sprintf "Assembly accession %s for %s does not comply with INSDC format",
+        $assembly_map->{$assembly_syn}, 
+        $assembly_syn
+      );
     }  
   } elsif (exists $ucscdb2insdc->{lc $assembly_syn}) {
     $assembly_id = $ucscdb2insdc->{lc $assembly_syn};
@@ -1015,9 +1020,10 @@ sub _add_genome_info {
     # TODO: Look up the assembly name in the shared genome info Ensembl DB
     #       map it to an accession
   }
-
-  die "Unable to find a valid INSDC accession for genome assembly name $assembly_syn"
-    unless defined $assembly_id;
+  if (!defined $assembly_id ) {
+    Registry::Utils::Exception->throw("Unable to find a valid INSDC accession for genome assembly name $assembly_syn");
+  }
+    
 
   #
   # Get species (tax id, scientific name, common name)
@@ -1049,12 +1055,13 @@ sub _add_genome_info {
   my $buffer;
   my $file = Registry->config()->{GenomeCollection}{assembly_set_file};
   gunzip $file => \$buffer 
-    or die "gunzip failed: $GunzipError\n";
+    or Registry::Utils::Exception->throw("gunzip failed: $GunzipError\n");
 
   my $gc_assembly_set = from_json($buffer);
   my $as = $gc_assembly_set->{$assembly_id};
-  die "Unable to find GC assembly set entry for $assembly_id"
-    unless $as;
+  if (! $as) {
+    Registry::Utils::Exception->throw("Unable to find GC assembly set entry for $assembly_id");
+  }
   
   my ($tax_id, $scientific_name, $common_name) = 
     ($as->{tax_id}, $as->{scientific_name}, $as->{common_name});
@@ -1086,23 +1093,23 @@ map { $vector_base_assemblies{$_}++ } @vector_base_assemblies;
 sub _add_genome_browser_links {
   my ($self, $genome, $doc) = @_;
   defined $genome and defined $doc or
-    die "Undefined genome and/or doc arguments";
+    Registry::Utils::Exception->throw("Undefined genome and/or doc arguments");
 
   my $assemblysyn = $genome->assembly;
-  defined $assemblysyn or die "Couldn't get assembly identifier from hub genome";
+  defined $assemblysyn or Registry::Utils::Exception->throw("Couldn't get assembly identifier from hub genome");
 
   my $hub = $doc->{hub};
-  defined $hub->{url} or die "Couldn't get hub URL";
+  defined $hub->{url} or Registry::Utils::Exception->throw("Couldn't get hub URL");
 
   my $is_assembly_hub = $hub->{assembly};
   defined $is_assembly_hub or 
-    die "Couldn't detect assembly hub";
+    Registry::Utils::Exception->throw("Couldn't detect assembly hub");
 
-  my ($assembly_accession, $assembly_name) =
-    ($doc->{assembly}{accession}, $doc->{assembly}{name});
-  defined $assembly_accession and defined $assembly_name or
-    die "Assembly accession|name not defined";
-
+  my $assembly_accession = $doc->{assembly}{accession};
+  my $assembly_name = $doc->{assembly}{name};
+  unless (defined $assembly_accession and defined $assembly_name) {
+    Registry::Utils::Exception->throw("Assembly accession|name not defined");
+  }
   #
   # UCSC browser link
   #
@@ -1139,11 +1146,14 @@ sub _add_genome_browser_links {
   #
   my $domain = 'http://### DIVISION ###.ensembl.org';
   my $species = $doc->{species}{scientific_name};
-  defined $species or die "Couldn't get species to build Ensembl URL";
+  defined $species or Registry::Utils::Exception->throw("Couldn't get species to build Ensembl URL");
 
   my @species_fields = split(/\s/, $species);
   $species = join('_', map { my $field = $_ =~ s/\W+//rg; $field } @species_fields[0..1]);
-  $species =~ /^\w+_\w+?/ or die "$species: Couldn't get the required species name to build the Ensembl URL";
+  
+  if ($species !~ /^\w+_\w+?/) {
+    Registry::Utils::Exception->throw("$species: Couldn't get the required species name to build the Ensembl URL");
+  }
   
   my $division;
 
@@ -1231,8 +1241,10 @@ sub _add_genome_browser_links {
     # disconnect otherwise will end up with lots of sleeping connections on the
     # public server causing "Too many connections" error
     $gdba->{dbc}->disconnect_if_idle && 
-      die "Couldn't close connection to ensemblgenomes info DB";
+      Registry::Utils::Exception->throw( "Couldn't close connection to ensemblgenomes info DB" );
 
+    # In Ensembl, the division is now named "Ensembl Vertebrates", rather than just Ensembl
+    # It's not clear whether that is significant here
     $genome_division = $genome->division if $genome;
     if (defined $genome_division && $genome_division =~ /^Ensembl/) {
       if ($genome_division eq 'Ensembl') {

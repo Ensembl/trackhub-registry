@@ -46,7 +46,7 @@
         <td>
           <div class="btn-group">
             <a class="btn btn-default btn-xs" href="[% c.uri_for(c.controller.action_for('view_trackhub_status'), [c.user.username, trackdb.id]) %]" rel="tooltip" title="View Track Collection Status"><span class="glyphicon glyphicon-search"/></a>
-            <a class="btn btn-default btn-xs" href="[% c.uri_for(c.controller.action_for('delete_trackhub'), [c.user.username, trackdb.id]) %]" rel="tooltip" title="Delete Track Collection"><span class="glyphicon glyphicon-trash"/></a>            
+            <a class="btn btn-default btn-xs" href="[% c.uri_for(c.controller.action_for('delete_trackhub'), [c.user.username, trackdb.id]) %]" rel="tooltip" title="Delete Track Collection"><span class="glyphicon glyphicon-trash"/></a>
           </div>
         </td>
       </tr>

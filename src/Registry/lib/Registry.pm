@@ -60,12 +60,12 @@ use Catalyst qw/
     ConfigLoader
     Static::Simple
     StackTrace
-    +CatalystX::SimpleLogin
     Authentication
     Authorization::Roles
     Session
     Session::Store::FastMmap
     Session::State::Cookie
+    Cache
 /;
 
 extends 'Catalyst';
@@ -100,9 +100,6 @@ __PACKAGE__->config(
     },
     'Plugin::Session' => {
         flash_to_stash => 1
-    },
-    'Controller::Login' => {
-        traits => ['-RenderAsTTTemplate'],
     },
     'Plugin::Static::Simple' => {
         ignore_extensions => [ qw/tmpl tt tt2 xhtml/ ],

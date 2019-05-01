@@ -20,7 +20,6 @@ use Test::Deep;
 use JSON;
 use List::Util qw( first );
 use HTTP::Request::Common qw/GET POST/;
-use Data::Dumper;
 use LWP::Simple qw($ua head);
 
 BEGIN {
@@ -55,18 +54,19 @@ ok($content->{ping}, 'Service available');
 
 note 'Preparing data for test (indexing users)';
 my $config = Registry->config()->{'Model::Search'};
-my $indexer = Registry::Indexer->new(dir   => "$Bin/trackhub-examples/",
-          trackhub => {
-            index => $config->{trackhub}{index},
-            type  => $config->{trackhub}{type},
-            mapping => 'trackhub_mappings.json'
-          },
-          authentication => {
-            index => $config->{user}{index},
-            type  => $config->{user}{type},
-            mapping => 'authentication_mappings.json'
-          }
-               );
+my $indexer = Registry::Indexer->new(
+  dir   => "$Bin/trackhub-examples/",
+  trackhub => {
+    index => $config->{trackhub}{index},
+    type  => $config->{trackhub}{type},
+    mapping => 'trackhub_mappings.json'
+  },
+  authentication => {
+    index => $config->{user}{index},
+    type  => $config->{user}{type},
+    mapping => 'authentication_mappings.json'
+  }
+);
 $indexer->index_users();
 
 
@@ -81,16 +81,16 @@ $ua->timeout(10);
 
 # submit some public hubs
 my @public_hubs = (
-       # { name => 'polyA', url => 'http://johnlab.org/xpad/Hub/UCSC.txt' },
-       { name => 'mRNA', url => 'http://www.mircode.org/ucscHub/hub.txt' },
-       # { name => 'blueprint', url => 'ftp://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub' },
-       { name => 'plants', url => 'http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/hub.txt' },
-       { name => 'ensembl', url => 'http://ngs.sanger.ac.uk/production/ensembl/regulation/hub.txt' },
-       { name => 'rnaseq', url => 'http://web.stanford.edu/~htilgner/2012_454paper/data/hub.txt' },
-       # { name => 'zebrafish', url => 'http://research.nhgri.nih.gov/manuscripts/Burgess/zebrafish/downloads/NHGRI-1/hub.txt' },
-       { name => 'sanger', url => 'http://ngs.sanger.ac.uk/production/grit/track_hub/hub.txt' },
-       # NA any more { name => 'thornton', url => 'http://devlaeminck.bio.uci.edu/RogersUCSC/hub.txt' }, 
-      );
+  # { name => 'polyA', url => 'http://johnlab.org/xpad/Hub/UCSC.txt' },
+  { name => 'mRNA', url => 'http://www.mircode.org/ucscHub/hub.txt' },
+  # { name => 'blueprint', url => 'ftp://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub' },
+  { name => 'plants', url => 'http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/hub.txt' },
+  { name => 'ensembl', url => 'http://ngs.sanger.ac.uk/production/ensembl/regulation/hub.txt' },
+  { name => 'rnaseq', url => 'http://web.stanford.edu/~htilgner/2012_454paper/data/hub.txt' },
+  # { name => 'zebrafish', url => 'http://research.nhgri.nih.gov/manuscripts/Burgess/zebrafish/downloads/NHGRI-1/hub.txt' },
+  { name => 'sanger', url => 'http://ngs.sanger.ac.uk/production/grit/track_hub/hub.txt' },
+  # NA any more { name => 'thornton', url => 'http://devlaeminck.bio.uci.edu/RogersUCSC/hub.txt' }, 
+);
 foreach my $hub (@public_hubs) {
   note sprintf "Submitting hub %s", $hub->{name};
   $request = POST('/api/trackhub?permissive=1',

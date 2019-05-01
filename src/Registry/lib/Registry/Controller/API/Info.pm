@@ -41,11 +41,8 @@ use HTTP::Tiny;
 BEGIN { extends 'Catalyst::Controller::REST'; }
 
 __PACKAGE__->config(
-		    'default'   => 'application/json',
-		    # map => {
-		    # 	    'text/plain' => ['YAML'],
-		    # 	   }
-		   );
+  'default'   => 'application/json',
+);
 
 =head1 METHODS
 
@@ -230,8 +227,8 @@ sub hubs_per_assembly_GET {
   
   my $config = Registry->config()->{'Model::Search'};
   my $results = $c->model('Search')->count_trackhubs(
-                                              query => { match => { $term_field => $assembly }}
-                                            );
+    query => { match => { $term_field => $assembly }}
+  );
 
   $self->status_ok($c, entity => { tot => $results });
 }

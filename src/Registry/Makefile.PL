@@ -28,7 +28,6 @@ requires 'Catalyst::Plugin::Session';
 requires 'Catalyst::Plugin::Session::State::Cookie';
 requires 'Catalyst::Plugin::Session::Store::FastMmap';
 requires 'Catalyst::Plugin::StatusMessage';
-requires 'CatalystX::SimpleLogin';
 requires 'Catalyst::Controller::ActionRole';
 requires 'Catalyst::ActionRole::ACL';
 requires 'Module::Install::Catalyst';
@@ -112,6 +111,7 @@ test_requires 'Test::More';
 test_requires 'Email::MIME';
 test_requires 'Email::Sender::Simple';
 test_requires 'Test::Deep';
+test_requires 'Test::HTTP::MockServer';
 
 catalyst;
 

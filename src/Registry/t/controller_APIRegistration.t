@@ -15,47 +15,123 @@
 use strict;
 use warnings;
 use Test::More;
-use Data::Dumper;
-
-BEGIN {
-  use FindBin qw/$Bin/;
-  use lib "$Bin/../lib";
-  $ENV{CATALYST_CONFIG} = "$Bin/../registry_testing.conf";
-}
-
-local $SIG{__WARN__} = sub {};
-
 use JSON;
 use HTTP::Headers;
 use HTTP::Request::Common qw/GET POST PUT DELETE/;
-
+use Registry::User::TestDB;
 use Test::WWW::Mechanize::Catalyst;
-use Catalyst::Test 'Registry';
-
 use Registry::Utils; # es_running, slurp_file
-use Registry::Indexer; # index a couple of sample documents
+use Test::HTTP::MockServer;
 
-unless (&Registry::Utils::es_running()) {
-  plan skip_all => 'Launch an elasticsearch instance for the tests to run fully';
+BEGIN {
+  use FindBin qw/$Bin/;
+  $ENV{CATALYST_CONFIG} = "$Bin/../registry_testing.conf";
 }
 
-  # index test data
-  note 'Preparing data for test (indexing sample documents)';
-  my $config = Registry->config()->{'Model::Search'};
-  my $indexer = Registry::Indexer->new(dir   => "$Bin/trackhub-examples/",
-            trackhub => {
-              index => $config->{trackhub}{index},
-              type  => $config->{trackhub}{type},
-              mapping => 'trackhub_mappings.json'
-            },
-            authentication => {
-              index => $config->{user}{index},
-              type  => $config->{user}{type},
-              mapping => 'authentication_mappings.json'
-            }
-                 );
-  $indexer->index_trackhubs();
-  $indexer->index_users();
+
+my $INDEX_NAME = 'trackhubs'; # Matches registry_testing.conf
+my $INDEX_TYPE = 'trackdb';
+
+
+my $db = Registry::User::TestDB->new(
+  config => {
+    driver => 'SQLite',
+    file => './thr_users.db', # This has to match registry_testing.conf db name
+    create => 1
+  },
+);
+# Make a test user for the application
+my $digest = Digest->new('SHA-256');
+my $salt = 'afs]dt42!'; # This has to match registry_testing.conf pre_salt
+
+$digest->add($salt);
+$digest->add('password');
+
+my $user = $db->schema->resultset('User')->create({
+  username => 'test-dude',
+  password => $digest->b64digest,
+  email => 'test@home',
+  continuous_alert => 1
+});
+$user->add_to_roles({ name => 'user' });
+
+
+use Catalyst::Test 'Registry';
+use_ok 'Registry::Controller::API::Registration';
+
+
+my $mech = Test::WWW::Mechanize::Catalyst->new(catalyst_app => 'Registry');
+$mech->get_ok('http://127.0.0.1/', 'Trackhub Registry running');
+
+my $request = HTTP::Request::Common::GET('http://127.0.0.1/api/login');
+$request->authorization_basic('test-dude', 'password');
+$mech->request($request);
+
+cmp_ok ($mech->status, '==', 200, 'Authentication achieved');
+ok(my $response = $mech->response, 'Request to log in');
+ok($response->is_success, 'Login happened');
+my $content = from_json($response->content);
+ok(exists $content->{auth_token}, 'Log in includes an auth_token we can use in the API');
+my $auth_token = $content->{auth_token};
+
+# Host a fake hub on localhost that we can reference in submitted hubs
+
+my $fake_server = Test::HTTP::MockServer->new();
+my $fake_response = sub {
+  my ($request, $response) = @_;
+  $response->code(200);
+  if ($request->uri =~ m/hub.txt/ ) {
+    $response->content(Registry::Utils::slurp_file("$Bin/track_hub/test_hub_1/hub.txt"));
+  } elsif ($request->uri =~ m/genomes.txt/) {
+    $response->content(Registry::Utils::slurp_file("$Bin/track_hub/test_hub_1/genomes.txt"));
+  } elsif ($request->uri =~ m/trackdb/) {
+    $response->content(Registry::Utils::slurp_file("$Bin/track_hub/test_hub_1/grch38/trackDb.txt"));
+  }
+};
+$fake_server->start_mock_server($fake_response);
+
+$mech->get_ok('127.0.0.1:9200/hub.txt', 'Test hub server online');
+my $hub_port = $fake_server->port(); # port is randomised on start, so we have to keep any eye on it
+
+# Submit a new hub
+
+$mech->add_header( user => 'test-dude', 'auth-token' => $auth_token);
+$mech->post_ok(
+  "http://localhost/api/trackhub/?permissive=1",
+  { 
+    content => to_json({
+      url => "http://localhost:$hub_port/hub.txt",
+      assemblies => 'GRCh38',
+      public => 1 # technically not required, but explicit here
+    })
+  },
+  'Submit new trackhub using authentication token'
+);
+
+# One hub is already registered during test setup, we try to submit it again
+
+# Now register another hub but do not make it available for search
+note sprintf "Submitting hub ultracons (not searchable)";
+$request = POST('/api/trackhub?permissive=1',
+    'Content-type' => 'application/json',
+    'Content'      => to_json({ url => 'http://genome-test.gi.ucsc.edu/~hiram/hubs/GillBejerano/hub.txt', public => 0 }));
+$request->headers->header(user       => 'trackhub1');
+$request->headers->header(auth_token => $auth_token);
+ok($response = request($request), 'POST request to /api/trackhub');
+ok($response->is_success, 'Request successful 2xx');
+is($response->content_type, 'application/json', 'JSON content type');
+
+# Logout
+$request = GET('/api/logout');
+$request->headers->header(user       => 'trackhub1');
+$request->headers->header(auth_token => $auth_token);
+ok($response = request($request), 'GET request to /api/logout');
+ok($response->is_success, 'Request successful 2xx');
+
+done_testing();
+
+=POD
+
 
   my $auth_token = log_in('trackhub1','trackhub1');
   

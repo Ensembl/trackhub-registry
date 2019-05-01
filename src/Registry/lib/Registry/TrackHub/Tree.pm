@@ -39,8 +39,6 @@ package Registry::TrackHub::Tree;
 use strict;
 use warnings;
 
-use Registry::TrackHub::Tree;
-
 use vars qw($AUTOLOAD);
 
 sub AUTOLOAD {
@@ -70,16 +68,14 @@ sub AUTOLOAD {
 sub new {
   my ($class, $args) = @_;
 
-  my $self =
-    {
-     # id => 'random string??',
-     data                 => {},
-     child_nodes          => [],
-     parent_node          => 0,
-     next_sibling         => 0,
-     previous_sibling     => 0,
-     tree_ids             => {} # a complete list of unique identifiers in the tree, and their nodes
-    };
+  my $self = {
+    data                 => {},
+    child_nodes          => [],
+    parent_node          => 0,
+    next_sibling         => 0,
+    previous_sibling     => 0,
+    tree_ids             => {} # a complete list of unique identifiers in the tree, and their nodes
+  };
   # overwrites previous args
   $self->{$_} = $args->{$_} for keys %{$args || {}};
   bless $self, $class;
@@ -115,10 +111,11 @@ sub create_node {
     return $node;
   }
   
-  return Registry::TrackHub::Tree->new({ id        => $id,
-					 data      => $data || {},
-					 tree_ids  => $self->tree_ids,
-				       });
+  return Registry::TrackHub::Tree->new({
+    id        => $id,
+		data      => $data || {},
+		tree_ids  => $self->tree_ids,
+  });
 }
 
 =head2 get_node

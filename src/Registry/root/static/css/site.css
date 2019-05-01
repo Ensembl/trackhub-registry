@@ -161,3 +161,7 @@ div.hub-summary-caption {
     border-radius:6px 0 6px 6px;
 }
 
+input:invalid {
+    color:red;
+}
+

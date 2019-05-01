@@ -1,6 +1,6 @@
 =head1 LICENSE
 
-Copyright [2015-2018] EMBL-European Bioinformatics Institute
+Copyright [2015-2019] EMBL-European Bioinformatics Institute
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,27 +14,30 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-=cut
+=head1 CONTACT
 
-package Registry::View::JSON;
-
-use strict;
-use warnings;
-use parent 'Catalyst::View::JSON';
+Please email comments or questions to the Trackhub Registry help desk
+at C<< <http://www.trackhubregistry.org/help> >>
 
 =head1 NAME
 
-Registry::View::JSON - Catalyst JSON View
+Registry::Utils::Exception - A throwable error class for non-Catalyst components
 
 =head1 SYNOPSIS
 
-$c->stash(message => $hash_ref);
-$c->forward('View::JSON');
+try {
+  Registry::Utils::Exception->throw('I broke');
+} catch {
+  print $_->message;
+};
 
 =head1 DESCRIPTION
 
-Catalyst JSON View, can't use the default because it's not in namespace.
+An exception class, so we can generate errors that aren't stack traces when they make it to the user.
 
 =cut
 
-1;
+package Registry::Utils::Exception;
+
+use Moose;
+extends 'Throwable::Error';

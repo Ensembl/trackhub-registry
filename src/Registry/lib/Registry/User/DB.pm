@@ -26,17 +26,7 @@ use Config::General;
 use Registry::User::Schema;
 
 has dsn => (
-  is => 'ro',
-  isa => 'Str',
-);
-
-has dbuser => (
-  is => 'ro',
-  isa => 'Str',
-);
-
-has dbpass => (
-  is => 'ro',
+  is => 'rw',
   isa => 'Str',
 );
 
@@ -70,36 +60,42 @@ has now_function => (
 sub _init_db {
   my $self = shift;
 
-  $self->_validate_config($self->config);
   my %conf = %{ $self->config };
   my %opts;
-  my $dsn;
 
-  if ($conf{driver} eq 'mysql') {
-    $opts{mysql_enable_utf8}    = 1;
-    $opts{mysql_auto_reconnect} = 1;
-    $dsn = sprintf 'dbi:%s:database=%s;host=%s;port=%s', $conf{driver}, $conf{db}, $conf{host}, $conf{port};
-  } elsif ($conf{driver} eq 'SQLite') {
-    $opts{sqlite_unicode} = 1;
-    $dsn = sprintf 'dbi:%s:database=%s',$conf{driver},$conf{file};
-    $self->now_function("date('now')");
-  } else {
-    confess 'Invalid driver specified in conf: '.$conf{driver};
+  if (! $self->dsn ) {
+    # If a DSN is provided, then presumably you know what you're doing?
+    my $dsn;
+    if (lc $conf{driver} eq 'mysql') {
+      $self->_validate_config($self->config, [qw/db host port user pass/]);
+      $opts{mysql_enable_utf8}    = 1;
+      $opts{mysql_auto_reconnect} = 1;
+      $dsn = sprintf 'dbi:%s:database=%s;host=%s;port=%s', $conf{driver}, $conf{db}, $conf{host}, $conf{port};
+    } elsif (lc $conf{driver} eq 'sqlite') {
+      $self->_validate_config($self->config, [qw/file/]);
+      $opts{sqlite_unicode} = 1;
+      $dsn = sprintf 'dbi:%s:database=%s',$conf{driver},$conf{file};
+      $self->now_function("date('now')");
+    } else {
+      confess 'Invalid driver specified in conf: '.$conf{driver};
+    }
+    $self->dsn($dsn);
   }
-  $self->{dsn} = $dsn;
+
   my %deploy_opts = ();
   # Example deploy option $deploy_opts{add_drop_table} = 1;
-  my $schema = Registry::User::Schema->connect($dsn, $conf{user}, $conf{pass}, \%opts);
+  my $schema = Registry::User::Schema->connect($self->dsn, $conf{user}, $conf{pass}, \%opts);
 
-  if (exists $conf{create} && $conf{create} == 1 && $conf{driver} eq 'mysql') {
+  if (exists $conf{driver} && lc $conf{driver} eq 'mysql' && exists $conf{create} && $conf{create} == 1) {
+    # Connect outside of the ORM so we can create the database
     my $dbh = DBI->connect(
-      $dsn,
+      $self->dsn,
       $conf{user},
       $conf{pass},
       \%opts
     );
 
-    # Remove database if already exists
+    # Remove database if it already exists
     my %dbs = map {$_->[0] => 1} @{$dbh->selectall_arrayref('SHOW DATABASES')};
     my $dbname = $conf{db};
     if ($dbs{$dbname}) {
@@ -113,6 +109,7 @@ sub _init_db {
 
   if ( exists $conf{create} && $conf{create} == 1 ) {
     $schema->deploy(\%deploy_opts);
+    # Put in the default roles, but leave users up to the creator of the database
     $schema->resultset( 'Role' )->populate( [
       [ 'name' ],
       [ 'user' ],
@@ -125,21 +122,16 @@ sub _init_db {
 
 =head2 _validate_config
   Arg [1]    : HashRef of configuation parameters (driver, db, host, port, user, pass)
+  Arg [2]    : ListRef of keys we expect in the config
   Description: Configuration file parameter validation
   Return type: DBI database handle
   Caller     : internal
 =cut
 
 sub _validate_config {
-  my ($self,$config) = @_;
-  my @required_keys = qw/driver/;
-  if ($config->{driver} eq 'mysql') {
-    push @required_keys, qw/db host port user pass/;
-  } elsif ($config->{driver} eq 'SQLite') {
-    push @required_keys, qw/file/;
-  } else {
-    confess q(DB config requires parameter 'driver' with value mysql or SQLite);
-  }
+  my ($self, $config, $required_keys) = @_;
+  my @required_keys = @$required_keys;
+  
   my @errors;
   foreach my $constraint (@required_keys) {
     if (! exists $config->{$constraint}) {

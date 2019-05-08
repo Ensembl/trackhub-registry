@@ -20,10 +20,12 @@ package Registry::User::DB;
 
 use Moose;
 use DBI;
+use DBIx::ParseDSN;
 use Carp;
 use Digest::SHA1 qw(sha1);
 use Config::General;
 use Registry::User::Schema;
+use Registry::Utils::Exception;
 
 has dsn => (
   is => 'rw',
@@ -80,20 +82,27 @@ sub _init_db {
       confess 'Invalid driver specified in conf: '.$conf{driver};
     }
     $self->dsn($dsn);
+  } else {
+    # Extract db name so we can check if we need to create it
+    my $dsn = parse_dsn($self->dsn);
+    $conf{db} = $dsn->database;
   }
 
   my %deploy_opts = ();
   # Example deploy option $deploy_opts{add_drop_table} = 1;
-  my $schema = Registry::User::Schema->connect($self->dsn, $conf{user}, $conf{pass}, \%opts);
+
 
   if (exists $conf{driver} && lc $conf{driver} eq 'mysql' && exists $conf{create} && $conf{create} == 1) {
     # Connect outside of the ORM so we can create the database
     my $dbh = DBI->connect(
       $self->dsn,
-      $conf{user},
-      $conf{pass},
+      $conf{dbuser},
+      $conf{dbpass},
       \%opts
     );
+    if (! defined $dbh) {
+      Registry::Utils::Exception->throw('Failed to connect to '.$self->dsn. ' with provided credentials');
+    }
 
     # Remove database if it already exists
     my %dbs = map {$_->[0] => 1} @{$dbh->selectall_arrayref('SHOW DATABASES')};
@@ -106,6 +115,8 @@ sub _init_db {
 
     $dbh->disconnect;
   }
+
+  my $schema = Registry::User::Schema->connect($self->dsn, $conf{dbuser}, $conf{dbpass}, \%opts);
 
   if ( exists $conf{create} && $conf{create} == 1 ) {
     $schema->deploy(\%deploy_opts);

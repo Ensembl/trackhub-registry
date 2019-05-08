@@ -71,6 +71,7 @@ requires 'DBI';
 requires 'DBIx::Class';
 requires 'Catalyst::Model::DBIC::Schema';
 requires 'DBIx::Class::Cursor::Cached';
+requires 'DBIx::ParseDSN';
 requires 'DBD::SQLite';
 requires 'DBD::mysql';
 

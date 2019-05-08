@@ -27,6 +27,7 @@ __PACKAGE__->add_columns(
   user_id => {
     data_type => 'int',
     is_nullable => 0,
+    is_auto_increment => 1
   },
   username => {
     data_type => 'varchar',

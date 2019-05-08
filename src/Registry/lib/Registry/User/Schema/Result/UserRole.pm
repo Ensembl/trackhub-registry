@@ -25,11 +25,13 @@ __PACKAGE__->table('user_roles');
 __PACKAGE__->add_columns(
   user_id => {
     data_type => 'int',
-    nullable => 0
+    nullable => 0,
+    is_foreign_key => 1
   },
   role_id => {
     data_type => 'int',
-    nullable => 0
+    nullable => 0,
+    is_foreign_key => 1
   }
 );
 

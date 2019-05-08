@@ -47,6 +47,16 @@ my $orm = Registry::User::DB->new(
   }
 );
 
+# Create some roles if they're not there.
+
+$orm->schema->resultset('Role')->find_or_create({
+  name => 'user'
+});
+$orm->schema->resultset('Role')->find_or_create({
+  name => 'admin'
+});
+
+
 my $digest = Digest->new('SHA-256');
 $digest->add($salt);
 $digest->add($adm_pass);
@@ -76,8 +86,8 @@ deploy_user_account_system.pl --dsn ... [--db_user, --db_pass] --adm_user [] --a
                    dbi:sqlite:database=thr_user.db
   --db_user   RW user for database host (needed for MySQL driver)
   --db_pass   RW user password (needed for MySQL driver)
-  --adm_user  User name for admin user (required)
-  --adm_pass  Password for admin user (required)
+  --adm_user  User name for web admin user (required, not DB admin)
+  --adm_pass  Password for web admin user (required, not DB admin)
   --driver    Database engine mysql | SQLite
   --salt      Password salt as used in the server config
   -h --help   display this help and exit

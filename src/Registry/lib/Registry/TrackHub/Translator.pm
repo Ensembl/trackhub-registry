@@ -41,6 +41,9 @@ linking to the UCSC, Ensembl browser, and BioDalliance are generated.
 The links should be generated on the fly rather than at import stage, but too
 late to fix it now.
 
+It uses a file generated from an ENA database via /src/Registry/scripts/dump_genome_assembly_set.pl
+to make GCA accession assignments. Please replace this mechanism with something automatic.
+
 =cut
 
 package Registry::TrackHub::Translator;

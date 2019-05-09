@@ -38,7 +38,7 @@ package Registry::Utils::File;
 ### 
 
 use strict;
-
+use warnings;
 use Compress::Zlib qw//;
 use Compress::Bzip2;
 use IO::Uncompress::Bunzip2;
@@ -64,7 +64,7 @@ use File::Spec;
 
 sub slurp_file {
   my $file = shift;
-  defined $file or confess "Undefined file";
+  defined $file or confess "Undefined file argument";
 
   my $string;
   {

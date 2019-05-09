@@ -41,7 +41,7 @@ use HTTP::Tiny;
 BEGIN { extends 'Catalyst::Controller::REST'; }
 
 __PACKAGE__->config(
-    'default'   => 'application/json'
+  default => 'application/json'
 );
 
 =head1 METHODS
@@ -49,7 +49,8 @@ __PACKAGE__->config(
 =head2 complete
 
 Action for /api/stats/complete. Returns complete data with which to build
-various stats based on species/assembly/file type on a dedicated page
+various stats based on species/assembly/file type on a dedicated page.
+This endpoint is NOT documented publicly for some reason
 
 =cut
 
@@ -68,6 +69,8 @@ sub complete_GET {
   my $trackdbs = $c->model('Search')->get_trackdbs();
   my $stats;
 
+  # This could probably be done with aggregations, but they are not necessarily suited
+  # to returning all facets with counts.
   # collect:
   # - number of hubs per species/assembly/file type
   # - number of tracks of a specific file type per species/assembly
@@ -122,11 +125,21 @@ sub summary :Local Args(0) ActionClass('REST') { }
 
 GET method for /api/stats/summary endpoint.
 
+Generates a JSON list of properties to render in graph form.
+
 =cut
 
 sub summary_GET {
   my ($self, $c) = @_;
 
-  my $summary = $c->model('Stats')->fetch_summary();
-  $self->status_ok($c, entity => $summary );
+  my ($hubs,$species,$assemblies) = $c->model('Search')->stats_query();
+
+  $self->status_ok($c, entity => {
+    [
+      ['Element', '', {'role' => 'style'}],
+      ['Hubs', $hubs, 'color: gray'],
+      ['Species', $species, 'color: #76A7FA'],
+      ['Assemblies', $assemblies, 'opacity: 0.2']
+    ]
+  } );
 }

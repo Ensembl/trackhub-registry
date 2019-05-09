@@ -50,6 +50,7 @@ isa_ok($model, 'Registry::Model::Search');
 my %test_hub_content = (
   type => 'epigenomics',
   owner => 'user1',
+  public => 'true',
   hub => {
     name => 'Blueprint_Hub',
     shortLabel => 'Blueprint Hub',
@@ -83,6 +84,7 @@ my %test_hub_content = (
 my %secondary_test_hub_content = (
   type => 'epigenomics',
   owner => 'user2',
+  public => 'true',
   hub => {
     name => 'a_hub',
     shortLabel => 'a',
@@ -354,6 +356,13 @@ cmp_ok ($paginated{page}, '==', 1, 'On page one');
 cmp_ok ($paginated{total}, '==', 20, 'Twenty things this time');
 cmp_ok ($paginated{page_size}, '==', 2, 'Page size goes in and comes out again');
 
+# Test stats retrieval
+
+my ($hub_count, $species_count, $assembly_count) = $model->stats_query();
+
+cmp_ok($hub_count, '==', 2, 'Stats count of hub total');
+cmp_ok($species_count, '==', 1, 'Stats count of species total');
+cmp_ok($assembly_count, '==', 1, 'Stats count of assembly total');
 
 # Post-test clean-up
 $model->indices->delete(index => $INDEX_NAME);

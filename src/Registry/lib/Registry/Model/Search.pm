@@ -615,5 +615,55 @@ sub paginate {
   return %pagination;
 }
 
+=head2 stats_query
+
+Perform a canned aggregator query to generate summary
+stats.
+
+=cut
+
+sub stats_query {
+  my ($self) = @_;
+
+  my $config = $self->schema->{trackhub};
+  my $index = $config->{index_name};
+  my $type = $config->{type};
+
+  my %query = (
+    index => $index,
+    type => $type,
+    body => {
+      size => 0,
+      query => {
+        match => {
+          public => 'true'
+        }
+      },
+      aggregations => {
+        species => {
+          cardinality => {
+            field => 'species.scientific_name'
+          }
+        },
+        assembly => {
+          cardinality => {
+            field => 'assembly.name'
+          }
+        }
+      }
+    }
+  );
+  my $stats_response = $self->_es->search(
+    %query
+  );
+
+  return (
+    $stats_response->{hits}{total},
+    $stats_response->{aggregations}{species}{value},
+    $stats_response->{aggregations}{assembly}{value}
+  );
+}
+
+
 __PACKAGE__->meta->make_immutable;
 1;

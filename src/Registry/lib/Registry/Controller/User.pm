@@ -398,7 +398,7 @@ sub register :Path('register') Args(0) {
       if ($c->authenticate({
           username => $new_user->username,
           password => $plain_password
-        }, 'http')
+        }, 'web')
       ) {
         $c->stash(status_msg => 'Welcome user '.$new_user->username);
         $c->session->{user} = $new_user;

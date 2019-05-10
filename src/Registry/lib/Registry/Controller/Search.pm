@@ -63,7 +63,10 @@ sub index :Path :Args(0) {
   my ($query_body, $query_field);
   if ($params->{q}) {
     if ($params->{q} !~ /\w/) {
-      $c->stash(error_msg => 'Unintelligible query string - your query must contain something resembling words or named fields', template => 'index.tt');
+      $c->stash(
+        error_msg => 'Unintelligible query string - your query must contain something resembling words or named fields', 
+        template => 'index.tt'
+      );
       return;
     } else {
       $first_constraint = { query_string => { query => $params->{q} }};

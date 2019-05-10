@@ -28,6 +28,7 @@ requires 'Catalyst::Plugin::Session';
 requires 'Catalyst::Plugin::Session::State::Cookie';
 requires 'Catalyst::Plugin::Session::Store::FastMmap';
 requires 'Catalyst::Plugin::StatusMessage';
+requires 'Catalyst::Plugin::Cache';
 requires 'Catalyst::Controller::ActionRole';
 requires 'Catalyst::ActionRole::ACL';
 requires 'Module::Install::Catalyst';
@@ -37,7 +38,7 @@ requires 'Moose';
 requires 'MooseX::NonMoose';
 requires 'namespace::autoclean';
 requires 'Config::General'; # This should reflect the config file format you've chosen
-                 # See Catalyst::Plugin::ConfigLoader for supported formats
+# See Catalyst::Plugin::ConfigLoader for supported formats
 
 # for handling profile and registration forms
 requires 'HTML::FormHandler::Moose';

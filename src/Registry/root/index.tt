@@ -88,7 +88,7 @@
   <div class="col-sm-4">
     <div class="box-progetto">
       <h2><span class="glyphicon glyphicon-stats"></span> Stats</h2>
-      <p>A brief summary of the data content, hovers over the column to view the exact numbers.</p>
+      <p>A brief summary of the data content, hover over the column for exact numbers.</p>
       <div id="chart_div"></div>
   </div><!-- /.col-sm-6 -->
 </div>

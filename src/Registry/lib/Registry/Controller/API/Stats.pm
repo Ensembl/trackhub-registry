@@ -133,13 +133,14 @@ sub summary_GET {
   my ($self, $c) = @_;
 
   my ($hubs,$species,$assemblies) = $c->model('Search')->stats_query();
-
-  $self->status_ok($c, entity => {
-    [
+  $c->log->debug(sprintf 'Stats: %d, %d, %d', $hubs, $species, $assemblies);
+  $self->status_ok(
+    $c,
+    entity => [
       ['Element', '', {'role' => 'style'}],
       ['Hubs', $hubs, 'color: gray'],
       ['Species', $species, 'color: #76A7FA'],
       ['Assemblies', $assemblies, 'opacity: 0.2']
     ]
-  } );
+  );
 }

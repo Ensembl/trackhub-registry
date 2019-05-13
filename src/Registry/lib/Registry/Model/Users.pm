@@ -36,7 +36,7 @@ Config for this model *must* contain:
 
 1) schema_class, the DBIC schema
 2) salt, the password pre-salt required for secure authentication plugin use
-3) connect_info, the dsn, use and password needed for the authentication backend
+3) connect_info, the dsn, user and password needed for the authentication backend
 
 =cut
 

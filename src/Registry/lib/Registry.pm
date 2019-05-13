@@ -51,7 +51,8 @@ use Catalyst::Runtime;
 #
 #         -Debug: activates the debug mode for very useful log messages
 #   ConfigLoader: will load the configuration from a Config::General file in the
-#                 application's home directory
+#                 application's home directory, or as defined by REGISTRY_CONFIG
+#                 environment variable
 # Static::Simple: will serve static files from the application's root
 #                 directory
 

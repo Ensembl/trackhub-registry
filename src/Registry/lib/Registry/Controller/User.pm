@@ -166,6 +166,9 @@ sub profile : Chained('user') :Path('profile') Args(0) {
   
   return unless $profile_form->process( params => $c->req->parameters );
 
+  $c->session->{user}->update;
+
+
   $c->stash(status_msg => 'Profile updated');
 }
 

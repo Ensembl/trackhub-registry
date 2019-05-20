@@ -30,10 +30,6 @@ my $readme_content = file_read("ftp://ftp.somedomain.org/pub/README");
 
 =head1 DESCRIPTION
 
-Non-OO library for common functions required for handling remote files 
-Note that we have to use two different Perl modules here, owing to 
-limitations on support for FTP and proxied HTTPS
-
 File access methods have two modes: "nice" mode is most suitable for
 web interfaces, and returns a hashref containing either the raw content
 or a user-friendly error message (no exceptions are thrown). "Non-nice" 
@@ -48,6 +44,7 @@ package Registry::Utils::URL;
 
 
 use strict;
+use warnings;
 
 use HTTP::Tiny;
 use LWP::UserAgent;
@@ -61,9 +58,7 @@ use Registry::Utils::File qw(get_compression);
 
 use Exporter qw(import);
 our @EXPORT_OK = qw(chase_redirects file_exists read_file get_filesize);
-our %EXPORT_TAGS = (all     => [@EXPORT_OK]);
-
-use constant 'MAX_HIGHLIGHT_FILESIZE' => 1048576;  # (bytes) = 1Mb
+our %EXPORT_TAGS = (all => [@EXPORT_OK]);
 
 =head1 METHODS
 
@@ -76,7 +71,6 @@ use constant 'MAX_HIGHLIGHT_FILESIZE' => 1048576;  # (bytes) = 1Mb
   Example     : my $url = chase_redirects(""ftp://ftp.somedomain.org/pub/README");
   Description : Deal with files "hidden" behind a URL-shortening service such as tinyurl
   Returntype  : url (String) or Hashref containing errors (ArrayRef)
-  Exceptions  : None
   Caller      : General
   Status      : Stable
 
@@ -94,14 +88,14 @@ sub chase_redirects {
     $ua->env_proxy;
     $ua->proxy([qw(http https)], $args->{'proxy'}) || ();
     my $response = $ua->head($url);
-    return $response->is_success ? $response->request->uri->as_string
-                                    : {'error' => [_get_lwp_useragent_error($response)]};
+    return $response->is_success
+      ? $response->request->uri->as_string : {'error' => [_get_lwp_useragent_error($response)]};
   }
   else {
     my %args = (
-              'timeout'       => 10,
-              'max_redirect'  => $args->{'max_follow'},
-              );
+      'timeout'       => 10,
+      'max_redirect'  => $args->{'max_follow'},
+    );
     if ($args->{'proxy'}) {
       $args{'http_proxy'}   = $args->{'proxy'};
       $args{'https_proxy'}  = $args->{'proxy'};
@@ -128,7 +122,6 @@ sub chase_redirects {
   Example     : my $exists = file_exists(""ftp://ftp.somedomain.org/pub/README");
   Description : Check if a file of this name exists
   Returntype  : Hashref (nice mode) or Boolean 
-  Exceptions  : None
   Caller      : General
   Status      : Stable
 
@@ -136,11 +129,9 @@ sub chase_redirects {
 
 sub file_exists {
 ### 
-### @param 
 ### @param Args Hashref 
-###         proxy      (optional) String
-###         
-###         
+### @param proxy      (optional) String
+###                  
 ### @return Hashref (nice mode) or Boolean 
   my ($file, $args) = @_;
   my $url = $file;
@@ -195,7 +186,6 @@ sub file_exists {
   Example     : my $content = read_file(""ftp://ftp.somedomain.org/pub/README");
   Description : Get entire content of file
   Returntype  : Hashref (in nice mode) or String - contents of file
-  Exceptions  : None
   Caller      : General
   Status      : Stable
 
@@ -221,7 +211,7 @@ sub read_file {
     }
   }
   else {
-    my %params = ('timeout'       => 30);
+    my %params = ('timeout' => 30);
     if ($args->{'proxy'}) {
       $params{'http_proxy'}   = $args->{'proxy'};
       $params{'https_proxy'}  = $args->{'proxy'};
@@ -269,7 +259,6 @@ sub read_file {
   Example     : my $headers = get_headers(""ftp://ftp.somedomain.org/pub/README");
   Description : Get one or all headers from a remote file
   Returntype  : Hashref containing results (single header or hashref of headers) or errors (ArrayRef)
-  Exceptions  : None
   Caller      : General
   Status      : Stable
 
@@ -326,7 +315,6 @@ sub get_headers {
   Example     : my $size = get_filesize(""ftp://ftp.somedomain.org/pub/README");
   Description : Get size of remote file 
   Returntype  : Hashref containing results (Integer - file size in bytes) or errors (ArrayRef)
-  Exceptions  : None
   Caller      : General
   Status      : Stable
 
@@ -350,8 +338,8 @@ sub _get_lwp_useragent_error {
 ### @return String
   my $response = shift;
 
-  return 'timeout'              unless $response->code;
-  return $response->status_line if     $response->code >= 400;
+  return 'timeout' unless $response->code;
+  return $response->status_line if $response->code >= 400;
   return;
 }
 

@@ -268,15 +268,12 @@ the status of a trackdb having the given id in the back end.
 sub view_trackhub_status : Chained('user') :Path('view_trackhub_status') Args(1) {
   my ($self, $c, $id) = @_;
 
-  my $trackdb;
-  try {
-    $trackdb = Registry::TrackHub::TrackDB->new($id);
-  } catch {
-    $c->stash(error_msg => $_);
-  };
+  my $hub = $c->model('Search')->get_trackhub_by_id($id, 1);
 
-  $trackdb->toggle_search if $c->req->params->{toggle_search};
-  $c->stash(trackdb => $trackdb, template => 'user/trackhub/view.tt');
+  if ($c->req->params->{toggle_search}) {
+    $hub = $c->model('Search')->toggle_search($hub);
+  }
+  $c->stash(trackdb => $hub, template => 'user/trackhub/view.tt');
 }
 
 =head2 refresh_trackhub_status

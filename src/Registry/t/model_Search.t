@@ -26,6 +26,7 @@ use JSON;
 
 use Registry::Utils; # slurp_file, es_running
 use Search::Elasticsearch::TestServer;
+use Test::MockObject;
 
 use_ok 'Registry::Model::Search';
 
@@ -207,7 +208,7 @@ is(scalar @{$docs->{hits}{hits}}, 1, 'user2 owns one hub');
 #
 # missing arg throws exception
 throws_ok { $model->get_trackhub_by_id }
-  qr/Missing/, 'Fetch doc without required arguments';
+  qr/Cannot get a hub without an ID/, 'Fetch doc without required arguments';
 
 # getting existing documents
 my $doc = $model->get_trackhub_by_id($DOC_ID);
@@ -363,6 +364,83 @@ my ($hub_count, $species_count, $assembly_count) = $model->stats_query();
 cmp_ok($hub_count, '==', 2, 'Stats count of hub total');
 cmp_ok($species_count, '==', 1, 'Stats count of species total');
 cmp_ok($assembly_count, '==', 1, 'Stats count of assembly total');
+
+# Test track info collection routine
+# Mock the URL checker to ensure we get a success result while offline
+my $mock_module;
+BEGIN {
+  $mock_module = Test::MockObject->new();
+  $mock_module->fake_module('Registry::Utils::URL', file_exists => sub {return {success => 1} });
+};
+
+is_deeply(Registry::Utils::URL::file_exists, {success => 1}, 'Mocking ready');
+
+my $info = $model->_collect_track_info($test_hub_content{configuration});
+
+is($info->{track_total}, 1 ,'Track total established');
+is_deeply($info->{number_file_types}, { bigbed => 1 } ,'Track total established');
+is($info->{total_tracks_with_data}, 1, 'Mocked URL check successful');
+is($info->{broken_track_total}, 0, 'Mocked URL check reports no broken tracks');
+is_deeply($info->{error}, {}, 'No errors in the error accumulator');
+
+my %tertiary_test_hub_content = (
+  type => 'epigenomics',
+  owner => 'user2',
+  public => 'true',
+  hub => {
+    name => 'a_hub',
+    shortLabel => 'a',
+    longLabel => 'a contrived test',
+    url => 'file:///test/a'
+  },
+  species => {
+    tax_id => 9606,
+    scientific_name => 'Homo sapiens'
+  },
+  assembly => {
+    accession => 'GCA_000001405.1',
+    name => 'GRCh37',
+    synonyms => 'hg19'
+  },
+  data => [{
+    id => 'trev',
+    random_key => 'surprise'
+  }],
+  configuration => {
+    bob => {
+      shortLabel => 'testing',
+      longLabel => 'Example track',
+      visibility => 'full',
+      bigDataUrl => 'http://does.not.matter/',
+      type => 'bigbed',
+      members => {
+        trev => {
+          shortLabel => 'testing',
+          longLabel => 'Example track',
+          visibility => 'full',
+          bigDataUrl => 'http://does.not.matter/',
+          type => 'bigbed',
+        }
+      }
+    }
+  }
+);
+
+$model->index(
+  index => $INDEX_NAME,
+  type => $INDEX_TYPE,
+  body => \%tertiary_test_hub_content
+);
+$model->indices->refresh;
+
+$info = $model->_collect_track_info($tertiary_test_hub_content{configuration});
+
+is($info->{track_total}, 2 ,'Recursive track total established');
+is_deeply($info->{number_file_types}, { bigbed => 2 } ,'Track total established');
+is($info->{total_tracks_with_data}, 2, 'Mocked URL check successful');
+is($info->{broken_track_total}, 0, 'Mocked URL check reports no broken tracks');
+is_deeply($info->{error}, {}, 'No errors in the error accumulator');
+
 
 # Post-test clean-up
 $model->indices->delete(index => $INDEX_NAME);

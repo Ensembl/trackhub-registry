@@ -199,10 +199,10 @@ around _build_es => sub {
   while ( my ($schema_name, $config) = each %{ $self->schema } ) {
       
     my $schema_path = $config->{mapping_file};
-    print "Creating index from config '$schema_name' with mapping $schema_path\n";
     
     # Create indexes and load mappings if they're not present
     unless ($client->indices->exists( index => $config->{index_name} ) ) {
+      print "Creating index from config '$schema_name' with mapping $schema_path\n";
       $client->indices->create(
         index => $config->{index_name},
         # type => $config->{type},

@@ -114,6 +114,7 @@ test_requires 'Email::MIME';
 test_requires 'Email::Sender::Simple';
 test_requires 'Test::Deep';
 test_requires 'Test::HTTP::MockServer';
+test_requires 'Test::MockObject';
 
 catalyst;
 

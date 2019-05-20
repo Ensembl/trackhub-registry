@@ -56,6 +56,7 @@ use namespace::autoclean;
 use Try::Tiny;
 use POSIX;
 use Catalyst::Exception qw/throw/;
+use Registry::Utils::URL qw(file_exists);
 
 extends 'Catalyst::Model::ElasticSearch';
 
@@ -125,17 +126,16 @@ sub count_trackhubs {
   Example     : my $trackDB = $model->get_trackhub_by_id(1);
   Description : Get the trackDB doc with the given (ES) id
   Returntype  : HashRef - a Search::Elasticsearch compatible representation of the ES doc
-  Exceptions  : None
-  Caller      : General
-  Status      : Stable
+  Caller      : Controller
 
 =cut
 
 sub get_trackhub_by_id {
   my ($self, $id, $orig) = @_;
 
-  croak "Missing required id parameter"
-    unless defined $id; # THIS IS NOT THE WAY TO RETURN ERRORS
+  if (! defined $id) {
+    Catalyst::Exception->throw('Server error: Cannot get a hub without an ID');
+  }
 
   my $config = $self->schema->{trackhub};
   try {
@@ -662,6 +662,163 @@ sub stats_query {
     $stats_response->{aggregations}{species}{value},
     $stats_response->{aggregations}{assembly}{value}
   );
+}
+
+
+=head2 update_status
+
+  Arg[1]      : Registry::TrackHub::TrackDB
+  Arg[2]      : Bool; whether to label all tracks OK
+  Example     : my $status = $trackdb->update_status();
+  Description : Update the status of the trackDB, internally it checks whether
+                all remote data files pointed to by the tracks are remotely available
+  Returntype  : HashRef - the status data after update
+  Exceptions  : Invalid hub parameters
+  Caller      : Controllers
+
+=cut
+
+sub update_status {
+  my ($self, $trackdb, $labelok) = @_;
+  
+  # check trackdb status
+  # another process might have started to check it
+  # abandon the task in this case
+
+  if (!exists $trackdb->{status}) { Registry::Utils::Exception->throw("Unable to read trackdb status"); }
+  
+  # initialise status to pending
+  my $last_update = $trackdb->{status}{last_update};
+  $trackdb->{status}{message} = 'Pending';
+
+  # reindex trackdb to flag other processes its pending status
+  # and refresh the index to immediately commit changes
+
+  my $config = $self->schema->{trackhub};
+  my $index = $config->{index_name};
+  my $type = $config->{type};
+
+  $self->_es->index(
+    index  => $index,
+    type   => $type,
+    id     => $trackdb->id,
+    body   => $trackdb
+  );
+  $self->_es->indices->refresh(index => $index);
+
+  # check remote data URLs and record stats
+  $trackdb->{status}{tracks} = {
+    total => 0,
+    with_data => {
+      total => 0,
+      total_ko => 0
+    }
+  };
+  $trackdb->{file_type} = {};
+  
+  my $collected_info = $self->_collect_track_info($trackdb->{configuration}, $labelok);
+
+  $trackdb->{status}{message} = $collected_info->{broken_track_total} ? 'Remote Data Unavailable' : 'All is Well';
+  $trackdb->{status}{last_update} = time;
+
+  # commit status change
+  $self->_es->index(
+    index  => $index,
+    type   => $type,
+    id     => $trackdb->id,
+    body   => $trackdb
+  );
+  $self->_es->indices->refresh(index => $index);
+
+  return $trackdb->{status};
+}
+
+# Track info can be recursive, because the hub specification allows track collections
+sub _collect_track_info {
+  my ($self, $config_data, $labelok) = @_;
+
+  my $track_total = 0;
+  my %file_types_count;
+  my $tracks_with_data_total = 0;
+  my $broken_track_total = 0;
+  my %broken_reasons;
+  # Iterate over track names
+  foreach my $track (keys %{$config_data}) {
+    $track_total++;
+
+    # Vague hub spec allows much madness in the structure, so check types
+    if (ref $config_data->{$track} eq 'HASH') {
+      # Iterate over keys in each track
+      foreach my $attr (keys %{$config_data->{$track}}) {
+        if ($attr eq 'type' and exists $config_data->{$track}{bigDataUrl}) {
+          $file_types_count{$config_data->{$track}{type}}++ if $config_data->{$track}{$attr};
+
+          $tracks_with_data_total++;
+
+          my $url = $config_data->{$track}{bigDataUrl};
+          unless ($labelok) {
+            # Check each data file is still out there
+            my $response = file_exists($url, { nice => 1 });
+            
+            if ($response->{error}) {
+              $broken_track_total++;
+              $broken_reasons{$track} = [ $url, $response->{error}[0] ];
+            }
+          }
+        # If the sub-document is "members", we get more tracks nested below.
+        } elsif ( $attr eq 'members' && ref $config_data->{$track}{$attr} eq 'HASH') {
+          my $return = $self->_collect_track_info($config_data->{$track}{$attr}, $labelok);
+          
+          # Merge the results in with prior calls to _collect_track_info()
+          $track_total += $return->{track_total};
+          for my $type (keys %{ $return->{number_file_types} }) {
+            $file_types_count{$type} += $return->{number_file_types}{$type};
+          }
+          $tracks_with_data_total += $return->{total_tracks_with_data};
+          $broken_track_total += $return->{broken_track_total};
+          for my $track (keys %{ $return->{error}}) {
+            $broken_reasons{$track} = $return->{error}{$track};
+          }
+        } 
+      }
+    }
+  }
+  return {
+    track_total => $track_total,
+    number_file_types => \%file_types_count,
+    total_tracks_with_data => $tracks_with_data_total,
+    broken_track_total => $broken_track_total,
+    error => \%broken_reasons
+  }
+}
+
+=head2 toggle_search
+
+  Arg[1]:     : TrackDB, straight from the backend, i.e not a TrackDB instance
+  Example     : $controller->toggle_search($hub);
+  Description : Enable/disable search for this trackDB from the front-end by
+                flipping its public flag
+  Caller      : Controllers
+
+=cut
+
+sub toggle_search {
+  my ($self, $hub) = @_;
+
+  my $config = $self->schema->{trackhub};
+  my $index = $config->{index_name};
+  my $type = $config->{type};
+
+  $hub->{public} = $hub->{public} ? 0:1;
+
+  $self->_es->index(
+    index => $index,
+    type => $type,
+    body => $hub
+  );
+  
+  $self->_es->indices->refresh(index => $index);
+  return $hub;
 }
 
 

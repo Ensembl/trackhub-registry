@@ -133,7 +133,8 @@ sub index :Path :Args(0) {
   };
 
   # User form doesn't want to handle Elasticsearch annotation in the results
-  my @clean_results = map { $_->{_source}{id} = $_->{_id}; $_->{_source} } @{ $results->{hits}{hits}};
+  my @clean_results = map { $_->{_source}{id} = $_->{_id}; $_->{_source} }
+                      @{ $results->{hits}{hits}};
 
   if($results){
     my %pagination = $c->model('Search')->paginate($results, $page, $entries_per_page, $from);
@@ -158,14 +159,9 @@ the trackdb with the given :id.
 
 sub view_trackhub :Path('view_trackhub') Args(1) {
   my ($self, $c, $id) = @_;
-  my $trackdb;
 
-  try {
-    $trackdb = Registry::TrackHub::TrackDB->new($id);
-  } catch {
-    $c->stash(error_msg => $_);
-  };
-
+  my $hub = $c->model('Search')->get_trackhub_by_id($id);
+  my $trackdb = Registry::TrackHub::TrackDB->new(doc => $hub->{_source});
   $c->stash(trackdb => $trackdb, template  => "search/view.tt");
 }
 

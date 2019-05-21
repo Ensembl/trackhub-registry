@@ -235,7 +235,7 @@ sub list_trackhubs :Chained('user') :Path('trackhubs') :Args(0) {
   my $hubs_for_user = $c->model('Search')->get_hubs_by_user_name($c->user->username);
 
   foreach my $trackdb (@{$hubs_for_user}) {
-    push @{$trackdbs}, Registry::TrackHub::TrackDB->new($trackdb->{_id});
+    push @{$trackdbs}, Registry::TrackHub::TrackDB->new(doc => $trackdb);
   }
 
   $c->stash(
@@ -291,8 +291,8 @@ sub refresh_trackhub_status : Chained('user') :Path('refresh_trackhub_status') A
   my ($self, $c, $id) = @_;
 
   try {
-    my $trackdb = Registry::TrackHub::TrackDB->new($id);
-    $trackdb->update_status();
+    my $hub = $c->model('Search')->get_trackhub_by_id($id);
+    $c->model('Search')->update_status($hub);
   } catch {
     $c->stash(error_msg => $_);
   };

@@ -56,9 +56,23 @@
               [% IF urls.vectorbase %]
               <li><a target="_blank" href="[% urls.vectorbase %]">VectorBase</a></li>
               [% END %]
-              [% IF urls.ucsc %]
-              <li><a target="_blank" href="[% urls.ucsc %]">UCSC</a></li>
+              <!-- Generate the right UCSC link depending on whether it's an assembly hub or not-->
+              [% IF hub.assembly %]
+              <li><a
+                target="_blank"
+                href="http://genome.ucsc.edu/cgi-bin/hgHubConnect?hgHub_do_redirect=on&hgHubConnect.remakeTrackHub=on&hgHub_do_firstDb=1&hubUrl=[% trackdb.hub.url %]">UCSC</a></li>
+              [% ELSE %]
+              <!-- Can't dynamically link to UCSC here, as they do not provide a list of supported assemblies we can consult -->
+              <li><a
+                target="_blank"
+                href="[% urls.ucsc %]">UCSC</a></li>
               [% END %]
+
+              <!-- Generate a link to NCBI with a GCA accession and the hub url as parameters -->
+              <li><a
+                target="_blank"
+                href="https://www.ncbi.nlm.nih.gov/genome/gdv/browser/genome/?acc=[% trackdb.assembly.accession %]&hub=[% hub.url %]"
+              >NCBI GDV</a></li>
             </ul>
           </div>
           [% END %]
@@ -68,7 +82,7 @@
           <li class="list-group-item">Remote data tracks <span class="badge">[% tracks.with_data.total %]</span></li>
           <li class="list-group-item">Data type: <span class="label label-default">[% trackdb.type %]</span></li>
           <li class="list-group-item">
-          File type(s): <!--[% trackdb.file_type.join(', ') %]-->
+          File type(s):
             <ul>
             [% FOREACH file_type IN trackdb.file_type %]
               <li>[% file_type %] <span style="padding-left: 1em"><span class="badge">[% trackdb.doc.file_type.$file_type %]</span></span></li>
@@ -76,7 +90,7 @@
             </ul>
           </li>
         [% IF trackdb.doc.source %]
-          <li class="list-group-item">Source URL: <a target="_blank" role=button" class="btn btn-xs btn-default" data-toggle="popover" title="View source URL" data-content="" href="[% trackdb.doc.source.url %]">View</a></li>
+          <li class="list-group-item">Source URL: <a target="_blank" role="button" class="btn btn-xs btn-default" data-toggle="popover" title="View source URL" data-content="" href="[% trackdb.doc.source.url %]">View</a></li>
         [% END %]
         </ul>        
       </div>
@@ -99,7 +113,7 @@
           [% END %]
         </p>
           [% IF hub.url %]
-        <p><strong>Public URL</strong>: <a target="_blank" role=button" class="btn btn-xs btn-default" data-toggle="popover" title="View source URL" data-content="" href="[% trackdb.doc.hub.url %]">View</a></p>
+        <p><strong>Public URL</strong>: <a target="_blank" role="button" class="btn btn-xs btn-default" data-toggle="popover" title="View source URL" data-content="" href="[% trackdb.doc.hub.url %]">View</a></p>
           [% END %]
         </p>
       </div>
@@ -150,7 +164,7 @@
   </div>
 </div>
 
-[% IF tracks.with_data.total_ko > 0 %]
+[% IF tracks && tracks.with_data.total_ko > 0 %]
 <div class="row">
   <div class="col-sm-12">
     <div class="panel panel-default">

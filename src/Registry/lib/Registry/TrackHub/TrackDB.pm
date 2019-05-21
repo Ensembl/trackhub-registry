@@ -53,11 +53,17 @@ sub BUILD {
   if (exists $args->{doc}) {
 
     foreach my $field (qw/type hub version source assembly status/) {
-      $self->$field( $args->{doc}{$field});
+      if (exists $args->{doc}{$field}) {
+        $self->$field( $args->{doc}{$field});
+      }
     }
     $self->file_type([ sort keys %{ $args->{doc}{file_type} } ]);
-    $self->created_time( $args->{doc}{created} );
-    $self->updated_time( $args->{doc}{updated} );
+    if (exists $args->{doc}{created}) {
+      $self->created_time( $args->{doc}{created} );
+    }
+    if (exists $args->{doc}{updated}) {
+      $self->updated_time( $args->{doc}{updated} );
+    }
 
   } else {
     # gonna be a useless TrackDB without a doc argument, but maybe you want to interfere?
@@ -80,7 +86,8 @@ has id => (
 has type => (
   is => 'rw',
   isa => 'Str',
-  documentation => 'Refers to the type of data in a genomics sense'
+  documentation => 'Refers to the type of data in a genomics sense',
+  default => 'genomics'
 );
 
 has hub => (
@@ -216,8 +223,10 @@ sub compute_checksum {
 
 sub status_message {
   my $self = shift;
-
-  return $self->status->{message};
+  if ($self->status) {
+    return $self->status->{message};
+  }
+  return;
 }
 
 =head2 status_last_update
@@ -235,7 +244,7 @@ sub status_message {
 sub status_last_update {
   my ($self, $format) = @_;
 
-  return unless $self->status->{last_update};
+  return unless $self->status && $self->status->{last_update};
 
   if ($format) {
     return strftime "%x %X %Z (%z)", localtime($self->status->{last_update})

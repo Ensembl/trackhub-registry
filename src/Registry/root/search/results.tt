@@ -221,7 +221,7 @@
                       [% END -%]
                       <li><a
                         target="_blank"
-                        href="https://www.ncbi.nlm.nih.gov/genome/gdv/browser/genome/?acc=[% trackdb.doc.assembly.accession %]&hub=[% trackdb.hub.url %]"
+                        href="https://www.ncbi.nlm.nih.gov/genome/gdv/browser/genome/?acc=[% item.assembly.accession %]&hub=[% item.hub.url %]"
                       >NCBI GDV</a></li>
                     </ul>
                     </ul>

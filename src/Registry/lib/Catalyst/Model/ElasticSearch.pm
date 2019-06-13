@@ -150,6 +150,7 @@ sub _build_es {
   return Search::Elasticsearch->new(
     nodes     => $self->nodes,
     transport => $self->transport,
+    send_get_body_as => 'POST', # Put this option in full-time. It was getting overwritten in construction
     %{ $self->_additional_opts },
   );
 }

@@ -24,14 +24,14 @@
       [% FOR trackdb IN trackdbs %]
       <tr>
         <td style="word-wrap: break-word;">[% i = i + 1; i %]</td>
-        <td style="word-wrap: break-word;">[% trackdb.doc.hub.name %]</td>
-        <td style="word-wrap: break-word;">[% trackdb.doc.assembly.name %]</td>
-        <td style="word-wrap: break-word;">[% trackdb.doc.version %]</td>
-        <td style="word-wrap: break-word;">[% trackdb.created(1) %]</td>
-        <td style="word-wrap: break-word;">[% trackdb.updated(1) %]</td>
+        <td style="word-wrap: break-word;">[% trackdb.hub.name %]</td>
+        <td style="word-wrap: break-word;">[% trackdb.assembly.name %]</td>
+        <td style="word-wrap: break-word;">[% trackdb.version %]</td>
+        <td style="word-wrap: break-word;">[% trackdb.created('formatted') %]</td>
+        <td style="word-wrap: break-word;">[% trackdb.updated('formatted') %]</td>
         <td style="word-wrap: break-word;">
         [% status = trackdb.status_message; %]
-        [% status_last_update = trackdb.status_last_update(1); %]
+        [% status_last_update = trackdb.status_last_update('formatted'); %]
         [% label_class = 'label-success' %]
         [% IF status == 'Unchecked' %]
         [%   label_class = 'label-warning' %]
@@ -45,8 +45,8 @@
         </td>
         <td>
           <div class="btn-group">
-            <a class="btn btn-default btn-xs" href="[% c.uri_for(c.controller.action_for('view_trackhub_status'), [c.user.username, trackdb.id]) %]" rel="tooltip" title="View Track Collection Status"><span class="glyphicon glyphicon-search"/></a>
-            <a class="btn btn-default btn-xs" href="[% c.uri_for(c.controller.action_for('delete_trackhub'), [c.user.username, trackdb.id]) %]" rel="tooltip" title="Delete Track Collection"><span class="glyphicon glyphicon-trash"/></a>
+            <a class="btn btn-default btn-xs" href="[% c.uri_for(c.controller.action_for('view_trackhub_status'), [trackdb.id]) %]" rel="tooltip" title="View Track Collection Status"><span class="glyphicon glyphicon-search"/></a>
+            <a class="btn btn-default btn-xs" href="[% c.uri_for(c.controller.action_for('delete_trackhub'), [trackdb.id]) %]" rel="tooltip" title="Delete Track Collection"><span class="glyphicon glyphicon-trash"/></a>
           </div>
         </td>
       </tr>

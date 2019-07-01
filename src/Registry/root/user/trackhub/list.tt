@@ -24,9 +24,9 @@
       [% FOR trackdb IN trackdbs %]
       <tr>
         <td style="word-wrap: break-word;">[% i = i + 1; i %]</td>
-        <td style="word-wrap: break-word;">[% trackdb.hub.name %]</td>
-        <td style="word-wrap: break-word;">[% trackdb.assembly.name %]</td>
-        <td style="word-wrap: break-word;">[% trackdb.version %]</td>
+        <td style="word-wrap: break-word;">[% trackdb.hub_name %]</td>
+        <td style="word-wrap: break-word;">[% trackdb.assembly_name %]</td>
+        <td style="word-wrap: break-word;">[% trackdb.version_number %]</td>
         <td style="word-wrap: break-word;">[% trackdb.created('formatted') %]</td>
         <td style="word-wrap: break-word;">[% trackdb.updated('formatted') %]</td>
         <td style="word-wrap: break-word;">

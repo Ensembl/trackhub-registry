@@ -27,7 +27,6 @@ use POSIX qw(strftime);
 use JSON;
 
 use Registry::Utils;
-use Registry::TrackHub::Translator;
 
 use_ok 'Registry::TrackHub::TrackDB';
 

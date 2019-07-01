@@ -81,8 +81,8 @@ has doc => (
 
 has id => (
   is => 'rw',
-  isa => 'Int',
-  documentation => 'The ID assigned by ElasticSearch',
+  isa => 'Str',
+  documentation => 'The UUID assigned by ElasticSearch',
 );
 
 has type => (

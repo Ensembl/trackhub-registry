@@ -235,7 +235,7 @@ sub list_trackhubs :Chained('user') :Path('trackhubs') :Args(0) {
   my $hubs_for_user = $c->model('Search')->get_hubs_by_user_name($c->user->username);
 
   foreach my $trackdb (@{$hubs_for_user}) {
-    push @{$trackdbs}, Registry::TrackHub::TrackDB->new(doc => $trackdb->{_source});
+    push @{$trackdbs}, Registry::TrackHub::TrackDB->new(doc => $trackdb->{_source}, id => $trackdb->{_id});
   }
 
   $c->stash(

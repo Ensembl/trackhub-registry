@@ -46,4 +46,9 @@ is($status->{message}, 'Unchecked', 'Status message');
 
 is_deeply($trackdb->file_type, [ 'bigbed', 'bigwig' ], 'File type(s)');
 
+is($trackdb->type, 'genomic', 'Hub type was assigned to object attribute');
+is($trackdb->assembly_name, 'JCVI_RCG_1.1', 'Assembly name made accessible via method');
+is($trackdb->hub_name, 'cshl2013', 'Hub name made accessible via method');
+is($trackdb->version_number, 'v1.0', 'Hub version available via method');
+
 done_testing();

@@ -35,7 +35,8 @@ A class to represent track db data in JSON format, to provide methods to get/set
 check and update the status of its tracks. An object of this class is built from an ElasticSearch 
 document.
 
-Typically used to carry hub information to template toolkit.
+Typically used to carry hub information to template toolkit. Template Toolkit CANNOT
+understand hashrefs and objects in the same call.
 
 =cut
 
@@ -69,6 +70,7 @@ sub BUILD {
     # gonna be a useless TrackDB without a doc argument, but maybe you want to interfere?
     Registry::Utils::Exception->throw('Please supply a hashref converted from a trackhub JSON document');
   }
+  return $self;
 }
 
 has doc => (
@@ -148,7 +150,6 @@ has status => (
   Returntype  : Scalar
   Exceptions  : None
   Caller      : General
-  Status      : Stable
 
 =cut
 
@@ -164,6 +165,10 @@ sub created {
   }
 }
 
+sub assembly_name { return shift->assembly->{name} };
+sub hub_name { return shift->hub->{name} };
+sub version_number { return shift->{version} };
+
 =head2 updated
 
   Arg[1]:     : Boolean, choose whether to ISO format the time of update
@@ -172,7 +177,6 @@ sub created {
   Returntype  : Scalar
   Exceptions  : None
   Caller      : General
-  Status      : Stable
 
 =cut
 

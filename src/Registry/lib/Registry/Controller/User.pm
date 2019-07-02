@@ -52,17 +52,13 @@ has registration_form => (
 
 =head1 METHODS
 
+=head2 login_submit
 
-=head2 login
-
-Authenticate user. CatalystX::SimpleLogin just made things worse for preventing URL params
-including user passwords.
+Provide a login form to the user. CatalystX::SimpleLogin can go away
 
 =cut
 
-sub login : Chained('/') { }
-
-sub login_request : Chained('login') Path('/login') GET {
+sub login_request :Path('/login') GET {
   my ($self, $c) = @_;
   if (! $c->user_exists ) {
     $c->stash(
@@ -74,7 +70,14 @@ sub login_request : Chained('login') Path('/login') GET {
   }
 }
 
-sub login_submit : Chained('login') Path('/login') POST {
+=head2 login_submit
+
+Authenticate user. CatalystX::SimpleLogin just made things worse for preventing URL params
+including user passwords.
+
+=cut
+
+sub login_submit :Path('/login') POST {
   my ($self, $c) = @_;
   
   my $authorized = $c->authenticate({
@@ -128,7 +131,7 @@ if necessary. Mainly we're maintaining the previous URL structure
 
 =cut
 
-sub user :Chained('/') :PathPart('user') {
+sub user :Chained('/') :PathPart('user') CaptureArgs(0) {
   my ($self, $c) = @_;
 
   if (!$c->user_exists) {
@@ -148,7 +151,7 @@ the user's profile.
 
 =cut
 
-sub profile : Chained('user') :Path('profile') Args(0) {
+sub profile :Chained('user') :PathPart('profile') Args(0) {
   my ($self, $c) = @_;
   
   # complain if user has not been found
@@ -179,15 +182,10 @@ a user having the specified ID.
 
 =cut
 
-sub delete : Chained('user') Path('delete') Args(1) Does('ACL') RequiresRole('admin') ACLDetachTo('denied') {
+sub delete : Chained('user') PathPart('delete') Args(1) Does('ACL') RequiresRole('admin') ACLDetachTo('denied') {
   my ($self, $c, $username) = @_;
 
   Catalyst::Exception->throw('No user name specified') unless defined $username;
-
-  #
-  # delete all trackDBs which belong to the user
-  #
-  # find username
 
   my $user = $c->model('Users')->get_user($username);
   if (! defined $user ) {
@@ -224,7 +222,7 @@ of trackhubs he/she has submitted to the system.
 
 =cut
 
-sub list_trackhubs :Chained('user') :Path('trackhubs') :Args(0) {
+sub list_trackhubs :Chained('user') :PathPart('trackhubs') :Args(0) {
   my ($self, $c) = @_;
   if (! $c->user_exists) {
     $c->log->debug('Got here without a login. Be on your way');
@@ -252,7 +250,7 @@ a form allowing the user to submit/update trackhubs directly from the web.
 
 =cut
 
-sub submit_trackhubs :Chained('user') :Path('submit_trackhubs') :Args(0) {
+sub submit_trackhubs :Chained('user') :PathPart('submit_trackhubs') Args(0) {
   my ($self, $c) = @_;
 
   $c->stash(template => 'user/trackhub/submit_update.tt');
@@ -265,15 +263,20 @@ the status of a trackdb having the given id in the back end.
 
 =cut
 
-sub view_trackhub_status : Chained('user') :Path('view_trackhub_status') Args(1) {
+sub view_trackhub_status :Chained('user') :PathPart('view_trackhub_status') :Args(1) {
   my ($self, $c, $id) = @_;
-
+  $c->log->debug('Reached status section');
   my $hub = $c->model('Search')->get_trackhub_by_id($id, 1);
 
   if ($c->req->params->{toggle_search}) {
     $hub = $c->model('Search')->toggle_search($hub);
   }
-  $c->stash(trackdb => $hub, template => 'user/trackhub/view.tt');
+  $c->stash(
+    trackdb => $hub,
+    template => 'user/trackhub/view.tt'
+  );
+  $c->log->debug('Set template to view.tt');
+  $c->detach;
 }
 
 =head2 refresh_trackhub_status
@@ -287,7 +290,7 @@ the trackdb references a very large number of remote files.
 
 =cut
 
-sub refresh_trackhub_status : Chained('user') :Path('refresh_trackhub_status') Args(1) {
+sub refresh_trackhub_status : Chained('user') :PathPart('refresh_trackhub_status') Args(1) {
   my ($self, $c, $id) = @_;
 
   try {
@@ -314,7 +317,7 @@ Action for /user/delete_trackhub/:id allowing an authenticated user to delete a 
 
 =cut
 
-sub delete_trackhub : Chained('user') :Path('delete') Args(1) {
+sub delete_trackhub : Chained('user') :PathPart('delete') Args(1) {
   my ($self, $c, $id) = @_;
   
   my $doc = $c->model('Search')->get_trackhub_by_id($id);
@@ -344,7 +347,7 @@ users who have submitted trackhubs to the system.
 
 =cut
 
-sub list_providers : Chained('user') Path('providers') Args(0) Does('ACL') RequiresRole('admin') ACLDetachTo('denied') {
+sub list_providers : Chained('user') PathPart('providers') Args(0) Does('ACL') RequiresRole('admin') ACLDetachTo('denied') {
   my ($self, $c) = @_;
 
   # get all user info. Don't want to show admin user to himself

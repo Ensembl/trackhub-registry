@@ -10,9 +10,9 @@ function toggle(b) {
 
 <div class="page-header">
   <h3>TrackDB ID: [% trackdb.id %]</h3>
-  <span class="label label-primary">[% trackdb.doc.hub.shortLabel %]</span>
-  <span class="label label-success">[% trackdb.doc.species.scientific_name %]</span>
-  <span class="label label-info">[% trackdb.doc.assembly.name %]</span>
+  <span class="label label-primary">[% trackdb.hub_property('shortLabel') %]</span>
+  <span class="label label-success">[% trackdb.scientific_name %]</span>
+  <span class="label label-info">[% trackdb.assembly_name %]</span>
 </div>
 
 <div class="row">
@@ -20,17 +20,19 @@ function toggle(b) {
     <div class="panel panel-default">
       <!-- Default panel contents -->
       <div class="panel-heading">General Info</div>
-      [% tracks = trackdb.status.tracks %]
+      [% tracks = trackdb.status_property('tracks') %]
       <div class="panel-body">
         <div style="float: right;">
-        [% status = trackdb.status_message; %]
-        [% status_last_update = trackdb.status_last_update(1); %]
-        [% label_class = 'label-success' %]
-        [% IF status == 'Unchecked' %]
-        [%   label_class = 'label-warning' %]
-        [% ELSIF status.match('Unavailable') %]
-        [%   label_class = 'label-danger' %]
-        [% END %]
+        [% 
+          status = trackdb.status_property('message');
+          status_last_update = trackdb.status_last_update(1)
+          label_class = 'label-success';
+          IF status == 'Unchecked';
+            label_class = 'label-warning';
+          ELSIF status.match('Unavailable');
+            label_class = 'label-danger';
+          END;
+        %]
           <span class="label [% label_class %]" style="padding-bottom: 1px;">[% status %]</span><br/>
         [% IF status != 'Unchecked' %]
           <small>[% status_last_update %]</small><br/>
@@ -60,7 +62,7 @@ function toggle(b) {
           <br/>
           [% END %]
         [% END %]
-        [% IF trackdb.doc.public %]
+        [% IF trackdb.public %]
           <br/><span class="label label-info" style="padding-bottom: 1px;">Searchable</span>
         [% ELSE %]
           <br/><span class="label label-danger" style="padding-bottom: 1px;">Not Searchable</span>
@@ -74,8 +76,8 @@ function toggle(b) {
           <li class="list-group-item">Remote data tracks <span class="badge">[% tracks.with_data.total %]</span></li>
           <li class="list-group-item">Data type: <span class="label label-default">[% trackdb.type %]</span></li>
           <li class="list-group-item">File type(s): <span class="label label-default">[% trackdb.file_type.join(', ') %]</span></li>
-        [% IF trackdb.doc.source %]
-          <li class="list-group-item">Source URL: <a target="_blank" role=button" class="btn btn-xs btn-default" data-toggle="popover" title="View source URL" data-content="" href="[% trackdb.doc.source.url %]">View</a></li>
+        [% IF trackdb.source %]
+          <li class="list-group-item">Source URL: <a target="_blank" role="button" class="btn btn-xs btn-default" data-toggle="popover" title="View source URL" data-content="" href="[% trackdb.source.url %]">View</a></li>
         [% END %]
         </ul>        
       </div>
@@ -86,19 +88,19 @@ function toggle(b) {
       <!-- Default panel contents -->
       <div class="panel-heading">Hub</div>
       <div class="panel-body">        
-        <p><strong>Name</strong>: [% trackdb.doc.hub.name %]</p>
-        <p><strong>Short Label</strong>: [% trackdb.doc.hub.shortLabel %]</p>
-        <p><strong>Long Label</strong>: [% trackdb.doc.hub.longLabel %]</p>
+        <p><strong>Name</strong>: [% trackdb.hub_property('name') %]</p>
+        <p><strong>Short Label</strong>: [% trackdb.hub_property('shortLabel') %]</p>
+        <p><strong>Long Label</strong>: [% trackdb.hub_property('longLabel') %]</p>
         <p>
           <strong>Assembly Hub</strong>: 
-          [% IF assembly_hub %]
+          [% IF assembly_hub %] <!-- How was this ever set? Get it from trackdb? -->
             <span class="glyphicon glyphicon-ok">
           [% ELSE %]
             <span class="glyphicon glyphicon-remove">
           [% END %]
         </p>
-          [% IF trackdb.doc.hub.url %]
-        <p><strong>Public URL</strong>: <a target="_blank" role=button" class="btn btn-xs btn-default" data-toggle="popover" title="View source URL" data-content="" href="[% trackdb.doc.hub.url %]">View</a></p>
+          [% IF trackdb.hub_property('url') %]
+        <p><strong>Public URL</strong>: <a target="_blank" role="button" class="btn btn-xs btn-default" data-toggle="popover" title="View source URL" data-content="" href="[% trackdb.hub_property('url') %]">View</a></p>
           [% END %]
         </p>
       </div>
@@ -130,7 +132,7 @@ function toggle(b) {
           </tr>
         </thead>
         <tbody>
-          [% assembly = trackdb.doc.assembly %]
+          [% assembly = trackdb.assembly %]
           <tr>
             <td>
             [% IF assembly.accession.match('GC') %]

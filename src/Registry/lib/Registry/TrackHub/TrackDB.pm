@@ -53,7 +53,7 @@ sub BUILD {
   my ($self, $args) = @_;
   if (exists $args->{doc}) {
 
-    foreach my $field (qw/type hub version source assembly status/) {
+    foreach my $field (qw/type hub version source assembly status public/) {
       if (exists $args->{doc}{$field}) {
         $self->$field( $args->{doc}{$field});
       }
@@ -93,9 +93,13 @@ has type => (
 );
 
 has hub => (
+  traits => ['Hash'],
   is => 'rw',
   isa => 'HashRef',
-  documentation => 'The hub portion of the trackDB document as hashref'
+  documentation => 'The hub portion of the trackDB document as hashref',
+  handles => {
+    hub_property => 'get'
+  }
 );
 
 has version => (
@@ -135,9 +139,19 @@ has assembly => (
 );
 
 has status => (
+  traits => ['Hash'],
   is => 'rw',
   isa => 'HashRef',
-  documentation => 'Status information relating to the accessibility of the backing data URLs'
+  documentation => 'Status information relating to the accessibility of the backing data URLs',
+  handles => {
+    status_property => 'get'
+  }
+);
+
+has public => (
+  is => 'rw',
+  isa => 'Str',
+  documentation => 'Whether the hub is publicly findable or not, boolean true/false as strings...'
 );
 
 =head1 METHODS
@@ -165,9 +179,10 @@ sub created {
   }
 }
 
-sub assembly_name { return shift->assembly->{name} };
-sub hub_name { return shift->hub->{name} };
-sub version_number { return shift->{version} };
+sub assembly_name { return shift->assembly->{name} }
+sub hub_name { return shift->hub->{name} }
+sub version_number { return shift->{version} }
+sub scientific_name { return shift->{species}->{scientific_name} }
 
 =head2 updated
 

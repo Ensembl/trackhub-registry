@@ -267,12 +267,12 @@ sub view_trackhub_status :Chained('user') :PathPart('view_trackhub_status') :Arg
   my ($self, $c, $id) = @_;
   $c->log->debug('Reached status section');
   my $hub = $c->model('Search')->get_trackhub_by_id($id, 1);
-
+  my $trackdb = Registry::TrackHub::TrackDB->new(doc => $hub, id => $id);
   if ($c->req->params->{toggle_search}) {
     $hub = $c->model('Search')->toggle_search($hub);
   }
   $c->stash(
-    trackdb => $hub,
+    trackdb => $trackdb,
     template => 'user/trackhub/view.tt'
   );
   $c->log->debug('Set template to view.tt');

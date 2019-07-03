@@ -1,11 +1,10 @@
-// This empty mapping file was not required for old Elasticsearch releases
 {
   "settings": {
     "number_of_shards": 1,
     "number_of_replicas": 1
   },
   "aliases": {
-    "reports": {}
+    "live_reports": {}
   },
   "mappings": {
     "report": {

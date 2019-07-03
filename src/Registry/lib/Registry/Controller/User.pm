@@ -36,95 +36,141 @@ package Registry::Controller::User;
 use Moose;
 use namespace::autoclean;
 
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
+BEGIN { extends 'Catalyst::Controller'; }
 
-use Data::Dumper;
-use List::Util 'max';
 use Try::Tiny;
 use Registry::Form::User::Registration;
 use Registry::Form::User::Profile;
 use Registry::TrackHub::TrackDB;
 
-has 'registration_form' => ( isa => 'Registry::Form::User::Registration', is => 'rw',
-    lazy => 1, default => sub { Registry::Form::User::Registration->new } );
+has registration_form => (
+  isa => 'Registry::Form::User::Registration',
+  is => 'rw',
+  lazy => 1,
+  default => sub { Registry::Form::User::Registration->new }
+);
 
 =head1 METHODS
 
-=head2 base
+=head2 login_submit
 
-This is the action on top of a chain of actions which capture user information
-after he/she has authenticated in the system. It puts the user ID and information
-in the stash which can be used by the following methods in the chain.
+Provide a login form to the user. CatalystX::SimpleLogin can go away
 
 =cut
 
-sub base : Chained('/login/required') PathPrefix CaptureArgs(1) {
-  my ($self, $c, $username) = @_;
+sub login_request :Path('/login') GET {
+  my ($self, $c) = @_;
+  if (! $c->user_exists ) {
+    $c->stash(
+      template => 'login/login.tt'
+    );
+    $c->detach();
+  } else {
+    $c->forward($c->controller->action_for('list_trackhubs'));
+  }
+}
 
-  # retrieve user's data to show the profile
-  #
-  # since the user's logged in, it should be possible to
-  # call Catalyst::Authentication::Store::ElasticSearch::User method, 
-  # i.e. $user->get('..'), $user->id
-  # without looking directly into the persistence engine
-  # 
-  # NOTE
-  # Yes, but if the user changes its profile, then switches between 
-  # the various tabs, and then comes back to the profile, session
-  # data kicks in and it will show information before the update
-  #
-  # Catalyst::Exception->throw("Unable to find logged in user info")
-  #     unless $c->user_exists;
+=head2 login_submit
 
-  # $c->stash(user => $c->user->get_object()->{_source},
-  # 	    id   => $c->user->id);
+Authenticate user. CatalystX::SimpleLogin just made things worse for preventing URL params
+including user passwords.
 
-  my $config = Registry->config()->{'Model::Search'};
-  my $query = { term => { username => $username } };
-  my $user_search = $c->model('Search')->search( index => $config->{user}{index},
-                                                 type  => $config->{user}{type},
-                                                 body => { query => $query } );
+=cut
 
-  $c->stash(user => $user_search->{hits}{hits}[0]{_source},
-            id   => $user_search->{hits}{hits}[0]{_id});
+sub login_submit :Path('/login') POST {
+  my ($self, $c) = @_;
+  
+  my $authorized = $c->authenticate({
+    username => $c->req->body_parameters->{username},
+    password => $c->req->body_parameters->{password}
+  }, 'web');
 
+  if (!$authorized) {
+    $c->log->debug('Authentication failed.');
+    $c->stash(
+      error_msg => 'Incorrect user name or password',
+      template => 'login/login.tt'
+    );
+  } else {
+    $c->log->debug('User logged in');
+
+    # Now the user is authentic, we can put the user in the session for user-based operations in
+    # logged in operations
+    
+    $c->session->{user} = $c->user;
+    $c->session->{user_id} = $c->user->user_id;
+    # At this point the user is logged in. Give the login page instructions for where to go now
+    # We can't use redirect like the old version, because the client is too smart and sends its
+    # payload to the list_trackhubs endpoint. It doesn't understand what to do.
+
+    $c->forward($c->controller->action_for('list_trackhubs'));
+  }
+}
+
+
+=head2 logout
+
+De-authenticate user and clear session
+
+=cut
+
+sub logout : Path('/logout') {
+  my ($self, $c) = @_;
+  $c->logout();
+  $c->delete_session('Logged out');
+  $c->res->redirect(
+    $c->uri_for('/')
+  );
+  $c->detach;
+}
+
+=head2 user
+
+The root of the user account URLs. An opportunity to prepare some general user state
+if necessary. Mainly we're maintaining the previous URL structure
+
+=cut
+
+sub user :Chained('/') :PathPart('user') CaptureArgs(0) {
+  my ($self, $c) = @_;
+
+  if (!$c->user_exists) {
+    $c->log->debug('User accessed page without logging in');
+    $c->stash(status_msg => 'You need to be logged in to access these pages');
+    $c->response->redirect($c->uri_for('/login'));
+    $c->detach;
+  }
+
+  return;
 }
 
 =head2 profile
 
-Action for the /user/:user/profile URL, which presents the form to change 
+Action for the /user/profile URL, which presents the form to change 
 the user's profile.
 
 =cut
 
-sub profile : Chained('base') :Path('profile') Args(0) {
+sub profile :Chained('user') :PathPart('profile') Args(0) {
   my ($self, $c) = @_;
   
   # complain if user has not been found
-  Catalyst::Exception->throw("Unable to find user information")
-      unless defined $c->stash->{user};
+  if (! exists $c->session->{user}) {
+    Catalyst::Exception->throw('Unable to find user information in session');
+  }
 
   # Fill in form with user data
-  my $profile_form = Registry::Form::User::Profile->new(init_object => $c->stash->{user});
+  my $profile_form = Registry::Form::User::Profile->new(item => $c->session->{user});
 
-  $c->stash(template => "user/profile.tt",
-            form     => $profile_form);
+  $c->stash(
+    template => "user/profile.tt",
+    form     => $profile_form
+  );
   
   return unless $profile_form->process( params => $c->req->parameters );
 
-  # new profile validated, merge old with new profile
-  # when attributes overlap overwrite the old entries with the new ones
-  my $new_user_profile = $c->stash->{user};
-  map { $new_user_profile->{$_} = $profile_form->value->{$_} } keys %{$profile_form->value};
-  
-  # update user profile on the backend
-  my $config = Registry->config()->{'Model::Search'};
-  $c->model('Search')->index(index   => $config->{user}{index},
-                             type    => $config->{user}{type},
-                             id      => $c->stash->{id},
-                             body    => $new_user_profile);
+  $c->session->{user}->update;
 
-  $c->model('Search')->indices->refresh(index => $config->{user}{index});
 
   $c->stash(status_msg => 'Profile updated');
 }
@@ -136,111 +182,106 @@ a user having the specified ID.
 
 =cut
 
-sub delete : Chained('base') Path('delete') Args(1) Does('ACL') RequiresRole('admin') ACLDetachTo('denied') {
-  my ($self, $c, $id) = @_;
+sub delete : Chained('user') PathPart('delete') Args(1) Does('ACL') RequiresRole('admin') ACLDetachTo('denied') {
+  my ($self, $c, $username) = @_;
 
-  Catalyst::Exception->throw("Unable to find user id")
-      unless defined $id;
+  Catalyst::Exception->throw('No user name specified') unless defined $username;
 
-  my $config = Registry->config()->{'Model::Search'};
+  my $user = $c->model('Users')->get_user($username);
+  if (! defined $user ) {
+    Catalyst::Exception->throw('Unable to find user $username information');
+  }
 
-  #
-  # delete all trackDBs which belong to the user
-  #
-  # find username
-  my $username = $c->model('Search')->search(index => $config->{user}{index},
-                                             type  => $config->{user}{type},
-                                             body  => {
-                                                 query => { filtered => { filter => { bool => { must => [ { term => { _id => $id } } ] } } } }
-                                                }
-                                            )->{hits}{hits}[0]{_source}{username};
-  Catalyst::Exception->throw("Unable to find user $id information")
-      unless defined $username;
+  my $user_trackdbs = $c->model('Search')->get_hubs_by_user_name($username);
 
-  # find trackDBs which belong to user
-  my $query = { term => { owner => $username } };
-  # my $query = { filtered => { filter => { bool => { must => [ { term => { owner => lc $username } } ] } } } };
-  my $user_trackdbs = $c->model('Search')->search_trackhubs(query => $query, size => 100000);
-  # my $user_trackdbs = grep { $_->{_source}{owner} eq $username } @{$c->model('Search')->search_trackhubs(query => $query, size => 100000)};
-
-  $c->log->debug(sprintf "Found %d trackDBs for user %s (%s)", scalar @{$user_trackdbs->{hits}{hits}}, $id, $username);
+  $c->log->debug(sprintf 'Found %d trackDBs for user %s', scalar @{$user_trackdbs}, $username);
   # delete user trackDBs
-  foreach my $trackdb (@{$user_trackdbs->{hits}{hits}}) {
-    $c->model('Search')->delete(index   => $config->{trackhub}{index},
-                                type    => $config->{trackhub}{type},
-                                id      => $trackdb->{_id});
+  foreach my $trackdb (@{$user_trackdbs}) {
+    $c->model('Search')->delete_hub_by_id($trackdb->{_id});
     $c->log->debug(sprintf "Document %s deleted", $trackdb->{_id});
   }
-  $c->model('Search')->indices->refresh(index => $config->{trackhub}{index});
+  $c->model('Search')->refresh_trackhub_index;
 
-  # delete the user
-  $c->model('Search')->delete(index   => $config->{user}{index},
-                              type    => $config->{user}{type},
-                              id      => $id);
-  $c->model('Search')->indices->refresh(index => $config->{user}{index});
+  # delete the user by ID
+  $c->model('Users')->delete_user($user);
 
   # redirect to the list of providers page
-  # $c->detach('list_providers', [$c->stash->{user}{username}]);
-  $c->res->redirect($c->uri_for($c->controller->action_for('list_providers', [$c->stash->{user}{username}])));
+  $c->res->redirect(
+    $c->uri_for(
+      $c->controller->action_for(
+        'list_providers'
+      )
+    )
+  );
 }
 
 =head2 list_trackhubs
 
-Action for /user/:user/list_trackhubs URL which shows an authenticated user the list
+Action for /user/trackhubs URL which shows an authenticated user the list
 of trackhubs he/she has submitted to the system.
 
 =cut
 
-sub list_trackhubs : Chained('base') :Path('trackhubs') Args(0) {
+sub list_trackhubs :Chained('user') :PathPart('trackhubs') :Args(0) {
   my ($self, $c) = @_;
-
-  my $trackdbs;
-  foreach my $trackdb (@{$c->model('Search')->get_trackdbs(query => { term => { owner => $c->user->username } })}) {
-    push @{$trackdbs}, Registry::TrackHub::TrackDB->new($trackdb->{_id});
+  if (! $c->user_exists) {
+    $c->log->debug('Got here without a login. Be on your way');
+    $c->detach('denied');
   }
 
-  $c->stash(trackdbs => $trackdbs,
-            template  => "user/trackhub/list.tt");
+  my $trackdbs;
+  my $hubs_for_user = $c->model('Search')->get_hubs_by_user_name($c->user->username);
+
+  foreach my $trackdb (@{$hubs_for_user}) {
+    push @{$trackdbs}, Registry::TrackHub::TrackDB->new(doc => $trackdb->{_source}, id => $trackdb->{_id});
+  }
+
+  $c->stash(
+    trackdbs => $trackdbs,
+    template => 'user/trackhub/list.tt'
+  );
 }
 
 =head2 submit_trackhubs
 
-Action for /user/:user/submit_trackhubs URL which, at the moment, shows an authenticated user
+Action for /user/submit_trackhubs URL which, at the moment, shows an authenticated user
 how he/she might submit/update trackhubs to the system. In the future, we might want to provide
 a form allowing the user to submit/update trackhubs directly from the web.
 
 =cut
 
-sub submit_trackhubs : Chained('base') :Path('submit_trackhubs') Args(0) {
+sub submit_trackhubs :Chained('user') :PathPart('submit_trackhubs') Args(0) {
   my ($self, $c) = @_;
 
-  $c->stash(template  => "user/trackhub/submit_update.tt");
+  $c->stash(template => 'user/trackhub/submit_update.tt');
 }
 
 =head2 view_trackhub_status
 
-Action for /user/:user/view_trackhub_status/:id allowing an authenticated user to view
+Action for /user/view_trackhub_status/:id allowing an authenticated user to view
 the status of a trackdb having the given id in the back end.
 
 =cut
 
-sub view_trackhub_status : Chained('base') :Path('view_trackhub_status') Args(1) {
+sub view_trackhub_status :Chained('user') :PathPart('view_trackhub_status') :Args(1) {
   my ($self, $c, $id) = @_;
-
-  my $trackdb;
-  try {
-    $trackdb = Registry::TrackHub::TrackDB->new($id);
-  } catch {
-    $c->stash(error_msg => $_);
-  };
-
-  $trackdb->toggle_search if $c->req->params->{toggle_search};
-  $c->stash(trackdb => $trackdb, template  => "user/trackhub/view.tt");
+  my $hub = $c->model('Search')->get_trackhub_by_id($id, 1);
+  $c->log->debug('Retrieved hub '.$id);
+  if ($c->req->params->{toggle_search}) {
+    $hub = $c->model('Search')->toggle_search($id, $hub);
+  }
+  my $trackdb = Registry::TrackHub::TrackDB->new(doc => $hub, id => $id);
+  $c->stash(
+    trackdb => $trackdb,
+    template => 'user/trackhub/view.tt'
+  );
+  $c->log->debug('Set template to view.tt');
+  $c->detach;
 }
 
 =head2 refresh_trackhub_status
 
-Action for /user/:user/refresh_trackhub_status/:id allowing an authenticated user to
+Action for /user/refresh_trackhub_status/:id allowing an authenticated user to
 refresh the status of a trackdb having the given id. This triggers the system to perform
 a check on the availability of the remote files specified in the trackdb.
 
@@ -249,44 +290,49 @@ the trackdb references a very large number of remote files.
 
 =cut
 
-sub refresh_trackhub_status : Chained('base') :Path('refresh_trackhub_status') Args(1) {
+sub refresh_trackhub_status : Chained('user') :PathPart('refresh_trackhub_status') Args(1) {
   my ($self, $c, $id) = @_;
 
   try {
-    my $trackdb = Registry::TrackHub::TrackDB->new($id);
-    $trackdb->update_status();
+    my $hub = $c->model('Search')->get_trackhub_by_id($id);
+    $c->model('Search')->update_status($hub);
   } catch {
     $c->stash(error_msg => $_);
   };
 
-  $c->res->redirect($c->uri_for($c->controller->action_for('list_trackhubs', [$c->user->username])));
+  $c->res->redirect(
+    $c->uri_for(
+      $c->controller->action_for(
+        'list_trackhubs',
+        [$c->user->username]
+      )
+    )
+  );
   $c->detach;
 }
 
 =head2 delete_trackhub
 
-Action for /user/:user/delete_trackhub/:id allowing an authenticated user to delete a trackdb by id.
+Action for /user/delete_trackhub/:id allowing an authenticated user to delete a trackdb by id.
 
 =cut
 
-sub delete_trackhub : Chained('base') :Path('delete') Args(1) {
+sub delete_trackhub : Chained('user') :PathPart('delete') Args(1) {
   my ($self, $c, $id) = @_;
-  
+  $c->log->debug("Going to delete $id");
   my $doc = $c->model('Search')->get_trackhub_by_id($id);
+
   if ($doc) {
     # TODO: this should be redundant, but just to be sure
-    if ($doc->{owner} eq $c->user->username) {
-      my $config = Registry->config()->{'Model::Search'};
-      # try { # TODO: this is not working for some reason
-      $c->model('Search')->delete(index   => $config->{trackhub}{index},
-                                  type    => $config->{trackhub}{type},
-                                  id      => $id);
-	$c->model('Search')->indices->refresh(index => $config->{trackhub}{index});
-      # } catch {
-      # 	Catalyst::Exception->throw($_);
-      # };
+    if ($doc->{_source}{owner} eq $c->user->username) {
+      
+      $c->model('Search')->delete_hub_by_id($id);
+      $c->model('Search')->refresh_trackhub_index;
+      
       $c->stash(status_msg => "Deleted track collection [$id]");
     } else {
+      $c->log->debug('Failed to delete, because owner of hub and user do not match');
+      # TODO: these error message don't render in the template
       $c->stash(error_msg => "Cannot delete collection [$id], does not belong to you");
     }
   } else {
@@ -299,35 +345,24 @@ sub delete_trackhub : Chained('base') :Path('delete') Args(1) {
 
 =head2 list_providers
 
-Action for /user/admin/list_providers URL used by the administrator to show the list of authenticated
+Action for /user/providers URL used by the administrator to show the list of authenticated
 users who have submitted trackhubs to the system.
 
 =cut
 
-sub list_providers : Chained('base') Path('providers') Args(0) Does('ACL') RequiresRole('admin') ACLDetachTo('denied') {
+sub list_providers : Chained('user') PathPart('providers') Args(0) Does('ACL') RequiresRole('admin') ACLDetachTo('denied') {
   my ($self, $c) = @_;
 
-  # get all user info, attach id
-  my $users;
-  # map { push @{$users}, $_->{_source} }
-  #   @{$c->model('Search')->query(index => 'test', type => 'user')->{hits}{hits}};
-
-  my $config = Registry->config()->{'Model::Search'};
-  foreach my $user_data (@{$c->model('Search')->search(index => $config->{user}{index}, 
-                                                       type  => $config->{user}{type},
-                                                       size => 100000)->{hits}{hits}}) {
-    my $user = $user_data->{_source};
-    # don't want to show admin user to himself
-    next if $user->{username} eq 'admin';
-    $user->{id} = $user_data->{_id};
-    push @{$users}, $user;
-  }
+  # get all user info. Don't want to show admin user to himself
+  my $users = [ grep { $_->{username} ne 'admin' } @{$c->model('Users')->get_all_users()} ];
 
   my $columns = [ 'username', 'first_name', 'last_name', 'fullname', 'email', 'affiliation' ];
 
-  $c->stash(users     => $users,
-            columns   => $columns,
-            template  => "user/list.tt");
+  $c->stash(
+    users     => $users,
+    columns   => $columns,
+    template  => 'user/list.tt'
+  );
 
 }
 
@@ -340,87 +375,56 @@ Action for /user/register URL presenting a form for signing up in the system.
 sub register :Path('register') Args(0) {
   my ($self, $c) = @_;
 
-  $c->stash(template => "user/register.tt",
-            form     => $self->registration_form);
+  $c->stash(
+    template => "user/register.tt",
+    form     => $self->registration_form  # Keep form state for next page view
+  );
 
-  return unless $self->registration_form->process( params => $c->req->parameters );
+  my $status = $self->registration_form->process(
+    params => $c->req->parameters
+  );
+  if ($status) {
+    try {
 
-  # user input is validated
-  # look if there's already a user with the provided username
-  my $username = $self->registration_form->value->{username};
-  # NOTE:
-  # there are problems at the moment with with usernames containing
-  # upper case characters. Deny registration in this case.
-  if ($username =~ /[A-Z]/) {
-    $c->stash(error_msg => "Username should not contain upper case characters.");
-  } else {
-    my $config = Registry->config()->{'Model::Search'};
+      my $user_params = $self->registration_form->value;
 
-    my $query = { term => { username => $username } };
-    my $user_exists = 
-      $c->model('Search')->count(index    => $config->{user}{index},
-                                 type     => $config->{user}{type},
-                                 body => { query => $query } )->{count};
-  
-    unless ($user_exists) {
-      # user with the provided username does not exist, proceed with registration
-    
-      # get the max user ID to assign the ID to the new user
-      my $users = $c->model('Search')->search(index => $config->{user}{index}, type => $config->{user}{type}, size => 100000);
-      my $current_max_id = max( map { $_->{_id} } @{$users->{hits}{hits}} );
+      delete $user_params->{password_conf};
+      delete $user_params->{gdpr_accept};
+      # It might be better if this password were encoded client side
+      my $plain_password = $user_params->{password};
+      $user_params->{password} = $c->model('Users')->encode_password($user_params->{password});
 
-      # add default user role to user 
-      my $user_data = $self->registration_form->value;
-      $user_data->{roles} = [ 'user' ];
+      my $new_user = $c->model('Users::User')->create($user_params);
+      $new_user->add_to_roles({ name => 'user' });
 
-      $c->model('Search')->index(index => $config->{user}{index},
-                                 type  => $config->{user}{type},
-                                 id      => $current_max_id?$current_max_id + 1:1,
-                                 body    => $user_data);
+      $c->log->debug('New user registered:'.$new_user->username);
 
-      # refresh the index
-      $c->model('Search')->indices->refresh(index => $config->{user}{index});
-
-      # authenticate and redirect to the user profile page
-      if ($c->authenticate({ username => $username,
-                             password => $self->registration_form->value->{password} } )) {
-        $c->stash(status_msg => sprintf "Welcome user %s", $username);
-        $c->res->redirect($c->uri_for($c->controller('User')->action_for('profile'), [$username]));
-        $c->detach;
+      $c->log->debug(sprintf 'Attempt to authenticate new user: %s : %s', $new_user->username, $plain_password);
+      # Log the new user in for them
+      if ($c->authenticate({
+          username => $new_user->username,
+          password => $plain_password
+        }, 'web')
+      ) {
+        $c->stash(status_msg => 'Welcome user '.$new_user->username);
+        $c->session->{user} = $new_user;
+        $c->session->{user_id} = $new_user->user_id;
+        $c->forward($c->controller->action_for('profile'));
       } else {
-        # Set an error message
-        $c->stash(error_msg => "Bad username or password.");
+        throw('Failed to authenticate new user account.');
       }
-
-    } else {
-      # user with the provided username already exists
-      # present the registration form again with the error message
-      $c->stash(error_msg => "User $username already exists. Please choose a different username.");
-    }    
+    } catch {
+      if ($_ =~ m/UNIQUE/) {
+        $c->stash(error_msg => 'User name is already in use. Please choose a different username.');
+      } else {
+        $c->stash(error_msg => "Failed to register new user account. Contact Trackhub Registry administrators with error: $_");
+      }
+    };
+  } elsif ($self->registration_form->has_errors) {
+    $c->stash(error_msg => "Form validation failed in the following fields:\n". join "\n",$self->registration_form->errors);
   }
 
 }
-
-# sub admin : Chained('base') PathPart('') CaptureArgs(0) Does('ACL') RequiresRole('admin') ACLDetachTo('denied') {}
-
-# sub list : Chained('admin') PathPart('user/list') Args(0) {
-#   my ($self, $c) = @_;
- 
-#   # my $users = $c->model('DB::User')->search(
-#   # 					    { active => 'Y'},
-#   # 					    {
-#   # 					     order_by => ['username'],
-#   # 					     page     => ($c->req->param('page') || 1),
-#   # 					     rows     => 20,
-#   # 					    }
-#   # 					   );
-  
-#   $c->stash(
-#   	    users => $users,
-#   	    pager => $users->pager,
-#   	   );
-  
-# }
 
 =head2 denied
 
@@ -431,8 +435,10 @@ Redirect to the login page with an error message if a user fails to authenticate
 sub denied : Private {
   my ($self, $c) = @_;
  
-  $c->stash(status_msg => "Access Denied",
-            template   => "login/login.tt");
+  $c->stash(
+    status_msg => 'Access Denied',
+    template   => 'login/login.tt'
+  );
 }
 
 __PACKAGE__->meta->make_immutable;

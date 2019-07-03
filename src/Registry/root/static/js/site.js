@@ -1,4 +1,4 @@
-jQuery.support.placeholder = (function(){
+jQuery.support.placeholder = (function() {
   var i = document.createElement('input');
   return 'placeholder' in i;
 })();

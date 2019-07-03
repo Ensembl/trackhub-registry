@@ -38,19 +38,17 @@ use Moose;
 use namespace::autoclean;
 
 use JSON;
-use List::Util 'max';
-use String::Random;
 use Try::Tiny;
 use File::Temp qw/ tempfile /;
 use Registry::TrackHub::Translator;
 use Registry::TrackHub::Validator;
-
-BEGIN { extends 'Catalyst::Controller::REST'; }
 use Params::Validate qw(SCALAR);
 
+BEGIN { extends 'Catalyst::Controller::REST'; }
+
 __PACKAGE__->config(
-		    'default'   => 'application/json',
-		   );
+  default => 'application/json'
+);
 
 =head1 METHODS
 
@@ -64,34 +62,30 @@ has authenticated and is submitting the request with an authorisation token.
 sub begin : Private {
   my ($self, $c) = @_;
 
-  # ... do things before Deserializing ... 
-  # 
   # API-key based authentication
-  # The client should have obtained an authorization token
-  # and submit the request by attaching the username and
+  # The client should have obtained an authorization token by a regular user+password
+  # log in. Requests to this controller are made by attaching the username and
   # the auth token as headers
   #
   my $authorized = 0;
   if (exists($c->req->headers->{'user'}) && exists($c->req->headers->{'auth-token'})) {
-    $authorized = $c->authenticate({ username => $c->req->headers->{'user'}, 
-                                     auth_key => $c->req->headers->{'auth-token'} }, 'authkey');
+    $authorized = $c->authenticate(
+      { 
+        username => $c->req->headers->{'user'}, 
+        auth_key => $c->req->headers->{'auth-token'}
+      },
+      'authkey'
+    );
   }
 
-  $c->forward('deserialize');
-
-  # ... do things after Deserializing ...
-  #
-  # Deny access in case API-key authorization fails,
-  # otherwise allow normal dispatch chain
-  #
   $c->detach('status_unauthorized', 
      [ message => "You need to login, get an auth_token and make requests using the token" ] )
      unless $authorized;
 
-  $c->stash(user => $c->req->headers->{'user'});
+  # We have overridden the Catalyst::Controller::REST default begin(), so we have to deserialize ourselves.
+  $c->forward('deserialize');
 
-  # $c->detach('/api/error', [ 'You need to login, get an auth_token and make requests using the token' ])
-  #   unless $authorized;
+  $c->stash(username => $c->req->headers->{'user'});
 }
 
 =head2 deserialize
@@ -101,25 +95,6 @@ Deserialise request.
 =cut
 
 sub deserialize : ActionClass('Deserialize') {}
-
-=head2 auto
-
-Works with normal HTTP basic auth, but errors occur
-when trying to use it to support API key authentication
-for all endpoints.
-
-I suspect it depends on the way the REST controller 
-overrides the dispatch chain.
-
-The intended functionality is implemented by overriding
-the begin method.
-
-=cut 
-
-# sub auto : Private {
-#   my ($self, $c) = @_;
-#   $c->authenticate();
-# }
 
 =head2 trackdb_list
 
@@ -144,9 +119,7 @@ sub trackdb_list_GET {
   my ($self, $c) = @_;
 
   # get all docs for the given user
-  my $query = { term => { owner => lc $c->stash->{user} } };
-  # TODO: use scan and scroll to retrieve large number of results efficiently
-  # See: https://www.elastic.co/guide/en/elasticsearch/guide/current/scan-scroll.html#scan-scroll
+  my $query = { term => { owner => lc $c->stash->{username} } };
   my $docs = $c->model('Search')->search_trackhubs(query => $query);
 
   my %trackhubs;
@@ -155,8 +128,6 @@ sub trackdb_list_GET {
       $c->uri_for('/api/trackdb/' . $doc->{_id})->as_string;
   }
   $self->status_ok($c, entity => \%trackhubs);
-
-  # $self->status_no_content($c);
 }
 
 =head2 trackdb_create
@@ -173,8 +144,10 @@ sub trackdb_create :Path('/api/trackdb/create') Args(0) ActionClass('REST') {
   # get the version, if specified
   # otherwise set to default (from config parameter)
   my $version = $c->request->param('version') || Registry->config()->{TrackHub}{schema}{default};
-  $c->go('ReturnError', 'custom', ["Invalid version specified, pattern is /^v\\d+\.\\d\$"])
-    unless $version =~ /^v\d+\.\d$/;
+  $c->log->debug('Handling submission with schema version: '.$version);
+  if (! $self->_validate_schema_version($version) ) {
+    $c->go('ReturnError', 'custom', ['Invalid version specified, pattern is /^v\d+\.\d+$/'])
+  }
     
   $c->stash( version => $version ); 
 }
@@ -192,7 +165,6 @@ sub trackdb_create_POST {
   my $is_readonly = 0;
   $is_readonly = Registry->config()->{'read_only_mode'};
 
-  # Server is running on read only mode
   if($is_readonly){
     return $self->status_bad_request($c, message => "Attention!! Server is running in READ-ONLY mode for essential maintenance.");
   }
@@ -203,7 +175,7 @@ sub trackdb_create_POST {
     unless defined $new_doc_data;
   
     # set the owner of the doc as the current user
-  $new_doc_data->{owner} = $c->stash->{user};
+  $new_doc_data->{owner} = $c->stash->{username};
   $new_doc_data->{version} = $c->stash->{version};
   # set creation date/status 
   $new_doc_data->{created} = time();
@@ -219,40 +191,27 @@ sub trackdb_create_POST {
     # with the same hub/assembly
     my $hub = $new_doc_data->{hub}{name};
     my $assembly_acc = $new_doc_data->{assembly}{accession};
-    defined $hub and defined $assembly_acc or
-      $c->go('ReturnError', 'custom', ["Unable to find hub/assembly information"]);
-    my $query = {
-      filtered => {
-        filter => {
-          bool => {
-            must => [
-              {
-                term => { owner => $c->stash->{user} } 
-              },
-              {
-                term => { 'hub.name' => $hub } 
-              },
-              {
-                term => { 'assembly.accession' => $assembly_acc } 
-              }
-            ]
-          }
-        }
-      }
-    };
-    $c->go('ReturnError', 'custom', ["Cannot submit: a document with the same hub/assembly exists"])
-      if $c->model('Search')->count_trackhubs(query => $query)->{count};
+    unless (defined $hub and defined $assembly_acc) {
+      $c->go('ReturnError', 'custom', ["Unable to find hub/assembly information without defined assembly accession and hub name"]);
+    }
+
+    my $count = $c->model('Search')->count_existing_hubs($c->stash->{username}, $hub, $assembly_acc);
+
+    if ($count != 0) {
+      $c->go('ReturnError', 'custom', ["Cannot submit: a document with the same hub/assembly already exists"]);
+    }
 	
     my $config = Registry->config()->{'Model::Search'};
-    $id = $c->model('Search')->index(index   => $config->{trackhub}{index},
-                                     type    => $config->{trackhub}{type},
-                                     body    => $new_doc_data
-                                     )->{_id};
+    $id = $c->model('Search')->index(
+      index   => $config->{trackhub}{index},
+      type    => $config->{trackhub}{type},
+      body    => $new_doc_data
+    )->{_id};
 
     # refresh the index
     $c->model('Search')->indices->refresh(index => $config->{trackhub}{index});
   } catch {
-    $c->go('ReturnError', 'custom', [qq{$_}]);
+    $c->go('ReturnError', 'custom', [q{$_}]);
   };
 
   $self->status_created( $c,
@@ -264,6 +223,7 @@ sub trackdb_create_POST {
 
 =head2 trackhub
 
+Return the track data hubs for the requesting user.
 Actions for /api/trackhub (GET|POST)
 
 =cut 
@@ -274,8 +234,11 @@ sub trackhub :Path('/api/trackhub') Args(0) ActionClass('REST') {
   # get the version, if specified
   # otherwise set to default (from config parameter)
   my $version = $c->request->param('version') || Registry->config()->{TrackHub}{schema}{default};
-  $c->go('ReturnError', 'custom', ["Invalid version specified, pattern is /^v\\d+\.\\d\$"])
-    unless $version =~ /^v\d+\.\d$/;
+  $c->log->debug('Handling submission with schema version: '.$version);
+
+  if (! $self->_validate_schema_version($version)) {
+    $c->go('ReturnError', 'custom', ['Invalid version specified, pattern is /^v\d+\.\d+$/']);
+  }
   
   # read param which prevent hubCheck running,
   # this is hidden to the user 
@@ -297,22 +260,22 @@ sub trackhub_GET {
   my ($self, $c) = @_;
 
   # get all docs for the given user
-  my $trackdbs = $c->model('Search')->get_trackdbs(query => { term => { owner => $c->stash->{user} } });
+  my $trackdbs = $c->model('Search')->get_trackdbs(query => { term => { owner => $c->stash->{username} } });
 
-  my $trackhubs;
+  my $results;
   foreach my $trackdb (@{$trackdbs}) {
-    my $hub = $trackdb->{hub}{name};
-    $trackhubs->{$hub} = $trackdb->{hub} unless exists $trackhubs->{$hub};
+    my $hub = $trackdb->{_source}{hub}{name};
+    $results->{$hub} = $trackdb->{_source}{hub} unless exists $results->{$hub};
 
-    push @{$trackhubs->{$hub}{trackdbs}},
+    push @{$results->{$hub}{trackdbs}},
       {
-       species  => $trackdb->{species}{tax_id},
-       assembly => $trackdb->{assembly}{accession},
-       uri      => $c->uri_for('/api/trackdb/' . $trackdb->{_id})->as_string
+       species  => $trackdb->{_source}{species}{tax_id},
+       assembly => $trackdb->{_source}{assembly}{accession},
+       uri      => $c->uri_for('/api/trackdb/' . $trackdb->{_source}{_id})->as_string
       };
   }
 
-  my @trackhubs = values %{$trackhubs};
+  my @trackhubs = values %{$results};
   $self->status_ok($c, entity => \@trackhubs);
 }
 
@@ -329,97 +292,61 @@ sub trackhub_POST {
   my ($self, $c) = @_;
 
   # if the client didn't supply any data, it didn't send a properly formed request
-  return $self->status_bad_request($c, message => "You must provide data with the POST request")
-    unless defined $c->req->data;
+
+  if (! defined $c->req->data) {
+    return $self->status_bad_request($c, message => "You must provide data with the POST request")
+  }
 
   # read parameters, remote hub URL/type/assembly maps
   my $url = $c->req->data->{url};
-  my $trackdb_type = lc $c->req->data->{type} || 'genomics'; # default to genomics type
+  my $trackdb_type = 'genomics';
+  if (exists $c->req->data->{type}) {
+    $trackdb_type = lc $c->req->data->{type}
+  }
+
   my $assembly_map = $c->req->data->{assemblies}; # might have submitted name -> accession map in case of non-UCSC assemblies
-  my $public = # whether the trackDbs are available for search or not, default: yes
-    defined $c->req->data->{public}?$c->req->data->{public}:1; 
+  # whether the trackDbs are available for search or not, default: yes
+  my $public = ( defined $c->req->data->{public} ) ? $c->req->data->{public} : 1;
   
-  return $self->status_bad_request($c, message => "You must specify the remote trackhub URL")
-    unless $url;
-  # add hub.txt to hub URL in case is missing
-  # the hub might be submitted twice, with or without the hub.txt file in the URL
-  # the following search using the hub.url as a filter won't detect the hub
-  # as being already submitted and interpret the request as a first submission
-  # so it won't delete the existing trackDbs
-  unless ($url =~ /\.txt$/) {
+  if (! defined $url) {
+    return $self->status_bad_request($c, message => 'You must specify the remote trackhub URL');
+  }
+  # Add hub.txt to hub URL in case it is missing
+  # The hub might be submitted with or without the hub.txt in the URL so we
+  # standardise on it being in the URL, and add hub.txt when it is absent
+  if ($url !~ /\.txt$/) {
     $url .= '/' unless $url =~ /\/$/;
     $url .= 'hub.txt';
   }
 
   $c->log->info("Request to create/update TrackHub at $url");
-
-  my ($version, $permissive) = ($c->stash->{version}, $c->stash->{permissive});
-  my $config = Registry->config()->{'Model::Search'};
-  my ($location, $entity);
-
   #
   # prevent submission of a hub submitted by another user
   #
-  my $query = {
-    filtered => {
-      filter => {
-        bool => {
-          must => [
-            { term => { 'hub.url' => $url } }
-          ],
-          must_not => [
-            { term => { owner => $c->stash->{user} } }
-          ]
-        }
-      }
-    }
-  };
-  my $registered_trackdbs = $c->model('Search')->search_trackhubs(query => $query);
-  if ($registered_trackdbs->{hits}{total}) {
-    $c->go('ReturnError', 'custom', [qq{Cannot submit a track hub registered by another user}]);
+
+  my $previous_instances = $c->model('Search')->get_hub_by_url($url);
+
+  if (scalar(@$previous_instances) > 0 && $previous_instances->[0]{_source}{owner} ne $c->stash->{username}) {
+    $c->go('ReturnError', 'custom', ['Cannot submit a track hub registered by another user']);
   }
 
-  # call might be a request to update an already registered TrackHub
-  # delete, if it exists, any trackDB in the document store belonging
-  # to the TrackHub
-  $query = {
-    filtered => {
-      filter => {
-        bool => {
-          must => [
-            { term => { owner => $c->stash->{user} } },
-            { term => { 'hub.url' => $url } }
-          ]
-        }
-      }
-    }
-  };
-  # TODO
-  # pay attention here to the size parameter, certain hubs contain more than 10 trackDbs
-  # using the scan & scroll API would definitively solve the problem
-  $registered_trackdbs = $c->model('Search')->search_trackhubs(query => $query, size => 1000);
-  my $updated = 0;
+  # Use the created timestamp from the previously submitted version of the hub
   my $created;
-  my @deleted_docs;
-  if ($registered_trackdbs->{hits}{total}) {
-    $c->log->info("TrackHub already registered. Deleting existing trackDBs");
-    foreach my $doc (@{$registered_trackdbs->{hits}{hits}}) {
-      $created = $doc->{_source}{created};
-      $c->model('Search')->delete(index   => $config->{trackhub}{index},
-                                  type    => $config->{trackhub}{type},
-                                  id      => $doc->{_id});
-      $c->log->info(sprintf "Deleted trackDb [%s]", $doc->{_id});
-      push @deleted_docs, $doc;
-    }
-    $c->model('Search')->indices->refresh(index => $config->{trackhub}{index});
-    $updated = 1;
-  } 
+  if (scalar @$previous_instances) {
+    $created = $previous_instances->[0]->{_source}{created};
+  }
+  my @docs_to_insert;
+  
+  # Validate the submitted hub
 
+  my ($location, $entity); # Return values for submitter
   try {
     $c->log->info("Translating TrackHub at $url");
-    my $translator = Registry::TrackHub::Translator->new(version => $version, 
-                                                         permissive => $permissive, 
-                                                         assemblies => $assembly_map);
+    my $translator = Registry::TrackHub::Translator->new(
+      version => $c->stash->{version}, 
+      permissive => $c->stash->{permissive}, 
+      assemblies => $assembly_map
+    );
 
     # assembly can be left undefined by the user
     # in this case, we get a list of translations of all different 
@@ -429,66 +356,56 @@ sub trackhub_POST {
     foreach my $json_doc (@{$trackdbs_docs}) {
       my $doc = from_json($json_doc);
       
-      $doc->{public} = $public;
+      $doc->{public} = ($public == 1)? 'true':'false';
 
-      # add type
       $doc->{type} = $trackdb_type;
 
-      # validate the doc
-      # NOTE: the doc is not indexed if it does not validate (i.e. raises an exception)
+      # validate the document. Do not index if validation fails.
       $self->_validate($c, $json_doc);
 
-      # set the owner of the doc as the current user
-      $doc->{owner} = $c->stash->{user};
+      $doc->{owner} = $c->stash->{username};
       # set creation/update date/status 
-      unless ($updated) {
-        $doc->{created} = time();
-      } else {
+      if ($created) {
         $doc->{created} = $created;
         $doc->{updated} = time();
       }
+      else {
+        $doc->{created} = time();
+      }
 
-      my $id = $c->model('Search')->index(
-        index   => $config->{trackhub}{index},
-        type    => $config->{trackhub}{type},
-        # id      => $id,
-        body    => $doc)->{_id};
-        # refresh the index
-      $c->model('Search')->indices->refresh(index => $config->{trackhub}{index});
-
-      $c->log->info(sprintf "Created trackDb [%s] (%s)", $id, $doc->{assembly}{name});
-
-      push @{$location}, $c->uri_for( '/api/trackdb/' . $id )->as_string;
-      push @{$entity}, $c->model('Search')->get_trackhub_by_id($id);
+      push @docs_to_insert,$doc;
     }
   } catch {
-    # TODO: roll back and delete any doc which has been indexed previous to the error
-    # NOTE: not sure this is the correct way, since /api/trackhub/:id (GET|POST|DELETE)
-    #       all expect the trackhub doc to be loaded in the stash
-    # map { $c->forward("trackdb_DELETE", $id) } @indexed;
+    # Validation error has occurred.
+    # Do not delete prior track, and complain to submitter
 
-    # 
-    # When submitter resubmit a hub, the API first deletes the existing track dbs and then
-    # parse/translate/resubmit the hub again. Problems occur when resubmission generates an
-    # error, e.g. a wrong assembly specified. In these cases, the hub is deleted from the
-    # registry while the correct result should be the hub remains untouched.
-    #
-    # Resubmit the original deleted documents
-    if (@deleted_docs) {
-      $c->log->info("An error occurred while resubmitting the hub. Roll-back to previous content.");
-      foreach my $doc (@deleted_docs) {
-        $c->log->info(sprintf "Reindexing doc %s", $doc->{_id});
-        $c->model('Search')->index(
-          index   => $config->{trackhub}{index},
-          type    => $config->{trackhub}{type},
-          id      => $doc->{_id},
-          body    => $doc->{_source});
-      }
-      $c->model('Search')->indices->refresh(index => $config->{trackhub}{index});
-    }
-    
-    $c->go('ReturnError', 'custom', [qq{$_}]);
+    $c->go('ReturnError', 'custom', [$_->message]);
+
   };
+
+  # Now all submitted items are validated, delete anything with the same URL
+
+  if (scalar @{$previous_instances}) {
+    # This is not in compliance with HTTP standards. Replacing a document should be done with PUT or PATCH
+    # The correct response here is to say: "You've already created that document"
+    $c->log->info("TrackHub already registered: $url. Deleting existing trackDBs");
+    foreach my $doc (@{$previous_instances}) {
+      $c->model('Search')->delete_hub_by_id($doc->{_id});
+      $c->log->info(sprintf "Deleted trackDb [%s]", $doc->{_id});
+    }
+  }
+  
+  # Insert the new documents
+
+  foreach my $new_doc (@docs_to_insert) {
+    my $id = $c->model('Search')->create_trackdb($new_doc);
+    $c->log->info(sprintf "Created trackDb [%s] (%s)", $id, $new_doc->{assembly}{name});
+  
+    $c->model('Search')->refresh_trackhub_index;
+
+    push @{$location}, $c->uri_for( '/api/trackdb/' . $id )->as_string;
+    push @{$entity}, $c->model('Search')->get_trackhub_by_id($id);
+  }
 
   # location in status_created can be either a scalar or a blessed reference
   bless($location, 'Location');
@@ -509,15 +426,11 @@ sub trackhub_by_name :Path('/api/trackhub') Args(1) ActionClass('REST') {
   my ($self, $c, $hubid) = @_;
 
   my $query = {
-    filtered => {
-      filter => {
-        bool => {
-          must => [
-            { term => { owner => $c->stash->{user} } },
-            { term => { 'hub.name' => $hubid } }
-          ]
-        }
-      }
+    bool => {
+      must => [
+        { term => { owner => $c->stash->{username} } },
+        { term => { 'hub.name' => $hubid } }
+      ]
     }
   };
 
@@ -525,7 +438,7 @@ sub trackhub_by_name :Path('/api/trackhub') Args(1) ActionClass('REST') {
   try {
     $trackdbs = $c->model('Search')->get_trackdbs(query => $query);
   } catch {
-    $c->go('ReturnError', 'custom', [qq{$_}]);
+    $c->go('ReturnError', 'custom', [$_->message]);
   };
 
   $c->stash(trackdbs => $trackdbs);
@@ -549,14 +462,14 @@ sub trackhub_by_name_GET {
   my $trackhub;
   foreach my $trackdb (@{$trackdbs}) {
     # record trackhub attributes
-    map { $trackhub->{$_} = $trackdb->{hub}{$_} } qw / name shortLabel longLabel url /
+    map { $trackhub->{$_} = $trackdb->{_source}{hub}{$_} } qw / name shortLabel longLabel url /
       unless defined $trackhub;
 
     push @{$trackhub->{trackdbs}},
       {
-       species  => $trackdb->{species},
-       assembly => $trackdb->{assembly},
-       uri      => $c->uri_for('/api/trackdb/' . $trackdb->{_id})->as_string
+        species  => $trackdb->{_source}{species},
+        assembly => $trackdb->{_source}{assembly},
+        uri      => $c->uri_for('/api/trackdb/' . $trackdb->{_source}{_id})->as_string
       };
   }
 
@@ -574,8 +487,9 @@ sub trackhub_by_name_DELETE {
   my $trackdbs = $c->stash->{trackdbs};
 
   # this doesn't work if we put the following in the parent method
-  return $self->status_not_found($c, message => "Could not find trackDBs attached to hub $hubid")
-    unless scalar @{$trackdbs};
+  if (! scalar @{$trackdbs}) {
+    return $self->status_not_found($c, message => "Could not find trackDBs attached to hub $hubid");
+  }
 
   my $config = Registry->config()->{'Model::Search'};
   my ($index, $type) = ($config->{trackhub}{index}, $config->{trackhub}{type});
@@ -592,7 +506,7 @@ sub trackhub_by_name_DELETE {
       );
     }
   } catch {
-    $c->go('ReturnError', 'custom', [qq{$_}]);
+    $c->go('ReturnError', 'custom', [$_->message]);
   };
 
   $c->model('Search')->indices->refresh(index => $index);
@@ -638,6 +552,18 @@ sub _validate: Private {
   return;
 }
 
+=head2 _validate_schema_version
+
+Checks a supplied trackhub version for validity
+
+=cut
+
+sub _validate_schema_version {
+  my ($self,$version) = @_;
+  return $version =~ /^v\d+\.\d+$/;
+}
+
+
 =head2 trackdb 
 
 Actions for /api/trackdb/:id (GET|PUT|DELETE)
@@ -664,10 +590,10 @@ sub trackdb_GET {
 
   my $trackhub = $c->stash()->{trackhub};
   if ($trackhub) {
-    if ($trackhub->{owner} eq $c->stash->{user}) {
+    if ($trackhub->{owner} eq $c->stash->{username}) {
       $self->status_ok($c, entity => $trackhub) if $trackhub;
     } else {
-      $self->status_bad_request($c, message => sprintf "Cannot fetch: document (ID: %d) does not belong to user %s", $doc_id, $c->stash->{user});
+      $self->status_bad_request($c, message => sprintf "Cannot fetch: document (ID: %d) does not belong to user %s", $doc_id, $c->stash->{username});
     }
   } else {
     $self->status_not_found($c, message => "Could not find trackhub doc (ID: $doc_id)");    
@@ -687,30 +613,31 @@ sub trackdb_PUT {
   # - the doc with that ID doesn't exist
   # - it doesn't belong to the user
   return $self->status_not_found($c, message => "Cannot update: document (ID: $doc_id) does not exist")
-    unless $c->stash()->{trackhub};
+    unless $c->stash->{trackhub};
 
-  return $self->status_bad_request($c, message => sprintf "Cannot update: document (ID: %d) does not belong to user %s", $doc_id, $c->stash->{user})
-    unless $c->stash->{trackhub}{owner} eq $c->stash->{user};
+  return $self->status_bad_request($c, message => sprintf "Cannot update: document (ID: %d) does not belong to user %s", $doc_id, $c->stash->{username})
+    unless $c->stash->{trackhub}{owner} eq $c->stash->{username};
 
   # need the version from the original doc
   # in order to validate the updated version
   my $version = $c->stash->{trackhub}{version};
   $c->go('ReturnError', 'custom', ["Couldn't get version from original trackdb document"])
     unless $version;
-  $c->go('ReturnError', 'custom', ["Invalid version from original trackdb document"])
-    unless $version =~ /^v\d+\.\d$/;
+  if (! $self->_validate_schema_version($version)) {
+    $c->go('ReturnError', 'custom', ["Invalid version from original trackdb document"])
+  }
   $c->stash(version => $version);
 
   my $new_doc_data = $c->req->data;
 
   # if the client didn't supply any data, 
   # they didn't send a properly formed request
-  return $self->status_bad_request($c, message => "You must provide a doc to modify!")
+  return $self->status_bad_request($c, message => "No body in your trackhub update request")
     unless defined $new_doc_data;
 
   # set the owner as the current user
   # and reset the created date/time
-  $new_doc_data->{owner} = $c->stash->{user};
+  $new_doc_data->{owner} = $c->stash->{username};
   $new_doc_data->{created} = $c->stash->{trackhub}{created};
 
   # validate the updated version
@@ -723,26 +650,14 @@ sub trackdb_PUT {
     # with the same hub/assembly
     my $hub = $new_doc_data->{hub}{name};
     my $assembly_acc = $new_doc_data->{assembly}{accession};
-    defined $hub and defined $assembly_acc or
-      $c->go('ReturnError', 'custom', ["Unable to find hub/assembly information"]);
-    my $query = {
-      filtered => {
-        filter => {
-          bool => {
-            must => [
-              { term => { owner => $c->stash->{user} } },
-              { term => { 'hub.name' => $hub } },
-              { term => { 'assembly.accession' => $assembly_acc } }
-            ]
-          }
-        }
-      }
-    };
-    # TODO: use scan and scroll to retrieve large number of results efficiently
-    my $duplicate_docs = $c->model('Search')->search_trackhubs(size => 100000, query => $query)->{hits};
-    if ($duplicate_docs->{total}) {
-      foreach my $doc (@{$duplicate_docs->{hits}}) {
-        $c->go('ReturnError', 'custom', ["Cannot submit: a document with the same hub/assembly exists"])
+    unless( defined $hub and defined $assembly_acc) {
+      $c->go('ReturnError', 'custom', ['Unable to find hub/assembly information']);
+    }
+    
+    my $duplicate_docs = $c->model('Search')->get_existing_hubs($c->stash->{username},$hub,$assembly_acc);
+    if (@$duplicate_docs) {
+      foreach my $doc (@$duplicate_docs) {
+        $c->go('ReturnError', 'custom', ['Cannot submit: a document when the same hub/assembly exists'])
         if $doc->{_id} != $doc_id;
       }
     }
@@ -788,8 +703,12 @@ sub trackdb_DELETE {
 
   my $trackhub = $c->stash()->{'trackhub'};
   if ($trackhub) {
-    return $self->status_bad_request($c, message => sprintf "Cannot delete: document (ID: %d) does not belong to user %s", $doc_id, $c->stash->{user})
-    unless $trackhub->{owner} eq $c->stash->{user};
+    if ($trackhub->{owner} ne $c->stash->{username}) {
+      return $self->status_bad_request(
+        $c,
+        message => sprintf "Cannot delete: document (ID: %d) does not belong to user %s", $doc_id, $c->stash->{username}
+      );
+    }
 
     #
     # http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/delete-doc.html
@@ -841,8 +760,8 @@ sub status_unauthorized : Private {
   my %p    = Params::Validate::validate( @_, { message => { type => SCALAR }, }, );
 
   $c->response->status(401);
-  $c->log->debug( "Status Unauthorized: " . $p{'message'} ) if $c->debug;
-  $self->_set_entity( $c, { error => $p{'message'} } );
+  $c->log->debug( "Status Unauthorized: " . $p{message} ) if $c->debug;
+  $self->_set_entity( $c, { error => $p{message} } );
   return 1;
 }
 

@@ -38,14 +38,15 @@ package Registry::Utils::File;
 ### 
 
 use strict;
-
+use warnings;
 use Compress::Zlib qw//;
 use Compress::Bzip2;
 use IO::Uncompress::Bunzip2;
-
+use Carp qw/confess/;
 use Exporter qw(import);
 our @EXPORT_OK = qw(slurp_file sanitise_filename get_filename get_extension get_compression uncompress);
 our %EXPORT_TAGS = (all => [@EXPORT_OK]);
+use File::Spec;
 
 =head1 METHODS
 
@@ -63,12 +64,12 @@ our %EXPORT_TAGS = (all => [@EXPORT_OK]);
 
 sub slurp_file {
   my $file = shift;
-  defined $file or die "Undefined file";
+  defined $file or confess "Undefined file argument";
 
   my $string;
   {
     local $/=undef;
-    open my $fh, '<',"$file" or die "Couldn't open file $file: $!";
+    open my $fh, '<',"$file" or confess sprintf "Couldn't open file %s: %s", File::Spec->rel2abs($file), $!;
     $string = <$fh>;
     close $fh;
   }

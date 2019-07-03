@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ENSDIR="${ENSDIR:-$PWD}"
 echo $ENSDIR
@@ -12,16 +12,6 @@ export CATALYST_DEBUG=0
 
 cd src/Registry
 rm -rf blib
-t/auth/script/setup.pl # initialisation for testing the authentication module
 prove -vr
 
-rt=$?
-if [ $rt -eq 0 ]; then
-  # if [ "$COVERALLS" = 'true' ]; then
-  #   echo "Running Devel::Cover coveralls report"
-  #   cover --nosummary -report coveralls
-  # fi
-  exit $?
-else
-  exit $rt
-fi
+exit $?

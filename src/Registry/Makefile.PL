@@ -1,6 +1,7 @@
 #!/usr/bin/env perl
 # IMPORTANT: if you delete this file your app will not work as
 # expected.  You have been warned.
+use strict;
 use inc::Module::Install 1.02;
 use Module::Install::Catalyst; # Complain loudly if you don't have
                                # Catalyst::Devel installed or haven't said
@@ -9,7 +10,7 @@ use Module::Install::Catalyst; # Complain loudly if you don't have
 name 'Registry';
 all_from 'lib/Registry.pm';
 
-requires 'Catalyst::Runtime' => '5.90071';
+requires 'Catalyst::Runtime';
 requires 'Catalyst::Plugin::ConfigLoader';
 requires 'Catalyst::Plugin::Static::Simple';
 requires 'Catalyst::Plugin::StackTrace';
@@ -22,12 +23,12 @@ requires 'Log::Log4perl::Catalyst';
 # http://www.catalystframework.org/calendar/2007/5
 requires 'Catalyst::Plugin::Authentication';
 requires 'Catalyst::Plugin::Authorization::Roles';
-requires 'Catalyst::Authentication::Credential::HTTP';
+requires 'Catalyst::Authentication::Store::DBIx::Class';
 requires 'Catalyst::Plugin::Session';
 requires 'Catalyst::Plugin::Session::State::Cookie';
 requires 'Catalyst::Plugin::Session::Store::FastMmap';
 requires 'Catalyst::Plugin::StatusMessage';
-requires 'CatalystX::SimpleLogin';
+requires 'Catalyst::Plugin::Cache';
 requires 'Catalyst::Controller::ActionRole';
 requires 'Catalyst::ActionRole::ACL';
 requires 'Module::Install::Catalyst';
@@ -37,7 +38,7 @@ requires 'Moose';
 requires 'MooseX::NonMoose';
 requires 'namespace::autoclean';
 requires 'Config::General'; # This should reflect the config file format you've chosen
-                 # See Catalyst::Plugin::ConfigLoader for supported formats
+# See Catalyst::Plugin::ConfigLoader for supported formats
 
 # for handling profile and registration forms
 requires 'HTML::FormHandler::Moose';
@@ -45,10 +46,14 @@ requires 'HTML::FormHandler::Moose';
 requires 'Try::Tiny';
 requires 'Capture::Tiny';
 requires 'Digest::MD5';
+requires 'Digest::SHA';
+requires 'Digest';
 requires 'File::Temp';
+requires 'File::Spec';
 requires 'List::Util';
 requires 'String::Random';
-requires 'Search::Elasticsearch' => 2.03;
+requires 'Search::Elasticsearch' => '5.02'; # v6 release does not seem to work quite right
+requires 'DRTECH/Search-Elasticsearch-Client-5_0-6.00.tar.gz'; # Make sure we get the v6 scroll API client for the v5 library
 requires 'Clone';
 requires 'Data::SearchEngine';
 requires 'Encode';
@@ -67,6 +72,9 @@ requires 'DBI';
 requires 'DBIx::Class';
 requires 'Catalyst::Model::DBIC::Schema';
 requires 'DBIx::Class::Cursor::Cached';
+requires 'DBIx::ParseDSN';
+requires 'DBD::SQLite';
+requires 'DBD::mysql';
 
 # for production
 recommends 'Log::Log4perl';
@@ -101,9 +109,12 @@ recommends 'WWW::Form::UrlEncoded';
 recommends 'Daemon::Control';
 
 
-test_requires 'Test::More' => '0.88';
+test_requires 'Test::More';
 test_requires 'Email::MIME';
 test_requires 'Email::Sender::Simple';
+test_requires 'Test::Deep';
+test_requires 'Test::HTTP::MockServer';
+test_requires 'Test::MockObject';
 
 catalyst;
 

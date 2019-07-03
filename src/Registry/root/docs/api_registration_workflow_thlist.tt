@@ -14,32 +14,32 @@
   <div class="col-sm-3" style="margin-top: 25px;">
     <div id="search-sidebar-left">
         <div class="panel panel-primary">
-	  <div class="panel-heading">API Docs</div>
+          <div class="panel-heading">API Docs</div>
           <div class="panel-body">
-	    <ul class="nav nav-list">
-	      <li><a href="[% c.uri_for('/docs/apis') %]">TH Registry APIs</a></li>
-	      <li><a href="[% c.uri_for('/docs/api/info') %]">Info API</a></li>
-	      <li><a>Registration API</a>
-	        <ul>
-		  <li><a href="[% c.uri_for('/docs/api/registration#authentication') %]">Authentication</a></li>
-		  <li>
-		    <a href="[% c.uri_for('/docs/api/registration#workflow') %]">A simplified RESTful workflow</a>
-		    <ul>
-		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/login') %]">Logging in</a></li>
-		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thregister') %]">Registering Track Hubs</a></li>
-		      <li><a style="font-weight: bold;">Retrieve list of track hubs</a></li>
-		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thupdate') %]">Updating Track Hubs</a></li>
-		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thdelete') %]">Deleting Track Hubs</a></li>
-		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/logout') %]">Log out</a></li>
-		    </ul>
-		  </li>
-		  <li><a href="[% c.uri_for('/docs/api/registration/reference') %]">API Reference</a></li>
-		</ul>
-	      </li>
-	      <li><a href="[% c.uri_for('/docs/api/search') %]">Search API</a></li>
-	    </ul>
+            <ul class="nav nav-list">
+              <li><a href="[% c.uri_for('/docs/apis') %]">TH Registry APIs</a></li>
+              <li><a href="[% c.uri_for('/docs/api/info') %]">Info API</a></li>
+              <li><a>Registration API</a>
+                <ul>
+                  <li><a href="[% c.uri_for('/docs/api/registration#authentication') %]">Authentication</a></li>
+                  <li>
+                    <a href="[% c.uri_for('/docs/api/registration#workflow') %]">A simplified RESTful workflow</a>
+                    <ul>
+                      <li><a href="[% c.uri_for('/docs/api/registration/workflow/login') %]">Logging in</a></li>
+                      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thregister') %]">Registering Track Hubs</a></li>
+                      <li><a style="font-weight: bold;">Retrieve list of track hubs</a></li>
+                      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thupdate') %]">Updating Track Hubs</a></li>
+                      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thdelete') %]">Deleting Track Hubs</a></li>
+                      <li><a href="[% c.uri_for('/docs/api/registration/workflow/logout') %]">Log out</a></li>
+                    </ul>
+                  </li>
+                  <li><a href="[% c.uri_for('/docs/api/registration/reference') %]">API Reference</a></li>
+                </ul>
+              </li>
+              <li><a href="[% c.uri_for('/docs/api/search') %]">Search API</a></li>
+            </ul>
           </div> 
-	</div>
+        </div>
     </div> <!-- sidebar -->
   </div>
 
@@ -108,7 +108,7 @@
           'name': 'cshl2013',
           'shortLabel': 'Plants',
           'longLabel': 'CSHL Biology of Genomes meeting 2013 demonstration assembly hub',
-          'url': 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt',
+          'url': 'http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/hub.txt',
           'trackdbs': [
                             {
                               'species': '3988',
@@ -129,7 +129,7 @@
         }
       ]
     </pre>
-    In our example, the client had previously registered one single hub, the <a target="_blank" href="http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt">CSHL Biology of Genomes meeting 2013 demonstration assembly hub</a>, so the response body is an array with one component representing this hub. The track hub object has some string attributes derived from parsing the remote hub URL specified in the url attribute.
+    In our example, the client had previously registered one single hub, the <a target="_blank" href="http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/hub.txt">CSHL Biology of Genomes meeting 2013 demonstration assembly hub</a>, so the response body is an array with one component representing this hub. The track hub object has some string attributes derived from parsing the remote hub URL specified in the url attribute.
   </p>
   <p>
     As can be seen from the response output, the track hub object contains an array, trackdbs, which is a list of objects containing information for each trackDb (i.e. assembly specific data files) associated with the track hub: the species NCBI tax id and assembly accession, and the URI of the JSON representation of the stored trackDb entity which can be retrieved from the Registry by making a GET request to the <a href="[% c.uri_for('/docs/api/registration/reference#get_trackdb') %]">/api/trackdb/:id</a> endpoint.
@@ -363,17 +363,10 @@ curl -X GET "https://www.trackhubregistry.org/api/trackhub" \
      -H "User: exampleuser" \
      -H "Auth-Token: 6l5/GuIiOSCywuSI9HF1VU97clwb/CXPDFS0MyAB/HCZuxtjQBj4uORZL8NY3Yhi" 
       
-      
-      
-      
+
       
       </pre>
      </div>
-
-
-
-
   </div>
-
   </div>
 </div>

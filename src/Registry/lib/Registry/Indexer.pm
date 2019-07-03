@@ -230,20 +230,27 @@ sub create_indices {
   # create the index 
   #
   # delete the index if it exists
-  $indices->delete(index => $index) and carp "Deleting index $index"
-    if $indices->exists(index => $index);
+  if ($indices->exists(index => $index)) {
+    $indices->delete(index => $index);
+    carp "Deleting index $index";
+  }
     
+  my $schema = from_json(Registry::Utils::slurp_file($mapping));
+  my $clean_schema = $schema->{mappings};
   # recreate the index
   carp "Creating index $index";
-  $indices->create(index => $index); 
+  # TODO Move index settings into their config file, so they're not embedded in the trackhub_mappings.json file
+  $indices->create(index => $index, body => { settings => $schema->{settings} });
   
   #
   # create the trackhub mapping
   #
+
   $indices->put_mapping(
     index => $index,
     type  => $type,
-    body  => from_json(&Registry::Utils::slurp_file($mapping)));
+    body  => $clean_schema
+  );
   my $mapping_json = $indices->get_mapping(index => $index, type  => $type);
   exists $mapping_json->{$index}{mappings}{$type} or croak "TrackHub mapping not created";
   carp "TrackHub mapping created";
@@ -251,20 +258,24 @@ sub create_indices {
   #
   # create the authentication/authorisation mapping
   #
-  # Note: we might/might not store user data on the same index as that of the trackhubs
-  #       do not delete/recreate the index if it exists
   ($index, $type, $mapping) = ($self->{auth}{index}, $self->{auth}{type}, $self->{auth}{mapping});
   defined $index && defined $type && defined $mapping or
     croak "Missing trackhub parameters (index|type|mapping)";
-  unless ($indices->exists(index => $index)) {
-    carp "Creating index $index";
-    $indices->create(index => $index);  
+  if ($indices->exists(index => $index)) {
+    $indices->delete(index => $index);
+    carp "Deleting index $index";
   }
+  carp "Creating index $index";
+  $schema = from_json(&Registry::Utils::slurp_file($mapping));
+
+
+  $indices->create(index => $index, body => { settings => $schema->{settings}});
 
   $indices->put_mapping(
     index => $index,
     type  => $type,
-    body  => from_json(&Registry::Utils::slurp_file($mapping)));
+    body  => $schema->{mappings}{users}
+  );
   $mapping_json = $indices->get_mapping(index => $index, type  => $type);
   exists $mapping_json->{$index}{mappings}{$type} or croak "Authentication/authorisation mapping not created";
   carp "Authentication/authorisation mapping created";

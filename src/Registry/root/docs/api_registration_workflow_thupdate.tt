@@ -14,32 +14,32 @@
   <div class="col-sm-3" style="margin-top: 25px;">
     <div id="search-sidebar-left">
         <div class="panel panel-primary">
-	  <div class="panel-heading">API Docs</div>
+          <div class="panel-heading">API Docs</div>
           <div class="panel-body">
-	    <ul class="nav nav-list">
-	      <li><a href="[% c.uri_for('/docs/apis') %]">TH Registry APIs</a></li>
-	      <li><a href="[% c.uri_for('/docs/api/info') %]">Info API</a></li>
-	      <li><a>Registration API</a>
-	        <ul>
-		  <li><a href="[% c.uri_for('/docs/api/registration#authentication') %]">Authentication</a></li>
-		  <li>
-		    <a href="[% c.uri_for('/docs/api/registration#workflow') %]">A simplified RESTful workflow</a>
-		    <ul>
-		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/login') %]">Logging in</a></li>
-		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thregister') %]">Registering Track Hubs</a></li>
-		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thlist') %]">Retrieve list of Track Hubs</a></li>
-		      <li><a style="font-weight: bold;">Updating Track Hubs</a></li>
-		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thdelete') %]">Deleting Track Hubs</a></li>
-		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/logout') %]">Log out</a></li>
-		    </ul>
-		  </li>
-		  <li><a href="[% c.uri_for('/docs/api/registration/reference') %]">API Reference</a></li>
-		</ul>
-	      </li>
-	      <li><a href="[% c.uri_for('/docs/api/search') %]">Search API</a></li>
-	    </ul>
+            <ul class="nav nav-list">
+              <li><a href="[% c.uri_for('/docs/apis') %]">TH Registry APIs</a></li>
+              <li><a href="[% c.uri_for('/docs/api/info') %]">Info API</a></li>
+              <li><a>Registration API</a>
+                <ul>
+                  <li><a href="[% c.uri_for('/docs/api/registration#authentication') %]">Authentication</a></li>
+                  <li>
+                    <a href="[% c.uri_for('/docs/api/registration#workflow') %]">A simplified RESTful workflow</a>
+                    <ul>
+                      <li><a href="[% c.uri_for('/docs/api/registration/workflow/login') %]">Logging in</a></li>
+                      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thregister') %]">Registering Track Hubs</a></li>
+                      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thlist') %]">Retrieve list of Track Hubs</a></li>
+                      <li><a style="font-weight: bold;">Updating Track Hubs</a></li>
+                      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thdelete') %]">Deleting Track Hubs</a></li>
+                      <li><a href="[% c.uri_for('/docs/api/registration/workflow/logout') %]">Log out</a></li>
+                    </ul>
+                  </li>
+                  <li><a href="[% c.uri_for('/docs/api/registration/reference') %]">API Reference</a></li>
+                </ul>
+              </li>
+              <li><a href="[% c.uri_for('/docs/api/search') %]">Search API</a></li>
+            </ul>
           </div> 
-	</div>
+        </div>
     </div> <!-- sidebar -->
   </div>
 
@@ -72,7 +72,7 @@
 
   <h4>Example: track hub update</h4>
   <p>
-    This example updates the registration of the <a target="_blank" href="http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt">CSHL Biology of Genomes meeting 2013 demonstration assembly hub</a>. This time we don't specify a data type, hence it will default to "genomics":
+    This example updates the registration of the <a target="_blank" href="http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/hub.txt">CSHL Biology of Genomes meeting 2013 demonstration assembly hub</a>. This time we don't specify a data type, hence it will default to "genomics":
   </p>
   <p>
     Request:
@@ -81,7 +81,7 @@
       User: exampleuser
       Auth-Token: 6l5/GuIiOSCywuSI9HF1VU97clwb/CXPDFS0MyAB/HCZuxtjQBj4uORZL8NY3Yhi
       {
-        "url": "http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt"
+        "url": "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/hub.txt"
       }
     </pre>
     The response is similar to that already seen in <a href="[% c.uri_for('/docs/api/registration/workflow/thregister') %]">Registering Track Hubs</a> which we don't report here.

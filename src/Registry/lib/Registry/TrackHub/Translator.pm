@@ -33,13 +33,16 @@ print "Hub: ", $doc->{hub}{name}, "\nSpecies: ", $doc->{species}{tax_id}, "\nAss
 
 =head1 DESCRIPTION
 
-This module encapsulates the process of converting a remote track hub into a
-set of Elasticsearch JSON documents which represent trackDB data for each
-assembly in the hub. Each trackDB document mirrors the hierarchical structure
-of its source and, in addition to that, adds some metadata (e.g. species, assembly)
-which supports the search/faceting mechanism. Besides this, URLs for linking
-to the UCSC and/or Ensembl browser are computed and added to the document, if
-applicable.
+Converts a remote track hub into a set of Elasticsearch JSON documents. Each
+trackDB document mirrors the hierarchical structure of its source and adds
+some metadata (e.g. species, assembly) for indexing by the backend. URLs for
+linking to the UCSC, Ensembl browser, and BioDalliance are generated.
+
+The links should be generated on the fly rather than at import stage, but too
+late to fix it now.
+
+It uses a file generated from an ENA database via /src/Registry/scripts/dump_genome_assembly_set.pl
+to make GCA accession assignments. Please replace this mechanism with something automatic.
 
 =cut
 
@@ -58,7 +61,9 @@ use Registry::TrackHub::Parser;
 use Bio::EnsEMBL::Utils::MetaData::DBSQL::GenomeInfoAdaptor;
 use HTML::Restrict;
 
-use vars qw($AUTOLOAD $ucscdb2insdc);
+use Registry::Utils::Exception;
+
+use vars qw($AUTOLOAD); # Why are we autoloading? No point at all
 
 sub AUTOLOAD {
   my $self = shift;
@@ -73,15 +78,15 @@ sub AUTOLOAD {
 }
 
 my %format_lookup = (
-     'bed'    => 'BED',
-     'bb'     => 'BigBed',
-     'bigBed' => 'BigBed',
-     'bw'     => 'BigWig',
-     'bigWig' => 'BigWig',
-     'bam'    => 'BAM',
-     'gz'     => 'VCFTabix',
-     'cram'   => 'CRAM'
-    );
+  bed    => 'BED',
+  bb     => 'BigBed',
+  bigBed => 'BigBed',
+  bw     => 'BigWig',
+  bigWig => 'BigWig',
+  bam    => 'BAM',
+  gz     => 'VCFTabix', # this is sketchy at best
+  cram   => 'CRAM'
+);
 
 =head1 METHODS
 
@@ -103,7 +108,9 @@ my %format_lookup = (
 sub new {
   my ($class, %args) = @_;
   
-  defined $args{version} or die "Undefined version";
+  if (! defined $args{version}) {
+    Registry::Utils::Exception->throw(q(Undefined version in supplied hash argument, should be '1.0' or similar) );
+  }
 
   my $self = \%args;
 
@@ -140,18 +147,23 @@ sub new {
 sub translate {
   my ($self, $url, $assembly) = @_;
 
-  my $dispatch = 
-    {
+  my $dispatch = {
      'v1.0' => sub { $self->to_json_1_0(@_) }
     }->{$self->version};
 
-  die sprintf "Version %s not supported", $self->version
-    unless $dispatch;
+  if (! $dispatch) {
+    Registry::Utils::Exception->throw( sprintf "Version %s not supported", $self->version );
+  }
 
   my $trackhub = Registry::TrackHub->new(url => $url, permissive => $self->permissive);
   
   my $docs;
-  unless ($assembly) { 
+  if ($assembly) {
+    push @{$docs}, $dispatch->(
+      trackhub => $trackhub, 
+      assembly => $assembly
+    );
+  } else {
     # assembly not specified
     # translate tracksDB conf for all assemblies stored in the Hub
     foreach my $assembly ($trackhub->assemblies) {
@@ -159,43 +171,36 @@ sub translate {
         trackhub => $trackhub, 
         assembly => $assembly);
     }
-  } else {
-    push @{$docs}, $dispatch->(
-      trackhub => $trackhub, 
-      assembly => $assembly);
   }
 
-  scalar @{$docs} or 
-    die "Something went wrong. Couldn't get any translated JSON from hub";
+  if (scalar @{$docs} == 0) {
+    Registry::Utils::Exception->throw("Something went wrong. Couldn't get any translated JSON from hub $url");
+  } 
 
   return $docs;
 }
 
 =head2 to_json_1_0
 
-  Arg [1]     : Registry::TrackHub - an object representing a track hub at a given URL
-  Arg [2]     : String - the assembly name whose trackDB file has to be converted
-  Example:    : my $docs = $translator->to_json_1_0($url, $assembly)
+  Arg [1]     : Hashref of named parameters: 
+                  trackhub => Registry::TrackHub - an object representing a track hub at a given URL
+                  assembly => String - the assembly name whose trackDB file has to be converted
+  
+  Example:    : my $docs = $translator->to_json_1_0(trackhub => $url, assembly => $assembly)
   Description : Convert trackDB file for assembly in a hub to a JSON document compliant
                 with version 1.0 trackDB JSON schema specification
   Returntype  : String - A JSON strings representing the trackDB file for the given assembly 
                 in the hub converted into a JSON doc
-  Exceptions  : None
   Caller      : Registry::TrackHub::Translator::translate
-  Status      : Stable
 
 =cut
 
-
-##################################################################################
-#             
-# Version v1.0 
-#
 sub to_json_1_0 {
   my ($self, %args) = @_;
   my ($trackhub, $assembly) = ($args{trackhub}, $args{assembly});
-  defined $trackhub and defined $assembly or
-    die "Undefined trackhub and/or assembly argument";
+  unless (defined $trackhub and defined $assembly) {
+    Registry::Utils::Exception->throw('Undefined trackhub and/or assembly argument in supplied hash');
+  }
 
   my $genome = $trackhub->get_genome($assembly);
   my $shortLabel_stripped = $trackhub->shortLabel;
@@ -203,23 +208,22 @@ sub to_json_1_0 {
   # strip away all HTML
   $shortLabel_stripped = $hr->process($shortLabel_stripped);
 
-  my $doc = 
-    {
-     version => 'v1.0',
-     hub     => {
-       name       => $trackhub->hub,
-       shortLabel => $trackhub->shortLabel,
-       shortLabel_stripped => $shortLabel_stripped,
-       longLabel  => $trackhub->longLabel,
-       url        => $trackhub->url,
-       assembly   => $genome->twoBitPath?1:0 # detect if it is an assembly hub
-     },
-     # add the original trackDb file as the source
-     source => { 
+  my $doc = {
+    version => 'v1.0',
+    hub     => {
+      name       => $trackhub->hub,
+      shortLabel => $trackhub->shortLabel,
+      shortLabel_stripped => $shortLabel_stripped,
+      longLabel  => $trackhub->longLabel,
+      url        => $trackhub->url,
+      assembly   => $genome->twoBitPath ? 1:0 # detect if it is an assembly hub
+    },
+    # add the original trackDb file as the source
+    source => { 
       url => $genome->trackDb->[0],
       checksum => Registry::Utils::checksum_compute($genome->trackDb->[0])
-     }
-    };
+    }
+  };
 
   # add species/assembly information
   $self->_add_genome_info($genome, $doc);
@@ -230,21 +234,25 @@ sub to_json_1_0 {
   # now the tracks, metadata and display/configuration
   my $tracks = Registry::TrackHub::Parser->new(files => $genome->trackDb)->parse;
 
-  # set each track metadata, prepare the configuration object
+  # Copy and clean metadata for each track
   foreach my $track (keys %{$tracks}) {
-    # 
-    # NOTE: at least a track can be searched by ID and NAME (longLabel)
-    #
+    my $track_data = $tracks->{$track};
     my $metadata = { id => $track }; 
     # longLabel should be present since mandatory for UCSC
     # Do not rely on it, see Blueprint track db
-    $metadata->{name} = $tracks->{$track}{longLabel} || $tracks->{$track}{shortLabel};
-    # we don't want null attribute values, enforced in the schema
-    delete $metadata->{name} unless defined $metadata->{name};
-
-    # add specific metadata, if ever present
-    map { $metadata->{$_} = $tracks->{$track}{metadata}{$_} if defined $tracks->{$track}{metadata}{$_} }
-      keys %{$tracks->{$track}{metadata}};
+    if (defined $track_data->{longLabel}) {
+      $metadata->{name} = $track_data->{longLabel};
+    } elsif (defined $track_data->{shortLabel}) {
+      $metadata->{name} = $track_data->{shortLabel};
+    } 
+    
+    # Copy the rest of the metadata while removing any null fields
+    my $temp = $track_data->{metadata};
+    foreach my $meta_key (keys %$temp) {
+      if (defined $temp->{$meta_key}) {
+        $metadata->{$meta_key} = $temp->{$meta_key};
+      }
+    }
     push @{$doc->{data}}, $metadata;
 
     delete $tracks->{$track}{metadata};
@@ -255,10 +263,10 @@ sub to_json_1_0 {
   my $ctree = Registry::TrackHub::Tree->new({ id => 'root' });
   $self->_make_configuration_tree($ctree, $tracks);
 
-  # now can recursively descend the hierarchy and 
-  # build the configuration object
-  map { $doc->{configuration}{$_->id} = $self->_make_configuration_object_1_0($_) } 
-    @{$ctree->child_nodes};
+  # now can recursively descend the hierarchy and build the configuration object
+  foreach my $node (@{$ctree->child_nodes}) {
+    $doc->{configuration}{$node->id} = $self->_make_configuration_object_1_0($node);
+  }
   
   # collect trackDB stats, i.e. # tracks, # tracks linked to data, file types
   $doc->{status} =
@@ -281,24 +289,44 @@ sub to_json_1_0 {
 }
 
 
+=head2 _make_configuration_object_1_0
+
+Misleading name, for a function which extracts defined values from a node's data
+
+=cut
+
 sub _make_configuration_object_1_0 {
   my ($self, $node) = @_;
-  defined $node or die "Undefined args";
+  
+  if (!defined $node) {
+    Registry::Utils::Exception->throw('Undefined node argument');
+  }
   
   # add the configuration attributes as they are specified
   my $node_conf = {};
-  # map { $node_conf->{$_} = $node->data->{$_} } keys %{$node->data};
-  map { $node->data->{$_} and $node_conf->{$_} = $node->data->{$_} } keys %{$node->data};
-  # delete $node_conf->{track};
+
+  foreach my $key (keys %{ $node->data} ) {
+    if (defined $node->data->{$key}) {
+      $node_conf->{$key} = $node->data->{$key};
+    }
+  }
 
   # now add the configuration of the children, if any
-  for my $child (@{$node->child_nodes}) {
+  foreach my $child (@{$node->child_nodes}) {
     my $child_conf = $self->_make_configuration_object_1_0($child);
     $node_conf->{members}{$child_conf->{track}} = $child_conf;
   }
 
   return $node_conf;
 }
+
+
+=head2 _collect_track_info
+
+Recurses through a potentially nested hash structure counting up track
+status information and tallying it in the provided $status object
+
+=cut
 
 sub _collect_track_info {
   my ($self, $hash, $status, $file_type) = @_;
@@ -311,22 +339,18 @@ sub _collect_track_info {
         if ($attr eq 'type' and exists $hash->{$track}{bigDataUrl}) {
           $file_type->{$hash->{$track}{type}}++ if $hash->{$track}{type};
           ++$status->{tracks}{with_data}{total};
-        } else {
-          $self->_collect_track_info($hash->{$track}{$attr}, $status, $file_type) if ref $hash->{$track}{$attr} eq 'HASH';
+        } elsif (ref $hash->{$track}{$attr} eq 'HASH') {
+          $self->_collect_track_info($hash->{$track}{$attr}, $status, $file_type);
         } 
       }
     }
   } 
 }
 
-#
-##################################################################################
-
-
 sub _make_configuration_tree {
   my ($self, $tree, $tracks) = @_;
-  defined $tree or die "Undefined tree";
-  defined $tracks or die "Undefined tracks";
+  defined $tree or Registry::Utils::Exception->throw("Undefined tree");
+  defined $tracks or Registry::Utils::Exception->throw("Undefined tracks");
 
   my %redo;
   foreach (sort { !$b->{'parent'} <=> !$a->{'parent'} } values %$tracks) {
@@ -356,7 +380,7 @@ sub _make_configuration_tree {
 # I presume this can be shared across translations
 # to different versions
 #
-$ucscdb2insdc = 
+my $ucscdb2insdc = 
   {
    #
    # These mappings have been derived from the list of UCSC genome releases at:
@@ -560,6 +584,7 @@ $ucscdb2insdc =
    # taegut2 => '', # not found
    taegut1 => 'GCA_000151805.2', # 'Taeniopygia_guttata-3.2.4',
    # zebrafish
+   danrer11 => 'GCA_000002035.4', # GRCz11
    danrer10 => 'GCA_000002035.3', # 'GRCz10', no syn on on NCBI
    danrer7 => 'GCA_000002035.2', # 'Zv9'
    danrer6 => 'GCA_000002035.1', # 'Zv8', no syn on on NCBI
@@ -666,7 +691,7 @@ $ucscdb2insdc =
    # tair10 => 'GCA_000001735.1', # TAIR10
    # tair9  => 'GCA_000001735.1', # TAIR9
    #
-   # http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt
+   # http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/hub.txt
    #
    # Arabidopsis thaliana
    aratha1 => 'GCA_000001735.1', # TAIR10
@@ -675,8 +700,8 @@ $ucscdb2insdc =
    # brassica rapa
    brarap1 => 'GCA_000309985.1', # Brapa_1.0
    #
-   # http://genome-test.cse.ucsc.edu/~nknguyen/ecoli/publicHubs/pangenome/hub.txt
-   # http://genome-test.cse.ucsc.edu/~nknguyen/ecoli/publicHubs/pangenomeWithDups/hub.txt
+   # http://genome-test.gi.ucsc.edu/~nknguyen/ecoli/publicHubs/pangenome/hub.txt
+   # http://genome-test.gi.ucsc.edu/~nknguyen/ecoli/publicHubs/pangenomeWithDups/hub.txt
    #
    # Escherichia coli 042
    escherichiaColi042Uid161985 => 'GCA_000027125.1', # ASM2712v1
@@ -909,8 +934,9 @@ $ucscdb2insdc =
 #
 sub _add_genome_info {
   my ($self, $genome, $doc) = @_;
-  defined $genome and defined $doc or
-    die "Undefined genome and/or doc arguments";
+  unless (defined $genome && defined $doc) {
+    Registry::Utils::Exception->throw("Undefined genome and/or doc arguments");
+  }
 
   #
   # Map the (UCSC) assembly synonym to INSDC assembly accession
@@ -986,7 +1012,11 @@ sub _add_genome_info {
     if ($assembly_map->{$assembly_syn} =~ /^G(CA|CF)_[0-9]+?\.[0-9]+?$/) {
       $assembly_id = $assembly_map->{$assembly_syn};
     } else {
-      die sprintf "Assembly accession %s for %s does not comply with INSDC format", $assembly_map->{$assembly_syn}, $assembly_syn;
+      Registry::Utils::Exception->throw(
+        sprintf "Assembly accession %s for %s does not comply with INSDC format",
+        $assembly_map->{$assembly_syn}, 
+        $assembly_syn
+      );
     }  
   } elsif (exists $ucscdb2insdc->{lc $assembly_syn}) {
     $assembly_id = $ucscdb2insdc->{lc $assembly_syn};
@@ -994,9 +1024,10 @@ sub _add_genome_info {
     # TODO: Look up the assembly name in the shared genome info Ensembl DB
     #       map it to an accession
   }
-
-  die "Unable to find a valid INSDC accession for genome assembly name $assembly_syn"
-    unless defined $assembly_id;
+  if (!defined $assembly_id ) {
+    Registry::Utils::Exception->throw("Unable to find a valid INSDC accession for genome assembly name $assembly_syn");
+  }
+    
 
   #
   # Get species (tax id, scientific name, common name)
@@ -1028,12 +1059,13 @@ sub _add_genome_info {
   my $buffer;
   my $file = Registry->config()->{GenomeCollection}{assembly_set_file};
   gunzip $file => \$buffer 
-    or die "gunzip failed: $GunzipError\n";
+    or Registry::Utils::Exception->throw("gunzip failed: $GunzipError\n");
 
   my $gc_assembly_set = from_json($buffer);
   my $as = $gc_assembly_set->{$assembly_id};
-  die "Unable to find GC assembly set entry for $assembly_id"
-    unless $as;
+  if (! $as) {
+    Registry::Utils::Exception->throw("Unable to find GC assembly set entry for $assembly_id");
+  }
   
   my ($tax_id, $scientific_name, $common_name) = 
     ($as->{tax_id}, $as->{scientific_name}, $as->{common_name});
@@ -1051,7 +1083,13 @@ sub _add_genome_info {
   return;
 }
 
-my @vector_base_assemblies = qw /AaegL3 AaegL5 AaloF1 AalbS1 AalbS2 AaraD1 AatrE1 AchrA1 AcolM1 AculA1 AdarC3 AdirW1 AepiE1 AfarF2 AfunF1 AgamP4 AmacM1 AmelC2 AmerM2 AminM1 AquaS1 AsinS2 AsteI2 AsteS1 BglaB1 ClecH1 CpipJ2 GausT1 GbreI1 GfusI1 GmorY1 GpalI1 GpapI1 IscaW1 LlonJ1 MdomA1 PhumU2 PpapI1 RproC3 SscaA1 ScalU1/;
+my @vector_base_assemblies = qw/
+  AaegL3 AaegL5 AaloF1 AalbS1 AalbS2 AaraD1 AatrE1 AchrA1
+  AcolM1 AculA1 AdarC3 AdirW1 AepiE1 AfarF2 AfunF1 AgamP4
+  AmacM1 AmelC2 AmerM2 AminM1 AquaS1 AsinS2 AsteI2 AsteS1
+  BglaB1 ClecH1 CpipJ2 GausT1 GbreI1 GfusI1 GmorY1 GpalI1
+  GpapI1 IscaW1 LlonJ1 MdomA1 PhumU2 PpapI1 RproC3 SscaA1
+  ScalU1/;
 
 my %vector_base_assemblies;
 map { $vector_base_assemblies{$_}++ } @vector_base_assemblies;
@@ -1059,23 +1097,23 @@ map { $vector_base_assemblies{$_}++ } @vector_base_assemblies;
 sub _add_genome_browser_links {
   my ($self, $genome, $doc) = @_;
   defined $genome and defined $doc or
-    die "Undefined genome and/or doc arguments";
+    Registry::Utils::Exception->throw("Undefined genome and/or doc arguments");
 
   my $assemblysyn = $genome->assembly;
-  defined $assemblysyn or die "Couldn't get assembly identifier from hub genome";
+  defined $assemblysyn or Registry::Utils::Exception->throw("Couldn't get assembly identifier from hub genome");
 
   my $hub = $doc->{hub};
-  defined $hub->{url} or die "Couldn't get hub URL";
+  defined $hub->{url} or Registry::Utils::Exception->throw("Couldn't get hub URL");
 
   my $is_assembly_hub = $hub->{assembly};
   defined $is_assembly_hub or 
-    die "Couldn't detect assembly hub";
+    Registry::Utils::Exception->throw("Couldn't detect assembly hub");
 
-  my ($assembly_accession, $assembly_name) =
-    ($doc->{assembly}{accession}, $doc->{assembly}{name});
-  defined $assembly_accession and defined $assembly_name or
-    die "Assembly accession|name not defined";
-
+  my $assembly_accession = $doc->{assembly}{accession};
+  my $assembly_name = $doc->{assembly}{name};
+  unless (defined $assembly_accession and defined $assembly_name) {
+    Registry::Utils::Exception->throw("Assembly accession|name not defined");
+  }
   #
   # UCSC browser link
   #
@@ -1110,13 +1148,16 @@ sub _add_genome_browser_links {
   #
   # EnsEMBL browser link
   #
-  my ($domain, $species) = 
-    ('http://### DIVISION ###.ensembl.org', $doc->{species}{scientific_name});
-  defined $species or die "Couldn't get species to build Ensembl URL";
+  my $domain = 'http://### DIVISION ###.ensembl.org';
+  my $species = $doc->{species}{scientific_name};
+  defined $species or Registry::Utils::Exception->throw("Couldn't get species to build Ensembl URL");
 
   my @species_fields = split(/\s/, $species);
-  $species = join('_', map { $_ =~ s/\W+//g; $_ } @species_fields[0..1]);
-  $species =~ /^\w+_\w+?/ or die "$species: Couldn't get the required species name to build the Ensembl URL";
+  $species = join('_', map { my $field = $_ =~ s/\W+//rg; $field } @species_fields[0..1]);
+  
+  if ($species !~ /^\w+_\w+?/) {
+    Registry::Utils::Exception->throw("$species: Couldn't get the required species name to build the Ensembl URL");
+  }
   
   my $division;
 
@@ -1206,8 +1247,10 @@ sub _add_genome_browser_links {
     # disconnect otherwise will end up with lots of sleeping connections on the
     # public server causing "Too many connections" error
     $gdba->{dbc}->disconnect_if_idle && 
-      die "Couldn't close connection to ensemblgenomes info DB";
+      Registry::Utils::Exception->throw( "Couldn't close connection to ensemblgenomes info DB" );
 
+    # In Ensembl, the division is now named "Ensembl Vertebrates", rather than just Ensembl
+    # It's not clear whether that is significant here
     $genome_division = $genome->division if $genome;
     if (defined $genome_division && $genome_division =~ /^Ensembl/) {
       if ($genome_division eq 'Ensembl') {
@@ -1237,7 +1280,7 @@ sub _add_genome_browser_links {
       ('https://www.vectorbase.org', $doc->{species}{scientific_name});
 
     $species = join('_', (split(/\s/, $species))[0 .. 1]);
-    $species =~ /^\w+_\w+$/ or die "Couldn't get the required species name to build the Ensembl URL";
+    $species =~ /^\w+_\w+$/ or Registry::Utils::Exception->throw("Couldn't get the required species name to build the Ensembl URL");
 
     # handle special case: Anopheles stephensi strain Indian (Anopheles_stephensiI in VB) 
     # cannot use species scientific name as it does not have strain

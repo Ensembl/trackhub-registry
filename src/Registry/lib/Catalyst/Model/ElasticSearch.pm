@@ -21,66 +21,36 @@ package Catalyst::Model::ElasticSearch;
 use Moose;
 use namespace::autoclean;
 use Search::Elasticsearch;
+use Registry::Utils::File qw/slurp_file/;
+use Carp;
+use JSON;
 extends 'Catalyst::Model';
 
 
-# ABSTRACT: A simple Catalyst model to interface with Search::Elasticsearch
-# Adapted from Catalyst::Model::Search::ElasticSearch
 =head1 SYNOPSIS
+  
+  package My::App::Model::Search;
+  use Moose;
+  use namespace::autoclean;
+  extends 'Catalyst::Model::Search::ElasticSearch';
 
-    package My::App;
-    use strict;
-    use warnings;
+  __PACKAGE__->meta->make_immutable;
+  1;
 
-    use Catalyst;
+=head1 DESCRIPTION
 
-    our $VERSION = '0.01';
-    __PACKAGE__->config(
-      name            => 'Test::App',
-      'Model::Search' => {
-        nodes           => 'localhost:9200',
-        request_timeout => 30,
-        max_requests    => 10_000
-      }
-    );
+Adapted from Catalyst::Model::Search::ElasticSearch
 
-    __PACKAGE__->setup;
+This base Catalyst::Model is inherited by any models that need to access Elasticsearch
+It provides convenient access to the ES REST API, and auto-populates it with schema as
+necessary.
 
-
-    package My::App::Model::Search;
-    use Moose;
-    use namespace::autoclean;
-    extends 'Catalyst::Model::Search::ElasticSearch';
-
-    __PACKAGE__->meta->make_immutable;
-    1;
-
-    package My::App::Controller::Root;
-    use base 'Catalyst::Controller';
-    __PACKAGE__->config(namespace => '');
-
-    sub search : Local {
-      my ($self, $c) = @_;
-      my $params = $c->req->params;
-      my $search = $c->model('Search');
-      my $results = $search->search(
-        index => 'test',
-        type  => 'test',
-        body  => { query => { term => { schpongle => $params->{'q'} } } }
-      );
-      $c->stash( results => $results );
-
-    }
-
-=head1 WARNING
-
-This is in very alpha stages.  More testing and production use are coming up, but be warned until then.
 
 =head1 CONFIGURATION PARAMETERS AND ATTRIBUTES
 
 =head2 nodes
 
-A list of nodes to connect to.
+A list of nodes to connect the Elasticsearch client to.
 
 =cut
 
@@ -93,6 +63,7 @@ has 'nodes' => (
 =head2 transport
 
 The transport to use to interact with the Elasticsearch API.  See L<Search::Elasticsearch::Transport|Search::Elasticsearch::Transport> for options.
+Rarely needed to be overriden
 
 =cut
 
@@ -112,39 +83,49 @@ has '_additional_opts' => (
   is      => 'rw',
   lazy    => 1,
   isa     => 'HashRef',
-  default => sub { {} },
+  default => sub { { send_get_body_as => 'POST', cxn_pool => 'Static'} },
+  # Here POST is used to deal with a restrictive firewall that strips body from GET messages
+  # Elasticsearch is more progressive than firewall vendors
 );
+
+=head2 schema
+
+We need to know both where our backend is, and what the indexes we are using are called
+Takes the form:
+
+schema => {
+  $schema_type => {
+    mapping_file => $path, # A JSON index mapping file for Elasticsearch
+    index_name => $name, # A name for the index we are using
+    type => $type # A type for the index, see ES documentation on index types
+  }
+}
+
+One of the schema types is expected to be called 'trackhub'
+
+=cut
+
+has schema => (
+  is => 'ro',
+  isa => 'HashRef'
+);
+
 
 =head2 _es
 
-The L<Search::Elasticsearch|Search::Elasticsearch> object.
+The L<Search::Elasticsearch> object.
 
-- NOTE: 
-  This is not true!
-  The Search::Elasticsearch constrctor returns an instance
-  of Search::Elasticsearch::Client::Direct.
-  The list of methods assigned to handles is incomplete and/or
-  wrong, as there are missing methods and methods which
-  this oject does not provide.
+Most of the common methods you would call on this instance are proxied by handler methods:
+$self->search() , $self->create() etc.
+Otherwise, $self->_es->search()
 
-From: https://metacpan.org/pod/Search::Elasticsearch#Bulk-methods-and-scrolled_search
+Several helper methods have been replaced by the Search::Elasticsearch::Bulk
+class. Similarly, scrolled_search() has been replaced by the Search::Elasticsearch::Scroll.
+These helper classes are accessible as:
+  $bulk   = $self->bulk_helper( %args_to_new );
+  $scroll = $self->scroll_helper( %args_to_new );
 
-Bulk indexing has changed a lot in the new client. The helper methods, eg bulk_index() and reindex() have been removed from the main client, and the bulk() method itself now simply returns the response from Elasticsearch. It doesn't interfere with processing at all.
-
-These helper methods have been replaced by the Search::Elasticsearch::Bulk class. Similarly, scrolled_search() has been replaced by the Search::Elasticsearch::Scroll. These helper classes are accessible as:
-$bulk   = $e->bulk_helper( %args_to_new );
-$scroll = $e->scroll_helper( %args_to_new );
-
-==> 
- - remove bulk_(index|create|delete) and reindex
- - add bulk_helper, scroll_helper
- - remove searchqs, scrolled_search (not supported)
- - add indices (returns Search::Elasticsearch::Client::Indices
- - add cluster (returns Search::Elasticsearch::Client::Cluster)
- - other?
-
-Given the method returns a Search::Elasticsearch::Client::Direct it's better
-to look at what it now supports.
+Other methods return a Search::Elasticsearch::Client::Direct
 
 See https://metacpan.org/pod/Search::Elasticsearch::Client::Direct for a list of methods
 grouped according to category
@@ -154,7 +135,6 @@ grouped according to category
 has '_es' => (
   is       => 'ro',
   lazy     => 1,
-  required => 1,
   builder  => '_build_es',
   handles  => {
     map { $_ => $_ }
@@ -170,9 +150,9 @@ sub _build_es {
   return Search::Elasticsearch->new(
     nodes     => $self->nodes,
     transport => $self->transport,
+    send_get_body_as => 'POST', # Put this option in full-time. It was getting overwritten in construction
     %{ $self->_additional_opts },
   );
-
 }
 
 around BUILDARGS => sub {
@@ -180,10 +160,9 @@ around BUILDARGS => sub {
   my $class  = shift;
 
   my $params = $class->$orig(@_);
-  # NOTE: also update this: other stuff deprecated?
-  # See https://metacpan.org/pod/Search::Elasticsearch#MIGRATING-FROM-ElasticSearch.pm
+
   if (defined $params->{servers}) {
-    warn("Passing 'servers' is deprecated, use 'nodes' now");
+    carp "Passing 'servers' is deprecated, use 'nodes' now";
     $params->{nodes} = delete $params->{servers};
   }
   my %additional_opts = %{$params};
@@ -191,6 +170,51 @@ around BUILDARGS => sub {
   $params->{_additional_opts} = \%additional_opts;
   return $params;
 };
+
+# Automatically deploy schemas to the configured backend if it is required
+around _build_es => sub {
+  my $orig = shift;
+  my $self = shift;
+  
+  my $client = $self->$orig(@_);
+
+  unless (
+    defined $self->schema
+    && exists $self->schema->{trackhub}
+  ) {
+    croak 'Server config file for '.$self.' must have a section defining
+      <schema>
+        <trackhub>
+          mapping_file $hub_mapping_json
+          index_name   $es_hub_index_name
+          type         trackdb
+        </trackhub>
+        <report>
+          mapping_file $report_mapping_json
+          index_name   $es_report_index_name
+          type         report
+        </report>
+      </schema>'
+  }
+
+  while ( my ($schema_name, $config) = each %{ $self->schema } ) {
+      
+    my $schema_path = $config->{mapping_file};
+    
+    # Create indexes and load mappings if they're not present
+    unless ($client->indices->exists( index => $config->{index_name} ) ) {
+      print "Creating index from config '$schema_name' with mapping $schema_path\n";
+      $client->indices->create(
+        index => $config->{index_name},
+        # type => $config->{type},
+        body => decode_json( slurp_file( $schema_path ) )
+      );
+      $client->indices->refresh; # If only ES were a proper database
+    }
+  }
+  return $client;
+};
+
 
 =head1 SEE ALSO
 

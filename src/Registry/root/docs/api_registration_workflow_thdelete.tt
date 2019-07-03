@@ -14,32 +14,32 @@
   <div class="col-sm-3" style="margin-top: 25px;">
     <div id="search-sidebar-left">
         <div class="panel panel-primary">
-	  <div class="panel-heading">API Docs</div>
+          <div class="panel-heading">API Docs</div>
           <div class="panel-body">
-	    <ul class="nav nav-list">
-	      <li><a href="[% c.uri_for('/docs/apis') %]">TH Registry APIs</a></li>
-	      <li><a href="[% c.uri_for('/docs/api/info') %]">Info API</a></li>
-	      <li><a>Registration API</a>
-	        <ul>
-		  <li><a href="[% c.uri_for('/docs/api/registration#authentication') %]">Authentication</a></li>
-		  <li>
-		    <a href="[% c.uri_for('/docs/api/registration#workflow') %]">A simplified RESTful workflow</a>
-		    <ul>
-		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/login') %]">Logging in</a></li>
-		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thregister') %]">Registering Track Hubs</a></li>
-		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thlist') %]">Retrieve list of Track Hubs</a></li>
-		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thupdate') %]">Updating Track Hubs</a></li>
-		      <li><a style="font-weight: bold;">Deleting Track Hubs</a></li>
-		      <li><a href="[% c.uri_for('/docs/api/registration/workflow/logout') %]">Log out</a></li>
-		    </ul>
-		  </li>
-		  <li><a href="[% c.uri_for('/docs/api/registration/reference') %]">API Reference</a></li>
-		</ul>
-	      </li>
-	      <li><a href="[% c.uri_for('/docs/api/search') %]">Search API</a></li>
-	    </ul>
+            <ul class="nav nav-list">
+              <li><a href="[% c.uri_for('/docs/apis') %]">TH Registry APIs</a></li>
+              <li><a href="[% c.uri_for('/docs/api/info') %]">Info API</a></li>
+              <li><a>Registration API</a>
+                <ul>
+                  <li><a href="[% c.uri_for('/docs/api/registration#authentication') %]">Authentication</a></li>
+                  <li>
+                    <a href="[% c.uri_for('/docs/api/registration#workflow') %]">A simplified RESTful workflow</a>
+                    <ul>
+                      <li><a href="[% c.uri_for('/docs/api/registration/workflow/login') %]">Logging in</a></li>
+                      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thregister') %]">Registering Track Hubs</a></li>
+                      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thlist') %]">Retrieve list of Track Hubs</a></li>
+                      <li><a href="[% c.uri_for('/docs/api/registration/workflow/thupdate') %]">Updating Track Hubs</a></li>
+                      <li><a style="font-weight: bold;">Deleting Track Hubs</a></li>
+                      <li><a href="[% c.uri_for('/docs/api/registration/workflow/logout') %]">Log out</a></li>
+                    </ul>
+                  </li>
+                  <li><a href="[% c.uri_for('/docs/api/registration/reference') %]">API Reference</a></li>
+                </ul>
+              </li>
+              <li><a href="[% c.uri_for('/docs/api/search') %]">Search API</a></li>
+            </ul>
           </div> 
-	</div>
+        </div>
     </div> <!-- sidebar -->
   </div>
 
@@ -71,7 +71,7 @@
 
   <h4>Example: track hub deletion request and response</h4>
   <p>
-    In this example, we follow the pattern of the previous steps where we have registered and updated the <a target="_blank" href="http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt">CSHL Biology of Genomes meeting 2013 demonstration assembly hub</a>. We now want to delete its records in the Registry, corresponding to three trackDbs associated to the an equivalent number of plant assemblies. 
+    In this example, we follow the pattern of the previous steps where we have registered and updated the <a target="_blank" href="http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/hub.txt">CSHL Biology of Genomes meeting 2013 demonstration assembly hub</a>. We now want to delete its records in the Registry, corresponding to three trackDbs associated to the an equivalent number of plant assemblies. 
   </p>
 
   <p>
@@ -129,7 +129,7 @@
 
   <h4>Example: track hub deletion request and response</h4>
   <p>
-    In this example, we follow the pattern of the previous steps where we have registered and updated the <a target="_blank" href="http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt">CSHL Biology of Genomes meeting 2013 demonstration assembly hub</a>. We now want to delete its records in the Registry, corresponding to three trackDbs associated to the an equivalent number of plant assemblies. In the following we assume you've already got the URIs of these entities. We then make three independent requests to <a href="[% c.uri_for('/docs/api/registration/reference#delete_trackdb') %]">DELETE /api/trackhub/:id</a> endpoint, each one with a different trackDb ID:
+    In this example, we follow the pattern of the previous steps where we have registered and updated the <a target="_blank" href="http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/hub.txt">CSHL Biology of Genomes meeting 2013 demonstration assembly hub</a>. We now want to delete its records in the Registry, corresponding to three trackDbs associated to the an equivalent number of plant assemblies. In the following we assume you've already got the URIs of these entities. We then make three independent requests to <a href="[% c.uri_for('/docs/api/registration/reference#delete_trackdb') %]">DELETE /api/trackhub/:id</a> endpoint, each one with a different trackDb ID:
   </p>
 
   <p>
@@ -145,7 +145,7 @@
       ...
       {
         // Ricinus communis trackDb object
-	...
+        ...
       }    
     </pre>
     Request 2 (delete Brassica rapa assembly data):
@@ -160,7 +160,7 @@
       ...
       {
         // Brassica rapa trackDb object
-	...
+        ...
       }    
     </pre>
     Request 3 (delete Arabidopsis thaliana assembly data):
@@ -175,7 +175,7 @@
       ...
       {
           // Arabidopsis thaliana trackDb object
-	  ...
+          ...
       }    
     </pre>
   </p>
@@ -188,9 +188,9 @@
       <li>if the credentials supplied in the authentication header are invalid, the server returns HTTP response code 401</li>
       <li>one of the trackDb URIs might be invalid, because:
         <ul>
-	  <li>the trackDb does not belong to the API user. The server in this case returns HTTP response code 400 with the message "Cannot delete: ..."</li>
-	  <li>the ID and hence the corresponding trackDb does not exist. The server in this case returns HTTP response code 404 with the message "Could not find: ..."</li>
-	</ul>
+          <li>the trackDb does not belong to the API user. The server in this case returns HTTP response code 400 with the message "Cannot delete: ..."</li>
+          <li>the ID and hence the corresponding trackDb does not exist. The server in this case returns HTTP response code 404 with the message "Could not find: ..."</li>
+        </ul>
       <li>if the Registry encountered an unexpected condition which prevented it from fulfilling the request, it returns HTTP response code 500</li>
       <li>if the Registry is currently unable to handle the request due to a temporary overloading or maintenance, it returns HTTP response code 503</li>
     </ul>

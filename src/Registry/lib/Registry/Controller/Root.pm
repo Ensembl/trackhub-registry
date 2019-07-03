@@ -26,6 +26,7 @@ use Try::Tiny;
 use Email::MIME;
 use Email::Sender::Simple qw(sendmail);
 use Registry::Form::User::Help;
+use String::Random;
 
 #
 # Sets the actions in this controller to be registered with no prefix
@@ -41,7 +42,7 @@ Registry::Controller::Root - Root Controller for Registry
 
 =head1 DESCRIPTION
 
-[enter your description here]
+Provides functionality for login, help and some other defaults
 
 =head1 METHODS
 
@@ -105,31 +106,29 @@ sub help :Path('/help') {
 
   return unless $help_form->process( params => $c->req->parameters );
 
-  my ($name, $subject, $email, $message) =
-    (
-     $help_form->value->{name},
-     $help_form->value->{subject},
-     $help_form->value->{email},
-     $help_form->value->{message}
-    );
-  my $email_message = 
-    Email::MIME->create(header_str => 
-                          [
-                           From => $email,
-                           To   => "trackhub-registry\@ebi.ac.uk",
-                           Subject => $subject
-                          ],
-                          attributes =>
-                          {
-                           encoding => 'quoted-printable',
-                           charset  => 'ISO-8859-1',
-                          },
-                          body_str => $message,
-                               );
+  my ($name, $subject, $email, $message) = (
+    $help_form->value->{name},
+    $help_form->value->{subject},
+    $help_form->value->{email},
+    $help_form->value->{message}
+  );
+  
+  my $email_message = Email::MIME->create(
+    header_str => [
+      From => $email,
+      To   => "trackhub-registry\@ebi.ac.uk",
+      Subject => $subject
+    ],
+    attributes => {
+      encoding => 'quoted-printable',
+      charset  => 'ISO-8859-1',
+    },
+    body_str => $message,
+  );
   try {
     sendmail($email_message);
   } catch {
-    $c->stash(error_msg => "An unexpected error happened, couldn't send message to HelpDesk.<br/>Please contact it directly at helpdesk\@trackhubregistry.org using your email client.")
+    $c->stash(error_msg => "An unexpected error happened, couldn't send message to HelpDesk.<br/>Please contact it directly at trackhub-registry\@ebi.ac.uk using your email client.")
   };
 
   $c->stash(status_msg => sprintf "%sYour message has been sent to our HelpDesk.<br/>We'll contact you as soon as possible.", $name?"Thanks $name for contacting us. ":"");
@@ -157,85 +156,55 @@ sub stats_test :Path('stats') {
   # $c->stash();
 }
 
-# =head2 search
-
-# Perform a search
-
-# =cut 
-
-# # DEPRECATION WARNING: The Regex dispatch type is deprecated.
-# #   The standalone Catalyst::DispatchType::Regex distribution
-# #   has been temporarily included as a prerequisite of
-# #   Catalyst::Runtime, but will be dropped in the future. Convert
-# #   to Chained methods or include Catalyst::DispatchType::Regex
-# #   as a prerequisite for your application.
-# #
-# # Something like this?
-# # handles /search?q=...
-# # sub search : Chained('/') :PathPart('search') :Args(0) { # Args ends the chain, is zero because args are passed as GET parameters
-# #
-# # handles /search/:index/:type/?q=...
-# sub search : Chained('/') :PathPart('search') :Args(2) { 
-# # see https://metacpan.org/pod/Catalyst::Manual::Tutorial::04_BasicCRUD
-# #
-# # sub search :Regex('^search$') { # :Local  {
-#   my ($self, $c, $index, $type) = @_;
-#   $index ||= 'test';
-#   $type ||= 'trackhub';
-#   my $params = $c->req->params;
-#   my $query = $params->{'q'};
-#   my $search = $c->model('Search');
-#   my $results = $search->search(index => $index,
-# 				type  => $type,
-# 				# body  => { query => { term => { alignment_software => $params->{'q'} } } }, # term filter: exact value
-# 				# http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/_finding_exact_values.html
-# 				# The term filter isn’t very useful on its own though. As discussed in Query DSL, the search API 
-# 				# expects a query, not a filter. To use our term filter, we need to wrap it with a filtered query:
-# 				# body  => { 
-# 				# query => {
-# 				# 	    "filtered" => { 
-# 				# 			   query => { "match_all" => {} }, # returns all documents (default, can omit)
-# 				# 			   filter => { term => { _all => $params->{'q'} } }
-# 				# 			   }
-# 				# 	    }
-# 				# },									       
-# 				body  => { query => { match => { _all => $params->{'q'} } } } # match query: full text search
-# 			       );
-
-#   $c->stash(index => $index);
-#   $c->stash(type => $type);
-#   $c->stash(results => $results);
-#   $c->stash(template => 'search_results.tt')
-
-# }
-
 =head2 login
+
+Form-based login is handled by Registry::User::Login. This is for API clients to use.
+It gives them a token to perform further API operations.
 
 =cut
 
-sub login :Path('/api/login') Args(0) {
+sub login :Path('/api/login') Args(0) ACLDetachTo('denied') {
   my ($self, $c) = @_;
 
   my $is_readonly = 0;
   $is_readonly = Registry->config()->{'read_only_mode'};
 
   # Server is running on read only mode
-  if($is_readonly){
+  # Client is software, we should NOT be sending them HTML
+  # Replace this with a 403 or something similar.
+  if ($is_readonly) {
     $c->stash(template => 'read_only_mode.tt');
     return;
   }
 
+  # Uses the HTTP credential class, and pulls Basic Auth out of the headers
+  # Auth failures trigger a text/plain 401 response
   $c->authenticate({}, 'http');
 
-  # user should exist
+  # user should exist if we got this far. Method provided by Catalyst::Authentication::Plugin
+  # Provide the user with an API authentication key
   $c->user->auth_key(String::Random::random_string('s' x 64));
-  # $c->user->obj->update();
-  # $c->response->headers->header('x-registry-authorization' => $c->user->get('auth_key'));
-  
-  # $self->status_ok($c, entity => { auth_token => $c->user->get('auth_key') });
+  $c->user->update(); # Get DBIC to store the API key
+
   $c->stash()->{auth_token} = $c->user->get('auth_key');
   $c->forward($c->view('JSON'));
 }
+
+
+
+=head2 denied
+
+Redirect to the login page with an error message if a user fails to authenticate.
+
+=cut
+
+sub denied : Private {
+  my ($self, $c) = @_;
+ 
+  $c->stash(status_msg => "Access Denied",
+            template   => "login/login.tt");
+}
+
 
 __PACKAGE__->meta->make_immutable;
 

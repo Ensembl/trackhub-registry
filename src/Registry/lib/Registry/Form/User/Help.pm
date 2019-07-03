@@ -22,34 +22,38 @@ use HTML::FormHandler::Moose;
 use namespace::autoclean;
 extends 'HTML::FormHandler';
 
-has '+name' => ( default => 'help_form' );
+has '+name' => (
+    default => 'help_form'
+);
 
-has_field 'name' => (
+has_field name => (
     label            => 'Your name:',
     type             => 'Text',
 );
 
-has_field 'email' => (
+has_field email => (
     label            => 'Your email:',
     type             => 'Email',
     required         => 1,
     required_message => 'Please enter the contact email.',
 );
 
-has_field 'subject' => (
+has_field subject => (
     label            => 'Subject:',
     type             => 'Text',
 );
 
-has_field 'message' => (
+has_field message => (
     label            => 'Message:',
     type             => 'TextArea',
 );
 
-has_field 'submit'  => ( type => 'Submit', value => 'Send', element_class => ['btn'] );
+has_field submit  => (
+    type => 'Submit',
+    value => 'Send',
+    element_class => ['btn']
+);
 
 __PACKAGE__->meta->make_immutable;
-
-no HTML::FormHandler::Moose;
 
 1;

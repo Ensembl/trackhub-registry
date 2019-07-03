@@ -1,7 +1,7 @@
 import requests, sys
 
 server = 'http://127.0.0.1:3000'
-hub_url = 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt'
+hub_url = 'http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/hub.txt'
 user = 'trackhub1'
 password = 'trackhub1'
 

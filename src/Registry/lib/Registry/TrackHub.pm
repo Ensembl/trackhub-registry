@@ -51,6 +51,7 @@ use warnings;
 use Registry::TrackHub::Genome;
 use Registry::Utils qw(run_cmd);
 use Registry::Utils::URL qw(read_file);
+use Registry::Utils::Exception;
 use Encode qw(decode_utf8 FB_CROAK);
 
 use vars qw($AUTOLOAD);
@@ -91,7 +92,7 @@ sub AUTOLOAD {
 sub new {
   my ($class, %args) = @_;
 
-  defined $args{url} or die "Undefined URL parameter.";
+  defined $args{url} or Registry::Utils::Exception->throw("Undefined URL parameter when instantiating TrackHub.");
 
   my $self = \%args;
   bless $self, $class;
@@ -139,15 +140,21 @@ sub assemblies {
 
 sub get_genome {
   my ($self, $assembly) = @_;
-  defined $assembly or die "Cannot get genome data: undefined assembly argument";
+  defined $assembly or Registry::Utils::Exception->throw("Cannot get genome data: undefined assembly argument");
 
   exists $self->genomes->{$assembly} or
-    die "No genome data for assembly $assembly";
+    Registry::Utils::Exception->throw("No genome data for assembly $assembly");
 
   return $self->genomes->{$assembly};
 }
 
-# TODO: finish check
+
+=head2 _hub_check
+  Description : Runs the USCS hubCheck tool found in kent tools on the submitted hub.
+  ReturnType  : Undef
+  Exceptions  : If hubCheck fails, this instance dies
+=cut
+
 sub _hub_check {
   my $self = shift;
   my $url = $self->url;
@@ -162,7 +169,7 @@ sub _hub_check {
     $hub_file = 'hub.txt';
     $url      =~ s|/$||;
   }
-
+  # TODO - check if hubCheck is present or not. Currently you get a bunch of useless warnings when absent
   my $cmd = sprintf("hubCheck -checkSettings -test -noTracks %s/%s", $url, $hub_file);
   my ($rc, $output) = Registry::Utils::run_cmd($cmd);
   if ($output =~ /problem/) {
@@ -173,7 +180,9 @@ sub _hub_check {
       # which is not related to some deprecated feature
       next if $line =~ /deprecated/;
 
-      die "hubCheck report:\n$output\n\nPlease refer to the (versioned) spec document: http://genome-test.cse.ucsc.edu/goldenPath/help/trackDb/trackDbHub.html";
+      Registry::Utils::Exception->throw(
+        "hubCheck report:\n$output\n\nPlease refer to the (versioned) spec document: http://genome-test.gi.ucsc.edu/goldenPath/help/trackDb/trackDbHub.html"
+      );
     }
   }
 }
@@ -198,8 +207,8 @@ sub _get_hub_info {
   my $content;
  
   if ($response->{error}) {
-    push @{$response->{error}}, "Please check the source URL in a web browser.";
-    die join("\n", @{$response->{error}});
+    push @{$response->{error}}, "Please check the source URL $url/$hub_file in a web browser.";
+    Registry::Utils::Exception->throw(join("\n", @{$response->{error}} ) );
   }
   $content = Encode::decode_utf8($response->{'content'}, Encode::FB_CROAK);
 
@@ -211,17 +220,16 @@ sub _get_hub_info {
     $line[1] =~ s/^\s+|\s+$//g; # trim left/right spaces
     $hub_details{$line[0]} = $line[1];
   }
-  die 'No genomesFile found' unless $hub_details{genomesFile};
+  Registry::Utils::Exception->throw('No genomesFile found') unless $hub_details{genomesFile};
  
   ## Now get genomes file and parse 
   $response = read_file("$url/$hub_details{'genomesFile'}", $file_args); 
-  die join("\n", @{$response->{error}}) if $response->{error};
+  Registry::Utils::Exception->throw( join("\n", @{$response->{error}}) ) if $response->{error};
   
   $content = $response->{content};
 
   (my $genome_file = $content) =~ s/\r//g;
   my $genomes;
-  my @lines = split /\n/, $genome_file;
   my ($genome, $file, %ok_genomes);
   foreach (split /\n/, $genome_file) {
     my ($k, $v) = split(/\s/, $_);
@@ -230,14 +238,6 @@ sub _get_hub_info {
     if ($k =~ /genome/) {
       $genome = $v;
       $genomes->{$genome} = Registry::TrackHub::Genome->new(assembly => $genome);
-      ## Check if any of these genomes are available on this site,
-      ## because we don't want to waste time parsing them if not!
-      # if ($assembly_lookup && $assembly_lookup->{$genome}) {
-      #  $ok_genomes{$genome} = 1;
-      # }
-      # else {
-      #  $genome = undef;
-      # }
     } else {
       $genomes->{$genome}->$k($v);
     }
@@ -283,7 +283,7 @@ sub _get_hub_info {
     }
   }
 
-  die join("\n", @errors) if scalar @errors;
+  Registry::Utils::Exception->throw( join("\n", @errors) ) if scalar @errors;
 
   map { $self->$_($hub_details{$_}) } keys %hub_details;
   $self->genomes($genomes);

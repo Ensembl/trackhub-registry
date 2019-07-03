@@ -3,11 +3,10 @@
 <div>
   [% FOR field IN form.error_fields %]
       [% FOR error IN field.errors %]
-          <!-- <p><span style="color: red;">[% field.label _ ': ' _ error %]</span></p> -->
-	  <div class="alert alert-danger alert-dismissible" role="alert">
+          <div class="alert alert-danger alert-dismissible" role="alert">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-	    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> [% field.label _ ': ' _ error %]
-      	  </div>
+            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> [% field.label _ ': ' _ error %]
+                </div>
       [% END %]
   [% END %]
 </div>
@@ -22,7 +21,7 @@
         chr:          '[% browser.chr %]',
         viewStart:    [% browser.viewStart %],
         viewEnd:      [% browser.viewEnd %],
-	cookieKey:    '[% browser.cookieKey %]',
+        cookieKey:    '[% browser.cookieKey %]',
 
         coordSystem: {
           speciesName: '[% browser.coordSystem.speciesName %]',
@@ -33,14 +32,14 @@
         },
 
         sources:     [{ name: '[% browser.sources.genome.name %]',
-                       	twoBitURI: '[% browser.sources.genome.twoBitURI %]',
-                       	tier_type: 'sequence'},
+                               twoBitURI: '[% browser.sources.genome.twoBitURI %]',
+                               tier_type: 'sequence'},
                       { name: '[% browser.sources.genes.name %]',
                         desc: '[% browser.sources.genes.desc %]',
-                       	bwgURI: '[% browser.sources.genes.bwgURI %]',
-                       	stylesheet_uri: '[% browser.sources.genes.stylesheet_uri %]',
-                       	collapseSuperGroups: true,
-                       	trixURI: '[% browser.sources.genes.trixURI %]' } ],
+                               bwgURI: '[% browser.sources.genes.bwgURI %]',
+                               stylesheet_uri: '[% browser.sources.genes.stylesheet_uri %]',
+                               collapseSuperGroups: true,
+                               trixURI: '[% browser.sources.genes.trixURI %]' } ],
 
         uiPrefix: '//www.biodalliance.org/release-0.13/',
 
@@ -61,11 +60,6 @@
       <li>Select the tracks you want to display</li>
     </ul>
     <p>The tracks will then automatically show under the genome sequence and gene structure tracks.</p>
-    <!--
-    <div class="alert alert-warning alert-dismissible" role="alert">
-      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-    </div>
-    -->
     <p><span class="label label-warning">Warning</span></p>
     <p>If the hub tab is not available it's likely that the server where the hub is hosted is not configured to serve the hub files over HTTP with support for CORS (Cross origin requests).<p>
     <div id="svgHolder" style="background: white; padding: 5px; margin-top: 20px"></div>

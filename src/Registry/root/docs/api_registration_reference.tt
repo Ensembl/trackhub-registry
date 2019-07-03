@@ -14,38 +14,38 @@
   <div class="col-sm-3" style="margin-top: 25px;">
     <div id="search-sidebar-left">
         <div class="panel panel-primary">
-	  <div class="panel-heading">API Docs</div>
+          <div class="panel-heading">API Docs</div>
           <div class="panel-body">
-	    <ul class="nav nav-list">
-	      <li><a href="[% c.uri_for('/docs/apis') %]">TH Registry APIs</a></li>
-	      <li><a href="[% c.uri_for('/docs/api/info') %]">Info API</a></li>
-	      <li><a style="font-weight: bold;">Registration API</a>
-	        <ul>
-		  <li><a href="[% c.uri_for('/docs/api/registration#authentication') %]">Authentication</a></li>
-		  <li><a href="[% c.uri_for('/docs/api/registration#workflow') %]">A simplified RESTful workflow</a></li>
-		  <li>
-		    <a href="#">API Reference</a>
-		    <ul>
-		      <li><a href="#login">GET /api/login</a></li>
-		      <li><a href="#get_trackhub">GET /api/trackhub</a></li>
-		      <li><a href="#post_trackhub">POST /api/trackhub</a></li>
-		      <li><a href="#get_trackhub_id">GET /api/trackhub/:id</a></li>
-		      <li><a href="#delete_trackhub_id">DELETE /api/trackhub/:id</a></li>
-		      <li><a href="#get_trackdb">GET /api/trackdb/:id</a></li>
-		      <!--
-		        <li><a href="#post_trackdb_create">POST /api/trackdb/create</a></li>
-		        <li><a href="#put_trackdb">PUT /api/trackdb/:id</a></li>
-		      -->
-		      <li><a href="#delete_trackdb">DELETE /api/trackdb/:id</a></li>
-		      <li><a href="#logout">GET /api/logout</a></li>
-		    </ul>
-		  </li>
-		</ul>
-	      </li>
-	      <li><a href="[% c.uri_for('/docs/api/search') %]">Search API</a></li>
-	    </ul>
+            <ul class="nav nav-list">
+              <li><a href="[% c.uri_for('/docs/apis') %]">TH Registry APIs</a></li>
+              <li><a href="[% c.uri_for('/docs/api/info') %]">Info API</a></li>
+              <li><a style="font-weight: bold;">Registration API</a>
+                <ul>
+                  <li><a href="[% c.uri_for('/docs/api/registration#authentication') %]">Authentication</a></li>
+                  <li><a href="[% c.uri_for('/docs/api/registration#workflow') %]">A simplified RESTful workflow</a></li>
+                  <li>
+                    <a href="#">API Reference</a>
+                    <ul>
+                      <li><a href="#login">GET /api/login</a></li>
+                      <li><a href="#get_trackhub">GET /api/trackhub</a></li>
+                      <li><a href="#post_trackhub">POST /api/trackhub</a></li>
+                      <li><a href="#get_trackhub_id">GET /api/trackhub/:id</a></li>
+                      <li><a href="#delete_trackhub_id">DELETE /api/trackhub/:id</a></li>
+                      <li><a href="#get_trackdb">GET /api/trackdb/:id</a></li>
+                      <!--
+                        <li><a href="#post_trackdb_create">POST /api/trackdb/create</a></li>
+                        <li><a href="#put_trackdb">PUT /api/trackdb/:id</a></li>
+                      -->
+                      <li><a href="#delete_trackdb">DELETE /api/trackdb/:id</a></li>
+                      <li><a href="#logout">GET /api/logout</a></li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+              <li><a href="[% c.uri_for('/docs/api/search') %]">Search API</a></li>
+            </ul>
           </div> 
-	</div>
+        </div>
     </div> <!-- sidebar -->
   </div>
 
@@ -67,15 +67,15 @@
     <tbody>
       <tr>
         <th>Response formats</th>
-	<td>JSON</td>
+        <td>JSON</td>
       </tr>
       <tr>
         <th>Authentication</th>
-	<td>Basic, MIME Base64</td>
+        <td>Basic, MIME Base64</td>
       </tr>
       <tr>
         <th>Rate Limited</th>
-	<td>No</td>
+        <td>No</td>
       </tr>
     </tbody>
   </table>
@@ -133,15 +133,15 @@
     <tbody>
       <tr>
         <th>Response formats</th>
-	<td>JSON</td>
+        <td>JSON</td>
       </tr>
       <tr>
         <th>Authentication</th>
-	<td>User+Auth-Token headers</td>
+        <td>User+Auth-Token headers</td>
       </tr>
       <tr>
         <th>Rate Limited</th>
-	<td>No</td>
+        <td>No</td>
       </tr>
     </tbody>
   </table>
@@ -181,7 +181,7 @@
                           ],
         'shortLabel': 'Plants',
         'name': 'cshl2013',
-        'url': 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt',
+        'url': 'http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/hub.txt',
         'longLabel': 'CSHL Biology of Genomes meeting 2013 demonstration assembly hub'
       },
       {
@@ -240,15 +240,15 @@
     <tbody>
       <tr>
         <th>Response formats</th>
-	<td>JSON</td>
+        <td>JSON</td>
       </tr>
       <tr>
         <th>Authentication</th>
-	<td>User+Auth-Token headers</td>
+        <td>User+Auth-Token headers</td>
       </tr>
       <tr>
         <th>Rate Limited</th>
-	<td>No</td>
+        <td>No</td>
       </tr>
     </tbody>
   </table>
@@ -265,57 +265,57 @@
     <tbody>
       <tr>
         <th>Content-type</th>
-	<td>application/json</td>
+        <td>application/json</td>
       </tr>
       <tr>
         <th id="post_trackhub_msg_format">Format</th>
-	<td>
-	  <pre>
-	    {
-	      "type": "object",
+        <td>
+          <pre>
+            {
+              "type": "object",
 
-	      "properties": {
-	        "url":    { 
-		  "description": "The hub URL (i.e. location of the hub.txt file)",
-		  "type": "string", 
-		  "format": "uri"
-		},
-		"type":  {
-		  "description": "The main type of data contained in the hub",
-		  "type": "string", 
-		  "enum": [ "genomics", "epigenomics", "transcriptomics", "proteomics" ] 
-		},
-		"public": {
-		  "description": "Whether the hub is available for search (1) or not (0)",
-		  "type": "number"
-		},
-		"assemblies": {
-		  "type": "object",
-		  "patternProperties": {
-		    "[a-zA-z][a-zA-Z0-9]+$": { "type": "string", "pattern": "^G(CA|CF)_[0-9]+.[0-9]+$" }
-		  }
-		}
-	      }
+              "properties": {
+                "url":    { 
+                  "description": "The hub URL (i.e. location of the hub.txt file)",
+                  "type": "string", 
+                  "format": "uri"
+                },
+                "type":  {
+                  "description": "The main type of data contained in the hub",
+                  "type": "string", 
+                  "enum": [ "genomics", "epigenomics", "transcriptomics", "proteomics" ] 
+                },
+                "public": {
+                  "description": "Whether the hub is available for search (1) or not (0)",
+                  "type": "number"
+                },
+                "assemblies": {
+                  "type": "object",
+                  "patternProperties": {
+                    "[a-zA-z][a-zA-Z0-9]+$": { "type": "string", "pattern": "^G(CA|CF)_[0-9]+.[0-9]+$" }
+                  }
+                }
+              }
 
-	      "required": [ "url" ]
-	    }
-	  </pre>
-	</td>
+              "required": [ "url" ]
+            }
+          </pre>
+        </td>
       </tr>
       <tr>
         <th>Example</th>
-	<td>
-	  <pre>
-	    { 
-	      "url" : "http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt", 
-	      "assemblies": {
-	        "araTha1": 'GCA_000001735.1',
-		"ricCom1": 'GCA_000151685.2',
-		"braRap1": 'GCA_000309985.1'
-	      }
-	    }
-	  </pre>
-	</td>
+        <td>
+          <pre>
+            { 
+              "url" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/hub.txt", 
+              "assemblies": {
+                "araTha1": 'GCA_000001735.1',
+                "ricCom1": 'GCA_000151685.2',
+                "braRap1": 'GCA_000309985.1'
+              }
+            }
+          </pre>
+        </td>
       </tr>
     </tbody>
   </table>
@@ -335,11 +335,11 @@
     User: exampleuser
     Auth-Token: 6l5/GuIiOSCywuSI9HF1VU97clwb/CXPDFS0MyAB/HCZuxtjQBj4uORZL8NY3Yhi
     {
-      "url": "http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt",
+      "url": "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/hub.txt",
       "assemblies": {
         "araTha1": 'GCA_000001735.1',
-	"ricCom1": 'GCA_000151685.2',
-	"braRap1": 'GCA_000309985.1'
+        "ricCom1": 'GCA_000151685.2',
+        "braRap1": 'GCA_000309985.1'
       }
     }
   </pre>
@@ -376,19 +376,19 @@
       <tr><td>201</td><td>Created</td><td>Request successful, hub trackDb entities created</td></tr>
       <tr>
         <td>400</td><td>Bad Request</td>
-	<td>
-	  Request cannot be fulfilled by the Registry. Possible reasons:
-	  <ul>
-	    <li>empty request body</li>
-	    <li>invalid JSON schema version</li>
-	    <li>request body does not specify remote hub URL</li>
-	    <li>hub is not compliant with the UCSC hub specs</li>
-	    <li>hub is not available or cannot be correctly parsed</li>
-	    <li>one of the hub trackDb configurations cannot be translated to <a href="[% c.uri_for('/docs/management/modelling') %]">valid JSON</a></li>
-	    <li>one of the hub genome subdirectory names are not <a target="_blank" href="https://genome.ucsc.edu/FAQ/FAQreleases.html#release1">valid UCSC DB names</a>, or cannot be translated to an existing NCBI assembly identifier (e.g. assembly accession + version, e.g. <a target="_blank" href="http://www.ncbi.nlm.nih.gov/assembly/GCF_000001405.13/">GCA_000001405.1</a>)
-	  </ul>
-	  See <a href="[% c.uri_for('/docs/api/registration/workflow/thregister#errors') %]">What can possibly go wrong</a> for more details, in particular about the error messages.
-	</td>
+        <td>
+          Request cannot be fulfilled by the Registry. Possible reasons:
+          <ul>
+            <li>empty request body</li>
+            <li>invalid JSON schema version</li>
+            <li>request body does not specify remote hub URL</li>
+            <li>hub is not compliant with the UCSC hub specs</li>
+            <li>hub is not available or cannot be correctly parsed</li>
+            <li>one of the hub trackDb configurations cannot be translated to <a href="[% c.uri_for('/docs/management/modelling') %]">valid JSON</a></li>
+            <li>one of the hub genome subdirectory names are not <a target="_blank" href="https://genome.ucsc.edu/FAQ/FAQreleases.html#release1">valid UCSC DB names</a>, or cannot be translated to an existing NCBI assembly identifier (e.g. assembly accession + version, e.g. <a target="_blank" href="http://www.ncbi.nlm.nih.gov/assembly/GCF_000001405.13/">GCA_000001405.1</a>)
+          </ul>
+          See <a href="[% c.uri_for('/docs/api/registration/workflow/thregister#errors') %]">What can possibly go wrong</a> for more details, in particular about the error messages.
+        </td>
       </tr>
       <tr><td>401</td><td>Unauthorized</td><td>The request requires user authentication</td></tr>
       <tr><td>500</td><td>Internal Server Error</td><td>Request cannot be fulfilled due to unexpected condition</td></tr>
@@ -412,15 +412,15 @@
     <tbody>
       <tr>
         <th>Response formats</th>
-	<td>JSON</td>
+        <td>JSON</td>
       </tr>
       <tr>
         <th>Authentication</th>
-	<td>User+Auth-Token headers</td>
+        <td>User+Auth-Token headers</td>
       </tr>
       <tr>
         <th>Rate Limited</th>
-	<td>No</td>
+        <td>No</td>
       </tr>
     </tbody>
   </table>
@@ -431,10 +431,10 @@
     <tbody>
       <tr>
         <td>id</td>
-	<td><var>String</var></td>
-    	<td>A track hub name (i.e. 'hub' attribute value in hub.txt)</td>
-	<td><var>cshl2013</var></td>
-      </tr>	
+        <td><var>String</var></td>
+            <td>A track hub name (i.e. 'hub' attribute value in hub.txt)</td>
+        <td><var>cshl2013</var></td>
+      </tr>        
     </tbody>
   </table>
 
@@ -479,15 +479,15 @@
     <tbody>
       <tr>
         <th>Response formats</th>
-	<td>JSON</td>
+        <td>JSON</td>
       </tr>
       <tr>
         <th>Authentication</th>
-	<td>User+Auth-Token headers</td>
+        <td>User+Auth-Token headers</td>
       </tr>
       <tr>
         <th>Rate Limited</th>
-	<td>No</td>
+        <td>No</td>
       </tr>
     </tbody>
   </table>
@@ -498,10 +498,10 @@
     <tbody>
       <tr>
         <td>id</td>
-	<td><var>String</var></td>
-    	<td>A track hub name (i.e. 'hub' attribute value in hub.txt)</td>
-	<td><var>cshl2013</var></td>
-      </tr>	
+        <td><var>String</var></td>
+            <td>A track hub name (i.e. 'hub' attribute value in hub.txt)</td>
+        <td><var>cshl2013</var></td>
+      </tr>        
     </tbody>
   </table>
 
@@ -544,15 +544,15 @@
     <tbody>
       <tr>
         <th>Response formats</th>
-	<td>JSON</td>
+        <td>JSON</td>
       </tr>
       <tr>
         <th>Authentication</th>
-	<td>User+Auth-Token headers</td>
+        <td>User+Auth-Token headers</td>
       </tr>
       <tr>
         <th>Rate Limited</th>
-	<td>No</td>
+        <td>No</td>
       </tr>
     </tbody>
   </table>
@@ -563,10 +563,10 @@
     <tbody>
       <tr>
         <td>id</td>
-	<td><var>String</var></td>
-    	<td>A trackDb document ID</td>
-	<td><var>gOGRzcTSRd2l0LMQTufS4w</var></td>
-      </tr>	
+        <td><var>String</var></td>
+            <td>A trackDb document ID</td>
+        <td><var>gOGRzcTSRd2l0LMQTufS4w</var></td>
+      </tr>        
     </tbody>
   </table>
 
@@ -589,12 +589,12 @@
           'type': 'genomics',
           'source': {
                         'checksum': 'f9561ae6f7883add3698fad7abab7e13',
-                        'url': 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/ricCom1/trackDb.txt'
+                        'url': 'http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/ricCom1/trackDb.txt'
                       },
           'hub': {
                      'shortLabel': 'Plants',
                      'name': 'cshl2013',
-                     'url': 'http://genome-test.cse.ucsc.edu/~hiram/hubs/Plants/hub.txt',
+                     'url': 'http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/hub.txt',
                      'longLabel': 'CSHL Biology of Genomes meeting 2013 demonstration assembly hub'
                    },
           'species': {
@@ -613,7 +613,7 @@
                                                     'priority': '149.1',
                                                     'visibility': 'dense',
                                                     'compositeTrack': 'on',
-	  ...
+          ...
     }
   </pre>
 
@@ -652,15 +652,15 @@
     <tbody>
       <tr>
         <th>Response formats</th>
-	<td>JSON</td>
+        <td>JSON</td>
       </tr>
       <tr>
         <th>Authentication</th>
-	<td>User+Auth-Token headers</td>
+        <td>User+Auth-Token headers</td>
       </tr>
       <tr>
         <th>Rate Limited</th>
-	<td>No</td>
+        <td>No</td>
       </tr>
     </tbody>
   </table>
@@ -677,13 +677,13 @@
     <tbody>
       <tr>
         <th>Content-type</th>
-	<td>application/json</td>
+        <td>application/json</td>
       </tr>
       <tr>
         <th id="post_trackdb_msg_format">Format</th>
-	<td>
-	  See <a href="[% c.uri_for('/api/modelling') %]">trackDb JSON schema</a>.
-	</td>
+        <td>
+          See <a href="[% c.uri_for('/api/modelling') %]">trackDb JSON schema</a>.
+        </td>
       </tr>
     </tbody>
   </table>
@@ -728,15 +728,15 @@
       <tr><td>201</td><td>Created</td><td>Request successful, hub trackDb entities created</td></tr>
       <tr>
         <td>400</td><td>Bad Request</td>
-	<td>
-	  Request cannot be fulfilled by the Registry. Possible reasons:
-	  <ul>
-	    <li>empty request body</li>
-	    <li>invalid JSON schema version</li>
-	    <li>trackDb with the same hub and assembly exists</li>
-	    <li>trackDb configuration cannot be translated to <a href="[% c.uri_for('/docs/api/modelling') %]">valid JSON</a></li>
-	  </ul>
-	</td>
+        <td>
+          Request cannot be fulfilled by the Registry. Possible reasons:
+          <ul>
+            <li>empty request body</li>
+            <li>invalid JSON schema version</li>
+            <li>trackDb with the same hub and assembly exists</li>
+            <li>trackDb configuration cannot be translated to <a href="[% c.uri_for('/docs/api/modelling') %]">valid JSON</a></li>
+          </ul>
+        </td>
       </tr>
       <tr><td>401</td><td>Unauthorized</td><td>The request requires user authentication</td></tr>
       <tr><td>500</td><td>Internal Server Error</td><td>Request cannot be fulfilled due to unexpected condition</td></tr>
@@ -760,15 +760,15 @@
     <tbody>
       <tr>
         <th>Response formats</th>
-	<td>JSON</td>
+        <td>JSON</td>
       </tr>
       <tr>
         <th>Authentication</th>
-	<td>User+Auth-Token headers</td>
+        <td>User+Auth-Token headers</td>
       </tr>
       <tr>
         <th>Rate Limited</th>
-	<td>No</td>
+        <td>No</td>
       </tr>
     </tbody>
   </table>
@@ -779,10 +779,10 @@
     <tbody>
       <tr>
         <td>id</td>
-	<td><var>String</var></td>
-    	<td>A trackDb document ID</td>
-	<td><var>gOGRzcTSRd2l0LMQTufS4w</var></td>
-      </tr>	
+        <td><var>String</var></td>
+            <td>A trackDb document ID</td>
+        <td><var>gOGRzcTSRd2l0LMQTufS4w</var></td>
+      </tr>        
     </tbody>
   </table>
 
@@ -817,8 +817,8 @@
           'created': 1440778576,
           'version': 'v1.0',
           'type': 'epigenomics',
-	  ...
-	  ...
+          ...
+          ...
     }
   </pre>
 
@@ -831,15 +831,15 @@
       <tr><td>200</td><td>OK</td><td>Request successful</td></tr>
       <tr>
         <td>400</td><td>Bad Request</td>
-	<td>
-	  Request cannot be fulfilled by the Registry. Possible reasons:
-	  <ul>
-	    <li>empty request body</li>
-	    <li>trackDb entity does not belong to (i.e. has not been registered by) the user</li>
-	    <li>trackDb configuration cannot be translated to <a href="[% c.uri_for('/docs/management/modelling') %]">valid JSON</a></li>
-	    <li>a trackDb entity with the same hub and assembly exists</li>
-	  </ul>
-	</td>
+        <td>
+          Request cannot be fulfilled by the Registry. Possible reasons:
+          <ul>
+            <li>empty request body</li>
+            <li>trackDb entity does not belong to (i.e. has not been registered by) the user</li>
+            <li>trackDb configuration cannot be translated to <a href="[% c.uri_for('/docs/management/modelling') %]">valid JSON</a></li>
+            <li>a trackDb entity with the same hub and assembly exists</li>
+          </ul>
+        </td>
       </tr>
       <tr><td>401</td><td>Unauthorized</td><td>The request requires user authentication</td></tr>
       <tr><td>404</td><td>Not found</td><td>trackDb with the given ID does not exist</td></tr>
@@ -873,15 +873,15 @@
     <tbody>
       <tr>
         <th>Response formats</th>
-	<td>JSON</td>
+        <td>JSON</td>
       </tr>
       <tr>
         <th>Authentication</th>
-	<td>User+Auth-Token headers</td>
+        <td>User+Auth-Token headers</td>
       </tr>
       <tr>
         <th>Rate Limited</th>
-	<td>No</td>
+        <td>No</td>
       </tr>
     </tbody>
   </table>
@@ -892,10 +892,10 @@
     <tbody>
       <tr>
         <td>id</td>
-	<td><var>String</var></td>
-    	<td>A trackDb document ID</td>
-	<td><var>gOGRzcTSRd2l0LMQTufS4w</var></td>
-      </tr>	
+        <td><var>String</var></td>
+            <td>A trackDb document ID</td>
+        <td><var>gOGRzcTSRd2l0LMQTufS4w</var></td>
+      </tr>        
     </tbody>
   </table>
 
@@ -915,8 +915,8 @@
           'created': 1440778576,
           'version': 'v1.0',
           'type': 'epigenomics',
-	  ...
-	  ...
+          ...
+          ...
     }    
   </pre>
 
@@ -954,15 +954,15 @@
     <tbody>
       <tr>
         <th>Response formats</th>
-	<td>JSON</td>
+        <td>JSON</td>
       </tr>
       <tr>
         <th>Authentication</th>
-	<td>User+Auth-Token headers</td>
+        <td>User+Auth-Token headers</td>
       </tr>
       <tr>
         <th>Rate Limited</th>
-	<td>No</td>
+        <td>No</td>
       </tr>
     </tbody>
   </table>

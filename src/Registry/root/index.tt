@@ -82,16 +82,14 @@
       </blockquote>
 
       <p>Track hubs can be searched based on metadata information. Free text <a href="[% c.uri_for('/docs/search') %]">search</a> is provided from the search box in the header of all track hub Registry web pages and in the middle of this page. Advanced search options are available for more specific and customised searches.</p>
-      <!-- <a href="[% c.uri_for('/search/advanced') %]" class="btn btn-primary">Advanced track search</a> -->
       <a href="[% c.uri_for('/docs/search/advanced') %]" class="btn btn-primary">Help on Advanced Search</a>
     </div>
   </div><!-- /.col-sm-6 -->
   <div class="col-sm-4">
     <div class="box-progetto">
       <h2><span class="glyphicon glyphicon-stats"></span> Stats</h2>
-      <p>A brief summary of the data content, hovers over the column to view the exact numbers.</p>
+      <p>A brief summary of the data content, hover over the column for exact numbers.</p>
       <div id="chart_div"></div>
-      <!-- <a href="[% c.uri_for('') %]" class="btn btn-primary">More</a> -->
   </div><!-- /.col-sm-6 -->
 </div>
 </section>

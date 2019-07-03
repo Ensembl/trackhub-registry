@@ -10,9 +10,9 @@ function toggle(b) {
 
 <div class="page-header">
   <h3>TrackDB ID: [% trackdb.id %]</h3>
-  <span class="label label-primary">[% trackdb.doc.hub.shortLabel %]</span>
-  <span class="label label-success">[% trackdb.doc.species.scientific_name %]</span>
-  <span class="label label-info">[% trackdb.doc.assembly.name %]</span>
+  <span class="label label-primary">[% trackdb.hub_property('shortLabel') %]</span>
+  <span class="label label-success">[% trackdb.scientific_name %]</span>
+  <span class="label label-info">[% trackdb.assembly_name %]</span>
 </div>
 
 <div class="row">
@@ -20,64 +20,66 @@ function toggle(b) {
     <div class="panel panel-default">
       <!-- Default panel contents -->
       <div class="panel-heading">General Info</div>
-      [% tracks = trackdb.status.tracks %]
+      [% tracks = trackdb.status_property('tracks') %]
       <div class="panel-body">
         <div style="float: right;">
-	[% status = trackdb.status_message; %]
-	[% status_last_update = trackdb.status_last_update(1); %]
-	[% label_class = 'label-success' %]
-	[% IF status == 'Unchecked' %]
-	[%   label_class = 'label-warning' %]
-	[% ELSIF status.match('Unavailable') %]
-	[%   label_class = 'label-danger' %]
-	[% END %]
-	  <span class="label [% label_class %]" style="padding-bottom: 1px;">[% status %]</span><br/>
-	[% IF status != 'Unchecked' %]
-	  <small>[% status_last_update %]</small><br/>
-	[% END %]
-	[% hub = trackdb.hub %]
-	[% urls = hub.browser_links %]
-	<br/>
-	[% IF status == 'All is Well' || status == 'Unchecked' %]
-	  [% IF urls %]
-	  <div class="btn-group btn-group-xs">
+        [% 
+          status = trackdb.status_property('message');
+          status_last_update = trackdb.status_last_update(1)
+          label_class = 'label-success';
+          IF status == 'Unchecked';
+            label_class = 'label-warning';
+          ELSIF status.match('Unavailable');
+            label_class = 'label-danger';
+          END;
+        %]
+          <span class="label [% label_class %]" style="padding-bottom: 1px;">[% status %]</span><br/>
+        [% IF status != 'Unchecked' %]
+          <small>[% status_last_update %]</small><br/>
+        [% END %]
+        [% hub = trackdb.hub %]
+        [% urls = hub.browser_links %]
+        <br/>
+        [% IF status == 'All is Well' || status == 'Unchecked' %]
+          [% IF urls %]
+          <div class="btn-group btn-group-xs">
             <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">View in Genome Browser <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu">
-	      [% IF urls.ensembl %]
+              [% IF urls.ensembl %]
               <li><a target="_blank" href="[% urls.ensembl %]">Ensembl</a></li>
-	      [% END %]
-	      [% IF urls.biodalliance %]
+              [% END %]
+              [% IF urls.biodalliance %]
               <li><a target="_blank" href="[% urls.biodalliance %]">Embedded View (Biodalliance)</a></li>
-	      [% END %]
-	      [% IF urls.vectorbase %]
+              [% END %]
+              [% IF urls.vectorbase %]
               <li><a target="_blank" href="[% urls.vectorbase %]">VectorBase</a></li>
-	      [% END %]
-	      [% IF urls.ucsc %]
+              [% END %]
+              [% IF urls.ucsc %]
               <li><a target="_blank" href="[% urls.ucsc %]">UCSC</a></li>
-	      [% END %]
+              [% END %]
             </ul>
           </div>
-	  <br/>
-	  [% END %]
-	[% END %]
-        [% IF trackdb.doc.public %]
-	  <br/><span class="label label-info" style="padding-bottom: 1px;">Searchable</span>
-        [% ELSE %]
-	  <br/><span class="label label-danger" style="padding-bottom: 1px;">Not Searchable</span>
+          <br/>
+          [% END %]
         [% END %]
-	  <form action="">
-	    <input type="button" id="searchable" value="Toggle" style="color:blue" onclick="toggle(this);">
+        [% IF trackdb.public == 'true' %]
+          <br/><span class="label label-info" style="padding-bottom: 1px;">Searchable</span>
+        [% ELSE %]
+          <br/><span class="label label-danger" style="padding-bottom: 1px;">Not Searchable</span>
+        [% END %]
+          <form action="">
+            <input type="button" id="searchable" value="Toggle" style="color:blue" onclick="toggle(this);">
           </form>
-	</div>
+        </div>
         <ul class="list-group col-sm-6">
           <!--<li class="list-group-item">Total number of tracks <span class="badge">[% tracks.total %]</span></li>-->
           <li class="list-group-item">Remote data tracks <span class="badge">[% tracks.with_data.total %]</span></li>
-	  <li class="list-group-item">Data type: <span class="label label-default">[% trackdb.type %]</span></li>
-	  <li class="list-group-item">File type(s): <span class="label label-default">[% trackdb.file_type.join(', ') %]</span></li>
-        [% IF trackdb.doc.source %]
-          <li class="list-group-item">Source URL: <a target="_blank" role=button" class="btn btn-xs btn-default" data-toggle="popover" title="View source URL" data-content="" href="[% trackdb.doc.source.url %]">View</a></li>
-	[% END %]
-	</ul>	
+          <li class="list-group-item">Data type: <span class="label label-default">[% trackdb.type %]</span></li>
+          <li class="list-group-item">File type(s): <span class="label label-default">[% trackdb.file_type.join(', ') %]</span></li>
+        [% IF trackdb.source %]
+          <li class="list-group-item">Source URL: <a target="_blank" role="button" class="btn btn-xs btn-default" data-toggle="popover" title="View source URL" data-content="" href="[% trackdb.source.url %]">View</a></li>
+        [% END %]
+        </ul>        
       </div>
     </div>
   </div>
@@ -85,22 +87,22 @@ function toggle(b) {
     <div class="panel panel-default">
       <!-- Default panel contents -->
       <div class="panel-heading">Hub</div>
-      <div class="panel-body">	
-        <p><strong>Name</strong>: [% trackdb.doc.hub.name %]</p>
-	<p><strong>Short Label</strong>: [% trackdb.doc.hub.shortLabel %]</p>
-	<p><strong>Long Label</strong>: [% trackdb.doc.hub.longLabel %]</p>
-	<p>
-	  <strong>Assembly Hub</strong>: 
-	  [% IF assembly_hub %]
-	    <span class="glyphicon glyphicon-ok">
-	  [% ELSE %]
+      <div class="panel-body">        
+        <p><strong>Name</strong>: [% trackdb.hub_property('name') %]</p>
+        <p><strong>Short Label</strong>: [% trackdb.hub_property('shortLabel') %]</p>
+        <p><strong>Long Label</strong>: [% trackdb.hub_property('longLabel') %]</p>
+        <p>
+          <strong>Assembly Hub</strong>: 
+          [% IF assembly_hub %] <!-- How was this ever set? Get it from trackdb? -->
+            <span class="glyphicon glyphicon-ok">
+          [% ELSE %]
             <span class="glyphicon glyphicon-remove">
-	  [% END %]
-	</p>
-	  [% IF trackdb.doc.hub.url %]
-	<p><strong>Public URL</strong>: <a target="_blank" role=button" class="btn btn-xs btn-default" data-toggle="popover" title="View source URL" data-content="" href="[% trackdb.doc.hub.url %]">View</a></p>
-	  [% END %]
-	</p>
+          [% END %]
+        </p>
+          [% IF trackdb.hub_property('url') %]
+        <p><strong>Public URL</strong>: <a target="_blank" role="button" class="btn btn-xs btn-default" data-toggle="popover" title="View source URL" data-content="" href="[% trackdb.hub_property('url') %]">View</a></p>
+          [% END %]
+        </p>
       </div>
     </div>
   </div>
@@ -111,40 +113,39 @@ function toggle(b) {
       <div class="panel-body">
         [% species = trackdb.doc.species %]
         <p>
-	  <a target="_blank" href="http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=[% species.tax_id %]">Taxonomy</a> <span class="badge">[% species.tax_id %]</span><br/>
-	  <strong>Scientific name</strong>: <em>[% species.scientific_name %]</em><br/>
-	  [% IF species.common_name %]
-	  <strong>Common name</strong>: [% species.common_name %]
-	  [% END %]
-	  <hr/>
+          <a target="_blank" href="http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=[% species.tax_id %]">Taxonomy</a> <span class="badge">[% species.tax_id %]</span><br/>
+          <strong>Scientific name</strong>: <em>[% species.scientific_name %]</em><br/>
+          [% IF species.common_name %]
+          <strong>Common name</strong>: [% species.common_name %]
+          [% END %]
+          <hr/>
         </p>
-	<p><strong>Assembly Information</strong></p>
+        <p><strong>Assembly Information</strong></p>
       </div>
       <table class="table table-condensed table-hover table-striped">
         <thead>
-	  <tr>
-	    <th>Accession</td>
+          <tr>
+            <th>Accession</td>
             <th>Name</th>
             <th>Long Name</th>
-	    <th>Synonyms</th>
-	  </tr>
+            <th>Synonyms</th>
+          </tr>
         </thead>
-	<tbody>
-	  [% assembly = trackdb.doc.assembly %]
-	  <tr>
-	    <td>
-	    [% IF assembly.accession.match('GC') %]
-	    <!--  <a target="_blank" href="http://www.ncbi.nlm.nih.gov/assembly/?term=[% assembly.accession %]">[% assembly.accession %]</a>-->
-	      <a target="_blank" href="http://www.ebi.ac.uk/ena/data/view/[% assembly.accession %]">[% assembly.accession %]</a>
-	    [% ELSE %]
-	      [% assembly.accession %]
-	    [% END %]
-	    </td>
-	    <td>[% assembly.name %]</td>
-	    <td>[% assembly.long_name %]</td>
-	    <td>[% assembly.synonyms %]</td>
-	  </tr>
-	</tbody>
+        <tbody>
+          [% assembly = trackdb.assembly %]
+          <tr>
+            <td>
+            [% IF assembly.accession.match('GC') %]
+              <a target="_blank" href="http://www.ebi.ac.uk/ena/data/view/[% assembly.accession %]">[% assembly.accession %]</a>
+            [% ELSE %]
+              [% assembly.accession %]
+            [% END %]
+            </td>
+            <td>[% assembly.name %]</td>
+            <td>[% assembly.long_name %]</td>
+            <td>[% assembly.synonyms %]</td>
+          </tr>
+        </tbody>
       </table>
     </div>
   </div>
@@ -158,35 +159,35 @@ function toggle(b) {
       <div class="panel-heading">Error Log</div>
       <div class="panel-body">
         <p>
-	  [% tracks.with_data.total_ko %] / [% tracks.with_data.total %] tracks linked to remote data have problems.
-	</p>
-	[% IF tracks.with_data.total_ko > 10 %]
-	<p>Showing the first 10:</p>
-	[% END %]
+          [% tracks.with_data.total_ko %] / [% tracks.with_data.total %] tracks linked to remote data have problems.
+        </p>
+        [% IF tracks.with_data.total_ko > 10 %]
+        <p>Showing the first 10:</p>
+        [% END %]
       </div>
       <!-- Table -->
       <table class="table table-condensed table-hover table-striped">
         <thead>
-	  <tr>
-	    <th>#</td>
+          <tr>
+            <th>#</td>
             <th>Track Name</th>
             <th>Remote Data URL</th>
-	    <th>Error</th>
-	  </tr>
+            <th>Error</th>
+          </tr>
         </thead>
-	<tbody>
-	[% i = 1 %]
+        <tbody>
+        [% i = 1 %]
         [% FOREACH t IN tracks.with_data.ko.keys.sort %]
-	  [% LAST IF i > 10; %]
-	  <tr>
-	    <td>[% i %]</td>
-	    <td>[% t %]</td>
-	    <td>[% tracks.with_data.ko.$t.0 %]</td>
-	    <td>[% tracks.with_data.ko.$t.1 %]</td>
-	  </tr>
-	  [% i = i + 1 %]
-	[% END %]
-	</tbody>
+          [% LAST IF i > 10; %]
+          <tr>
+            <td>[% i %]</td>
+            <td>[% t %]</td>
+            <td>[% tracks.with_data.ko.$t.0 %]</td>
+            <td>[% tracks.with_data.ko.$t.1 %]</td>
+          </tr>
+          [% i = i + 1 %]
+        [% END %]
+        </tbody>
       </table>
     </div>
   </div>

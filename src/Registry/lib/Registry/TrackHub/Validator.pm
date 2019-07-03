@@ -49,6 +49,7 @@ use warnings;
 
 use Capture::Tiny qw( capture );
 use File::Basename qw();
+use Registry::Utils::Exception;
 
 use vars qw($AUTOLOAD);
 
@@ -82,10 +83,10 @@ sub AUTOLOAD {
 sub new {
   my ($class, %args) = @_;
 
-  defined $args{schema} or die "Undefined JSON schema";
-  -e $args{schema} and -f $args{schema} or
-    die "Unable to read schema file: $args{schema}";
-
+  if (!defined $args{schema}) {Registry::Utils::Exception->throw("Undefined JSON schema")};
+  unless (-e $args{schema} and -f $args{schema}) {
+    Registry::Utils::Exception->throw("Unable to read schema file: $args{schema}");
+  }
   my $self = \%args;
   bless $self, $class;
 
@@ -109,6 +110,7 @@ sub validate {
 
   my $cfile = __FILE__;
   my ($name, $path, $suffix) = File::Basename::fileparse($cfile);
+  # This totally won't break.
   my $cmd = sprintf("$path/../../../../../docs/trackhub-schema/validate.py -s %s -f %s", $self->{schema}, $file);
   # my ($rc, $output) = Registry::Utils::run_cmd($cmd);
   my ($output, $err, $rc) = capture { system( $cmd ); };
@@ -123,8 +125,8 @@ sub validate {
     #          the python module search path
     return 0 if $rc == 256 and $err !~ /ImportError/s;
 
-    die "Command \"$cmd\" failed $!\n" if $rc == -1;
-    die "Command \"$cmd\" exited with value $rc\n$output\n";
+    Registry::Utils::Exception->throw("Command \"$cmd\" failed $!\n") if $rc == -1;
+    Registry::Utils::Exception->throw("Command \"$cmd\" exited with value $rc\n$output\n");
   }
 
   # insert here whatever condition on the output 
@@ -141,7 +143,7 @@ sub validate {
     # to the error output.
     # remove
     $output =~ s/^.+?(?=Failed.+?)//s;
-    die $output;
+    Registry::Utils::Exception->throw($output);
   }
 
   # success

@@ -17,15 +17,15 @@
       <fieldset>
         <legend>Authentication & Contact</legend>
 
-	<div class="form-group">
+        <div class="form-group">
           <label class="col-sm-3 control-label" for="username">Username</label>
-	  <div class="col-sm-8">
+          <div class="col-sm-8">
             <input type="text" id="username" class="form-control" placeholder="[% user.username %]" readonly>
-	  </div>
-    	</div>
+          </div>
+            </div>
 
         <!-- First name -->
-	[% f = form.field('first_name') %]
+        [% f = form.field('first_name') %]
         <div class="form-group">
           <label class="col-sm-3 control-label" for="first_name">First Name</label>
           <div class="col-sm-8">
@@ -34,7 +34,7 @@
         </div>
 
         <!-- Last name -->
-	[% f = form.field('last_name') %]
+        [% f = form.field('last_name') %]
         <div class="form-group">
           <label class="col-sm-3 control-label" for="last_name">Last Name</label>
           <div class="col-sm-8">
@@ -43,7 +43,7 @@
         </div>
 
         <!-- Affiliation -->
-	[% f = form.field('affiliation') %]
+        [% f = form.field('affiliation') %]
         <div class="form-group">
           <label class="col-sm-3 control-label" for="affiliation">Affiliation</label>
           <div class="col-sm-8">
@@ -52,7 +52,7 @@
         </div>
 
         <!-- Email -->
-	[% f = form.field('email') %]
+        [% f = form.field('email') %]
         <div class="form-group">
           <label class="col-sm-3 control-label" for="email">Email</label>
           <div class="col-sm-8">
@@ -61,7 +61,7 @@
         </div>
 
         <!-- Password input-->
-	[% f = form.field('password') %]
+        [% f = form.field('password') %]
         <div class="form-group">
           <label class="col-sm-3 control-label" for="password">Password</label>
           <div class="col-sm-8">
@@ -77,31 +77,31 @@
         </div>
 
         <legend>Track hub monitoring configuration</legend>
-	
-	[% f = form.field('check_interval') %]
-	[% selected = 'selected'; %]
+        
+        [% f = form.field('check_interval') %]
+        [% selected = 'selected'; %]
         <div class="form-group">
-	  <label class="col-sm-3 control-label" for="check_interval">Check Interval</label>
-	  <div class="col-sm-5">
-	    <select class="form-control" name="check_interval" id="check_interval">
-	      <option [% selected IF f.fif == 0 %] value="0">Automatic</option>
-	      <option [% selected IF f.fif == 1 %] value="1">Weekly</option>
-	      <option [% selected IF f.fif == 2 %] value="2">Monthly</option>
-	    </select>
-	  </div>
-	</div>
+          <label class="col-sm-3 control-label" for="check_interval">Check Interval</label>
+          <div class="col-sm-5">
+            <select class="form-control" name="check_interval" id="check_interval">
+              <option [% selected IF f.fif == 0 %] value="0">Automatic</option>
+              <option [% selected IF f.fif == 1 %] value="1">Weekly</option>
+              <option [% selected IF f.fif == 2 %] value="2">Monthly</option>
+            </select>
+          </div>
+        </div>
 
-	[% f = form.field('continuous_alert') %]
-	[% checked = 'checked'; %]
+        [% f = form.field('continuous_alert') %]
+        [% checked = 'checked'; %]
         <div class="form-group">
-	  <!--<label class="col-sm-3 control-label" for="continuous_alert"></label>-->
-	  <div class="checkbox">
-  	    <label class="col-sm-5 control-label">
-    	      <input type="checkbox" id="continuous_alert" name="continuous_alert" value="1" [% checked IF f.fif == 1 %]>
-	      Receive continuous alerts
-  	    </label>
-	  </div>
-	</div>
+          <!--<label class="col-sm-3 control-label" for="continuous_alert"></label>-->
+          <div class="checkbox">
+              <label class="col-sm-5 control-label">
+                  <input type="checkbox" id="continuous_alert" name="continuous_alert" value="1" [% checked IF f.fif == 1 %]>
+              Receive continuous alerts
+              </label>
+          </div>
+        </div>
 
 
         <!-- Button -->

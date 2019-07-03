@@ -13,23 +13,23 @@
   <div class="col-sm-3" style="margin-top: 25px;">
     <div id="search-sidebar-left">
         <div class="panel panel-primary">
-	  <div class="panel-heading">Track Hub Management Docs</div>
+          <div class="panel-heading">Track Hub Management Docs</div>
           <div class="panel-body">
-	    <ul class="nav nav-list">
-	      <li><a href="[% c.uri_for('/docs/management/overview') %]">Overview</a></li>
-	      <li><a href="[% c.uri_for('/docs/management/assembly_support') %]">Supported Genome Assemblies</a></li>
-	      <li><a href="[% c.uri_for('/docs/management/modelling') %]">Modelling Track Hubs</a></li>
-	      <li><a href="[% c.uri_for('/docs/api/registration') %]">REST API</a></li>
-	      <li><a style="font-weight: bold;">Dashboard</a>
-	        <ul>
-		  <li><a href="#status">Viewing/Editing THs</a></li>
-		  <li><a href="#profile">Updating Profile</a></li>
-		  <li><a href="#monitoring">Automatic TH Monitoring</a></li>
-		</ul>
-	      </li>
-	    </ul>
+            <ul class="nav nav-list">
+              <li><a href="[% c.uri_for('/docs/management/overview') %]">Overview</a></li>
+              <li><a href="[% c.uri_for('/docs/management/assembly_support') %]">Supported Genome Assemblies</a></li>
+              <li><a href="[% c.uri_for('/docs/management/modelling') %]">Modelling Track Hubs</a></li>
+              <li><a href="[% c.uri_for('/docs/api/registration') %]">REST API</a></li>
+              <li><a style="font-weight: bold;">Dashboard</a>
+                <ul>
+                  <li><a href="#status">Viewing/Editing THs</a></li>
+                  <li><a href="#profile">Updating Profile</a></li>
+                  <li><a href="#monitoring">Automatic TH Monitoring</a></li>
+                </ul>
+              </li>
+            </ul>
           </div> 
-	</div>
+        </div>
     </div> <!-- sidebar -->
   </div>
 
@@ -52,9 +52,9 @@
     <p>
       Each line refers to track database settings for a given assembly in a given hub submitted to the Registry. <em>Id</em> is the ID of the corresponding JSON document as stored in the Registry; <em>Hub</em> and <em>Assembly</em> are respectively the name of the Hub and the assembly the database refers to; <em>Created/Updated</em> are the dates at which the hub was submitted to/updated in the Registry; <em>Status</em> shows a label about the status of the track database as know to the Registry, which can be:
       <ul>
-	<li>"Unknown": the Registry has not yet checked the status of the hub and the tracks in the database;</li>
+        <li>"Unknown": the Registry has not yet checked the status of the hub and the tracks in the database;</li>
         <li>"All is well": hub and all track data files as available;</li>
-	<li>"Remote data unavailable": some or all of the remote track data is unavailable.</li>
+        <li>"Remote data unavailable": some or all of the remote track data is unavailable.</li>
       </ul>
       The last two come with the date at which the check was performed. The last column presents buttons for doing some actions depending on the status of the track database. When status reports "Remote data unavailable", you can click on the spyglass icon to access information about the reasons, like in the following:
     </p>
@@ -90,7 +90,7 @@
       You can control two parameters related to these periodic inspections:
       <ul>
         <li><em>Check interval</em>: tells the Registry the frequency with which to perfom the check. If set to <em>Automatic</em> the decision is left to the Registry;</li>
-	<li><em>Receive continuos alerts</em>: if the checkbox is not ticked, you receive an alert message about some faulty tracks only once.</li>
+        <li><em>Receive continuos alerts</em>: if the checkbox is not ticked, you receive an alert message about some faulty tracks only once.</li>
       </ul>
       As stated before, the Registry sends an alert message to the profile's email address at the end of each inspection in case something wrong is found with the track data files of your submitted data hubs, and unless you've ticked the checkbox above.
     </p>

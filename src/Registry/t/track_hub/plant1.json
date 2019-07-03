@@ -1,0 +1,298 @@
+{
+   "source" : {
+      "checksum" : "f9561ae6f7883add3698fad7abab7e13",
+      "url" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/ricCom1/trackDb.txt"
+   },
+   "hub" : {
+      "browser_links" : {
+         "ucsc" : "http://genome.ucsc.edu/cgi-bin/hgHubConnect?hgHub_do_redirect=on&hgHubConnect.remakeTrackHub=on&hgHub_do_firstDb=1&hubUrl=http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants"
+      },
+      "shortLabel_stripped" : "Plants",
+      "shortLabel" : "Plants",
+      "url" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants",
+      "name" : "cshl2013",
+      "longLabel" : "CSHL Biology of Genomes meeting 2013 demonstration assembly hub",
+      "assembly" : 1
+   },
+   "status" : {
+      "tracks" : {
+         "with_data" : {
+            "total_ko" : 0,
+            "total" : 12
+         },
+         "total" : 13
+      },
+      "last_update" : "",
+      "message" : "Unchecked"
+   },
+   "version" : "v1.0",
+   "data" : [
+      {
+         "name" : "Repeating Elements by RepeatMasker",
+         "id" : "repeatMasker_"
+      },
+      {
+         "name" : "Other Repeating Elements by RepeatMasker",
+         "id" : "repeatMaskerOther_"
+      },
+      {
+         "name" : "Assembly",
+         "id" : "assembly_"
+      },
+      {
+         "name" : "Simple Tandem Repeats by TRF",
+         "id" : "simpleRepeat_"
+      },
+      {
+         "name" : "Genomic Intervals Masked by WindowMasker + SDust",
+         "id" : "windowMasker"
+      },
+      {
+         "name" : "Low Complexity Repeating Elements by RepeatMasker",
+         "id" : "repeatMaskerLowComplexity_"
+      },
+      {
+         "name" : "Simple Repeating Elements by RepeatMasker",
+         "id" : "repeatMaskerSimple_"
+      },
+      {
+         "name" : "Gap",
+         "id" : "gap_"
+      },
+      {
+         "name" : "RNA Repeating Elements by RepeatMasker",
+         "id" : "repeatMaskerRNA_"
+      },
+      {
+         "name" : "lastz chain to araTha1",
+         "id" : "lastzAraTha1"
+      },
+      {
+         "name" : "GC Percent in 5-Base Windows",
+         "id" : "gc5Base_"
+      },
+      {
+         "name" : "Genscan Gene Predictions",
+         "id" : "genscan_"
+      },
+      {
+         "name" : "CpG Islands (Islands < 300 Bases are Light Green)",
+         "id" : "cpgIslandExt_"
+      }
+   ],
+   "species" : {
+      "scientific_name" : "Ricinus communis",
+      "common_name" : "castor bean",
+      "tax_id" : "3988"
+   },
+   "file_type" : {
+      "bigbed" : 11,
+      "bigwig" : 1
+   },
+   "configuration" : {
+      "repeatMasker_" : {
+         "priority" : "149.1",
+         "visibility" : "dense",
+         "compositeTrack" : "on",
+         "shortLabel" : "RepeatMasker",
+         "track" : "repeatMasker_",
+         "members" : {
+            "repeatMaskerSimple_" : {
+               "priority" : "2",
+               "spectrum" : "on",
+               "colorByStrand" : "50,50,150 150,50,50",
+               "parent" : "repeatMasker_",
+               "shortLabel" : "Simple",
+               "track" : "repeatMaskerSimple_",
+               "bigDataUrl" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/ricCom1/bbi/ricCom1.rmsk.Simple.bb",
+               "additional_fields" : 1,
+               "type" : "bigbed",
+               "maxWindowToDraw" : "10000000",
+               "longLabel" : "Simple Repeating Elements by RepeatMasker",
+               "standard_fields" : "6"
+            },
+            "repeatMaskerOther_" : {
+               "priority" : "4",
+               "spectrum" : "on",
+               "colorByStrand" : "50,50,150 150,50,50",
+               "parent" : "repeatMasker_",
+               "shortLabel" : "Other",
+               "track" : "repeatMaskerOther_",
+               "bigDataUrl" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/ricCom1/bbi/ricCom1.rmsk.Other.bb",
+               "additional_fields" : 1,
+               "type" : "bigbed",
+               "maxWindowToDraw" : "10000000",
+               "longLabel" : "Other Repeating Elements by RepeatMasker",
+               "standard_fields" : "6"
+            },
+            "repeatMaskerRNA_" : {
+               "priority" : "1",
+               "spectrum" : "on",
+               "colorByStrand" : "50,50,150 150,50,50",
+               "parent" : "repeatMasker_",
+               "shortLabel" : "RNA",
+               "track" : "repeatMaskerRNA_",
+               "bigDataUrl" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/ricCom1/bbi/ricCom1.rmsk.RNA.bb",
+               "additional_fields" : 1,
+               "type" : "bigbed",
+               "maxWindowToDraw" : "10000000",
+               "longLabel" : "RNA Repeating Elements by RepeatMasker",
+               "standard_fields" : "6"
+            },
+            "repeatMaskerLowComplexity_" : {
+               "priority" : "3",
+               "spectrum" : "on",
+               "colorByStrand" : "50,50,150 150,50,50",
+               "parent" : "repeatMasker_",
+               "shortLabel" : "Low Complexity",
+               "track" : "repeatMaskerLowComplexity_",
+               "bigDataUrl" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/ricCom1/bbi/ricCom1.rmsk.LowComplexity.bb",
+               "additional_fields" : 1,
+               "type" : "bigbed",
+               "maxWindowToDraw" : "10000000",
+               "longLabel" : "Low Complexity Repeating Elements by RepeatMasker",
+               "standard_fields" : "6"
+            }
+         },
+         "description_url" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/ricCom1/repeatMasker_.html",
+         "group" : "varRep",
+         "html" : "../trackDescriptions/repeatMasker",
+         "noInherit" : "on",
+         "type" : "bed",
+         "longLabel" : "Repeating Elements by RepeatMasker"
+      },
+      "assembly_" : {
+         "priority" : "10",
+         "colorByStrand" : "150,100,30 230,170,40",
+         "visibility" : "pack",
+         "shortLabel" : "Assembly",
+         "bigDataUrl" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/ricCom1/bbi/ricCom1.assembly.bb",
+         "urlLabel" : "NCBI Nucleotide database",
+         "group" : "map",
+         "color" : "150,100,30",
+         "html" : "assembly",
+         "url" : "http://www.ncbi.nlm.nih.gov/nuccore/$$",
+         "longLabel" : "Assembly",
+         "standard_fields" : "6",
+         "track" : "assembly_",
+         "altColor" : "230,170,40",
+         "description_url" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/ricCom1/assembly_.html",
+         "type" : "bigbed"
+      },
+      "simpleRepeat_" : {
+         "priority" : "149.3",
+         "visibility" : "dense",
+         "shortLabel" : "Simple Repeats",
+         "track" : "simpleRepeat_",
+         "bigDataUrl" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/ricCom1/bbi/ricCom1.simpleRepeat.bb",
+         "additional_fields" : 1,
+         "description_url" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/ricCom1/simpleRepeat_.html",
+         "group" : "varRep",
+         "html" : "../trackDescriptions/simpleRepeat",
+         "type" : "bigbed",
+         "standard_fields" : "4",
+         "longLabel" : "Simple Tandem Repeats by TRF"
+      },
+      "windowMasker" : {
+         "priority" : "149.26",
+         "visibility" : "dense",
+         "shortLabel" : "WM + SDust",
+         "track" : "windowMasker",
+         "bigDataUrl" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/ricCom1/bbi/ricCom1.windowMasker.bb",
+         "description_url" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/ricCom1/windowMasker.html",
+         "group" : "varRep",
+         "configurable" : 1,
+         "html" : "../trackDescriptions/windowMasker",
+         "type" : "bigbed",
+         "standard_fields" : "3",
+         "longLabel" : "Genomic Intervals Masked by WindowMasker + SDust"
+      },
+      "gap_" : {
+         "priority" : "11",
+         "visibility" : "dense",
+         "shortLabel" : "Gap",
+         "track" : "gap_",
+         "bigDataUrl" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/ricCom1/bbi/ricCom1.gap.bb",
+         "description_url" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/ricCom1/gap_.html",
+         "group" : "map",
+         "color" : "0,0,0",
+         "html" : "gap",
+         "type" : "bigbed",
+         "standard_fields" : "4",
+         "longLabel" : "Gap"
+      },
+      "cpgIslandExt_" : {
+         "priority" : "90",
+         "visibility" : "pack",
+         "track" : "cpgIslandExt_",
+         "shortLabel" : "CpG Islands",
+         "bigDataUrl" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/ricCom1/bbi/ricCom1.cpgIslandExt.bb",
+         "altColor" : "128,228,128",
+         "additional_fields" : 1,
+         "description_url" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/ricCom1/cpgIslandExt_.html",
+         "group" : "regulation",
+         "color" : "0,100,0",
+         "html" : "../trackDescriptions/cpgIslandExt",
+         "type" : "bigbed",
+         "longLabel" : "CpG Islands (Islands < 300 Bases are Light Green)",
+         "standard_fields" : "4"
+      },
+      "lastzAraTha1" : {
+         "priority" : "150",
+         "visibility" : "dense",
+         "shortLabel" : "lastz araTha1",
+         "track" : "lastzAraTha1",
+         "bigDataUrl" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/ricCom1/bbi/lastzRicCom1ToAraTha1.bb",
+         "description_url" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/ricCom1/lastzAraTha1.html",
+         "group" : "compGeno",
+         "configurable" : 1,
+         "type" : "bigbed",
+         "standard_fields" : "12",
+         "longLabel" : "lastz chain to araTha1"
+      },
+      "gc5Base_" : {
+         "priority" : "23.5",
+         "visibility" : "full",
+         "shortLabel" : "GC Percent",
+         "signal_range" : [
+            "0",
+            "100"
+         ],
+         "bigDataUrl" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/ricCom1/bbi/ricCom1.gc5Base.bw",
+         "maxHeightPixels" : "128:36:16",
+         "color" : "0,0,0",
+         "group" : "map",
+         "autoScale" : "Off",
+         "html" : "../trackDescriptions/gc5Base",
+         "graphTypeDefault" : "Bar",
+         "longLabel" : "GC Percent in 5-Base Windows",
+         "viewLimits" : "30:70",
+         "track" : "gc5Base_",
+         "gridDefault" : "OFF",
+         "altColor" : "128,128,128",
+         "description_url" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/ricCom1/gc5Base_.html",
+         "type" : "bigwig",
+         "windowingFunction" : "Mean"
+      },
+      "genscan_" : {
+         "priority" : "50",
+         "visibility" : "pack",
+         "shortLabel" : "Genscan Genes",
+         "track" : "genscan_",
+         "bigDataUrl" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/ricCom1/bbi/ricCom1.genscan.bb",
+         "description_url" : "http://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/ricCom1/genscan_.html",
+         "group" : "genes",
+         "color" : "170,100,0",
+         "configurable" : 1,
+         "html" : "../trackDescriptions/genscan",
+         "type" : "bigbed",
+         "standard_fields" : "12",
+         "longLabel" : "Genscan Gene Predictions"
+      }
+   },
+   "assembly" : {
+      "synonyms" : "ricCom1",
+      "name" : "JCVI_RCG_1.1",
+      "accession" : "GCA_000151685.2"
+   }
+}

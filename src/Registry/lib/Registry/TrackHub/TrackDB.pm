@@ -25,10 +25,9 @@ Registry::TrackHub::TrackDB - Interface to a trackDB JSON document
 
 =head1 SYNOPSIS
 
-my $trackdb = Registry::TrackHub::TrackDB->new($id);
-print "TrackDB $id refers to assembly ", $trackdb->assembly, "\n";
-
-print "Updating status..." && $trackdb->update_status();
+my $trackdb = Registry::TrackHub::TrackDB->new(doc => $hashref);
+print $trackdb->status_last_update;
+my $content = $trackdb->doc;
 
 =head1 DESCRIPTION
 
@@ -36,240 +35,184 @@ A class to represent track db data in JSON format, to provide methods to get/set
 check and update the status of its tracks. An object of this class is built from an ElasticSearch 
 document.
 
+Typically used to carry hub information to template toolkit. Template Toolkit CANNOT
+understand hashrefs and objects in the same call.
+
 =cut
 
 package Registry::TrackHub::TrackDB;
 
-use strict;
-use warnings;
-
+use Moose;
 use POSIX qw(strftime);
 
-# use Registry;
-use Registry::Model::Search;
 use Registry::Utils;
-use Registry::Utils::URL qw(file_exists);
+use Registry::Utils::Exception;
 
-my %format_lookup = (
-     'bed'    => 'BED',
-     'bb'     => 'BigBed',
-     'bigBed' => 'BigBed',
-     'bw'     => 'BigWig',
-     'bigWig' => 'BigWig',
-     'bam'    => 'BAM',
-     'gz'     => 'VCFTabix',
-     'cram'   => 'CRAM'
-    );
+# Received a complex document as hashref, populate the relevant attributes of this class
+sub BUILD {
+  my ($self, $args) = @_;
+  if (exists $args->{doc}) {
 
-=head1 METHODS
-
-=head2 new
-
-  Arg[1]:     : Scalar - the id of the Elasticsearch document (required)
-  Example     : Registry::TrackHub::TrackDB->new(1);
-  Description : Build a Registry::TrackHub::TrackDB object
-  Returntype  : Registry::TrackHub::TrackDB
-  Exceptions  : Thrown if required parameter is not provided
-  Caller      : Registry::Controller::User
-  Status      : Stable
-
-=cut
-
-sub new {
-  my ($class, $id) = @_; # arg is the ID of an ES doc
-  defined $id or die "Undefined ID";
-  
-  # the nodes parameter must be passed passed when we invoke the 
-  # constructor outside the Catalyst loop, since we cannot access
-  # the Registry configuration object
-  my $config = Registry->config()->{'Model::Search'};
-
-  my $self = { 
-    _id  => $id,
-    _es  => {
-       client => Registry::Model::Search->new(nodes => $config->{nodes}),
-       index  => $config->{trackhub}{index},
-       type   => $config->{trackhub}{type}
+    foreach my $field (qw/type hub version source assembly status public/) {
+      if (exists $args->{doc}{$field}) {
+        $self->$field( $args->{doc}{$field});
       }
-   };
-  $self->{_doc} = $self->{_es}{client}->get_trackhub_by_id($id);
-  defined $self->{_doc} or die "Unable to get document [$id] from store";
+    }
+    $self->file_type([ sort keys %{ $args->{doc}{file_type} } ]);
+    if (exists $args->{doc}{created}) {
+      $self->created_time( $args->{doc}{created} );
+    }
+    if (exists $args->{doc}{updated}) {
+      $self->updated_time( $args->{doc}{updated} );
+    }
 
-  # check the document is in the correct format: ATMO, only v1.0 supported
-  my $doc = $self->{_doc};
-  exists $doc->{data} and ref $doc->{data} eq 'ARRAY' and
-  exists $doc->{configuration} and ref $doc->{configuration} eq 'HASH' or
-    die "TrackDB document doesn't seem to be in the correct format";
-
-  bless $self, $class;
+  } else {
+    # gonna be a useless TrackDB without a doc argument, but maybe you want to interfere?
+    Registry::Utils::Exception->throw('Please supply a hashref converted from a trackhub JSON document');
+  }
   return $self;
 }
 
-=head2 doc
+has doc => (
+  is => 'rw',
+  isa => 'HashRef',
+  documentation => 'The HashRef form of the document from Elasticsearch'
+);
 
-  Arg[1]:     : None
-  Example     : my $doc = $trackdb->doc();
-  Description : Returns the (JSON) doc
-  Returntype  : HashRef - the document as a hash of attribute/value pairs
-  Exceptions  : None
-  Caller      : General
-  Status      : Stable
+has id => (
+  is => 'rw',
+  isa => 'Str',
+  documentation => 'The UUID assigned by ElasticSearch',
+);
 
-=cut
+has type => (
+  is => 'rw',
+  isa => 'Str',
+  documentation => 'Refers to the type of data in a genomics sense',
+  default => 'genomics'
+);
 
-sub doc {
-  return shift->{_doc};
-}
+has hub => (
+  traits => ['Hash'],
+  is => 'rw',
+  isa => 'HashRef',
+  documentation => 'The hub portion of the trackDB document as hashref',
+  handles => {
+    hub_property => 'get'
+  }
+);
 
-=head2 id
+has version => (
+  is => 'rw',
+  isa => 'Str',
+  documentation => 'The JSON schema version that applies to the document'
+);
 
-  Arg[1]:     : None
-  Example     : my $id = $trackdb->id();
-  Description : Returns the ID of the trackDB document
-  Returntype  : Scalar
-  Exceptions  : None
-  Caller      : General
-  Status      : Stable
+has file_type => (
+  is => 'rw',
+  isa => 'ArrayRef[Str]',
+  documentation => 'A list of file types present in the hub'
+);
 
-=cut
+has created_time => (
+  is => 'rw',
+  isa => 'Int',
+  documentation => 'The time (unix epoch) that the hub was created'
+);
 
-sub id {
-  return shift->{_id};
-}
+has updated_time => (
+  is => 'rw',
+  isa => 'Maybe[Int]',
+  documentation => 'The time (unix epoch) that the hub was last updated'
+);
 
-=head2 type
+has source => (
+  is => 'rw',
+  isa => 'HashRef',
+  documentation => 'Information about the source of the hub'
+);
 
-  Arg[1]:     : None
-  Example     : my $type = $trackdb->type();
-  Description : Returns the data type of the trackDB represented by the document
-  Returntype  : Scalar
-  Exceptions  : None
-  Caller      : General
-  Status      : Stable
+has assembly => (
+  is => 'rw',
+  isa => 'HashRef',
+  documentation => 'Assembly information from the hub'
+);
 
-=cut
+has status => (
+  traits => ['Hash'],
+  is => 'rw',
+  isa => 'HashRef',
+  documentation => 'Status information relating to the accessibility of the backing data URLs',
+  handles => {
+    status_property => 'get'
+  }
+);
 
-sub type {
-  return shift->{_doc}{type};
-}
+has public => (
+  is => 'rw',
+  isa => 'Str',
+  documentation => 'Whether the hub is publicly findable or not, boolean true/false as strings...'
+);
 
-=head2 hub
-
-  Arg[1]:     : None
-  Example     : my $hub = $trackdb->hub();
-  Description : Returns the hub portion of the trackDB document
-  Returntype  : HashRef
-  Exceptions  : None
-  Caller      : General
-  Status      : Stable
-
-=cut
-
-sub hub {
-  return shift->{_doc}{hub};
-}
-
-=head2 version
-
-  Arg[1]:     : None
-  Example     : my $v = $trackdb->version();
-  Description : Returns the (JSON schema) version of the trackDB JSON document
-  Returntype  : Scalar
-  Exceptions  : None
-  Caller      : General
-  Status      : Stable
-
-=cut
-
-sub version {
-  return shift->{_doc}{version};
-}
-
-=head2 file_type
-
-  Arg[1]:     : None
-  Example     : my $file_types = $trackdb->file_type();
-  Description : Returns the file types of the files referenced by the tracks in the trackDB
-  Returntype  : ArrayRef
-  Exceptions  : None
-  Caller      : General
-  Status      : Stable
-
-=cut
-
-sub file_type {
-  return [ sort keys %{shift->{_doc}{file_type}} ];
-}
+=head1 METHODS
 
 =head2 created
 
-  Arg[1]:     : None
+  Arg[1]:     : Boolean, choose whether to ISO format the time of creation
   Example     : my $created = $trackdb->created();
   Description : Returns the timestamp representing the time when the trackDB was initially stored
   Returntype  : Scalar
   Exceptions  : None
   Caller      : General
-  Status      : Stable
 
 =cut
 
 sub created {
   my ($self, $format) = @_;
 
-  return unless $self->{_doc}{created};
+  return unless $self->created_time;
 
-  return strftime "%Y-%m-%d %X %Z (%z)", localtime($self->{_doc}{created})
-    if $format;
-
-  return $self->{_doc}{created};
+  if ($format) {
+    return strftime "%Y-%m-%d %X %Z (%z)", localtime($self->created_time)
+  } else {
+    return $self->created_time;
+  }
 }
+
+sub assembly_name { return shift->assembly->{name} }
+sub hub_name { return shift->hub->{name} }
+sub version_number { return shift->{version} }
+sub scientific_name { return shift->{species}->{scientific_name} }
 
 =head2 updated
 
-  Arg[1]:     : None
+  Arg[1]:     : Boolean, choose whether to ISO format the time of update
   Example     : my $updated = $trackdb->updated();
   Description : Returns the timestamp representing the time when the trackDB was last updated
   Returntype  : Scalar
   Exceptions  : None
   Caller      : General
-  Status      : Stable
 
 =cut
 
 sub updated {
   my ($self, $format) = @_;
 
-  return unless $self->{_doc}{updated};
+  return unless $self->updated_time;
 
-  return strftime "%Y-%m-%d %X %Z (%z)", localtime($self->{_doc}{updated})
-    if $format;
+  if ($format) {
+    return strftime "%Y-%m-%d %X %Z (%z)", localtime($self->updated_time)
+  }
 
-  return $self->{_doc}{updated};
-}
-
-=head2 source
-
-  Arg[1]:     : None
-  Example     : my $source = $trackdb->source();
-  Description : Returns the structure representing the remote source file of the trackDB
-  Returntype  : HashRef
-  Exceptions  : None
-  Caller      : General
-  Status      : Stable
-
-=cut
-
-sub source {
-  return shift->{_doc}{source};
+  return $self->updated_time;
 }
 
 =head2 compute_checksum
 
-  Arg[1]:     : None
   Example     : my $checksum = $trackdb->checksum();
   Description : Compute the checksum of the remote source trackDB file
   Returntype  : Scalar
-  Exceptions  : None
+  Exceptions  : On there being no source URL in the document
   Caller      : General
   Status      : Stable
 
@@ -278,69 +221,38 @@ sub source {
 sub compute_checksum {
   my $self = shift;
   
-  my $source_url = $self->{_doc}{source}{url};
-  defined $source_url or die sprintf "Cannot get source URL for trackDb %s", $self->id;
+  my $source_url = $self->source->{url};
+  unless (defined $source_url) {
+    Registry::Utils::Exception->throw(sprintf "Cannot get source URL for trackDb %s", $self->id);
+  }
 
   return Registry::Utils::checksum_compute($source_url);
 }
 
-=head2 assembly
-
-  Arg[1]:     : None
-  Example     : my $assembly = $trackdb->assembly();
-  Description : Returns the structure representing trackDB assembly data
-  Returntype  : HashRef
-  Exceptions  : None
-  Caller      : General
-  Status      : Stable
-
-=cut
-
-sub assembly {
-  return shift->{_doc}{assembly};
-}
-
-=head2 status
-
-  Arg[1]:     : None
-  Example     : my $status = $trackdb->status();
-  Description : Returns the structure representing trackDB status data
-  Returntype  : HashRef
-  Exceptions  : None
-  Caller      : General
-  Status      : Stable
-
-=cut
-
-sub status {
-  my $self = shift;
-  
-  return $self->{_doc}{status};
-}
 
 =head2 status_message
 
-  Arg[1]:     : None
   Example     : my $msg = $trackdb->status_message();
   Description : Returns the message representing the status of the remote trackDB
   Returntype  : Scalar
   Exceptions  : None
   Caller      : General
-  Status      : Stable
 
 =cut
 
 sub status_message {
   my $self = shift;
-
-  return $self->{_doc}{status}{message};
+  if ($self->status) {
+    return $self->status->{message};
+  }
+  return;
 }
 
 =head2 status_last_update
 
-  Arg[1]:     : None
+  Arg[1]:     : Boolean, choose whether to ISO format the time since status was updated
   Example     : my $last_update = $trackdb->status_last_update();
-  Description : Returns the timestamp reprenting when the status of the trackDB was last checked
+  Description : Returns the timestamp representing when the status of the trackDB was last checked
   Returntype  : Scalar
   Exceptions  : None
   Caller      : General
@@ -351,137 +263,12 @@ sub status_message {
 sub status_last_update {
   my ($self, $format) = @_;
 
-  return unless $self->{_doc}{status}{last_update};
+  return unless $self->status && $self->status->{last_update};
 
-  return strftime "%x %X %Z (%z)", localtime($self->{_doc}{status}{last_update})
-    if $format;
-
-  return $self->{_doc}{status}{last_update};
-}
-
-=head2 toggle_search
-
-  Arg[1]:     : None
-  Example     : $trackdb->toggle_search();
-  Description : Enable/disable search for this trackDB from the front-end
-  Returntype  : None
-  Exceptions  : None
-  Caller      : General
-  Status      : Stable
-
-=cut
-
-sub toggle_search {
-  my $self = shift;
-
-  my $doc = $self->{_doc};
-  $doc->{public} = $doc->{public}?0:1;
-
-  $self->{_es}{client}->index(index  => $self->{_es}{index},
-      type   => $self->{_es}{type},
-      id     => $self->{_id},
-      body   => $doc);
-  $self->{_es}{client}->indices->refresh(index => $self->{_es}{index});
-}
-
-=head2 update_status
-
-  Arg[1]:     : Bool; whether to label all tracks OK
-  Example     : my $status = $trackdb->update_status();
-  Description : Update the status of the trackDB, internally it checks whether
-                all remote data files pointed to by the tracks are remotely available
-  Returntype  : HashRef - the updated status data structure
-  Exceptions  : None
-  Caller      : General
-  Status      : Stable
-
-=cut
-
-sub update_status {
-  my ($self, $labelok) = @_;
-
-  my $doc = $self->{_doc};
-  
-  # check doc status
-  # another process might have started to check it
-  # abandon the task in this case
-  #
-  # TODO? abandon also if doc has been recently checked
-  #
-  exists $doc->{status} or die "Unable to read status";
-
-  # should not do this as now there's only one process 
-  # checking the trackDBs
-  # die sprintf "TrackDB document [%s] is already being checked by another process.", $self->{_id}
-  #   if $doc->{status}{message} eq 'Pending';
-    
-  # initialise status to pending
-  my $last_update = $doc->{status}{last_update};
-  $doc->{status}{message} = 'Pending';
-
-  # reindex doc to flag other processes its pending status
-  # and refresh the index to immediately commit changes
-  $self->{_es}{client}->index(index  => $self->{_es}{index},
-                              type   => $self->{_es}{type},
-                              id     => $self->{_id},
-                              body   => $doc);
-  $self->{_es}{client}->indices->refresh(index => $self->{_es}{index});
-
-  # check remote data URLs and record stats
-  $doc->{status}{tracks} = 
-    {
-     total => 0,
-     with_data => {
-       total => 0,
-       total_ko => 0
-      }
-    };
-  $doc->{file_type} = {};
-  
-  $self->_collect_track_info($doc->{configuration}, $labelok);
-
-  $doc->{status}{message} = 
-    $doc->{status}{tracks}{with_data}{total_ko}?'Remote Data Unavailable':'All is Well';
-  $doc->{status}{last_update} = time;
-
-  # commit status change
-  $self->{_es}{client}->index(index  => $self->{_es}{index},
-                              type   => $self->{_es}{type},
-                              id     => $self->{_id},
-                              body   => $doc);
-  $self->{_es}{client}->indices->refresh(index => $self->{_es}{index});
-
-  return $doc->{status};
-}
-
-sub _collect_track_info {
-  my ($self, $hash, $labelok) = @_;
-  foreach my $track (keys %{$hash}) { # key is track name
-    ++$self->{_doc}{status}{tracks}{total};
-
-    if (ref $hash->{$track} eq 'HASH') {
-      foreach my $attr (keys %{$hash->{$track}}) {
-        next unless $attr eq 'members' or $attr eq 'type';
-        if ($attr eq 'type' and exists $hash->{$track}{bigDataUrl}) {
-          $self->{_doc}{file_type}{$hash->{$track}{type}}++ if $hash->{$track}{type};
-          ++$self->{_doc}{status}{tracks}{with_data}{total};
-
-          my $url = $hash->{$track}{bigDataUrl};
-          unless ($labelok) {
-            my $response = file_exists($url, { nice => 1 });
-            if ($response->{error}) {
-              $self->{_doc}{status}{tracks}{with_data}{total_ko}++;
-              $self->{_doc}{status}{tracks}{with_data}{ko}{$track} = 
-                [ $url, $response->{error}[0] ];
-            }
-          }
-        } else {
-          $self->_collect_track_info($hash->{$track}{$attr}, $labelok) if ref $hash->{$track}{$attr} eq 'HASH';
-        } 
-      }
-    }
+  if ($format) {
+    return strftime "%x %X %Z (%z)", localtime($self->status->{last_update})
   }
-  
+  return $self->status->{last_update};
 }
 
 1;

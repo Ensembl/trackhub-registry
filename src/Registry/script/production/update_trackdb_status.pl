@@ -419,8 +419,13 @@ sub check_user_tracks {
         $logger->info("Retrying ($_)");
         try {
           $status = $trackdb->update_status();
-          $logger->info("Previously detected faulty tracks seem to be ok now, abort retrying") and last
-            unless $status->{tracks}{with_data}{total_ko};
+
+          if ($status->{tracks}{with_data}{total_ko} == 0) {
+            $logger->info("Previously detected faulty tracks seem to be ok now, abort retrying");
+            last;
+          }
+
+
         } catch {
           $logger->error("Could not update status for trackDB [$id]:\n$_");
 
@@ -597,6 +602,8 @@ sub get_user_trackdbs {
   # }
 
   my $trackdbs;
+  
+
   map { push @{$trackdbs}, Registry::TrackHub::TrackDB->new($_->{_id}) }
     @{$es->search(index => $index,
                   type  => $type,

@@ -265,12 +265,12 @@ the status of a trackdb having the given id in the back end.
 
 sub view_trackhub_status :Chained('user') :PathPart('view_trackhub_status') :Args(1) {
   my ($self, $c, $id) = @_;
-  $c->log->debug('Reached status section');
   my $hub = $c->model('Search')->get_trackhub_by_id($id, 1);
-  my $trackdb = Registry::TrackHub::TrackDB->new(doc => $hub, id => $id);
+  $c->log->debug('Retrieved hub '.$id);
   if ($c->req->params->{toggle_search}) {
-    $hub = $c->model('Search')->toggle_search($hub);
+    $hub = $c->model('Search')->toggle_search($id, $hub);
   }
+  my $trackdb = Registry::TrackHub::TrackDB->new(doc => $hub, id => $id);
   $c->stash(
     trackdb => $trackdb,
     template => 'user/trackhub/view.tt'
@@ -319,17 +319,20 @@ Action for /user/delete_trackhub/:id allowing an authenticated user to delete a 
 
 sub delete_trackhub : Chained('user') :PathPart('delete') Args(1) {
   my ($self, $c, $id) = @_;
-  
+  $c->log->debug("Going to delete $id");
   my $doc = $c->model('Search')->get_trackhub_by_id($id);
+
   if ($doc) {
     # TODO: this should be redundant, but just to be sure
-    if ($doc->{owner} eq $c->user->username) {
+    if ($doc->{_source}{owner} eq $c->user->username) {
       
       $c->model('Search')->delete_hub_by_id($id);
       $c->model('Search')->refresh_trackhub_index;
       
       $c->stash(status_msg => "Deleted track collection [$id]");
     } else {
+      $c->log->debug('Failed to delete, because owner of hub and user do not match');
+      # TODO: these error message don't render in the template
       $c->stash(error_msg => "Cannot delete collection [$id], does not belong to you");
     }
   } else {

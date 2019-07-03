@@ -335,7 +335,8 @@ sub delete_hub_by_id {
   $self->delete(
     index => $config->{index_name},
     type => $config->{type},
-    id => $id
+    id => $id,
+    refresh => 'true',
   );
 }
 
@@ -794,8 +795,9 @@ sub _collect_track_info {
 
 =head2 toggle_search
 
-  Arg[1]:     : TrackDB, straight from the backend, i.e not a TrackDB instance
-  Example     : $controller->toggle_search($hub);
+  Arg[1]:     : Elasticsearch ID for the hub - the raw document doesn't contain it
+  Arg[2]:     : TrackDB, straight from the backend, i.e not a TrackDB instance
+  Example     : $controller->toggle_search($id, $hub);
   Description : Enable/disable search for this trackDB from the front-end by
                 flipping its public flag
   Caller      : Controllers
@@ -803,17 +805,22 @@ sub _collect_track_info {
 =cut
 
 sub toggle_search {
-  my ($self, $hub) = @_;
+  my ($self, $id, $hub) = @_;
 
   my $config = $self->schema->{trackhub};
   my $index = $config->{index_name};
   my $type = $config->{type};
 
-  $hub->{public} = $hub->{public} ? 0:1;
+  if ($hub->{public} eq 'true') {
+    $hub->{public} = 'false';
+  } else {
+    $hub->{public} = 'true';
+  }
 
   $self->_es->index(
     index => $index,
     type => $type,
+    id => $id,
     body => $hub
   );
   

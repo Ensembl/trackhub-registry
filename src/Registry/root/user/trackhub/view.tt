@@ -62,7 +62,7 @@ function toggle(b) {
           <br/>
           [% END %]
         [% END %]
-        [% IF trackdb.public %]
+        [% IF trackdb.public == 'true' %]
           <br/><span class="label label-info" style="padding-bottom: 1px;">Searchable</span>
         [% ELSE %]
           <br/><span class="label label-danger" style="padding-bottom: 1px;">Not Searchable</span>

@@ -35,8 +35,11 @@ A class to represent track db data in JSON format, to provide methods to get/set
 check and update the status of its tracks. An object of this class is built from an ElasticSearch 
 document.
 
-Typically used to carry hub information to template toolkit. Template Toolkit CANNOT
-understand hashrefs and objects in the same call.
+Typically used to carry hub information to template toolkit, like a Java Bean.
+Template Toolkit CANNOT understand hashrefs and objects in the same call, and requires accessors.
+
+This object type is not used to modify data before saving. It could do with enabling with
+serialisation ability.
 
 =cut
 
@@ -150,8 +153,8 @@ has status => (
 
 has public => (
   is => 'rw',
-  isa => 'Str',
-  documentation => 'Whether the hub is publicly findable or not, boolean true/false as strings...'
+  isa => 'Bool',
+  documentation => 'Whether the hub is publicly findable or not, boolean true/false'
 );
 
 =head1 METHODS

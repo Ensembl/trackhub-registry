@@ -306,7 +306,14 @@ sub trackhub_POST {
 
   my $assembly_map = $c->req->data->{assemblies}; # might have submitted name -> accession map in case of non-UCSC assemblies
   # whether the trackDbs are available for search or not, default: yes
-  my $public = ( defined $c->req->data->{public} ) ? $c->req->data->{public} : 1;
+  my $public;
+  if ( defined $c->req->data->{public} ) {
+    if ( $c->req->data->{public} == 1 ) {
+      $public = JSON::true;
+    } else {
+      $public = JSON::false;
+    }
+  }
   
   if (! defined $url) {
     return $self->status_bad_request($c, message => 'You must specify the remote trackhub URL');
@@ -356,7 +363,7 @@ sub trackhub_POST {
     foreach my $json_doc (@{$trackdbs_docs}) {
       my $doc = from_json($json_doc);
       
-      $doc->{public} = ($public == 1)? 'true':'false';
+      $doc->{public} = $public; # i.e. if public = 1, all submitted hubs become public
 
       $doc->{type} = $trackdb_type;
 

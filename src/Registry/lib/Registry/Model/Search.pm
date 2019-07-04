@@ -55,6 +55,7 @@ use Carp;
 use namespace::autoclean;
 use Try::Tiny;
 use POSIX;
+use JSON; # for trues and falses
 use Catalyst::Exception qw/throw/;
 use Registry::Utils::URL qw(file_exists);
 
@@ -123,7 +124,7 @@ sub count_trackhubs {
   Arg[1]      : Scalar - ES trackDB doc ID (required)
   Arg[2]      : Bool - whether to get the original ES document (the original doc with ES decorated metadata) 
                 instead of just the source
-  Example     : my $trackDB = $model->get_trackhub_by_id(1);
+  Example     : my $trackhub = $model->get_trackhub_by_id(1);
   Description : Get the trackDB doc with the given (ES) id
   Returntype  : HashRef - a Search::Elasticsearch compatible representation of the ES doc
   Caller      : Controller
@@ -170,7 +171,8 @@ sub get_trackhub_by_id {
   Description : Search over the trackDB docs using a Search::Elasticsearch compatible query arg,
                 should be equivalent to search_trackhubs but implemented with the scan&scroll API,
                 so size uncapped.
-  Returntype  : ListRef - the Search::Elasticsearch compatible list of results
+                This method is incorrectly named, as it returns hubs, not TrackDB objects.
+  Returntype  : ListRef[hub HashRef] - the Search::Elasticsearch compatible list of results
   Exceptions  : None
   Caller      : Registry::Controller::API::Registration
   Status      : Stable
@@ -189,6 +191,7 @@ sub get_trackdbs {
   
   # see https://metacpan.org/pod/Search::Elasticsearch::Scroll
 
+  # Do not confuse this with a TrackDB object. Variable is badly named
   my $trackdbs = $self->pager(\%args, sub { 
     my $result = shift;
     $result->{_source}{_id} = $result->{_id};
@@ -799,7 +802,9 @@ sub _collect_track_info {
   Arg[2]:     : TrackDB, straight from the backend, i.e not a TrackDB instance
   Example     : $controller->toggle_search($id, $hub);
   Description : Enable/disable search for this trackDB from the front-end by
-                flipping its public flag
+                flipping its public flag.
+                We write directly to the backend model because the TrackDB abstraction
+                has been built read-only for rendering.
   Caller      : Controllers
 
 =cut
@@ -811,10 +816,12 @@ sub toggle_search {
   my $index = $config->{index_name};
   my $type = $config->{type};
 
-  if ($hub->{public} eq 'true') {
-    $hub->{public} = 'false';
+  if ($hub->{public} == 1) {
+    # Going straight into JSON, and then on to the server. ES6+ stopped supporting truthiness of values
+    # See: https://metacpan.org/pod/Search::Elasticsearch::Client::6_0::Direct#Boolean-parameters
+    $hub->{public} = JSON::false;
   } else {
-    $hub->{public} = 'true';
+    $hub->{public} = JSON::true;
   }
 
   $self->_es->index(

@@ -161,7 +161,7 @@ sub view_trackhub :Path('view_trackhub') Args(1) {
   my ($self, $c, $id) = @_;
 
   my $hub = $c->model('Search')->get_trackhub_by_id($id);
-  my $trackdb = Registry::TrackHub::TrackDB->new(doc => $hub->{_source});
+  my $trackdb = Registry::TrackHub::TrackDB->new(doc => $hub->{_source}, id => $id);
   $c->stash(trackdb => $trackdb, template  => "search/view.tt");
 }
 

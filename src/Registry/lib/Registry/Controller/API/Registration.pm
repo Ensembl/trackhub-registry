@@ -833,8 +833,8 @@ sub logout :Path('/api/logout') Args(0) ActionClass('REST') { }
 
 sub logout_GET {
   my ($self, $c) = @_;
-
-  $c->user->delete('auth_key');
+  $c->user->auth_key(undef); # Remove the API key from the record
+  $c->user->update;
 
   $self->status_ok($c, entity => { message => 'Successfully logged out' });
 }

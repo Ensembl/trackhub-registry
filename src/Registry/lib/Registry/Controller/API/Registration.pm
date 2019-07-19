@@ -306,9 +306,9 @@ sub trackhub_POST {
 
   my $assembly_map = $c->req->data->{assemblies}; # might have submitted name -> accession map in case of non-UCSC assemblies
   # whether the trackDbs are available for search or not, default: yes
-  my $public;
+  my $public = JSON::true;
   if ( defined $c->req->data->{public} ) {
-    if ( $c->req->data->{public} == 1 ) {
+    if ( $c->req->data->{public} ) { # rely on Perl truthiness to catch everything but 0
       $public = JSON::true;
     } else {
       $public = JSON::false;

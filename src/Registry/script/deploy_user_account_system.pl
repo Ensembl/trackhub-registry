@@ -21,7 +21,7 @@ use Getopt::Long;
 use Pod::Usage;
 use Digest;
 
-my ($dsn, $db_user, $db_pass, $adm_user, $adm_pass, $help, $driver, $salt);
+my ($dsn, $db_user, $db_pass, $adm_user, $adm_pass, $help, $driver, $salt, $email);
 
 GetOptions (
   'dsn=s'       => \$dsn,
@@ -31,6 +31,7 @@ GetOptions (
   'adm_pass=s'  => \$adm_pass,
   'driver=s'    => \$driver,
   'salt=s'      => \$salt,
+  'email=s'     => \$email,
   'help|h'      => \$help,
 ) or pod2usage(2);
 
@@ -66,7 +67,7 @@ my $admin_user = $orm->schema->resultset('User')->create({
   first_name => 'Admin',
   password => $digest->b64digest,
   affiliation => 'EMBL-EBI',
-  email => 'ens-apps@ebi.ac.uk',
+  email => $email,
   continuous_alert => 0
 });
 

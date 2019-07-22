@@ -48,11 +48,13 @@ use Registry::Utils::URL qw(read_file);
 my $help = 0;  # print usage and exit
 my $log_dir = '/nfs/public/nobackup/ens_thr/production/public_hubs/logs/';
 my $config_file = 'public_hubs.conf'; # expect file in current directory
+my $email; # The account to try to send emails to when things go wrong.
 
 # parse command-line arguments
 my $options_ok = 
   GetOptions("config|c=s" => \$config_file,
              "logdir|l=s" => \$log_dir,
+             "email|c=s" => \$email,
              "help|h"     => \$help) or pod2usage(2);
 pod2usage() if $help;
 
@@ -139,11 +141,13 @@ foreach my $hub_url (keys %config) {
 
   # delete configuration keys to proper content for submission, 
   # only assembly name-accession mapping should be left
-  map { delete $hub_conf{$_} } qw/description enable permissive error/;
+  for my $key (qw/description enable permissive error/) {
+    delete $hub_conf{$key};
+  }
 
   my $delete = 0;
   my $hub_name = search_hub_by_url($hub_url);
-  my $registered = looks_like_number($hub_name)?0:1;
+  my $registered = looks_like_number($hub_name) ? 0 : 1;
   $logger->info(sprintf "Found hub \"%s\" [%s,%s]", $desc, $enabled?"enabled":"not enabled", $registered?"registered":"not registered");
 
   if ($enabled) {
@@ -280,9 +284,8 @@ sub send_alert_message {
     Email::MIME->create(
       header_str => 
       [
-       From    => 'avullo@ebi.ac.uk',
-       To      => 'avullo@ebi.ac.uk',
-       Cc      => 'prem@ebi.ac.uk',
+       From    => $email,
+       To      => $email,
        Subject => sprintf("Alert report from TrackHub Registry: %s", $localtime),
       ],
       attributes => 
@@ -294,7 +297,7 @@ sub send_alert_message {
     );
   
   $logger->info("Sending alert report to admin");
-  sendmail($message);  
+  sendmail($message);
 }
 
 __END__

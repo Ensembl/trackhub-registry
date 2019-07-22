@@ -94,7 +94,7 @@ my $results = eval {
       query => {
         bool => {
           must => [
-            exists => { "field" => "data.biosample_id" } 
+            { exists => { field => "data.biosample_id" } }
           ]
         }
       }

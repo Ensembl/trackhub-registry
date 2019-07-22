@@ -95,8 +95,8 @@ my $results = eval {
         bool => {
           must => [
             exists => { "field" => "data.biosample_id" } 
-          }
-        ]
+          ]
+        }
       }
     }
   );

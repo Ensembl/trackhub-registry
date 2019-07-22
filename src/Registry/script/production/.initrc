@@ -7,7 +7,7 @@ name : thregistry_staging
 nodes : 10.3.9.113:9100
 
 [trackhubs]
-index   : trackhubs_v1
+index   : trackhubs
 alias   : trackhubs
 type    : trackdb
 mapping : /homes/ens_thrprd01/deployed_thr/production/deployed/src/trackhub-registry/docs/trackhub-schema/v1.0/examples/trackhub_mappings.json
@@ -15,7 +15,7 @@ mapping : /homes/ens_thrprd01/deployed_thr/production/deployed/src/trackhub-regi
 # see https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-update-settings.html
 
 [reports]
-index      : reports_v1
+index      : reports
 alias      : reports
 type       : report
 

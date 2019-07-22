@@ -87,16 +87,19 @@ my $es = connect_to_es_cluster($config{cluster_prod});
 #
 my $sample_id_key = 'biosample_id';
 my $results = eval {
-  $es->search(index  => 'trackhubs',
-              type   => 'trackdb',
-              body   => {
-               # fields => [ $sample_id_key ],
-                query => {
-                  filtered => {
-                    filter => { 'exists' => { field => $sample_id_key }}
-                  }
-                }
-              });
+  $es->search(
+    index  => 'trackhubs',
+    type   => 'trackdb',
+    body   => {
+      query => {
+        bool => {
+          must => [
+            exists => { "field" => "data.biosample_id" } 
+          }
+        ]
+      }
+    }
+  );
 }; 
 if ($@) {
   my $message = "Error querying for track hubs with BioSample IDs, see $log_file\n: $@";

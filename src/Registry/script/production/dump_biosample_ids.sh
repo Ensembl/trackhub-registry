@@ -15,4 +15,4 @@
 
 cd /homes/ens_thrprd01/deployed_thr/production/deployed/src/trackhub-registry/src/Registry/script/production
 source ./thr_env
-perl dump_biosample_ids.pl
+perl dump_biosample_ids.pl --email=ens-apps@ebi.ac.uk

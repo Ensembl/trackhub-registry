@@ -36,18 +36,19 @@ use Search::Elasticsearch;
 my $help = 0;  # print usage and exit
 my $log_dir = '/nfs/public/nobackup/ens_thr/production/biosample_dumps/logs/';
 my $config_file = '.initrc'; # expect file in current directory
+my $email;
 
 # parse command-line arguments
-my $options_ok = 
-  GetOptions("config|c=s" => \$config_file,
-	     "logdir|l=s" => \$log_dir,
-	     "help|h"     => \$help) or pod2usage(2);
+my $options_ok = GetOptions(
+  "config|c=s" => \$config_file,
+	"logdir|l=s" => \$log_dir,
+  "email=s"    => \$email,
+	"help|h"     => \$help) or pod2usage(2);
 pod2usage() if $help;
 
 # init logging, use log4perl inline configuration
 unless(-d $log_dir) {
-  mkdir $log_dir or
-    die("cannot create directory: $!");
+  mkdir $log_dir or die("cannot create directory: $!");
 }
 
 my $log_file = "${log_dir}/biosample_ids.log";
@@ -98,7 +99,7 @@ my $results = eval {
               });
 }; 
 if ($@) {
-  my $message = "Error querying for track hubs with BioSample IDs: $@";
+  my $message = "Error querying for track hubs with BioSample IDs, see $log_file\n: $@";
   send_alert_message($message);
   $logger->logdie($message);
 }
@@ -143,19 +144,17 @@ sub send_alert_message {
   my $localtime = localtime;
   my $message = 
     Email::MIME->create(
-      header_str => 
-      [
-       From    => 'avullo@ebi.ac.uk',
-       To      => 'avullo@ebi.ac.uk',
-       Subject => sprintf("Alert report from TrackHub Registry: %s", $localtime),
+      header_str => [
+        From    => $email,
+        To      => $email,
+        Subject => sprintf("Error report from TrackHub Registry: %s", $localtime),
       ],
-      attributes => 
-      {
-       encoding => 'quoted-printable',
-       charset  => 'ISO-8859-1',
+      attributes => {
+        encoding => 'quoted-printable',
+        charset  => 'ISO-8859-1',
       },
       body_str => $body,
-           );
+    );
   
   $logger->info("Sending alert report to admin");
   sendmail($message);  

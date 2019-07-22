@@ -13,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-source  ~/.bash_profile 
-cd /nfs/public/release/ens_thr/production/src/trackhub-registry/src/Registry/script/production
+cd /homes/ens_thrprd01/deployed_thr/production/deployed/src/trackhub-registry/src/Registry/script/production
+source ./thr_env
 perl dump_biosample_ids.pl

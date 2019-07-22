@@ -39,6 +39,7 @@ requires 'MooseX::NonMoose';
 requires 'namespace::autoclean';
 requires 'Config::General'; # This should reflect the config file format you've chosen
 # See Catalyst::Plugin::ConfigLoader for supported formats
+requires 'Config::Std'; # Somebody likes using as many config libraries as possible. This one is for cronjobs and the initrc file
 
 # for handling profile and registration forms
 requires 'HTML::FormHandler::Moose';

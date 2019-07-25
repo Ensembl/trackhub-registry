@@ -1,5 +1,5 @@
 #elasticdump
-export PATH=$PATH:/nfs/public/release/ens_thr/staging/npm_nodejs/node-local/bin
+export PATH=$PATH:/homes/ens_thrprd01/node/node-v10.16.0-linux-x64/bin:/homes/ens_thrprd01/node/node-v10.16.0-linux-x64/node_modules/elasticdump/bin
 
 #disable proxy
 export HTTP_PROXY=
@@ -8,11 +8,11 @@ export http_proxy=
 export https_proxy=
 
 #dump trackhubs
-elasticdump --input=http://wp-p1m-73:9100/trackhubs_v1 --output=http://wp-p2m-72:9200/trackhubs_v1 --type=analyzer
-elasticdump --input=http://wp-p1m-73:9100/trackhubs_v1 --output=http://wp-p2m-72:9200/trackhubs_v1 --type=mapping
-elasticdump --input=http://wp-p1m-73:9100/trackhubs_v1 --output=http://wp-p2m-72:9200/trackhubs_v1 --type=data
+elasticdump --input=http://wp-p1m-73:9200/trackhubs --output=http://wp-p2m-72:9200/trackhubs --type=analyzer
+elasticdump --input=http://wp-p1m-73:9200/trackhubs --output=http://wp-p2m-72:9200/trackhubs --type=mapping
+elasticdump --input=http://wp-p1m-73:9200/trackhubs --output=http://wp-p2m-72:9200/trackhubs --type=data
 
 #dump reports
-elasticdump --input=http://wp-p1m-73:9100/reports_v1 --output=http://wp-p2m-72:9200/reports_v1  --type=data
-elasticdump --input=http://wp-p1m-73:9100/reports_v1 --output=http://wp-p2m-72:9200/reports_v1  --type=mapping
-elasticdump --input=http://wp-p1m-73:9100/reports_v1 --output=http://wp-p2m-72:9200/reports_v1  --type=data
+elasticdump --input=http://wp-p1m-73:9200/reports --output=http://wp-p2m-72:9200/reports --type=data
+elasticdump --input=http://wp-p1m-73:9200/reports --output=http://wp-p2m-72:9200/reports --type=mapping
+elasticdump --input=http://wp-p1m-73:9200/reports --output=http://wp-p2m-72:9200/reports --type=data

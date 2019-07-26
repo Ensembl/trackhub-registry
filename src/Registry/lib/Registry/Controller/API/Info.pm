@@ -162,7 +162,7 @@ sub assemblies_GET {
         filter => { term => { public => "true" } },
           aggs => {
             species => {
-              terms => { field => 'species.scientific_name' },
+              terms => { field => 'species.scientific_name', size => 10000 },
               aggs  => {
                 ass_name => {
                   terms => { field => 'assembly.name' },
@@ -179,7 +179,8 @@ sub assemblies_GET {
             },
           }
         }
-     }
+     },
+     size => 0
   );
 
   my $assemblies;

@@ -57,7 +57,6 @@ use Catalyst::Runtime;
 #                 directory
 
 use Catalyst qw/
-    -Debug
     ConfigLoader
     Static::Simple
     StackTrace

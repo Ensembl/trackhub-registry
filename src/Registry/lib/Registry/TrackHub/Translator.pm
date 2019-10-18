@@ -225,6 +225,12 @@ sub to_json_1_0 {
     }
   };
 
+  # Check for metafair key in trackhub object and persist into final document
+  if ($trackhub->metaFairValid) {
+    $doc->{hub}{metaFairValid} = 1;
+    $doc->{hub}{metaFairData} = $trackhub->metaFairData;
+  }
+
   # add species/assembly information
   $self->_add_genome_info($genome, $doc);
 

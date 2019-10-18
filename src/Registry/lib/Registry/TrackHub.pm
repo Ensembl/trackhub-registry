@@ -50,9 +50,10 @@ use warnings;
 
 use Registry::TrackHub::Genome;
 use Registry::Utils qw(run_cmd);
-use Registry::Utils::URL qw(read_file);
+use Registry::Utils::URL qw(read_file validate_url_with_fair_service);
 use Registry::Utils::Exception;
 use Encode qw(decode_utf8 FB_CROAK);
+use JSON qw(decode_json);
 
 use vars qw($AUTOLOAD);
 
@@ -167,12 +168,12 @@ sub _hub_check {
     $url      = join '/', @split_url;
   } else {
     $hub_file = 'hub.txt';
-    $url      =~ s|/$||;
+    $url      =~ s|/$||; # delete trailing slash
   }
   # TODO - check if hubCheck is present or not. Currently you get a bunch of useless warnings when absent
   my $cmd = sprintf("hubCheck -checkSettings -test -noTracks %s/%s", $url, $hub_file);
   my ($rc, $output) = Registry::Utils::run_cmd($cmd);
-  if ($output =~ /problem/) {
+  if ($output && $output =~ /problem/) {
     my @lines = split /\n/, $output;
     shift @lines;
     for my $line (@lines) {
@@ -199,7 +200,7 @@ sub _get_hub_info {
     $url      = join '/', @split_url;
   } else {
     $hub_file = 'hub.txt';
-    $url      =~ s|/$||;
+    $url      =~ s|/$||; # delete trailing slash
   }
 
   my $file_args = { nice => 1 };
@@ -249,6 +250,19 @@ sub _get_hub_info {
   foreach my $genome (keys %{$genomes}) {
     $file = $genomes->{$genome}->trackDb;
  
+    # Hack to support Fair metadata collaborators
+    # If the fairMeta key is found in the genomes.txt, we validate an additional JSON file
+    # using the Barcelona fair validation tool: http://fairtracks.bsc.es/api/validate
+    if ($genomes->{$genome}->metaFair) {
+      my $relative_path = $genomes->{$genome}->metaFair;
+
+      my $obj = $self->_annotate_fair_metadata($relative_path);
+      if ($obj) {
+        $self->metaFairValid(1);
+        $self->metaFairData($obj);
+      }
+    }
+
     if ($file =~ /^http|^ftp/) { # path to trackDB could be remote
       $response = read_file("$file", $file_args);
     } else {
@@ -289,6 +303,25 @@ sub _get_hub_info {
   $self->genomes($genomes);
 
   return;
+}
+
+# Given a URL to metadata JSON, validate it, and transform the valid JSON into an object
+sub _annotate_fair_metadata {
+  my ($self, $relative_path) = @_;
+
+  my @split_url = split '/', $self->url;
+  my $url;
+
+  if ($split_url[-1] =~ /[.?]/) {
+    pop @split_url;
+  }
+  $url = join '/', @split_url, $relative_path;
+
+  if (my $document = validate_url_with_fair_service($url)) {
+    return decode_json($document);
+  } else {
+    return;
+  }
 }
 
 1;

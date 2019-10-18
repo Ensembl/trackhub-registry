@@ -48,6 +48,7 @@ use warnings;
 
 use HTTP::Tiny;
 use LWP::UserAgent;
+use JSON;
 
 BEGIN {
   use FindBin qw/$Bin/;
@@ -57,7 +58,7 @@ BEGIN {
 use Registry::Utils::File qw(get_compression);
 
 use Exporter qw(import);
-our @EXPORT_OK = qw(chase_redirects file_exists read_file get_filesize);
+our @EXPORT_OK = qw(chase_redirects file_exists read_file get_filesize validate_url_with_fair_service);
 our %EXPORT_TAGS = (all => [@EXPORT_OK]);
 
 =head1 METHODS
@@ -356,6 +357,43 @@ sub _get_http_tiny_error {
   return;
 }
 
+=head2 validate_url_with_fair_service
+  
+  Arg [1]    : url - URL of a JSON file
+  Arg [2]    : HashRef - 
+                  proxy - settings to use when web proxy is required, see read_file()
+  Description: Given a JSON file, attempt to validate it against a web service
+  Returntype : Str/undef - the content of the JSON file on successful in validation
+
+=cut
+
+sub validate_url_with_fair_service {
+  my ($url, $args) = @_;
+  my $json_content = read_file($url, $args);
+
+  my %params = ('timeout' => 40);
+  if ($args->{'proxy'}) {
+    $params{'http_proxy'}   = $args->{'proxy'};
+    $params{'https_proxy'}  = $args->{'proxy'};
+  }
+  my $http = HTTP::Tiny->new(%params);
+  my $service_url = 'http://fairtracks.bsc.es/api/validate';
+  my $response = $http->request('POST', $service_url, { 'headers' => {'Content-Type' => 'application/json',  'accept' => 'application/json'},
+    'content' => $json_content
+  });
+
+  if ($response->{success}) {
+    # Then this hub has been checked by the validation service, but it may still be either valid or invalid
+    my $response_object = decode_json($response->{content});
+    if ($response_object->{validated} == JSON::true) {
+      print STDERR "Hub validated by fairtracks schema\n";
+      return $json_content;
+    }
+    print STDERR "Hub failed to validate by fairtracks schema\n";
+    # Swallow the validation errors. Not our problem to report them
+  }
+  return;
+}
 
 1;
 

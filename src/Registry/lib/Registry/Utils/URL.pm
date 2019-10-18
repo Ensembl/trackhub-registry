@@ -364,6 +364,7 @@ sub _get_http_tiny_error {
                   proxy - settings to use when web proxy is required, see read_file()
   Description: Given a JSON file, attempt to validate it against a web service
   Returntype : Str/undef - the content of the JSON file on successful in validation
+               Int (Bool) - Did the JSON validate without issue? 1 = Yes, 0 = No
 
 =cut
 
@@ -387,10 +388,11 @@ sub validate_url_with_fair_service {
     my $response_object = decode_json($response->{content});
     if ($response_object->{validated} == JSON::true) {
       print STDERR "Hub validated by fairtracks schema\n";
-      return $json_content;
+      return ($json_content, 1);
     }
     print STDERR "Hub failed to validate by fairtracks schema\n";
     # Swallow the validation errors. Not our problem to report them
+    return ($json_content, 0);
   }
   return;
 }

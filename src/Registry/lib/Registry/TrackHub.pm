@@ -258,7 +258,6 @@ sub _get_hub_info {
 
       my $obj = $self->_annotate_fair_metadata($relative_path);
       if ($obj) {
-        $self->metaFairValid(1);
         $self->metaFairData($obj);
       }
     }
@@ -317,11 +316,14 @@ sub _annotate_fair_metadata {
   }
   $url = join '/', @split_url, $relative_path;
 
-  if (my $document = validate_url_with_fair_service($url)) {
-    return decode_json($document);
-  } else {
-    return;
+  my ($document, $valid) = validate_url_with_fair_service($url);
+  if ($document) {
+    my $obj = decode_json($document);
+    print STDERR 'Adding metaFair validity flag';
+    $obj->{metaFairValid} = ($valid) ? JSON::true : JSON::false;
+    return $obj;
   }
+  return;
 }
 
 1;

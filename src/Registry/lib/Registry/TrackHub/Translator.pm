@@ -226,8 +226,7 @@ sub to_json_1_0 {
   };
 
   # Check for metafair key in trackhub object and persist into final document
-  if ($trackhub->metaFairValid) {
-    $doc->{hub}{metaFairValid} = 1;
+  if ($trackhub->metaFairData) {
     $doc->{hub}{metaFairData} = $trackhub->metaFairData;
   }
 

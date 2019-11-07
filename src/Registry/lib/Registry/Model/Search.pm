@@ -408,7 +408,14 @@ sub api_search {
 
   my @extra_clauses;
   my @optional_clauses;
-  if ($user_query ne '') { push @extra_clauses,{ match => $user_query } ; }
+  if ($user_query && $user_query ne '') {
+    push @{ $query{query}{bool}{must} }, { multi_match => {
+      query => $user_query,
+      fields => [qw/
+        hub.shortLabel hub.longLabel hub.name type species.common_name species.scientific_name
+      /]
+    }};
+  }
   push @extra_clauses, {public => "true" }; # present only 'public' hubs
   push @extra_clauses, { "species.scientific_name.lowercase" => lc $species } if $species;
   # if assembly is provided extend the search to both the name and synonyms to allow fetching

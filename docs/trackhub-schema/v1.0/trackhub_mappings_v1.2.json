@@ -1,0 +1,128 @@
+ {
+  "_comment": "This is trackhub_mappings_v1.1.json adapted to work better in Elasticsearch v6.3",
+  "settings": {
+    "number_of_shards": 3,
+    "number_of_replicas": 2,
+    "analysis": {
+      "analyzer": {
+        "case_insensitive_keywords": {
+          "tokenizer": "keyword",
+          "filter": "lowercase"
+        }
+      }
+    }
+  },
+  "aliases": {
+    "live_trackhubs": {}
+  },
+  "mappings": {
+    "trackdb": {
+      "date_detection": false,
+      "properties": {
+        "owner": {
+          "type": "keyword",
+          "index": true
+        },
+        "public": {
+          "type": "boolean",
+          "index": true
+        },
+        "created": {
+          "type": "date",
+          "index": false
+        },
+        "updated": {
+          "type": "date",
+          "index": false
+        },
+        "status": {
+          "type": "object",
+          "enabled": false
+        },
+        "hub": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "keyword",
+              "index": true,
+              "fields": {
+                "lowercase": {
+                  "type": "text",
+                  "analyzer": "case_insensitive_keywords"
+                }
+              }
+            },
+            "url": {
+              "type": "keyword",
+              "index": true
+            },
+            "longLabel": {
+              "type": "text",
+              "index": true
+            },
+            "shortLabel": {
+              "type" : "text",
+              "index": true
+            },
+            "metaFairValid": {
+              "type": "boolean",
+              "index": true
+            },
+            "metaFairData": {
+              "type": "object",
+              "enabled": false
+            }
+          }
+        },
+        "species": {
+          "type": "object",
+          "properties": {
+            "scientific_name": {
+              "type": "keyword",
+              "index": true,
+              "fields": {
+                "lowercase": {
+                  "type": "text",
+                  "analyzer": "case_insensitive_keywords"
+                }
+              }
+            },
+            "tax_id": {
+              "type": "integer",
+              "index": true
+            },
+            "common_name": {
+              "type": "text",
+              "index": true
+            }
+          }
+        },
+        "assembly": {
+          "type": "object",
+          "properties": {
+            "accession": {
+              "type": "keyword",
+              "index": true
+            },
+            "name": {
+              "type": "keyword",
+              "index": true
+            },
+            "synonyms": {
+              "type": "keyword",
+              "index": true
+            }            
+          }
+        },
+        "configuration": {
+          "type": "object",
+          "enabled": false
+        },
+        "type": {
+          "type": "keyword"
+        },
+        "data": []
+      }
+    }
+  }
+}

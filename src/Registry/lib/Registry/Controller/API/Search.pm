@@ -85,15 +85,34 @@ sub search_POST {
   }
   my $data = $c->req->data;
 
-  my $query_body = {};
-
   # do the search
   my $results;
 
   if (exists $c->stash->{all} && $c->stash->{all} == 1) {
 
+    # pager() does not create query documents on its own, unlike api_search()
+    # used when ?all=0
+    my $flexible_query_element = { query => {} };
+    if ($data->{query}) {
+      $flexible_query_element = {
+        query => {
+          bool => {
+            must => [{
+              multi_match => {
+                query => $data->{query},
+                fields => [qw/
+                  hub.shortLabel hub.longLabel hub.name type 
+                  species.common_name species.scientific_name
+                /]
+              }
+            }]
+          }
+        }
+      }
+    }
+
     my $result_list = $c->model('Search')->pager(
-      undef, 
+      $flexible_query_element,
       sub {
         my $thing = shift;
         for my $corrected_key (qw/id score type/) {
@@ -107,7 +126,13 @@ sub search_POST {
           delete $thing->{$discarded_key};
         }
         return $thing;
-      });
+      },
+      $data->{species},
+      $data->{assembly},
+      $data->{accession},
+      $data->{hub},
+      $data->{type}
+    );
 
     $results = { 
       total_entries => scalar @$result_list,

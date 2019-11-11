@@ -406,8 +406,6 @@ sub api_search {
     size => $per_page
   );
 
-  my @extra_clauses;
-  my @optional_clauses;
   if ($user_query && $user_query ne '') {
     push @{ $query{query}{bool}{must} }, { multi_match => {
       query => $user_query,
@@ -416,9 +414,29 @@ sub api_search {
       /]
     }};
   }
-  push @extra_clauses, {public => "true" }; # present only 'public' hubs
+  $self->_add_additional_query_constraints(\%query, $species, $accession, $hub, $type, $assembly);
+  my $response = $self->search_trackhubs(%query);
+  $response = $self->clean_results($response);
+
+  # Format for return to user
+  my $hits = {
+    total_entries => $response->{hits}{total},
+    items => $response->{hits}{hits}
+  };
+  return $hits;
+}
+
+sub _add_additional_query_constraints {
+  my ($self, $query, $species, $accession, $hub, $type, $assembly) = @_;
+  
+  my @extra_clauses;
+  my @optional_clauses;
+
+  @extra_clauses = ({public => "true"}); # present only 'public' hubs
+  push @extra_clauses, { "assembly.accession" => $accession } if $accession;
+  push @extra_clauses, { "hub.name" => $hub } if $hub;
+  push @extra_clauses, { type => $type } if $type;
   push @extra_clauses, { "species.scientific_name.lowercase" => lc $species } if $species;
-  # if assembly is provided extend the search to both the name and synonyms to allow fetching
 
   # ENSCORESW-2039
   # put assembly parameter as query string, otherwise cannot find some assemblies
@@ -429,29 +447,17 @@ sub api_search {
     push @optional_clauses, { "assembly.synonyms" => $assembly };
     push @optional_clauses, { "assembly.accession" => $assembly };
   }
-  push @extra_clauses, { "assembly.accession" => $accession } if $accession;
-  push @extra_clauses, { "hub.name" => $hub } if $hub;
-  push @extra_clauses, { type => $type } if $type;
 
   foreach my $clause (@extra_clauses) {
-    push @{ $query{query}{bool}{must} }, { term => $clause};
+    push @{ $query->{query}{bool}{must} }, { term => $clause};
   }
   foreach my $clause (@optional_clauses) {
-    push @{ $query{query}{bool}{should}}, { term => $clause};
+    push @{ $query->{query}{bool}{should}}, { term => $clause};
   }
   if (@optional_clauses) {
-    $query{query}{bool}{minimum_should_match} = 1;
+    $query->{query}{bool}{minimum_should_match} = 1;
   }
-
-  my $response = $self->search_trackhubs(%query);
-  $response = $self->clean_results($response);
-
-  # Format for return to user
-  my $hits = {
-    total_entries => $response->{hits}{total},
-    items => $response->{hits}{hits}
-  };
-  return $hits;
+  return $query;
 }
 
 =head2 clean_results
@@ -495,6 +501,12 @@ sub clean_results {
   Arg[1]      : Hashref - containing query elements appropriate to Search::Elasticsearch
                 body => { query => $query }, index => $index_name, type => $type
   Arg[2]      : Callback - code to post-process each of the documents in the result
+  Arg[3]      : String - species name
+  Arg[4]      : String - assembly name
+  Arg[5]      : String - A INSDC assembly accession, GCA....
+  Arg[6]      : String - Name of a track hub
+  Arg[7]      : String - Type of track hub, e.g. proteomics or whatever
+  
   Examples    : my $result_list = $model->pager({query => { match => { ... } }, });
   Description : Fetches all the results for the query and buffers any paging that is required
                 i.e. to extract more than 10000 records from Elasticsearch in a single request.
@@ -503,13 +515,14 @@ sub clean_results {
 =cut
 
 sub pager {
-  my ($self, $query, $callback) = @_;
+  my ($self, $query, $callback, $species, $assembly, $accession, $hub, $type) = @_;
 
   my @result_buffer = ();
-  $query->{query} ||= { match_all => {} };
-  $query->{size} ||= 10000; # Get the biggest chunks possible (restricted server-side)
+  $query->{query} //= { match_all => {} };
+  $query->{size} //= 10000; # Get the biggest chunks possible (restricted server-side)
   $query->{sort} = '_doc'; # optimisation for ES
 
+  $self->_add_additional_query_constraints($query, $species, $accession, $hub, $type, $assembly);
   my %prepped_query = $self->_decorate_query(%$query);
 
   my $iterator = $self->scroll_helper(

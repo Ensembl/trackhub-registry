@@ -4,3 +4,5 @@ src/Registry/Makefile
 src/Registry/blib
 src/Registry/inc
 inc/Module/*
+.DS_Store*
+.!*

@@ -1,0 +1,3 @@
+genome hg38
+trackDb grch38/tracksDb.txt
+metaFair grch38/blueprint.json

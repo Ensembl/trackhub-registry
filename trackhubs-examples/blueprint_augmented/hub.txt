@@ -1,0 +1,6 @@
+hub augmented_FAIR_Blueprint_Hub_2016
+shortLabel FAIR epigenomics with extras
+longLabel FAIR-metadata epigenomics hub derived from the Blueprint Epigenomics Data Hub, with even moreadditional metadata
+genomesFile genomes.txt
+email helpdesk@trackhubregistry.org
+descriptionUrl http://www.blueprint-epigenome.eu/index.cfm?p=31AD6D30-9B3C-BB97-E7F81875121FEC41

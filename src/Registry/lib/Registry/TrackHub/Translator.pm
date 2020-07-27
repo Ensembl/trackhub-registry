@@ -59,6 +59,7 @@ use Registry::TrackHub::Tree;
 use Registry::TrackHub::Parser;
 
 use Bio::EnsEMBL::Utils::MetaData::DBSQL::GenomeInfoAdaptor;
+use Bio::EnsEMBL::DBSQL::DBConnection; # Remove this when GenomeInfoAdaptor gets better
 use HTML::Restrict;
 
 use Registry::Utils::Exception;

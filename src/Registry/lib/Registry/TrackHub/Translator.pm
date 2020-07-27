@@ -1228,15 +1228,36 @@ sub _add_genome_browser_links {
     # Look up division in shared genome DB, by using assembly accession,
     # when provided, or assembly name
     
-    # create an adaptor to work with genomes
-    # Dirty hack now that we cannot use the build_adaptor() function with
+    # MAXIMUM HACK ALERT
+    # Create an adaptor to work with genomes
+    # We cannot use the build_adaptor() function with
     # default public hosts. Access to public server host via local network
     # was a custom NAT rule which did not survive the data centre move
     # revert to GenomeInfoAdaptor->build_adaptor() if outside EBI
+    # API does not readily expose what the latest DB available is, so
+    # this is how it has to be...
+    my $dbc = Bio::EnsEMBL::DBSQL::DBConnection->new(
+      -host => 'mysql-ens-mirror-3',
+      -port => 4275,
+      -user => 'ensro'
+    );
+
+    # Copied directly from build_adaptor >_<
+    my $dbs = $dbc->sql_helper()->execute(
+      -SQL => q/select schema_name,
+      cast(replace(schema_name,'ensemblgenomes_info_','') as unsigned int ) as rel
+      from information_schema.SCHEMATA
+      where schema_name like 'ensemblgenomes_info_%' order by rel desc/
+    );
+    $dbc->disconnect_if_idle();
+    $dbname = $dbs->[0][0];
+
+    # and now we know the DBNAME connect again.
     my $gdba = Bio::EnsEMBL::Utils::MetaData::DBSQL::GenomeInfoAdaptor->new(
       -host => 'mysql-ens-mirror-3',
       -port => 4275,
       -user => 'ensro',
+      -dbname => $dbname
     );
     
     # first see if we can get by assembly accession

@@ -1229,7 +1229,15 @@ sub _add_genome_browser_links {
     # when provided, or assembly name
     
     # create an adaptor to work with genomes
-    my $gdba = Bio::EnsEMBL::Utils::MetaData::DBSQL::GenomeInfoAdaptor->build_adaptor();
+    # Dirty hack now that we cannot use the build_adaptor() function with
+    # default public hosts. Access to public server host via local network
+    # was a custom NAT rule which did not survive the data centre move
+    # revert to GenomeInfoAdaptor->build_adaptor() if outside EBI
+    my $gdba = Bio::EnsEMBL::Utils::MetaData::DBSQL::GenomeInfoAdaptor->new(
+      -host => 'mysql-ens-mirror-3',
+      -port => 4275,
+      -user => 'ensro',
+    );
     
     # first see if we can get by assembly accession
     my ($genome, $genome_division);

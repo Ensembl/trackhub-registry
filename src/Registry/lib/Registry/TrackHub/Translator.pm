@@ -1251,7 +1251,7 @@ sub _add_genome_browser_links {
       where schema_name like 'ensemblgenomes_info_%' order by rel desc/
     );
     $dbc->disconnect_if_idle();
-    $dbname = $dbs->[0][0];
+    my $dbname = $dbs->[0][0];
 
     # and now we know the DBNAME connect again.
     my $gdba = Bio::EnsEMBL::Utils::MetaData::DBSQL::GenomeInfoAdaptor->new(

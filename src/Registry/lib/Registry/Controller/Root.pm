@@ -107,15 +107,15 @@ sub help :Path('/help') {
   return unless $help_form->process( params => $c->req->parameters );
   # return unless ($help_form->process( params => $c->req->parameters )) or ($help_form->value->{password} eq "");
 
-  my ($name, $subject, $email, $message, $password) = (
+  my ($name, $subject, $email, $message, $phone) = (
     $help_form->value->{name},
     $help_form->value->{subject},
     $help_form->value->{email},
     $help_form->value->{message},
-    $help_form->value->{password}
+    $help_form->value->{phone}
   );
 
-  if($password ne "") {
+  if($phone ne "") {
       return;
   }
   

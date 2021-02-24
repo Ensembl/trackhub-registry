@@ -48,8 +48,8 @@ has_field message => (
     type             => 'TextArea',
 );
 
-has_field password => (
-    label            => 'Password:',
+has_field phone => (
+    label            => 'Phone:',
     type             => 'Text',
     tabindex         => '-1',
     autocomplete     => 'off',

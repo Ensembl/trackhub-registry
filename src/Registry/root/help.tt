@@ -67,6 +67,14 @@
           </div>
         </div>
 
+        <!-- Phone -->
+        <div class="form-group">
+          <label class="col-sm-3 control-label" for="message">Phone:</label>
+          <div class="col-sm-8">
+            <input id="phone" type="text" name="phone" style="display:none !important" tabindex="-1" autocomplete="off">
+          </div>
+        </div>
+
         <!-- Button -->
         <div class="form-group">
           <label class="col-sm-3 control-label" for="submit"></label>

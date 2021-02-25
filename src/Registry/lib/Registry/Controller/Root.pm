@@ -105,13 +105,19 @@ sub help :Path('/help') {
             form     => $help_form);
 
   return unless $help_form->process( params => $c->req->parameters );
+  # return unless ($help_form->process( params => $c->req->parameters )) or ($help_form->value->{password} eq "");
 
-  my ($name, $subject, $email, $message) = (
+  my ($name, $subject, $email, $message, $phone) = (
     $help_form->value->{name},
     $help_form->value->{subject},
     $help_form->value->{email},
-    $help_form->value->{message}
+    $help_form->value->{message},
+    $help_form->value->{phone}
   );
+
+  if($phone ne "") {
+      return;
+  }
   
   my $email_message = Email::MIME->create(
     header_str => [

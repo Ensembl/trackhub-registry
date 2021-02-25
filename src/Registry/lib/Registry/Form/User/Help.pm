@@ -48,6 +48,14 @@ has_field message => (
     type             => 'TextArea',
 );
 
+has_field phone => (
+    label            => 'Phone:',
+    type             => 'Text',
+    tabindex         => '-1',
+    autocomplete     => 'off',
+    style            => 'display:none !important',
+);
+
 has_field submit  => (
     type => 'Submit',
     value => 'Send',

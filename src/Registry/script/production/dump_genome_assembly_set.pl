@@ -49,8 +49,8 @@ my $options_ok =
              "help|h"     => \$help) or pod2usage(2);
 pod2usage() if $help;
 
-my $schema = Registry::GenomeAssembly::Schema->connect("DBI:Oracle:host=ora-vm-066.ebi.ac.uk;sid=ETAPRO;port=1571", 
-                                                       'gc_reader', 
+my $schema = Registry::GenomeAssembly::Schema->connect("DBI:Oracle:host=ora-vmpub-007.ebi.ac.uk;sid=ETAPRO;port=1531",
+                                                       'gc_reader',
                                                        'reader', 
                                                        { 'RaiseError' => 1, 'PrintError' => 0 });
 

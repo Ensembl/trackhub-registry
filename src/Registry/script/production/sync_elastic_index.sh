@@ -1,7 +1,10 @@
 #!/usr/bin/sh
 
-# Elasticdump location
-export PATH=$PATH:/homes/<tark_dev_username>/workspace/node_modules/elasticdump/bin
+# PREPARE THE ENVIRONMENT
+# Activate Python Venev where node is installed from elasticdump to work
+source $HOME/workspace/thr_cronjob_dir/thr_node_env/bin/activate
+# Add elasticdump to PATH
+export PATH=$PATH:$HOME/workspace/thr_cronjob_dir/node_modules/elasticdump/bin
 
 # Disable proxy
 export HTTP_PROXY=

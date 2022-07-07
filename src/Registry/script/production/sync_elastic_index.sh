@@ -18,22 +18,29 @@ OUTPUT_HOST='http://wp-p2m-72:9200' #HX
 # DELETE FROM OUTPUT HOST
 # HX HOST IS READONLY- So before delete change it to false
 # Added -H to fix: https://stackoverflow.com/a/47545023/4488332
+echo "######## Turning off read-only... ########"
 curl -XPUT ${OUTPUT_HOST}/trackhubs_v1.2/_settings -d '{"index":{"blocks.read_only":false}}' -H 'Content-Type: application/json'
   
 # Delete the index
+echo "######## Deleting the index... ########"
 curl -XDELETE ${OUTPUT_HOST}/trackhubs_v1.2
 
 # LOAD the index from HH to HX
 # Dump trackhubs
+echo "######## Dumping analyzer... ########"
 elasticdump --input=${INPUT_HOST}/trackhubs_v1.2 --output=${OUTPUT_HOST}/trackhubs_v1.2 --type=analyzer
+echo "######## Dumping mapping... ########"
 elasticdump --input=${INPUT_HOST}/trackhubs_v1.2 --output=${OUTPUT_HOST}/trackhubs_v1.2 --type=mapping
+echo "######## Dumping data... ########"
 elasticdump --input=${INPUT_HOST}/trackhubs_v1.2 --output=${OUTPUT_HOST}/trackhubs_v1.2 --type=data
 
 # Create alias
+echo "######## Creating alias... ########"
 curl -XPOST "${OUTPUT_HOST}/_aliases/" -d '{ "actions": [{ "add": { "index": "trackhubs_v1.2", "alias": "trackhubs" }} ] }' -H 'Content-Type: application/json'
 
 
 # HX HOST IS READONLY- So before delete change it to false
+echo "######## Turning on read-only... ########"
 curl -XPUT ${OUTPUT_HOST}/trackhubs_v1.2/_settings -d '{"index":{"blocks.read_only":true}}' -H 'Content-Type: application/json'
 
 

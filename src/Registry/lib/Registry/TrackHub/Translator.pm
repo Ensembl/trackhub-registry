@@ -490,6 +490,7 @@ my $ucscdb2insdc =
    # pig
    susscr3 => 'GCA_000003025.4', # 'Sscrofa10.2',
    susscr2 => 'GCA_000003025.2', # 'Sscrofa9.2', # no syn on NCBI
+   susScr11 => 'GCA_000003025.6', # 'Sscrofa11.1'
    # pika
    ochpri3 => 'GCA_000292845.1', # 'OchPri3.0', # no syn on NCBI
    ochpri2 => 'GCA_000164825.1', # 'OchPri2'
@@ -1286,7 +1287,7 @@ sub _add_genome_browser_links {
     # It's not clear whether that is significant here
     $genome_division = $genome->division if $genome;
     if (defined $genome_division && $genome_division =~ /^Ensembl/) {
-      if ($genome_division eq 'Ensembl') {
+      if ($genome_division eq 'Ensembl'  || $genome_division eq 'EnsemblVertebrates') {
         $division = 'www';
       } else {
         ($division = lc $genome_division) =~ s/ensembl//i;

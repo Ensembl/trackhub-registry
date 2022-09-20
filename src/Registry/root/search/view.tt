@@ -61,9 +61,8 @@
               <li><a
                 target="_blank"
                 href="http://genome.ucsc.edu/cgi-bin/hgHubConnect?hgHub_do_redirect=on&hgHubConnect.remakeTrackHub=on&hgHub_do_firstDb=1&hubUrl=[% trackdb.hub.url %]">UCSC</a></li>
-              [% END %]
               <!-- Can't dynamically link to UCSC here, as they do not provide a list of supported assemblies we can consult -->
-              [% IF urls.ucsc %]
+              [% ELSIF urls.ucsc %]
                 <li><a target="_blank" href="[% urls.ucsc %]">UCSC</a></li>
               [% END %]
 

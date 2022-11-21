@@ -37,6 +37,16 @@
 
 </script>
 
+<div class="alert alert-warning alert-dismissible" role="alert">
+  <p>
+    We are in the process of deploying a redeveloped version of TrackHubRegistry. Due to this, there will be disruption
+    in service from 6th December 2022. Apologies for any inconvenience this causes.
+  </p>
+  <p>
+    A pre-release version of the new site is available <a href="https://test.trackhubregistry.org/" target="_blank" rel="noopener noreferrer">here</a>.
+  </p>
+</div>
+
 <div class="jumbotron background-color-primary-accent">
   <div class="container content">
     <div>
